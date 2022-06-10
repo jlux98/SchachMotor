@@ -18,6 +18,11 @@ public enum PieceType {
     King(0);
 
     private int pointValue;
+
+    /**
+     * Constructs a Piecetype with the specified value.
+     * @param pointValue the piece's value
+     */
     private PieceType(int pointValue) {
         this.pointValue = pointValue;
     }
