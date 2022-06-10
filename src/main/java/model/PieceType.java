@@ -9,7 +9,7 @@ package model;
  * 
  */
 public enum PieceType {
-    //TODO use different piece value system
+    //TODO use a more elaborate piece value system
     Pawn(1),
     Knight(3),
     Bishop(3),
