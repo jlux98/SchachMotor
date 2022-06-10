@@ -19,6 +19,15 @@ public class Board {
     public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile) {
+        if (spaces == null) {
+            throw new NullPointerException("spaces array may not be null");
+        }
+        if (enPassantTargetRank <= 0 || enPassantTargetFile <= 0) {
+            throw new IllegalArgumentException("coordinates must be greater than 0");
+        }
+        if (enPassantTargetRank > 8 || enPassantTargetFile > 8) {
+            throw new IllegalArgumentException("coordinates must be less than 8");
+        }
         this.spaces = spaces;
         this.whiteNextMove = whiteNextMove;
         this.whiteInCheck = whiteInCheck;
@@ -48,6 +57,7 @@ public class Board {
     public Board(int pointValue, Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile) {
+        //value may be less than 0 (minimax / negamax)
         this(spaces, whiteNextMove, whiteInCheck, blackInCheck, whiteCastlingKingside, whiteCastlingQueenside,
                 blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile);
         this.pointValue = pointValue;
@@ -71,6 +81,7 @@ public class Board {
      * @param pointValue the board's value
      */
     public void setPointValue(int pointValue) {
+        //pointvalue may be negative
         this.pointValue = pointValue;
     }
 
