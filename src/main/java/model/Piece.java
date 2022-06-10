@@ -26,4 +26,12 @@ public class Piece {
         this.pieceType = pieceType;
         this.isWhite = isWhite;
     }
+
+    public PieceType getPieceType() {
+        return pieceType;
+    }
+
+    public boolean getIsWhite() {
+        return isWhite;
+    }
 }
