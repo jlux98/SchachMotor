@@ -33,12 +33,13 @@ public class Board {
     public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
             boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
             int halfMoves, int fullMoves) {
-        if (spaces == null) {
+       if (spaces == null) {
             throw new NullPointerException("spaces array may not be null");
-        }
-        if (enPassantTargetRank <= 0 || enPassantTargetFile <= 0) {
+        } 
+        // en passant target coordiantes of -1 are used if no en passant captures are possbile
+        /* if (enPassantTargetRank <= 0 || enPassantTargetFile <= 0) {
             throw new IllegalArgumentException("coordinates must be greater than 0");
-        }
+        } */
         if (enPassantTargetRank > 8 || enPassantTargetFile > 8) {
             throw new IllegalArgumentException("coordinates must be less than 8");
         }
