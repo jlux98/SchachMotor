@@ -11,6 +11,10 @@ import model.PieceType;
  * In the end the only public method will be generatePossibleMoves, but for
  * testing purposes I have decided to keep the other methods public until then
  *      -johannes
+ * it might be better to have the methods private and write a test class that extends this class
+ * making the private methods publicly available for testing. this way the "production" class MoveGenerator
+ * would not have to be adapted for testing
+ *      - Moritz
  */
 public abstract class MoveGenerator {
     public Board[] generatePossibleMoves(Board boardState){
