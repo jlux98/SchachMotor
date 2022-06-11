@@ -11,6 +11,18 @@ import java.util.Optional;
  */
 public class Board {
 
+    private Optional<Piece>[][] spaces;
+    private int pointValue;
+    private boolean whiteNextMove;
+    private boolean whiteInCheck;
+    private boolean blackInCheck;
+    private boolean whiteCastlingKingside;
+    private boolean whiteCastlingQueenside;
+    private boolean blackCastlingKingside;
+    private boolean blackCastlingQueenside;
+    private int enPassantTargetRank;
+    private int enPassantTargetFile;
+
     /**
      * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
      * but without requiring a value to be set.
@@ -62,18 +74,6 @@ public class Board {
                 blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile);
         this.pointValue = pointValue;
     }
-
-    private Optional<Piece>[][] spaces;
-    private int pointValue;
-    private boolean whiteNextMove;
-    private boolean whiteInCheck;
-    private boolean blackInCheck;
-    private boolean whiteCastlingKingside;
-    private boolean whiteCastlingQueenside;
-    private boolean blackCastlingKingside;
-    private boolean blackCastlingQueenside;
-    private int enPassantTargetRank;
-    private int enPassantTargetFile;
 
     /**
      * Sets the point value of this board.
