@@ -22,8 +22,8 @@ public class Board {
     private boolean blackCastlingQueenside;
     private int enPassantTargetRank;
     private int enPassantTargetFile;
-    private int halfMoves;
-    private int fullMoves;
+    private int halfMovesSincePawnMoveOrCapture;
+    private int fullMoveCount;
 
     /**
      * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
@@ -59,8 +59,8 @@ public class Board {
         this.blackCastlingQueenside = blackCastlingQueenside;
         this.enPassantTargetRank = enPassantTargetRank;
         this.enPassantTargetFile = enPassantTargetFile;
-        this.halfMoves = halfMoves;
-        this.fullMoves = fullMoves;
+        this.halfMovesSincePawnMoveOrCapture = halfMoves;
+        this.fullMoveCount = fullMoves;
     }
 
     /**
@@ -76,6 +76,8 @@ public class Board {
      * @param blackCastlingQueenside whether black can castle queenside
      * @param enPassantTargetRank if a pawn performed a double-step in the last turn, the rank of the traversed space; -1 otherwise
      * @param enPassantTargetFile if a pawn performed a double-step in the last turn, the file of the traversed space; -1 otherwise
+     * @param halfMoves the number of half moves since a piece was captured or a pawn was moved 
+     * @param fullMoves the number of full moves that have been played since the start of this game
      */
     public Board(int pointValue, Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
@@ -150,10 +152,10 @@ public class Board {
     }
 
     public int getHalfMoves() {
-        return halfMoves;
+        return halfMovesSincePawnMoveOrCapture;
     }
 
     public int getFullMoves() {
-        return fullMoves;
+        return fullMoveCount;
     }
 }
