@@ -22,6 +22,8 @@ public class Board {
     private boolean blackCastlingQueenside;
     private int enPassantTargetRank;
     private int enPassantTargetFile;
+    private int halfMoves;
+    private int fullMoves;
 
     /**
      * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
@@ -30,7 +32,7 @@ public class Board {
      */
     public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
-            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile) {
+            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         if (spaces == null) {
             throw new NullPointerException("spaces array may not be null");
         }
@@ -39,6 +41,13 @@ public class Board {
         }
         if (enPassantTargetRank > 8 || enPassantTargetFile > 8) {
             throw new IllegalArgumentException("coordinates must be less than 8");
+        }
+        if (halfMoves < 0) {
+            throw new IllegalArgumentException("half move count must be greater than 0");
+        }
+        if (fullMoves < 1) {
+            //full move counter starts at 1
+            throw new IllegalArgumentException("full move count must be greater than 1");
         }
         this.spaces = spaces;
         this.whiteNextMove = whiteNextMove;
@@ -50,6 +59,8 @@ public class Board {
         this.blackCastlingQueenside = blackCastlingQueenside;
         this.enPassantTargetRank = enPassantTargetRank;
         this.enPassantTargetFile = enPassantTargetFile;
+        this.halfMoves = halfMoves;
+        this.fullMoves = fullMoves;
     }
 
     /**
@@ -68,10 +79,10 @@ public class Board {
      */
     public Board(int pointValue, Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
-            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile) {
+            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         //value may be less than 0 (minimax / negamax)
         this(spaces, whiteNextMove, whiteInCheck, blackInCheck, whiteCastlingKingside, whiteCastlingQueenside,
-                blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile);
+                blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
         this.pointValue = pointValue;
     }
 
@@ -138,4 +149,11 @@ public class Board {
         return enPassantTargetFile;
     }
 
+    public int getHalfMoves() {
+        return halfMoves;
+    }
+
+    public int getFullMoves() {
+        return fullMoves;
+    }
 }
