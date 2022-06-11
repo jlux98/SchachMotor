@@ -8,9 +8,15 @@ import java.util.Optional;
  * It stores the position of the pieces, the players' castling ability, whose turn it is, if a player is in check
  * and if a pawn may be captured en passant
  * (= all of the information denoted by a fen string plus whether a player is in check).
+ * <br><br>
+ * <b>Note:</b>
+ * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
 public class Board {
 
+    /**
+     * The array element at [0][0] represents the space a8, [7][7] represents h1.
+     */
     private Piece[][] spaces;
     private int pointValue;
     private boolean whiteInCheck;
