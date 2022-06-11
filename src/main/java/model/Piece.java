@@ -27,6 +27,36 @@ public class Piece {
         this.isWhite = isWhite;
     }
 
+    /**
+    * Constructs the piece represented by the passed character.   
+    *          <ul>
+    *              <li>upper case characters are white pieces</li>
+    *              <li>lower case characters are black pieces</li>
+    *              <li>knight - k,K</li>
+    *              <li>queen - q,Q</li>
+    *              <li>rook - r,R</li>
+    *              <li>bishop - b,B</li>
+    *              <li>knight - n,N</li>
+    *              <li>pawn - p,P</li>
+    *          </ul>
+    */
+    public Piece(char pieceCharacter) {
+        //determine color
+        this.isWhite = Character.isUpperCase(pieceCharacter);
+
+        //determine type
+        pieceCharacter = Character.toLowerCase(pieceCharacter);
+        switch (pieceCharacter) {
+            case 'k' -> this.pieceType = PieceType.King;
+            case 'q' -> this.pieceType = PieceType.Queen;
+            case 'r' -> this.pieceType = PieceType.Rook;
+            case 'b' -> this.pieceType = PieceType.Bishop;
+            case 'n' -> this.pieceType = PieceType.Knight;
+            case 'p' -> this.pieceType = PieceType.Pawn;
+            default -> throw new IllegalArgumentException("piece characters must be k,q,r,b,n or p, not " + pieceCharacter);
+        }
+    }
+
     public PieceType getPieceType() {
         return pieceType;
     }
