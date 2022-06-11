@@ -127,7 +127,7 @@ public class Board {
         return whiteNextMove;
     }
 
-    private boolean getWhiteCastlingKingside() {
+    public boolean getWhiteCastlingKingside() {
         return whiteCastlingKingside;
     }
 
