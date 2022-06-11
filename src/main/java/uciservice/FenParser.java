@@ -7,28 +7,20 @@ import model.Board;
 import model.Piece;
 
 /**
- * Class used to translate FEN-Strings to the internal representation of a board.
+ * Class used to translate FEN-Strings to instances of {@link Board}.
  */
 public class FenParser {
-    private static final String DELIMITER = " ";
-
-    private String fen;
-
-    /* from chess wiki:
-         <FEN> ::=  <Piece Placement>
-    ' ' <Side to move>
-    ' ' <Castling ability>
-    ' ' <En passant target square>
-    ' ' <Halfmove clock>
-    ' ' <Fullmove counter> */
+    /**
+     * separates portions of the fen string, such as position, castling rights, current player
+     */
+    private static final String FEN_DELIMITER = " ";
+    /**
+     * separates ranks in the position part of a fen string
+     */
+    private static final String RANK_DELIMITER = "/";
 
     //parser attributes
-    private String positionToken;
-    private String activePlayerToken;
-    private String castlingAbilitiesToken;
-    private String enPassantTargetSquareToken;
-    private String halfMoveCountToken;
-    private String fullMoveCountToken;
+    private String fen;
 
     //board attributes
     private Piece[][] piecePositions;
@@ -42,6 +34,10 @@ public class FenParser {
     private int halfMoves;
     private int fullMoves;
 
+    /**
+     * Constructs a new FenParser that can be used to parse the specified fen string to a Board by calling {@link #parseFen()}.
+     * @param fen the fen string that should be translated into a board
+     */
     public FenParser(String fen) {
         if (fen == null) {
             throw new NullPointerException("fen string may not be null");
@@ -50,31 +46,33 @@ public class FenParser {
         this.piecePositions = new Piece[8][8];
     }
 
+    /**
+     * Parses the fen string that was supplied to the constructor.
+     * @return an instance of Board representing the information that was stored in the fen string
+     */
     public Board parseFen() {
-        breakIntoTokens();
         parseTokens();
         return createBoard();
     }
 
-    private void breakIntoTokens() {
-        String[] tokens = fen.split(Pattern.quote(DELIMITER));
-        positionToken = tokens[0];
-        activePlayerToken = tokens[1];
-        castlingAbilitiesToken = tokens[2];
-        enPassantTargetSquareToken = tokens[3];
-        halfMoveCountToken = tokens[4];
-        fullMoveCountToken = tokens[5];
-    }
-
+    /**
+     * Breaks up the fen string into blank-separated tokens and parses them accordingly.
+     * The extracted information is stored in instance variables.
+     */
     private void parseTokens() {
-        parsePosition();
-        parseActivePlayer();
-        parseCastlingAbilities();
-        parseEnPassantTargetSquare();
-        parseHalfMoveCount();
-        parseFullMoveCount();
+        String[] tokens = fen.split(Pattern.quote(FEN_DELIMITER));
+        parsePosition(tokens[0]);
+        parseActivePlayer(tokens[1]);
+        parseCastlingAbilities(tokens[2]);
+        parseEnPassantTargetSquare(tokens[3]);
+        parseHalfMoveCount(tokens[4]);
+        parseFullMoveCount(tokens[5]);
     }
 
+    /**
+     * Constructs a board instance from the values extracted from a fen string.
+     * @return an instance of Board representing the information that was stored in the fen string
+     */
     private Board createBoard() {
         return new Board(piecePositions, isWhiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside,
                 blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
@@ -118,10 +116,11 @@ public class FenParser {
      *      <li>8 empty squares</li>
      *      <li>white rook (on a1), followed by 7 empty squares</li>
      * </ul>
+     * @param positionToken the fen token denoting the position of the pieces on the board
      */
-    private void parsePosition() {
+    private void parsePosition(String positionToken) {
         //split token into ranks
-        String[] ranks = positionToken.split(Pattern.quote("/"));
+        String[] ranks = positionToken.split(Pattern.quote(RANK_DELIMITER));
         int placeInRank = 0;
         for (String rank : ranks) {
             parseRank(rank, placeInRank);
@@ -130,7 +129,7 @@ public class FenParser {
     }
 
     /**
-     * Parses a single rank provided as a fen string.
+     * Parses a single rank extracted from a fen string.
      * @param rank a part of a fen string representing one rank
      * @param yPosition determines which rank on the board the pieces are placed in,
      * yPosition = 0 places in the first rank, yPosition = 7 in the last rank
@@ -148,7 +147,12 @@ public class FenParser {
         }
     }
 
-    private void parseActivePlayer() {
+    /**
+     * Parses the active player portion of a fen string.
+     * @param activePlayerToken the fen token denoting the active player
+     * @throws IllegalStateException if the token is not "w" (white's turn) or "b" (black's turn)
+     */
+    private void parseActivePlayer(String activePlayerToken) {
         if (activePlayerToken.length() != 1) {
             throw new IllegalStateException(
                     "side to move / active player must be one character, not " + activePlayerToken.length());
@@ -178,10 +182,10 @@ public class FenParser {
      *      <li>lowercase denotes black's abilities</li>
      *      <li> if no player has the ability to castle, '-' is written instead (only one character)
      * </ul>
-     * 
+     * @param castlingAbilitiesToken the fen token denoting the castling abilities
      * @throws IllegalStateException if the token length is not within 1 to 4 characters
      */
-    private void parseCastlingAbilities() {
+    private void parseCastlingAbilities(String castlingAbilitiesToken) {
         int tokenLength = castlingAbilitiesToken.length();
 
         if (tokenLength < 1 || tokenLength > 4) {
@@ -221,10 +225,11 @@ public class FenParser {
     }
 
     /**
-     * Parses the en passant target square portion of the fen string.
-     * @throws IllegalStateException if the token extracted from fen does not consist of two characters
+     * Parses the en passant target square portion of a fen string.
+     * @param enPassantTargetSquareToken the fen token containing the en passant target square
+     * @throws IllegalStateException if the token extracted from fen does not consist of two characters and is not "-"
      */
-    private void parseEnPassantTargetSquare() {
+    private void parseEnPassantTargetSquare(String enPassantTargetSquareToken) {
 
         if (enPassantTargetSquareToken.length() != 2) {
             //length != 2 => only "-" is a valid token
@@ -289,17 +294,19 @@ public class FenParser {
 
     /**
      * Parses the half move count provided by a fen string.
-     * @throws NumberFormatException if the token extracted from fen string is not a number
+     * @param halfMoveCountToken the fen token denoting the half move count
+     * @throws NumberFormatException if the token is not a number
      */
-    private void parseHalfMoveCount() {
+    private void parseHalfMoveCount(String halfMoveCountToken) {
         halfMoves = Integer.parseInt(halfMoveCountToken);
     }
 
     /**
      * Parses the half move count provided by a fen string.
-    * @throws NumberFormatException if the token extracted from fen string is not a number
+     * @param fullMoveCountToken the fen token denoting the full move count
+    * @throws NumberFormatException if the token is not a number
     */
-    private void parseFullMoveCount() {
+    private void parseFullMoveCount(String fullMoveCountToken) {
         fullMoves = Integer.parseInt(fullMoveCountToken);
     }
 
