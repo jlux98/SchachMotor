@@ -13,9 +13,9 @@ public class Board {
 
     private Optional<Piece>[][] spaces;
     private int pointValue;
-    private boolean whiteNextMove;
     private boolean whiteInCheck;
     private boolean blackInCheck;
+    private boolean whiteNextMove;
     private boolean whiteCastlingKingside;
     private boolean whiteCastlingQueenside;
     private boolean blackCastlingKingside;
@@ -66,7 +66,7 @@ public class Board {
      * but without requiring a point value to be set.
      * The value may be set using Board.setPointValue() at a later time.
      */
-    public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
+    public Board(boolean whiteInCheck, boolean blackInCheck, Optional<Piece>[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
@@ -91,11 +91,11 @@ public class Board {
      * @param halfMoves the number of half moves since a piece was captured or a pawn was moved 
      * @param fullMoves the number of full moves that have been played since the start of this game
      */
-    public Board(int pointValue, Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
+    public Board(int pointValue, boolean whiteInCheck, boolean blackInCheck, Optional<Piece>[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         //value may be less than 0 (minimax / negamax)
-        this(spaces, whiteNextMove, whiteInCheck, blackInCheck, whiteCastlingKingside, whiteCastlingQueenside,
+        this(whiteInCheck, blackInCheck, spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside,
                 blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
         this.pointValue = pointValue;
     }
@@ -117,7 +117,7 @@ public class Board {
     public void setBlackInCheck(boolean blackInCheck) {
         this.blackInCheck = blackInCheck;
     }
-    
+
     /*
      **********************************
      * Getters
