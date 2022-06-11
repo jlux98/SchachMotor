@@ -26,13 +26,13 @@ public class Board {
     private int fullMoveCount;
 
     /**
-     * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
-     * but without requiring a value to be set.
-     * The value may be set using Board.setPointValue() at a later time.
-     */
-    public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
-            boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
-            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
+    * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
+    * but without requiring point value and whiteInCheck / blackInCheck to be set.
+    * These value may be set using the corresponding setter at a later time.
+    */
+    public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
+            boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
+            int halfMoves, int fullMoves) {
         if (spaces == null) {
             throw new NullPointerException("spaces array may not be null");
         }
@@ -51,8 +51,6 @@ public class Board {
         }
         this.spaces = spaces;
         this.whiteNextMove = whiteNextMove;
-        this.whiteInCheck = whiteInCheck;
-        this.blackInCheck = blackInCheck;
         this.whiteCastlingKingside = whiteCastlingKingside;
         this.whiteCastlingQueenside = whiteCastlingQueenside;
         this.blackCastlingKingside = blackCastlingKingside;
@@ -61,6 +59,20 @@ public class Board {
         this.enPassantTargetFile = enPassantTargetFile;
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
+    }
+
+    /**
+     * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
+     * but without requiring a point value to be set.
+     * The value may be set using Board.setPointValue() at a later time.
+     */
+    public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteInCheck, boolean blackInCheck,
+            boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
+            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
+        this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
+                enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
+        this.whiteInCheck = whiteInCheck;
+        this.blackInCheck = blackInCheck;
     }
 
     /**
@@ -98,6 +110,14 @@ public class Board {
         this.pointValue = pointValue;
     }
 
+    public void setWhiteInCheck(boolean whiteInCheck) {
+        this.whiteInCheck = whiteInCheck;
+    }
+
+    public void setBlackInCheck(boolean blackInCheck) {
+        this.blackInCheck = blackInCheck;
+    }
+    
     /*
      **********************************
      * Getters
