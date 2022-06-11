@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public class Board {
 
-    private Optional<Piece>[][] spaces;
+    private Piece[][] spaces;
     private int pointValue;
     private boolean whiteInCheck;
     private boolean blackInCheck;
@@ -30,7 +30,7 @@ public class Board {
     * but without requiring point value and whiteInCheck / blackInCheck to be set.
     * These value may be set using the corresponding setter at a later time.
     */
-    public Board(Optional<Piece>[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
+    public Board(Piece[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
             boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
             int halfMoves, int fullMoves) {
        if (spaces == null) {
@@ -67,7 +67,7 @@ public class Board {
      * but without requiring a point value to be set.
      * The value may be set using Board.setPointValue() at a later time.
      */
-    public Board(boolean whiteInCheck, boolean blackInCheck, Optional<Piece>[][] spaces, boolean whiteNextMove,
+    public Board(boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
@@ -92,7 +92,7 @@ public class Board {
      * @param halfMoves the number of half moves since a piece was captured or a pawn was moved 
      * @param fullMoves the number of full moves that have been played since the start of this game
      */
-    public Board(int pointValue, boolean whiteInCheck, boolean blackInCheck, Optional<Piece>[][] spaces, boolean whiteNextMove,
+    public Board(int pointValue, boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         //value may be less than 0 (minimax / negamax)
@@ -128,7 +128,7 @@ public class Board {
         return pointValue;
     };
 
-    public Optional<Piece>[][] getSpaces() {
+    public Piece[][] getSpaces() {
         return spaces;
     }
 

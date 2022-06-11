@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import model.Board;
+import model.Piece;
 import model.PieceType;
-
 
 /**
  * In the end the only public method will be generatePossibleMoves, but for
@@ -33,8 +33,11 @@ public abstract class MoveGenerator {
 
     private Set<Board> generatePossibleMovesPerPiece(Board boardState, int rank,
         int file){
-        PieceType currentType = 
-            boardState.getSpaces()[rank][file].get().getPieceType();
+        Piece currentPiece = boardState.getSpaces()[rank][file];
+        if (currentPiece == null) {
+            //TODO what to do if there is no piece at the specified position?
+        }
+        PieceType currentType = currentPiece.getPieceType();
         switch (currentType){
             case Bishop:
                 return computeBishopMoves(boardState, rank, file);

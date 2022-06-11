@@ -1,6 +1,5 @@
 package uciservice;
 
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import model.Board;
@@ -31,7 +30,7 @@ public class FenParser {
     private String fullMoveCountToken;
 
     //board attributes
-    private Optional<Piece>[][] piecePositions;
+    private Piece[][] piecePositions;
     private boolean isWhiteNextMove;
     private boolean whiteCastlingKingside = false;
     private boolean whiteCastlingQueenside = false;
