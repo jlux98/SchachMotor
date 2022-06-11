@@ -1,5 +1,6 @@
 package uciservice;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import model.Board;
@@ -41,16 +42,12 @@ public class FenParser {
     private int halfMoves;
     private int fullMoves;
 
-    // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-    // rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
-    // rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2
-    // rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2 
-
     public FenParser(String fen) {
         if (fen == null) {
             throw new NullPointerException("fen string may not be null");
         }
         this.fen = fen;
+        this.piecePositions = new Piece[8][8];
     }
 
     public Board parseFen() {
@@ -84,13 +81,77 @@ public class FenParser {
 
     }
 
+    /**
+     * Parses the position of chess pieces from a fen string.
+     * <br><br>
+     * FEN-Strings store the position as follows:
+     * <ul> 
+     *      <li>the board is represented from a8 to h1</li>
+     *      <li>pieces are represented by a single character
+     *          <ul>
+     *              <li>upper case characters are white pieces</li>
+     *              <li>lower case characters are black pieces</li>
+     *              <li>knight - k,K</li>
+     *              <li>queen - q,Q</li>
+     *              <li>rook - r,R</li>
+     *              <li>bishop - b,B</li>
+     *              <li>knight - n,N</li>
+     *              <li>pawn - p,P</li>
+     *          </ul>
+     *      </li>
+     *      <li>consecutive empty squares are denoted by a single digit
+     *          <ul>
+     *              <li>p3r means: pawn, 3 empty squares, rook </li>
+     *          </ul>
+     *      </li>
+     *      <li>the end of a rank is denoted by "/"</li>
+     * </ul>
+     * Example:
+     * r7\3pR2r\8\8\8\8\8\R7 
+     * <ul>
+     *      <li>black rook (on a8), followed by 7 empty squares</li>
+     *      <li>three empty squares, black pawn (on d7), white rook (e7), two empty squares, black rook (h7)</li>
+     *      <li>8 empty squares</li>
+     *      <li>8 empty squares</li>
+     *      <li>8 empty squares</li>
+     *      <li>8 empty squares</li>
+     *      <li>8 empty squares</li>
+     *      <li>white rook (on a1), followed by 7 empty squares</li>
+     * </ul>
+     */
     private void parsePosition() {
-        //TODO implement
+        //split token into ranks
+        String[] ranks = positionToken.split(Pattern.quote("/"));
+        int placeInRank = 0;
+        for (String rank : ranks) {
+            parseRank(rank, placeInRank);
+            placeInRank++;
+        }
+    }
+
+    /**
+     * Parses a single rank provided as a fen string.
+     * @param rank a part of a fen string representing one rank
+     * @param yPosition determines which rank on the board the pieces are placed in,
+     * yPosition = 0 places in the first rank, yPosition = 7 in the last rank
+     */
+    private void parseRank(String rank, int yPosition) {
+        //A8 IS SPACES[0][0]
+        int xPosition = 0;
+        for (char character : rank.toCharArray()) {
+            if (Character.isDigit(character)) {
+                xPosition += Character.getNumericValue(character);
+            } else {
+                Piece piece = new Piece(character);
+                piecePositions[xPosition][yPosition] = piece;
+            }
+        }
     }
 
     private void parseActivePlayer() {
         if (activePlayerToken.length() != 1) {
-            throw new IllegalStateException("side to move / active player must be one character, not " + activePlayerToken.length());
+            throw new IllegalStateException(
+                    "side to move / active player must be one character, not " + activePlayerToken.length());
         }
         char activePlayerChar = activePlayerToken.charAt(0);
         if (activePlayerChar == 'w') {
@@ -101,7 +162,8 @@ public class FenParser {
             isWhiteNextMove = false;
             return;
         }
-        throw new IllegalStateException("side to move / active player must be denoted by \"w\" or \"b\", not by " + activePlayerChar);
+        throw new IllegalStateException(
+                "side to move / active player must be denoted by \"w\" or \"b\", not by " + activePlayerChar);
     }
 
     /**
