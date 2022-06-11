@@ -39,6 +39,7 @@ public class Piece {
     *              <li>knight - n,N</li>
     *              <li>pawn - p,P</li>
     *          </ul>
+    * @throws IllegalArgumentException if the character does not represent a chess piece
     */
     public Piece(char pieceCharacter) {
         //determine color
