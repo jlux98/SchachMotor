@@ -108,6 +108,22 @@ public class Board {
     }
 
     /**
+     * Copies the spaces array to facilitate generation of follow-up boards wtihout affecting this board.
+     * <br><br>
+     * <b>Note:</b> the pieces themselves are not copied (the same piece instances are returned inside the copied array)
+     * @return a copy of the two dimensional array representing the chess pieces' positions.
+     */
+    public Piece[][] copySpaces() {
+        Piece[][] copy = new Piece[8][8];
+        for (int index = 0; index < spaces.length; index++) {
+            //copy the 8 inner arrays
+            copy[index] = spaces[index].clone();
+        }
+        return copy;
+
+    }
+
+    /**
      * Sets the point value of this board.
      * Required to allow for boards to be generated first and evaluated at a later time.
      * @param pointValue the board's value
