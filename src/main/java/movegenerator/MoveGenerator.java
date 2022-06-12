@@ -1,4 +1,4 @@
-package temp;
+package movegenerator;
 
 import java.util.HashSet;
 import java.util.Set;
