@@ -7,11 +7,11 @@ package model;
  */
 public class Piece {
 
-    private PieceType pieceType;
+    private final PieceType pieceType;
     /*
      * Determines the Piece's color.
      */
-    private boolean isWhite;
+    private final boolean isWhite;
 
     /**
      * Constructs a new Piece of the specified type and color.
