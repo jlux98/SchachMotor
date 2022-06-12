@@ -66,6 +66,11 @@ public class Board {
         this.enPassantTargetFile = enPassantTargetFile;
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
+        computeChecks();
+    }
+
+    private void computeChecks() {
+        //TODO: Implement a method for autonomously tracking, which side is in check
     }
 
     /**
@@ -200,5 +205,9 @@ public class Board {
 
     public int getFullMoves() {
         return fullMoveCount;
+    }
+
+    public Piece getPieceAt(int rank, int file){
+        return spaces[rank][file];
     }
 }

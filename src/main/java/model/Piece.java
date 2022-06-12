@@ -48,12 +48,12 @@ public class Piece {
         //determine type
         pieceCharacter = Character.toLowerCase(pieceCharacter);
         switch (pieceCharacter) {
-            case 'k' -> this.pieceType = PieceType.King;
-            case 'q' -> this.pieceType = PieceType.Queen;
-            case 'r' -> this.pieceType = PieceType.Rook;
-            case 'b' -> this.pieceType = PieceType.Bishop;
-            case 'n' -> this.pieceType = PieceType.Knight;
-            case 'p' -> this.pieceType = PieceType.Pawn;
+            case 'k' -> this.pieceType = PieceType.KING;
+            case 'q' -> this.pieceType = PieceType.QUEEN;
+            case 'r' -> this.pieceType = PieceType.ROOK;
+            case 'b' -> this.pieceType = PieceType.BISHOP;
+            case 'n' -> this.pieceType = PieceType.KNIGHT;
+            case 'p' -> this.pieceType = PieceType.PAWN;
             default -> throw new IllegalArgumentException("piece characters must be k,q,r,b,n or p, not " + pieceCharacter);
         }
     }
