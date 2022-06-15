@@ -65,4 +65,36 @@ public class Piece {
     public boolean getIsWhite() {
         return isWhite;
     }
+
+    @Override
+    public String toString() {
+        String result;
+        switch (pieceType){
+            case BISHOP:
+                result = "b";
+                break;
+            case KING:
+                result = "k";
+                break;
+            case KNIGHT:
+                result = "n";
+                break;
+            case PAWN:
+                result = "p";
+                break;
+            case QUEEN:
+                result = "q";
+                break;
+            case ROOK:
+                result = "r";
+                break;
+            default:
+                result = "error";
+                break;
+        }
+        if (isWhite) {
+            result = result.toUpperCase();
+        }
+        return result;
+    }
 }

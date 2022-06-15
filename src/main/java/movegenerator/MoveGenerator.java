@@ -19,6 +19,12 @@ import model.PieceType;
  */
 public abstract class MoveGenerator {
 
+    /**
+     * A method that generates all possible follow-up-boards for a given game
+     * state
+     * @param boardState the given game state
+     * @return an array with all possible follow-up-boards
+     */
     public Board[] generatePossibleMoves(Board boardState) {
         Set<Board> followUpBoards = new HashSet<>();
         for (int rank = 0; rank < 8; rank++) {
@@ -34,6 +40,14 @@ public abstract class MoveGenerator {
         return output;
     }
 
+
+    /**
+     * @param boardState the game for which to compute follow-ups
+     * @param rank the horizontal coordinate of a given piece
+     * @param file the vertical coordinate of a given piece
+     * @return a set with all possible follow-up-boards for the given board
+     * and the given piece
+     */
     private Set<Board> generatePossibleMovesPerPiece(Board boardState, int rank, int file) {
         Piece currentPiece = boardState.getSpaces()[rank][file];
         if (currentPiece == null) {
@@ -58,8 +72,16 @@ public abstract class MoveGenerator {
         }
     }
 
+    /**
+     * Computes all possible follow-up boards for a specific pawn on a 
+     * given board
+     * @param boardState the given game state
+     * @param rank the horizontal position of the given pawn
+     * @param file the vertical position of the given pawn
+     * @return a set with all possible follow-up-boards for the given board
+     * and the given pawn
+     */
     public Set<Board> computePawnMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #3 - generate pawn moves
         Piece currentPiece = boardState.getPieceAt(rank, file);
         Set<Board> results = new HashSet<Board>();
         int sign = 0;
@@ -68,110 +90,118 @@ public abstract class MoveGenerator {
         } else {
             sign = 1;
         }
-        computePawnSingleStep(boardState, results, rank, file, sign, currentPiece);
-        computePawnDoubleStep(boardState, results, rank, file, sign, currentPiece);
-        // TODO: capturing
-        computePawnCaptureLeft(boardState, results, rank, file, sign, currentPiece);
-        computePawnCaptureRight(boardState, results, rank, file, sign, currentPiece);
-        // TODO: capturing en-passant
+        computePawnSingleStep(boardState, results, rank, file, sign);
+        computePawnDoubleStep(boardState, results, rank, file, sign);
+        computePawnCaptureLeft(boardState, results, rank, file, sign);
+        computePawnCaptureRight(boardState, results, rank, file, sign);
+        computeEnPassant(boardState, results, rank, file, sign);
         return results;
     }
 
     /**
-     * Checks, if a pawn in a given location can be promoted. If it can then the
-     * function adds all possible promotions into the Set results.
-     * @param bs
-     * @param results
-     * @param rank
-     * @param file
-     * @param sign
-     * @param currentPiece
+     * Checks, if a pawn in a given location can be promoted. If it can then this
+     * method calls the promotion function .
+     * @param bs the current board state
+     * @param results the set in which to add the promotions
+     * @param rank the horizontal position of the pawn whose promotion is checked
+     * @param file the vertical position of the pawn whose promotion is checked
+     * @param sign the direction in which the pawn moves (-1 is up, 1 is down)
      * @return true if the pawn was able to be promoted, false if not
      */
-    private boolean computePawnPromotions(Board bs, Set<Board> results, int rank,
-        int file, int sign, Piece currentPiece) {
-        if (currentPiece.getIsWhite() && rank == 0 ||
-            !currentPiece.getIsWhite() && rank == 7){
-            
-            Piece[][] bishopPromotion = bs.copySpaces();
-            bishopPromotion[rank][file] = new Piece(PieceType.BISHOP,
-                currentPiece.getIsWhite());
-            results.add(new Board(bishopPromotion, bs.getWhiteNextMove(),
-                bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
-                bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-                -1,-1, bs.getHalfMoves(), bs.getFullMoves()));
-
-            Piece[][] knightPromotion = bs.copySpaces();
-            knightPromotion[rank][file] = new Piece(PieceType.KNIGHT,
-                currentPiece.getIsWhite());
-            results.add(new Board(knightPromotion, bs.getWhiteNextMove(),
-                bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
-                bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-                -1,-1, bs.getHalfMoves(), bs.getFullMoves()));
-            
-            Piece[][] queenPromotion = bs.copySpaces();
-            queenPromotion[rank][file] = new Piece(PieceType.QUEEN,
-                currentPiece.getIsWhite());
-            results.add(new Board(queenPromotion, bs.getWhiteNextMove(),
-                bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
-                bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-                -1,-1, bs.getHalfMoves(), bs.getFullMoves()));
-            
-            Piece[][] rookPromotion = bs.copySpaces();
-            rookPromotion[rank][file] = new Piece(PieceType.ROOK,
-                currentPiece.getIsWhite());
-            results.add(new Board(rookPromotion, bs.getWhiteNextMove(),
-                bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
-                bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-                -1,-1, bs.getHalfMoves(), bs.getFullMoves()));
-            
+    private boolean checkForPawnPromotions(Board bs, Set<Board> results, int rank,
+        int file, int sign) {
+        if ((sign == -1) && rank == 0 ||
+            (sign == 1) && rank == 7){
+            computePawnPromotion(bs, results, rank, file, sign, PieceType.BISHOP);
+            computePawnPromotion(bs, results, rank, file, sign, PieceType.KNIGHT);
+            computePawnPromotion(bs, results, rank, file, sign, PieceType.QUEEN);
+            computePawnPromotion(bs, results, rank, file, sign, PieceType.ROOK);
             return true;
         } else {
             return false;
         }
     }
 
+    private void computePawnPromotion(Board bs, Set<Board> results, int rank,
+        int file, int sign, PieceType promoteTo){
+        Piece[][] promotion = bs.copySpaces();
+            promotion[rank][file] = new Piece(promoteTo,
+                (sign == -1));
+            results.add(new Board(promotion, bs.getWhiteNextMove(),
+                bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
+                bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
+                -1,-1, bs.getHalfMoves(), bs.getFullMoves()));
+    }
+
     private void computePawnSingleStep(Board bs, Set<Board> results, int rank,
-        int file, int sign, Piece currentPiece){
+        int file, int sign){
         if (bs.getPieceAt(rank+(sign*1), file) == null){
             Piece[][] resultingSpaces = getBoardAfterMove(bs.getSpaces(), rank,
                 file, rank+(sign*1), file);
-            addPawnMove(bs, results, rank, file, sign, currentPiece, resultingSpaces);;
+            addPawnMove(bs, results, rank, file, sign, resultingSpaces, false);
         }
     }
 
     private void computePawnDoubleStep(Board bs, Set<Board> results, int rank,
-        int file, int sign, Piece currentPiece){
+        int file, int sign){
         if (bs.getPieceAt(rank+(sign*1), file) == null &&
             bs.getPieceAt(rank+(sign*2), file) == null){
             Piece[][] resultingSpaces = getBoardAfterMove(bs.getSpaces(), rank,
                 file, rank+(sign*2), file);
-            addPawnMove(bs, results, rank, file, sign, currentPiece, resultingSpaces);
+            addPawnMove(bs, results, rank, file, sign, resultingSpaces, true);
         }
     }
 
     public void computePawnCaptureLeft(Board bs, Set<Board> results, int rank,
-        int file, int sign, Piece currentPiece){
+        int file, int sign){
         if (rank != 0){
             Piece targetPiece = bs.getPieceAt(rank+(sign*1), file-1);
             if (targetPiece != null &&
-                targetPiece.getIsWhite() != currentPiece.getIsWhite())){
+                targetPiece.getIsWhite() != (sign == -1)){
                 Piece[][] resultingSpaces = getBoardAfterMove(bs.getSpaces(),
                     rank, file, rank+(sign*1), file-1);
-                addPawnMove(bs, results, rank, file, sign, currentPiece, resultingSpaces);
+                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false);
             }
         }
     }
 
     public void computePawnCaptureRight(Board bs, Set<Board> results, int rank,
-        int file, int sign, Piece currentPiece){
+        int file, int sign){
         if (rank != 7){
             Piece targetPiece = bs.getPieceAt(rank+(sign*1), file+1);
             if (targetPiece != null &&
-                targetPiece.getIsWhite() != currentPiece.getIsWhite())){
+                targetPiece.getIsWhite() != (sign == -1)){
                 Piece[][] resultingSpaces = getBoardAfterMove(bs.getSpaces(),
                     rank, file, rank+(sign*1), file+1);
-                addPawnMove(bs, results, rank, file, sign, currentPiece, resultingSpaces);
+                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false);
+            }
+        }
+    }
+
+    /**
+     * Checks whether an en-passant-capture is possible from the pawn whose 
+     * whose position is specified by rank and file on the Board bs. Adds the
+     * capture to the results if it is.
+     * @param bs
+     * @param results
+     * @param rank
+     * @param file
+     * @param sign the direction in which the specified pawn moves (if sign is 
+     * 1 then the pawn moves from bottom to top, if sign is -1 then the pawn
+     * moves from top to bottom)
+     */
+    public void computeEnPassant(Board bs, Set<Board> results, int rank,
+        int file, int sign){
+        int targetRank = bs.getEnPassantTargetRank();
+        int targetFile = bs.getEnPassantTargetFile(); 
+        if (targetRank != -1 &&
+            targetFile != -1){
+            if (targetRank == rank+(sign*1) &&
+                (targetFile == file+1 || targetFile == file-1)){
+                Piece[][] resultingSpaces = getBoardAfterMove(bs.getSpaces(),
+                    rank, file, targetRank, targetFile);
+                resultingSpaces[rank+(sign*2)][targetFile] = null;
+                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false);
             }
         }
     }
@@ -184,17 +214,26 @@ public abstract class MoveGenerator {
      * @param results
      * @param newSpaces
      * @param previousBoard
+     * @param sign the direction in which the specified pawn moves (if sign is 
+     * 1 then the pawn moves from bottom to top, if sign is -1 then the pawn
+     * moves from top to bottom)
      */
     private void addPawnMove(Board bs, Set<Board> results, int rank,
-        int file, int sign, Piece currentPiece, Piece[][] resultingSpaces){
+        int file, int sign, Piece[][] resultingSpaces, boolean doubleStep){
+        int doubleStepRank = -1;
+        int doubleStepFile = -1;
+        if (doubleStep){
+            doubleStepRank = rank+(sign*1);
+            doubleStepFile = file;
+        }
         Board resultingBoard = new Board(resultingSpaces, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-            -1,-1, 0, bs.getFullMoves()+1);
-        if (currentPiece.getIsWhite() == !resultingBoard.getWhiteInCheck()||
-           !currentPiece.getIsWhite() == !resultingBoard.getBlackInCheck()){
-            if (!computePawnPromotions(resultingBoard, results, rank,
-                file, sign, currentPiece)){
+            doubleStepRank,doubleStepFile, 0, bs.getFullMoves()+1);
+        if ((sign == -1) && !resultingBoard.getWhiteInCheck()||
+            (sign == 1) && !resultingBoard.getBlackInCheck()){
+            if (!checkForPawnPromotions(resultingBoard, results, rank,
+                file, sign)){
                 results.add(resultingBoard);
             }
         }
@@ -202,7 +241,25 @@ public abstract class MoveGenerator {
 
     public Set<Board> computeKnightMoves(Board boardState, int rank, int file) {
         // TODO: Ticket #4 - generate knight moves
+        boolean isWhite = boardState.getPieceAt(rank, file).getIsWhite();
+        int targetRank;
+        int targetFile;
+
+
         return null;
+    }
+
+    private boolean targetLegal(int targetRank, int targetFile, boolean isWhite, Board boardState){
+        Piece targetPiece = boardState.getPieceAt(targetRank, targetFile);
+        boolean targetPieceIsWhite;
+        if (targetPiece != null){
+            targetPieceIsWhite = targetPiece.getIsWhite();
+        } else {
+            targetPieceIsWhite = !isWhite;
+        }
+        return  (targetRank >= 0) && (targetRank <= 7) && 
+                (targetFile >= 0) && (targetFile <= 7) &&
+                (isWhite != targetPieceIsWhite);
     }
 
     public Set<Board> computeKingMoves(Board boardState, int rank, int file) {
@@ -298,6 +355,7 @@ public abstract class MoveGenerator {
         Piece[][] spacesAfterMove = Arrays.copyOf(spaces, spaces.length);
         spacesAfterMove[startingRank][startingFile] = null;
         spacesAfterMove[targetRank][targetFile] = movingPiece;
+        // TODO: Notieren, ob eine Figur geschlagen wurde - somehow
         return spacesAfterMove;
     }
 }
