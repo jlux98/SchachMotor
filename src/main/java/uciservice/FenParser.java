@@ -143,6 +143,8 @@ public class FenParser {
             } else {
                 Piece piece = new Piece(character);
                 piecePositions[xPosition][yPosition] = piece;
+                // added incrementor so that the same piece wasn't overwritten all the Time -J
+                xPosition++;
             }
         }
     }

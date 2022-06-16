@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -66,6 +67,11 @@ public class Board {
         this.enPassantTargetFile = enPassantTargetFile;
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
+        computeChecks();
+    }
+
+    private void computeChecks() {
+        //TODO: Implement a method for autonomously tracking which side is in check
     }
 
     /**
@@ -122,6 +128,103 @@ public class Board {
         return copy;
 
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        // TODO Auto-generated method stub
+        if (obj instanceof Board){
+            Board board = (Board) obj;
+            return  (blackCastlingKingside == board.getBlackCastlingKingside()) &&
+                    (blackCastlingQueenside == board.getBlackCastlingQueenside()) &&
+                    (blackInCheck == board.getBlackInCheck()) &&
+                    (enPassantTargetFile == board.getEnPassantTargetFile()) &&
+                    (enPassantTargetRank == board.getEnPassantTargetRank()) &&
+                    (fullMoveCount == board.getFullMoves()) &&
+                    (halfMovesSincePawnMoveOrCapture == board.getHalfMoves()) &&
+                    (pointValue == board.getPointValue()) &&
+                    (spaces.equals(board.getSpaces())) &&
+                    (whiteCastlingKingside == board.getWhiteCastlingKingside()) &&
+                    (whiteCastlingQueenside == board.getWhiteCastlingQueenside()) &&
+                    (whiteInCheck == board.getWhiteInCheck()) &&
+                    (whiteNextMove == board.getWhiteNextMove());
+        } else {
+        return false;
+        }
+    }
+
+    public static String spacesToString(Piece[][] inputSpaces){
+        String[] spaceStrings = new String [8];
+        for (int i = 0; i < 8; i++) {
+            String result = "";
+            for (int j = 0; j < 8; j++){
+                /*  Ordering: it is more intuive for code to write [x][y] for coordinates
+                    but this leads to the toString depicting the board on its
+                    side without swapping i and j here */
+                Piece currentPiece = inputSpaces[j][i]; 
+                if (currentPiece != null){
+                    result += currentPiece.toString();
+                } else {
+                    result += "0";
+                }
+            }
+            spaceStrings[i] = result;
+        }
+        return Arrays.toString(spaceStrings);
+    }
+
+    public boolean spacesEquals(Object o){
+        if (o instanceof Piece[][]){
+            Piece[][] otherSpaces = (Piece[][]) o;
+            return spacesToString(spaces).equals(spacesToString(otherSpaces));
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        String result;
+        result = spacesToString(spaces) + "\n";
+        if (whiteNextMove) {
+            result += "White Next Move\n";
+        } else {
+            result += "Black Next Move\n";
+        }
+        result += "White Castling: ";
+        if (whiteCastlingKingside && whiteCastlingQueenside) {
+            result += "Kingside and Queenside\n";
+        } else {
+            if (whiteCastlingKingside) {
+                result += "Kingside\n";
+            } else if (whiteCastlingQueenside) {
+                result += "Queenside\n";
+            } else {
+                result += "none\n";
+            }
+        }
+        result += "Black Castling: ";
+        if (blackCastlingKingside && blackCastlingQueenside) {
+            result += "Kingside and Queenside\n";
+        } else {
+            if (blackCastlingKingside) {
+                result += "Kingside\n";
+            } else if (blackCastlingQueenside) {
+                result += "Queenside\n";
+            } else {
+                result += "none\n";
+            }
+        }
+        if (enPassantTargetRank == -1 || enPassantTargetFile == -1) {
+            result += "No En Passant possible\n";
+        } else {
+            result += "En Passant possible with target square [" +
+                enPassantTargetRank + "][" + enPassantTargetFile + "]\n";
+        }
+        result += "Halfmove Clock: " + halfMovesSincePawnMoveOrCapture + "\n";
+        result += "Fullmove Number: " + fullMoveCount + "\n";
+        return result;
+    }
+
 
     /**
      * Sets the point value of this board.
@@ -200,5 +303,9 @@ public class Board {
 
     public int getFullMoves() {
         return fullMoveCount;
+    }
+
+    public Piece getPieceAt(int rank, int file){
+        return spaces[rank][file];
     }
 }

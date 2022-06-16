@@ -10,12 +10,12 @@ package model;
  */
 public enum PieceType {
     //TODO use a more elaborate piece value system
-    Pawn(1),
-    Knight(3),
-    Bishop(3),
-    Rook(5),
-    Queen(9),
-    King(0);
+    PAWN(1),
+    KNIGHT(3),
+    BISHOP(3),
+    ROOK(5),
+    QUEEN(9),
+    KING(0);
 
     private int pointValue;
 

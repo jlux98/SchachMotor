@@ -48,12 +48,12 @@ public class Piece {
         //determine type
         pieceCharacter = Character.toLowerCase(pieceCharacter);
         switch (pieceCharacter) {
-            case 'k' -> this.pieceType = PieceType.King;
-            case 'q' -> this.pieceType = PieceType.Queen;
-            case 'r' -> this.pieceType = PieceType.Rook;
-            case 'b' -> this.pieceType = PieceType.Bishop;
-            case 'n' -> this.pieceType = PieceType.Knight;
-            case 'p' -> this.pieceType = PieceType.Pawn;
+            case 'k' -> this.pieceType = PieceType.KING;
+            case 'q' -> this.pieceType = PieceType.QUEEN;
+            case 'r' -> this.pieceType = PieceType.ROOK;
+            case 'b' -> this.pieceType = PieceType.BISHOP;
+            case 'n' -> this.pieceType = PieceType.KNIGHT;
+            case 'p' -> this.pieceType = PieceType.PAWN;
             default -> throw new IllegalArgumentException("piece characters must be k,q,r,b,n or p, not " + pieceCharacter);
         }
     }
@@ -64,5 +64,37 @@ public class Piece {
 
     public boolean getIsWhite() {
         return isWhite;
+    }
+
+    @Override
+    public String toString() {
+        String result;
+        switch (pieceType){
+            case BISHOP:
+                result = "b";
+                break;
+            case KING:
+                result = "k";
+                break;
+            case KNIGHT:
+                result = "n";
+                break;
+            case PAWN:
+                result = "p";
+                break;
+            case QUEEN:
+                result = "q";
+                break;
+            case ROOK:
+                result = "r";
+                break;
+            default:
+                result = "error";
+                break;
+        }
+        if (isWhite) {
+            result = result.toUpperCase();
+        }
+        return result;
     }
 }
