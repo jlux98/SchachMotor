@@ -67,11 +67,128 @@ public class Board {
         this.enPassantTargetFile = enPassantTargetFile;
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
-        computeChecks();
+        // boolean[][] attackedByWhite = computeChecks(true);
     }
 
-    private void computeChecks() {
+    public boolean[][] computeChecks(Boolean isWhite) {
         //TODO: Implement a method for autonomously tracking which side is in check
+        boolean[][] result = new boolean[8][8];
+        for (int rank = 0; rank < 8; rank++){
+            for (int file = 0; file < 8; file++){
+                Piece currentPiece = spaces[rank][file];
+                if (currentPiece != null && currentPiece.getIsWhite() == isWhite){
+                    result = paintAttackBoard(result, rank, file, currentPiece.getPieceType());
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean[][] paintAttackBoard(boolean[][] result, int rank, int file,
+        PieceType type) {
+        switch(type){
+            case BISHOP:
+                return paintBishopAttacks(result, rank, file);
+            case KING:
+                return paintKingAttacks(result, rank, file);
+            case KNIGHT:
+                return paintKnightAttacks(result, rank, file);
+            case PAWN:
+                return paintPawnAttacks(result, rank, file);
+            case QUEEN:
+                return paintQueenAttacks(result, rank, file);
+            case ROOK:
+                return paintRookAttacks(result, rank, file);
+            default:
+                return result;
+
+        }
+    }
+
+    private boolean[][] paintRookAttacks(boolean[][] result, int rank, int file) {
+        // northern attack vector
+        result = paintRayAttack(result, rank-1, file, -1, 0);
+        // eastern attack vector
+        result = paintRayAttack(result, rank, file+1, 0, 1);
+        // southern attack vector
+        result = paintRayAttack(result, rank+1, file, 1, 0);
+        // western attack vector
+        result = paintRayAttack(result, rank, file-1, 0, -1);
+        return result;
+    }
+
+    private boolean[][] paintQueenAttacks(boolean[][] result, int rank, int file) {
+        result = paintBishopAttacks(result, rank, file);
+        result = paintRookAttacks(result, rank, file);
+        return result;
+    }
+
+    private boolean[][] paintPawnAttacks(boolean[][] result, int rank, int file) {
+        return null;
+    }
+
+    private boolean[][] paintKnightAttacks(boolean[][] result, int rank, int file) {
+        return null;
+    }
+
+    /**
+     * A method that gets a starting space and marks the line eminating from
+     * that space defined by the slope arguments in a 2d-Array
+     * @param result the array in which to mark a line
+     * @param targetRank the horizontal coordinate of the starting space
+     * @param targetFile the vertical coordinate of the starting space
+     * @param rankSlope the vertical variance of the line
+     * @param fileSlope the horizontal variance of the line
+     * @return the array with the line marked
+     */
+    public boolean[][] paintRayAttack (boolean[][] result, int targetRank, int targetFile, int rankSlope, int fileSlope) {
+        boolean collision = false;
+        if (targetRank < 0 ||
+            targetRank > 7 ||
+            targetFile < 0 ||
+            targetRank > 7) {
+            return result;
+        }
+        if (rankSlope == 0 && fileSlope == 0) {
+            result[targetRank][targetFile] = true;
+            return result;
+        }
+        for (int i = 0; (i > -1) && (i < 8) && (!collision); i++){
+            for (int j = 0; (j > -1) && (j < 8) && (!collision); j++){
+                if (i == targetRank &&
+                    j == targetFile){
+                    result[i][j] = true;
+                    targetRank += rankSlope;
+                    targetFile += fileSlope;
+                    if (spaces[i][j] != null){
+                        collision = true;
+                        break;
+                    }
+                }
+            }
+        }    
+        return result;
+    }
+
+    private boolean[][] paintBishopAttacks(boolean[][] result, int rank, int file) {
+        // Northeastern attack vector
+        result = paintRayAttack(result, rank-1, file+1, -1, 1);
+        // Southeastern attack vector
+        result = paintRayAttack(result, rank+1, file+1, 1, 1);
+        // Southwestern attack vector
+        result = paintRayAttack(result, rank+1, file-1, 1, -1);
+        // Northwestern attack vector
+        result = paintRayAttack(result, rank-1, file-1, -1, -1);
+        return result;
+    }
+
+    private boolean[][] paintKingAttacks(boolean[][] result, int rank, int file) {
+        // TODO: Discuss whether this needs to be implemented
+        /*  Since a king can't actually put the other king in check we don't
+            need this at first glance. On the other hand it might still be
+            desirable for this to be implemented because of completion or
+            because a king might impede the other king's castling ability */
+        return result;
     }
 
     /**
@@ -154,22 +271,23 @@ public class Board {
 
     public static String spacesToString(Piece[][] inputSpaces){
         String[] spaceStrings = new String [8];
-        for (int i = 0; i < 8; i++) {
+        for (int rank = 0; rank < 8; rank++) {
             String result = "";
-            for (int j = 0; j < 8; j++){
+            for (int file = 0; file < 8; file++){
                 /*  Ordering: it is more intuive for code to write [x][y] for coordinates
                     but this leads to the toString depicting the board on its
                     side without swapping i and j here */
-                Piece currentPiece = inputSpaces[j][i]; 
+                Piece currentPiece = inputSpaces[file][rank]; 
                 if (currentPiece != null){
                     result += currentPiece.toString();
                 } else {
                     result += "0";
                 }
             }
-            spaceStrings[i] = result;
+            spaceStrings[rank] = result;
         }
-        return Arrays.toString(spaceStrings);
+        
+        return Arrays.toString(spaceStrings).replace(", ", ",\n");
     }
 
     public boolean spacesEquals(Object o){
