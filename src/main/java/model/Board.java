@@ -77,7 +77,7 @@ public class Board {
             for (int file = 0; file < 8; file++){
                 Piece currentPiece = spaces[rank][file];
                 if (currentPiece != null && currentPiece.getIsWhite() == isWhite){
-                    result = paintAttackBoard(result, rank, file, currentPiece.getPieceType());
+                    result = paintAttackBoard(result, rank, file, currentPiece.getPieceType(),isWhite);
                 }
             }
         }
@@ -85,7 +85,7 @@ public class Board {
     }
 
     private boolean[][] paintAttackBoard(boolean[][] result, int rank, int file,
-        PieceType type) {
+        PieceType type, boolean isWhite) {
         switch(type){
             case BISHOP:
                 return paintBishopAttacks(result, rank, file);
@@ -94,7 +94,7 @@ public class Board {
             case KNIGHT:
                 return paintKnightAttacks(result, rank, file);
             case PAWN:
-                return paintPawnAttacks(result, rank, file);
+                return paintPawnAttacks(result, rank, file, isWhite);
             case QUEEN:
                 return paintQueenAttacks(result, rank, file);
             case ROOK:
@@ -123,12 +123,28 @@ public class Board {
         return result;
     }
 
-    private boolean[][] paintPawnAttacks(boolean[][] result, int rank, int file) {
-        return null;
+    private boolean[][] paintPawnAttacks(boolean[][] result, int rank, int file, boolean color) {
+        int sign = 0;
+        if (color){
+            sign = -1;
+        } else {
+            sign = 1;
+        }
+        result = paintRayAttack(result, rank+(sign*1), file+1, 0, 0);
+        result = paintRayAttack(result, rank+(sign*1), file-1, 0, 0);
+        return result;
     }
 
     private boolean[][] paintKnightAttacks(boolean[][] result, int rank, int file) {
-        return null;
+        result = paintRayAttack(result, rank-2, file-1, 0, 0);
+        result = paintRayAttack(result, rank-2, file+1, 0, 0);
+        result = paintRayAttack(result, rank-1, file+2, 0, 0);
+        result = paintRayAttack(result, rank+1, file+2, 0, 0);
+        result = paintRayAttack(result, rank+2, file+1, 0, 0);
+        result = paintRayAttack(result, rank+2, file-1, 0, 0);
+        result = paintRayAttack(result, rank+1, file-2, 0, 0);
+        result = paintRayAttack(result, rank-1, file-2, 0, 0);
+        return result;
     }
 
     /**
@@ -183,12 +199,23 @@ public class Board {
     }
 
     private boolean[][] paintKingAttacks(boolean[][] result, int rank, int file) {
-        // TODO: Discuss whether this needs to be implemented
-        /*  Since a king can't actually put the other king in check we don't
-            need this at first glance. On the other hand it might still be
-            desirable for this to be implemented because of completion or
-            because a king might impede the other king's castling ability */
-        return result;
+         // northern attack vector
+         result = paintRayAttack(result, rank-1, file, 0, 0);
+         // eastern attack vector
+         result = paintRayAttack(result, rank, file+1, 0, 0);
+         // southern attack vector
+         result = paintRayAttack(result, rank+1, file, 0, 0);
+         // western attack vector
+         result = paintRayAttack(result, rank, file-1, 0, 0);
+         // Northeastern attack vector
+        result = paintRayAttack(result, rank-1, file+1, 0, 0);
+        // Southeastern attack vector
+        result = paintRayAttack(result, rank+1, file+1, 0, 0);
+        // Southwestern attack vector
+        result = paintRayAttack(result, rank+1, file-1, 0, 0);
+        // Northwestern attack vector
+        result = paintRayAttack(result, rank-1, file-1, 0, 0);
+         return result;
     }
 
     /**

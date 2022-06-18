@@ -2,6 +2,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import model.Board;
 import uciservice.FenParser;
@@ -13,6 +14,9 @@ public class MoveGeneratorTest {
     private Board queenTestPosition;
     private Board rookTestPosition;
     private Board bishopTestPosition;
+    private Board pawnTestPosition;
+    private Board kingTestPosition;
+    private Board knightTestPosition;
 
     @BeforeEach
     public void initialize(){
@@ -25,7 +29,13 @@ public class MoveGeneratorTest {
         rookTestPosition = fullParseFen("8/1r4R1/8/8/8/8/1K4Q1/8 " +
             "w KQkq - 0 1");
         bishopTestPosition = fullParseFen("8/1b4R1/8/8/8/8/1K4Q1/8 " +
-        "w KQkq - 0 1");
+            "w KQkq - 0 1");  
+        kingTestPosition = fullParseFen("8/1k4R1/8/8/8/8/1K4Q1/8 " +
+            "w KQkq - 0 1");
+        pawnTestPosition = fullParseFen("8/1p4R1/8/8/8/8/1K4Q1/8 " +
+            "w KQkq - 0 1");
+        knightTestPosition = fullParseFen("8/1n4R1/8/8/8/8/1K4Q1/8 " +
+            "w KQkq - 0 1");
     }
 
     private Board fullParseFen(String fenString){
@@ -224,6 +234,75 @@ public class MoveGeneratorTest {
         };
         boolean[][] attackMapActual =
             queenTestPosition.computeChecks(false);
+        for (int rank = 0; rank < 8; rank++){
+            for (int file = 0; file < 8; file++){
+                assertEquals(
+                    attackMapExpected[rank][file], attackMapActual[rank][file],
+                    "Error at ["+rank+"]["+file+"]");
+            }
+        }
+    }
+
+    @Test
+    public void kingAttackMapTest(){
+        boolean[][] attackMapExpected = {
+            {true, true, true, false, false, false, false, false},
+            {true, false, true, false, false, false, false, false},
+            {true, true, true, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false}
+        };
+        boolean[][] attackMapActual =
+            kingTestPosition.computeChecks(false);
+        for (int rank = 0; rank < 8; rank++){
+            for (int file = 0; file < 8; file++){
+                assertEquals(
+                    attackMapExpected[rank][file], attackMapActual[rank][file],
+                    "Error at ["+rank+"]["+file+"]");
+            }
+        }
+    }
+
+    @Test
+    public void pawnAttackMapTest(){
+        boolean[][] attackMapExpected = {
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {true, false, true, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false}
+        };
+        boolean[][] attackMapActual =
+            pawnTestPosition.computeChecks(false);
+        for (int rank = 0; rank < 8; rank++){
+            for (int file = 0; file < 8; file++){
+                assertEquals(
+                    attackMapExpected[rank][file], attackMapActual[rank][file],
+                    "Error at ["+rank+"]["+file+"]");
+            }
+        }
+    }
+
+    @Test
+    public void knightAttackMapTest(){
+        boolean[][] attackMapExpected = {
+            {false, false, false, true, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, true, false, false, false, false},
+            {true, false, true, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false},
+            {false, false, false, false, false, false, false, false}
+        };
+        boolean[][] attackMapActual =
+            knightTestPosition.computeChecks(false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
