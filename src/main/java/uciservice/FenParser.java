@@ -142,7 +142,13 @@ public class FenParser {
                 xPosition += Character.getNumericValue(character);
             } else {
                 Piece piece = new Piece(character);
-                piecePositions[xPosition][yPosition] = piece;
+                // FIXME: Talk about the order:
+                /* Advantage to [x][y]: more in line with mathematical notation
+                 * Advantage to [y][x]: easier to write tests for since the 
+                 * positions in the 2d arrays match up, else you have to write
+                 * the tests "laying on the side"
+                 */
+                piecePositions[yPosition][xPosition] = piece;
                 // added incrementor so that the same piece wasn't overwritten all the Time -J
                 xPosition++;
             }
