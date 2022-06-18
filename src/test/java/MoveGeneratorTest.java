@@ -14,7 +14,7 @@ public class MoveGeneratorTest {
     private Board queenTestPosition;
     private Board rookTestPosition;
     private Board bishopTestPosition;
-    private Board pawnTestPosition;
+    private Board pawnAttackMapTestPosition;
     private Board kingTestPosition;
     private Board knightTestPosition;
 
@@ -22,19 +22,19 @@ public class MoveGeneratorTest {
     public void initialize(){
         startingPosition = fullParseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
             "w KQkq - 0 1");
-        emptyPosition = fullParseFen("8/8/8/8/8/8/8/8 " +
+        emptyPosition = fullParseFen("k7/8/8/8/8/8/8/7K " +
             "w KQkq - 0 1");
-        queenTestPosition = fullParseFen("8/1q4R1/8/8/8/8/1K4Q1/8 " +
+        queenTestPosition = fullParseFen("8/1q4k1/8/8/8/8/1Q4K1/8 " +
             "w KQkq - 0 1");
-        rookTestPosition = fullParseFen("8/1r4R1/8/8/8/8/1K4Q1/8 " +
+        rookTestPosition = fullParseFen("8/1r4k1/8/8/8/8/1K4Q1/8 " +
             "w KQkq - 0 1");
-        bishopTestPosition = fullParseFen("8/1b4R1/8/8/8/8/1K4Q1/8 " +
+        bishopTestPosition = fullParseFen("8/1b4k1/8/8/8/8/1Q4K1/8 " +
             "w KQkq - 0 1");  
         kingTestPosition = fullParseFen("8/1k4R1/8/8/8/8/1K4Q1/8 " +
             "w KQkq - 0 1");
-        pawnTestPosition = fullParseFen("8/1p4R1/8/8/8/8/1K4Q1/8 " +
+        pawnAttackMapTestPosition = fullParseFen("8/1p4k1/8/8/8/8/1K4Q1/8 " +
             "w KQkq - 0 1");
-        knightTestPosition = fullParseFen("8/1n4R1/8/8/8/8/1K4Q1/8 " +
+        knightTestPosition = fullParseFen("8/1n4k1/8/8/8/8/1K4Q1/8 " +
             "w KQkq - 0 1");
     }
 
@@ -176,9 +176,9 @@ public class MoveGeneratorTest {
     @Test
     public void rookAttackMapTest(){
         boolean[][] attackMapExpected = {
-            {false, true, false, false, false, false, false, false},
-            {true, false, true, true, true, true, true, false},
-            {false, true, false, false, false, false, false, false},
+            {false, true, false, false, false, true, true, true},
+            {true, false/* rook */, true, true, true, true, true/* king */, true},
+            {false, true, false, false, false, true, true, true},
             {false, true, false, false, false, false, false, false},
             {false, true, false, false, false, false, false, false},
             {false, true, false, false, false, false, false, false},
@@ -187,7 +187,7 @@ public class MoveGeneratorTest {
         };
         
         boolean[][] attackMapActual =
-            rookTestPosition.computeChecks(false);
+            rookTestPosition.getAttackedByBlack();
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -200,9 +200,9 @@ public class MoveGeneratorTest {
     @Test
     public void bishopAttackMapTest(){
         boolean[][] attackMapExpected = {
-            {true, false, true, false, false, false, false, false},
-            {false, false, false, false, false, false, false, false},
-            {true, false, true, false, false, false, false, false},
+            {true, false, true, false, false, true, true, true},
+            {false, false, false, false, false, true, false, true},
+            {true, false, true, false, false, true, true, true},
             {false, false, false, true, false, false, false, false},
             {false, false, false, false, true, false, false, false},
             {false, false, false, false, false, true, false, false},
@@ -223,9 +223,9 @@ public class MoveGeneratorTest {
     @Test
     public void queenAttackMapTest(){
         boolean[][] attackMapExpected = {
-            {true, true, true, false, false, false, false, false},
-            {true, false, true, true, true, true, true, false},
-            {true, true, true, false, false, false, false, false},
+            {true, true, true, false, false, true, true, true},
+            {true, false, true, true, true, true, true, true},
+            {true, true, true, false, false, true, true, true},
             {false, true, false, true, false, false, false, false},
             {false, true, false, false, true, false, false, false},
             {false, true, false, false, false, true, false, false},
@@ -269,9 +269,9 @@ public class MoveGeneratorTest {
     @Test
     public void pawnAttackMapTest(){
         boolean[][] attackMapExpected = {
-            {false, false, false, false, false, false, false, false},
-            {false, false, false, false, false, false, false, false},
-            {true, false, true, false, false, false, false, false},
+            {false, false, false, false, false, true, true, true},
+            {false, false, false, false, false, true, false, true},
+            {true, false, true, false, false, true, true, true},
             {false, false, false, false, false, false, false, false},
             {false, false, false, false, false, false, false, false},
             {false, false, false, false, false, false, false, false},
@@ -279,7 +279,7 @@ public class MoveGeneratorTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            pawnTestPosition.computeChecks(false);
+            pawnAttackMapTestPosition.computeChecks(false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -292,9 +292,9 @@ public class MoveGeneratorTest {
     @Test
     public void knightAttackMapTest(){
         boolean[][] attackMapExpected = {
-            {false, false, false, true, false, false, false, false},
-            {false, false, false, false, false, false, false, false},
-            {false, false, false, true, false, false, false, false},
+            {false, false, false, true, false, true, true, true},
+            {false, false, false, false, false, true, false, true},
+            {false, false, false, true, false, true, true, true},
             {true, false, true, false, false, false, false, false},
             {false, false, false, false, false, false, false, false},
             {false, false, false, false, false, false, false, false},
@@ -310,5 +310,20 @@ public class MoveGeneratorTest {
                     "Error at ["+rank+"]["+file+"]");
             }
         }
+    }
+
+    @Test
+    public void checkTestTest(){
+        assertTrue(queenTestPosition.getWhiteInCheck());
+        assertTrue(bishopTestPosition.getWhiteInCheck());
+        assertTrue(rookTestPosition.getWhiteInCheck());
+        assertFalse(knightTestPosition.getWhiteInCheck());
+        assertFalse(pawnAttackMapTestPosition.getWhiteInCheck());
+        assertFalse(kingTestPosition.getWhiteInCheck());
+    }
+
+    @Test
+    public void pawnMoveGenerationTest(){
+        
     }
 }

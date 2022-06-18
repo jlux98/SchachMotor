@@ -72,9 +72,17 @@ public class Board {
         this.attackedByWhite = computeChecks(true);
         this.attackedByBlack = computeChecks(false);
         Coordinate whiteKing = getKingPosition(true);
-        this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
+        if (whiteKing != null){
+            this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
+        } else {
+            throw new IllegalStateException("There must not be a game state without a white King!");
+        }
         Coordinate blackKing = getKingPosition(false);
-        this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
+        if (blackKing != null){
+            this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
+        } else {
+            throw new IllegalStateException("There must not be a game state without a black King!");
+        }
     }
 
     public boolean[][] computeChecks(Boolean isWhite) {
@@ -308,10 +316,8 @@ public class Board {
         for (int rank = 0; rank < 8; rank++) {
             String result = "";
             for (int file = 0; file < 8; file++){
-                /*  Ordering: it is more intuive for code to write [x][y] for coordinates
-                    but this leads to the toString depicting the board on its
-                    side without swapping i and j here */
-                Piece currentPiece = inputSpaces[file][rank]; 
+                /*  Ordering: see the FIXME in FenParser.java */
+                Piece currentPiece = inputSpaces[rank][file]; 
                 if (currentPiece != null){
                     result += currentPiece.toString();
                 } else {
@@ -478,12 +484,15 @@ public class Board {
     }
 
     public Coordinate getKingPosition(boolean isWhite){
-        for (int rank = 0; rank < 7; rank++){
-            for (int file = 0; file < 7; file++){
-                if (isWhite && spaces[rank][file].toString().equals("K")){
+        for (int rank = 0; rank < 8; rank++){
+            for (int file = 0; file < 8; file++){
+                Piece currentPiece = spaces[rank][file];
+                if (isWhite && currentPiece != null &&
+                    currentPiece.toString().equals("K")){
                     return new Coordinate(rank, file);
                 }
-                if (!isWhite && spaces[rank][file].toString().equals("k")){
+                if (!isWhite && currentPiece != null &&
+                    currentPiece.toString().equals("k")){
                     return new Coordinate(rank, file);
                 }
             }
