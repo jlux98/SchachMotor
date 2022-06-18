@@ -31,6 +31,8 @@ public class Board {
     private int enPassantTargetFile;
     private int halfMovesSincePawnMoveOrCapture;
     private int fullMoveCount;
+    private boolean[][] attackedByWhite;
+    private boolean[][] attackedByBlack;
 
     /**
     * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
@@ -67,7 +69,12 @@ public class Board {
         this.enPassantTargetFile = enPassantTargetFile;
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
-        // boolean[][] attackedByWhite = computeChecks(true);
+        this.attackedByWhite = computeChecks(true);
+        this.attackedByBlack = computeChecks(false);
+        Coordinate whiteKing = getKingPosition(true);
+        this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
+        Coordinate blackKing = getKingPosition(false);
+        this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
     }
 
     public boolean[][] computeChecks(Boolean isWhite) {
@@ -162,7 +169,7 @@ public class Board {
         if (targetRank < 0 ||
             targetRank > 7 ||
             targetFile < 0 ||
-            targetRank > 7) {
+            targetFile > 7) {
             return result;
         }
         if (rankSlope == 0 && fileSlope == 0) {
@@ -452,5 +459,35 @@ public class Board {
 
     public Piece getPieceAt(int rank, int file){
         return spaces[rank][file];
+    }
+
+    public boolean[][] getAttackedByWhite() {
+        return attackedByWhite;
+    }
+
+    public void setAttackedByWhite(boolean[][] attackedByWhite) {
+        this.attackedByWhite = attackedByWhite;
+    }
+
+    public boolean[][] getAttackedByBlack() {
+        return attackedByBlack;
+    }
+
+    public void setAttackedByBlack(boolean[][] attackedByBlack) {
+        this.attackedByBlack = attackedByBlack;
+    }
+
+    public Coordinate getKingPosition(boolean isWhite){
+        for (int rank = 0; rank < 7; rank++){
+            for (int file = 0; file < 7; file++){
+                if (isWhite && spaces[rank][file].toString().equals("K")){
+                    return new Coordinate(rank, file);
+                }
+                if (!isWhite && spaces[rank][file].toString().equals("k")){
+                    return new Coordinate(rank, file);
+                }
+            }
+        }
+        return null;
     }
 }
