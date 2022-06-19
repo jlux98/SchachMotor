@@ -181,6 +181,22 @@ public class Board {
         }
     }
 
+    //generateFollowUpBoard should be overwritten by #15
+    //copied signatures for ease of implementing against them
+    public Board generateFollowUpBoard(Piece[][] newPosition) {
+        return null;
+    }
+
+    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile) {
+        return null;
+    }
+
+    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+            boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
+            boolean newBlackCastlingQueenside) {
+        return null;
+    }
+
     @Override
     public String toString() {
         String result;
