@@ -268,15 +268,26 @@ public abstract class MoveGenerator {
         return null;
     }
 
+    
+     /**
+      * Generates all legal moves for a specific bishop.
+      * @param boardState the board for which a follow-up board should be generated
+      * @param rank the rank of the bishop
+      * @param file the file of the bishop
+      * @return the boards that the generated moves result in
+      */
     public Set<Board> computeBishopMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #5 - generate bishop moves
-        Piece spaces[][] = boardState.copySpaces();
-        return null;
+        return computeDiagonalMoves(boardState, rank, file);
     }
 
-    /**
-     * generates all legal diagonal moves (used for bishop and queen)
-     */
+
+     /**
+      * Generates all legal diagonal moves (used for bishop and queen).
+      * @param boardState the board for which a follow-up board should be generated
+      * @param rank the rank of the piece to be moved
+      * @param file the file of the piece to be moved
+      * @return the boards that the generated moves result in
+      */
 
     private Set<Board> computeDiagonalMoves(Board boardState, int rank, int file) {
         HashSet<Board> diagonalMoves = new HashSet<Board>();
