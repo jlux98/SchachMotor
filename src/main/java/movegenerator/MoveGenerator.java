@@ -268,26 +268,69 @@ public abstract class MoveGenerator {
         return null;
     }
 
-    
-     /**
-      * Generates all legal moves for a specific bishop.
-      * @param boardState the board for which a follow-up board should be generated
-      * @param rank the rank of the bishop
-      * @param file the file of the bishop
-      * @return the boards that the generated moves result in
-      */
+    /**
+     * Generates all legal moves for a specific bishop.
+     * @param boardState the board for which a follow-up board should be generated
+     * @param rank the rank of the bishop
+     * @param file the file of the bishop
+     * @return the boards that the generated moves result in
+     */
     public Set<Board> computeBishopMoves(Board boardState, int rank, int file) {
         return computeDiagonalMoves(boardState, rank, file);
     }
 
+    /**
+    * Generates all legal moves for a specific rook.
+    * @param boardState the board for which a follow-up board should be generated
+    * @param rank the rank of the rook
+    * @param file the file of the rook
+    * @return the boards that the generated moves result in
+    */
+    public Set<Board> computeRookMoves(Board boardState, int rank, int file) {
+        return computeHorizontalAndVerticalMoves(boardState, rank, file);
+    }
 
-     /**
-      * Generates all legal diagonal moves (used for bishop and queen).
+    /**
+    * Generates all legal moves for a specific queen.
+    * @param boardState the board for which a follow-up board should be generated
+    * @param rank the rank of the queen
+    * @param file the file of the queen
+    * @return the boards that the generated moves result in
+    */
+    public Set<Board> computeQueenMoves(Board boardState, int rank, int file) {
+        HashSet<Board> moves = new HashSet<Board>();
+        moves.addAll(computeHorizontalAndVerticalMoves(boardState, rank, file));
+        moves.addAll(computeDiagonalMoves(boardState, rank, file));
+        return moves;
+    }
+
+    /**
+      * Generates all legal horizontal and vertical moves (used for rook and queen).
       * @param boardState the board for which a follow-up board should be generated
       * @param rank the rank of the piece to be moved
       * @param file the file of the piece to be moved
       * @return the boards that the generated moves result in
       */
+    private Set<Board> computeHorizontalAndVerticalMoves(Board boardState, int rank, int file) {
+        HashSet<Board> moves = new HashSet<Board>();
+        //left
+        moves.addAll(computeRay(boardState, rank, file, -1, 0));
+        //right
+        moves.addAll(computeRay(boardState, rank, file, 1, 0));
+        //up
+        moves.addAll(computeRay(boardState, rank, file, 0, -1));
+        //down
+        moves.addAll(computeRay(boardState, rank, file, 0, 1));
+        return moves;
+    }
+
+    /**
+     * Generates all legal diagonal moves (used for bishop and queen).
+     * @param boardState the board for which a follow-up board should be generated
+     * @param rank the rank of the piece to be moved
+     * @param file the file of the piece to be moved
+     * @return the boards that the generated moves result in
+     */
 
     private Set<Board> computeDiagonalMoves(Board boardState, int rank, int file) {
         HashSet<Board> diagonalMoves = new HashSet<Board>();
@@ -322,11 +365,11 @@ public abstract class MoveGenerator {
         HashSet<Board> moves = new HashSet<Board>();
         Piece piece = currentBoard.getPieceAt(rank, file);
         Board generatedBoard = null;
-        Piece newSpaces[][]  = null;
+        Piece newSpaces[][] = null;
         //TODO adjust rank and file index in array ([rank][file] or [file][rank])
         //rank number depends on y axis, file number on x axis
         //while next step legal
-        while (targetLegal(rank+yOffset, file+xOffset, piece.getIsWhite(), currentBoard)) {
+        while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentBoard)) {
             newSpaces = currentBoard.copySpaces();
 
             //leave current space
@@ -344,16 +387,6 @@ public abstract class MoveGenerator {
         }
 
         return moves;
-    }
-
-    public Set<Board> computeRookMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #6 - generate rook moves
-        return null;
-    }
-
-    public Set<Board> computeQueenMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #7 - generate queen moves
-        return null;
     }
 
     /**
