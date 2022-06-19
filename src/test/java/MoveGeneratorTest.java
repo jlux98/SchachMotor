@@ -1,10 +1,17 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import model.Board;
+import movegenerator.MoveGenerator;
 import uciservice.FenParser;
 
 public class MoveGeneratorTest {
@@ -323,7 +330,86 @@ public class MoveGeneratorTest {
     }
 
     @Test
-    public void pawnMoveGenerationTest(){
-        
+    public void pawnCheckDetectionTest(){
+        Board checkPosition = fullParseFen("8/8/R2p2k1/8/8/8/8/K7 " +
+            "w KQkq - 0 1");
+        Board[] expectedPositions = null;
+        assertEquals(expectedPositions,
+            MoveGenerator.generatePossibleMovesPerPiece(checkPosition, 2, 2));   
+    }
+
+    @Test
+    public void pawnStepGenerationTest(){
+        // Pawn can either do a double step or a single step
+        Board stepPosition = fullParseFen("8/p6k/8/8/8/8/8/K7 " +
+            "w KQkq - 0 1");
+        List<Board> expectedPositions = new ArrayList<Board>();
+        expectedPositions.add(fullParseFen("8/7k/p7/8/8/8/8/K7 " +
+            "b KQkq - 0 2"));
+        expectedPositions.add(fullParseFen("8/7k/8/p7/8/8/8/K7 " +
+            "b KQkq a6 0 2"));
+        Collections.sort(expectedPositions);
+        List<Board>actualPositions = new ArrayList<Board>(
+            MoveGenerator.generatePossibleMovesPerPiece(stepPosition, 1, 0));
+        Collections.sort(actualPositions);
+        assertEquals(expectedPositions, actualPositions);
+    }
+
+    @Test
+    public void pawnCaptureGenerationTest(){
+        // Pawn should capture left and right
+        Board capturePosition = fullParseFen("8/8/1p5k/PPP5/8/8/8/7K " +
+            "w KQkq - 0 1");
+        List<Board> expectedPositions = new ArrayList<Board>();
+        expectedPositions.add(fullParseFen("8/8/7k/pPP5/8/8/8/7K " +
+            "b KQkq - 0 2"));
+        expectedPositions.add(fullParseFen("8/8/7k/PPp5/8/8/8/7K " +
+            "b KQkq - 0 2"));
+        Collections.sort(expectedPositions);
+        List<Board>actualPositions = new ArrayList<Board>(
+            MoveGenerator.generatePossibleMovesPerPiece(capturePosition,2,1));
+        Collections.sort(actualPositions);
+        assertEquals(expectedPositions, actualPositions);
+    }
+
+    @Test
+    public void pawnPromotionGenerationTest(){
+        // Pawn should promote to all 4 possible options
+        Board promotionPosition = fullParseFen("8/7k/8/8/8/8/p7/7K " +
+        "w KQkq - 0 1");
+        List<Board> expectedPositions = new ArrayList<Board>();
+        expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/b6K " +
+        "b KQkq - 0 2"));
+        expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/n6K " +
+        "b KQkq - 0 2"));
+        expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/q6K " +
+        "b KQkq - 0 2"));
+        expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/r6K " +
+        "b KQkq - 0 2"));
+        Collections.sort(expectedPositions);
+        List<Board> actualPositions = new ArrayList<Board>(
+            MoveGenerator.generatePossibleMovesPerPiece(promotionPosition,6,0));
+        Collections.sort(actualPositions);
+        assertEquals(expectedPositions, actualPositions);
+    }
+
+    @Test
+    public void pawnEnPassantGenerationTest(){
+        Board enPassantLeftPosition = fullParseFen("8/1pP4k/1P6/8/8/8/8/7K " +
+            "w KQkq c6 0 1");
+        Board enPassantRightPosition = fullParseFen("8/Pp5k/1P6/8/8/8/8/7K " +
+            "w KQkq a6 0 1");
+        List<Board> expectedPositionLeft = new ArrayList<Board>();
+        expectedPositionLeft.add(fullParseFen("8/7k/1Pp5/8/8/8/8/7K " +
+        "b KQkq - 0 2"));
+        List<Board> actualPositionsLeft = new ArrayList<Board>(
+            MoveGenerator.generatePossibleMovesPerPiece(enPassantLeftPosition,1,1));
+        assertEquals(expectedPositionLeft, actualPositionsLeft);
+        List<Board> expectedPositionRight = new ArrayList<Board>();
+        expectedPositionRight.add(fullParseFen("8/7k/pP6/8/8/8/8/7K " +
+        "b KQkq - 0 2"));
+        List<Board> actualPositionsRight = new ArrayList<Board>(
+            MoveGenerator.generatePossibleMovesPerPiece(enPassantRightPosition,1,1));
+        assertEquals(expectedPositionRight, actualPositionsRight);
     }
 }
