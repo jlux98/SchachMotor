@@ -33,7 +33,7 @@ public class Board {
     private int fullMoveCount;
 
     /**
-    * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
+    * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
     * but without requiring point value and whiteInCheck / blackInCheck to be set.
     * These value may be set using the corresponding setter at a later time.
     */
@@ -75,7 +75,7 @@ public class Board {
     }
 
     /**
-     * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
+     * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
      * but without requiring a point value to be set.
      * The value may be set using Board.setPointValue() at a later time.
      */
