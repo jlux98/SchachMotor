@@ -129,6 +129,81 @@ public class Board {
 
     }
 
+    /**
+     * Generates a follow-up board without en passant target square.
+     * Same as {@link Board#generateFollowUpBoard(Piece[][], int, int) generateFollowUpBoard(Board, Piece[][], -1, -1)}.
+     * @param previousBoard
+     * @param newPosition
+     * @return
+     */
+    public Board generateFollowUpBoard(Piece[][] newPosition) {
+        return generateFollowUpBoard(newPosition, -1, -1);
+    }
+
+    /**
+     * Generates a follow-up board to this board with the specified parameters.
+     * Sets check flags according to the attack maps.
+     * Castling right flags are copied from this board.
+     * <br><br>
+     * <b>Note:</b>
+     * This method is not suitable to generate follow-up boards for rooks and kings since castling rights are copied.
+     * Use {@link #generateFollowUpBoard(Piece[][], int, int, boolean, boolean, boolean, boolean)}  instead.
+     * @param newPosition the piece's  new position 
+     * @param newEnPassantTargetRank rank of the en passant target square
+     * @param newEnPassantTargetFile file of the en passant target square
+     * @return a follow-up board to this board  
+     */
+    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile) {
+
+        //use getters over direct field access so additional code can be run if required at a later time
+        boolean newWhiteCastlingKingside = this.getWhiteCastlingKingside();
+        boolean newWhiteCastlingQueenside = this.getWhiteCastlingQueenside();
+        boolean newBlackCastlingKingside = this.getBlackCastlingKingside();
+        boolean newBlackCastlingQueenside = this.getBlackCastlingQueenside();
+
+        return generateFollowUpBoard(newPosition, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
+                newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside);
+    }
+
+    /**
+    * Generates a follow-up board to this board with the specified parameters.
+    * Sets check flags according to the attack maps.
+    * <br><br>  
+    * Castling flags represent permanent loss of castling ability, 
+    * not temporary inability to castle e.g. caused by check or a piece placed in between rook and king.
+    * 
+    * @param newPosition the piece's  new position 
+    * @param newEnPassantTargetRank rank of the en passant target square
+    * @param enPassantTargetFileboolean file of the en passant target square
+    * @param newWhiteCastlingKingside whether white may castle kingside
+    * @param newWhiteCastlingQueenside whether white may castle queenside
+    * @param newBlackCastlingKingside whether black may castle kingside
+    * @param newBlackCastlingQueenside whether black may castle queenside
+    * @return a follow-up board to this board 
+    */
+    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+            boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
+            boolean newBlackCastlingQueenside) {
+
+        //arguments start with "new" to prevent shadowing of / name-clashing with the surrounding board's attributes
+        //such shadowing should be avoided since arguments (e.g. whiteCastlingKingSide) could be missing and the value would be read
+        //from the corresponding attribute, rather than resulting in an error
+
+        int fullMoveCount = this.getFullMoves();
+        if (this.getWhiteNextMove()) {
+            //the board to be generated is white's turn. since black just moved, increment fullMoveCounter
+            fullMoveCount += 1;
+        }
+
+        //TODO set check flags
+        boolean newWhiteInCheck = false;
+        boolean newBlackInCheck = false;
+
+        return new Board(newWhiteInCheck, newBlackInCheck, newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
+                newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
+                newEnPassantTargetFile, this.getHalfMoves() + 1, fullMoveCount);
+    }
+
     @Override
     public boolean equals(Object obj) {
         // TODO Auto-generated method stub
