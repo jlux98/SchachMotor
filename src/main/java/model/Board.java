@@ -13,7 +13,7 @@ import java.util.Optional;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Board {
+public class Board implements Comparable<Board>{
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -290,7 +290,6 @@ public class Board {
 
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
         if (obj instanceof Board){
             Board board = (Board) obj;
             return  (blackCastlingKingside == board.getBlackCastlingKingside()) &&
@@ -301,7 +300,7 @@ public class Board {
                     (fullMoveCount == board.getFullMoves()) &&
                     (halfMovesSincePawnMoveOrCapture == board.getHalfMoves()) &&
                     (pointValue == board.getPointValue()) &&
-                    (spaces.equals(board.getSpaces())) &&
+                    (spacesEquals(board.getSpaces())) &&
                     (whiteCastlingKingside == board.getWhiteCastlingKingside()) &&
                     (whiteCastlingQueenside == board.getWhiteCastlingQueenside()) &&
                     (whiteInCheck == board.getWhiteInCheck()) &&
@@ -498,5 +497,10 @@ public class Board {
             }
         }
         return null;
+    }
+
+    @Override
+    public int compareTo(Board otherBoard) {
+        return this.toString().compareTo(otherBoard.toString());
     }
 }
