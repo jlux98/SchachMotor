@@ -321,37 +321,6 @@ public abstract class MoveGenerator {
         return moves;
     }
 
-    private Board generateFollowUpBoardWithoutEnPassentTarget(Board previousBoard, Piece[][] newPosition) {
-        return generateFollowUpBoard(previousBoard, newPosition, -1, -1);
-    }
-
-    /**
-     * Generates a follow-up board to previousBoard.
-     * Handles setting 
-     * 
-     * @param previousBoard the previous board
-     * @param newPosition the piece's  new position 
-     * @return a Board representing the new game state
-     */
-    private Board generateFollowUpBoard(Board previousBoard, Piece[][] newPosition, int enPassantTargetRank, int enPassantTargetFile) {
-
-        int fullMoveCount = previousBoard.getFullMoves();
-        if (previousBoard.getWhiteNextMove()) {
-            //the board to be generated is white's turn. since black just moved, increment fullMoveCounter
-            fullMoveCount += 1;
-        }
-
-        //FIXME determine castling rights
-        boolean whiteCastlingKingside = previousBoard.getWhiteCastlingKingside();
-        boolean whiteCastlingQueenside = previousBoard.getWhiteCastlingQueenside();
-        boolean blackCastlingKingside = previousBoard.getBlackCastlingKingside();
-        boolean blackCastlingQueenside  = previousBoard.getBlackCastlingQueenside();
-
-        return new Board(newPosition, !!previousBoard.getWhiteNextMove(),  whiteCastlingKingside,  whiteCastlingQueenside,
-         blackCastlingKingside,  blackCastlingQueenside, enPassantTargetRank,enPassantTargetFile, previousBoard.getHalfMoves()+1,fullMoveCount )
-
-    }
-
     public Set<Board> computeRookMoves(Board boardState, int rank, int file) {
         // TODO: Ticket #6 - generate rook moves
         return null;
