@@ -3,6 +3,8 @@ package model;
 import java.util.Arrays;
 import java.util.Optional;
 
+import movegenerator.AttackMapGenerator;
+
 /**
  * Class representing the game state.
  * <br><br>
@@ -69,8 +71,8 @@ public class Board implements Comparable<Board>{
         this.enPassantTargetFile = enPassantTargetFile;
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
-        this.attackedByWhite = computeChecks(true);
-        this.attackedByBlack = computeChecks(false);
+        this.attackedByWhite = AttackMapGenerator.computeChecks(spaces, true);
+        this.attackedByBlack = AttackMapGenerator.computeChecks(spaces, false);
         Coordinate whiteKing = getKingPosition(true);
         if (whiteKing != null){
             this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
@@ -83,154 +85,6 @@ public class Board implements Comparable<Board>{
         } else {
             throw new IllegalStateException("There must not be a game state without a black King!");
         }
-    }
-
-    public boolean[][] computeChecks(Boolean isWhite) {
-        //TODO: Implement a method for autonomously tracking which side is in check
-        boolean[][] result = new boolean[8][8];
-        for (int rank = 0; rank < 8; rank++){
-            for (int file = 0; file < 8; file++){
-                Piece currentPiece = spaces[rank][file];
-                if (currentPiece != null && currentPiece.getIsWhite() == isWhite){
-                    result = paintAttackBoard(result, rank, file, currentPiece.getPieceType(),isWhite);
-                }
-            }
-        }
-        return result;
-    }
-
-    private boolean[][] paintAttackBoard(boolean[][] result, int rank, int file,
-        PieceType type, boolean isWhite) {
-        switch(type){
-            case BISHOP:
-                return paintBishopAttacks(result, rank, file);
-            case KING:
-                return paintKingAttacks(result, rank, file);
-            case KNIGHT:
-                return paintKnightAttacks(result, rank, file);
-            case PAWN:
-                return paintPawnAttacks(result, rank, file, isWhite);
-            case QUEEN:
-                return paintQueenAttacks(result, rank, file);
-            case ROOK:
-                return paintRookAttacks(result, rank, file);
-            default:
-                return result;
-
-        }
-    }
-
-    private boolean[][] paintRookAttacks(boolean[][] result, int rank, int file) {
-        // northern attack vector
-        result = paintRayAttack(result, rank-1, file, -1, 0);
-        // eastern attack vector
-        result = paintRayAttack(result, rank, file+1, 0, 1);
-        // southern attack vector
-        result = paintRayAttack(result, rank+1, file, 1, 0);
-        // western attack vector
-        result = paintRayAttack(result, rank, file-1, 0, -1);
-        return result;
-    }
-
-    private boolean[][] paintQueenAttacks(boolean[][] result, int rank, int file) {
-        result = paintBishopAttacks(result, rank, file);
-        result = paintRookAttacks(result, rank, file);
-        return result;
-    }
-
-    private boolean[][] paintPawnAttacks(boolean[][] result, int rank, int file, boolean color) {
-        int sign = 0;
-        if (color){
-            sign = -1;
-        } else {
-            sign = 1;
-        }
-        result = paintRayAttack(result, rank+(sign*1), file+1, 0, 0);
-        result = paintRayAttack(result, rank+(sign*1), file-1, 0, 0);
-        return result;
-    }
-
-    private boolean[][] paintKnightAttacks(boolean[][] result, int rank, int file) {
-        result = paintRayAttack(result, rank-2, file-1, 0, 0);
-        result = paintRayAttack(result, rank-2, file+1, 0, 0);
-        result = paintRayAttack(result, rank-1, file+2, 0, 0);
-        result = paintRayAttack(result, rank+1, file+2, 0, 0);
-        result = paintRayAttack(result, rank+2, file+1, 0, 0);
-        result = paintRayAttack(result, rank+2, file-1, 0, 0);
-        result = paintRayAttack(result, rank+1, file-2, 0, 0);
-        result = paintRayAttack(result, rank-1, file-2, 0, 0);
-        return result;
-    }
-
-    /**
-     * A method that gets a starting space and marks the line eminating from
-     * that space defined by the slope arguments in a 2d-Array
-     * @param result the array in which to mark a line
-     * @param targetRank the horizontal coordinate of the starting space
-     * @param targetFile the vertical coordinate of the starting space
-     * @param rankSlope the vertical variance of the line
-     * @param fileSlope the horizontal variance of the line
-     * @return the array with the line marked
-     */
-    public boolean[][] paintRayAttack (boolean[][] result, int targetRank, int targetFile, int rankSlope, int fileSlope) {
-        boolean collision = false;
-        if (targetRank < 0 ||
-            targetRank > 7 ||
-            targetFile < 0 ||
-            targetFile > 7) {
-            return result;
-        }
-        if (rankSlope == 0 && fileSlope == 0) {
-            result[targetRank][targetFile] = true;
-            return result;
-        }
-        for (int i = 0; (i > -1) && (i < 8) && (!collision); i++){
-            for (int j = 0; (j > -1) && (j < 8) && (!collision); j++){
-                if (i == targetRank &&
-                    j == targetFile){
-                    result[i][j] = true;
-                    targetRank += rankSlope;
-                    targetFile += fileSlope;
-                    if (spaces[i][j] != null){
-                        collision = true;
-                        break;
-                    }
-                }
-            }
-        }    
-        return result;
-    }
-
-    private boolean[][] paintBishopAttacks(boolean[][] result, int rank, int file) {
-        // Northeastern attack vector
-        result = paintRayAttack(result, rank-1, file+1, -1, 1);
-        // Southeastern attack vector
-        result = paintRayAttack(result, rank+1, file+1, 1, 1);
-        // Southwestern attack vector
-        result = paintRayAttack(result, rank+1, file-1, 1, -1);
-        // Northwestern attack vector
-        result = paintRayAttack(result, rank-1, file-1, -1, -1);
-        return result;
-    }
-
-    private boolean[][] paintKingAttacks(boolean[][] result, int rank, int file) {
-         // northern attack vector
-         result = paintRayAttack(result, rank-1, file, 0, 0);
-         // eastern attack vector
-         result = paintRayAttack(result, rank, file+1, 0, 0);
-         // southern attack vector
-         result = paintRayAttack(result, rank+1, file, 0, 0);
-         // western attack vector
-         result = paintRayAttack(result, rank, file-1, 0, 0);
-         // Northeastern attack vector
-        result = paintRayAttack(result, rank-1, file+1, 0, 0);
-        // Southeastern attack vector
-        result = paintRayAttack(result, rank+1, file+1, 0, 0);
-        // Southwestern attack vector
-        result = paintRayAttack(result, rank+1, file-1, 0, 0);
-        // Northwestern attack vector
-        result = paintRayAttack(result, rank-1, file-1, 0, 0);
-         return result;
     }
 
     /**
