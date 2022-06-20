@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import model.Board;
+import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;
 
@@ -106,11 +108,14 @@ public class MoveGeneratorTest {
         };
 
         boolean[][] attackMapActualDiagonal =
-            emptyPosition.paintRayAttack(new boolean[8][8], 1,1,1,1);
+            AttackMapGenerator.paintRayAttack(emptyPosition.getSpaces(), 
+            new boolean[8][8], 1,1,1,1);
         boolean[][] attackMapActualHorizontal =
-            emptyPosition.paintRayAttack(new boolean[8][8], 1,1,0,1);
+            AttackMapGenerator.paintRayAttack(emptyPosition.getSpaces(),
+            new boolean[8][8], 1,1,0,1);
         boolean[][] attackMapActualVertical =
-            emptyPosition.paintRayAttack(new boolean[8][8], 1,1,1,0);
+            AttackMapGenerator.paintRayAttack(emptyPosition.getSpaces(),
+            new boolean[8][8], 1,1,1,0);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -160,11 +165,14 @@ public class MoveGeneratorTest {
         };
 
         boolean[][] attackMapActualDiagonal =
-            queenTestPosition.paintRayAttack(new boolean[8][8], 2,2,1,1);
+            AttackMapGenerator.paintRayAttack(queenTestPosition.getSpaces(), 
+            new boolean[8][8], 2,2,1,1);
         boolean[][] attackMapActualHorizontal =
-            queenTestPosition.paintRayAttack(new boolean[8][8], 1,2,0,1);
+            AttackMapGenerator.paintRayAttack(queenTestPosition.getSpaces(), 
+            new boolean[8][8], 1,2,0,1);
         boolean[][] attackMapActualVertical =
-            queenTestPosition.paintRayAttack(new boolean[8][8], 2,1,1,0);
+            AttackMapGenerator.paintRayAttack(queenTestPosition.getSpaces(), 
+            new boolean[8][8], 2,1,1,0);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -217,7 +225,8 @@ public class MoveGeneratorTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            bishopTestPosition.computeChecks(false);
+            AttackMapGenerator.computeChecks(bishopTestPosition.getSpaces(),
+            false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -240,7 +249,7 @@ public class MoveGeneratorTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            queenTestPosition.computeChecks(false);
+            AttackMapGenerator.computeChecks(queenTestPosition.getSpaces(), false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -263,7 +272,7 @@ public class MoveGeneratorTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            kingTestPosition.computeChecks(false);
+            AttackMapGenerator.computeChecks(kingTestPosition.getSpaces(),false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -286,7 +295,7 @@ public class MoveGeneratorTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            pawnAttackMapTestPosition.computeChecks(false);
+            AttackMapGenerator.computeChecks(pawnAttackMapTestPosition.getSpaces(), false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -309,7 +318,7 @@ public class MoveGeneratorTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            knightTestPosition.computeChecks(false);
+            AttackMapGenerator.computeChecks(knightTestPosition.getSpaces(),false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -342,12 +351,12 @@ public class MoveGeneratorTest {
     public void pawnStepGenerationTest(){
         // Pawn can either do a double step or a single step
         Board stepPosition = fullParseFen("8/p6k/8/8/8/8/8/K7 " +
-            "w KQkq - 0 1");
+            "b KQkq - 0 1");
         List<Board> expectedPositions = new ArrayList<Board>();
         expectedPositions.add(fullParseFen("8/7k/p7/8/8/8/8/K7 " +
-            "b KQkq - 0 2"));
+            "w KQkq - 0 2"));
         expectedPositions.add(fullParseFen("8/7k/8/p7/8/8/8/K7 " +
-            "b KQkq a6 0 2"));
+            "w KQkq a6 0 2"));
         Collections.sort(expectedPositions);
         List<Board>actualPositions = new ArrayList<Board>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPosition, 1, 0));
@@ -357,14 +366,14 @@ public class MoveGeneratorTest {
 
     @Test
     public void pawnCaptureGenerationTest(){
-        // Pawn should capture left and right
+                // Pawn should capture left and right
         Board capturePosition = fullParseFen("8/8/1p5k/PPP5/8/8/8/7K " +
-            "w KQkq - 0 1");
+            "b KQkq - 0 1");
         List<Board> expectedPositions = new ArrayList<Board>();
         expectedPositions.add(fullParseFen("8/8/7k/pPP5/8/8/8/7K " +
-            "b KQkq - 0 2"));
+            "w KQkq - 0 2"));
         expectedPositions.add(fullParseFen("8/8/7k/PPp5/8/8/8/7K " +
-            "b KQkq - 0 2"));
+            "w KQkq - 0 2"));
         Collections.sort(expectedPositions);
         List<Board>actualPositions = new ArrayList<Board>(
             MoveGenerator.generatePossibleMovesPerPiece(capturePosition,2,1));
@@ -376,16 +385,16 @@ public class MoveGeneratorTest {
     public void pawnPromotionGenerationTest(){
         // Pawn should promote to all 4 possible options
         Board promotionPosition = fullParseFen("8/7k/8/8/8/8/p7/7K " +
-        "w KQkq - 0 1");
+        "b KQkq - 0 1");
         List<Board> expectedPositions = new ArrayList<Board>();
         expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/b6K " +
-        "b KQkq - 0 2"));
+        "w KQkq - 0 2"));
         expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/n6K " +
-        "b KQkq - 0 2"));
+        "w KQkq - 0 2"));
         expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/q6K " +
-        "b KQkq - 0 2"));
+        "w KQkq - 0 2"));
         expectedPositions.add(fullParseFen("8/7k/8/8/8/8/8/r6K " +
-        "b KQkq - 0 2"));
+        "w KQkq - 0 2"));
         Collections.sort(expectedPositions);
         List<Board> actualPositions = new ArrayList<Board>(
             MoveGenerator.generatePossibleMovesPerPiece(promotionPosition,6,0));
@@ -396,20 +405,54 @@ public class MoveGeneratorTest {
     @Test
     public void pawnEnPassantGenerationTest(){
         Board enPassantLeftPosition = fullParseFen("8/1pP4k/1P6/8/8/8/8/7K " +
-            "w KQkq c6 0 1");
+            "b KQkq c6 0 1");
         Board enPassantRightPosition = fullParseFen("8/Pp5k/1P6/8/8/8/8/7K " +
-            "w KQkq a6 0 1");
+            "b KQkq a6 0 1");
         List<Board> expectedPositionLeft = new ArrayList<Board>();
         expectedPositionLeft.add(fullParseFen("8/7k/1Pp5/8/8/8/8/7K " +
-        "b KQkq - 0 2"));
+            "w KQkq - 0 2"));
         List<Board> actualPositionsLeft = new ArrayList<Board>(
             MoveGenerator.generatePossibleMovesPerPiece(enPassantLeftPosition,1,1));
         assertEquals(expectedPositionLeft, actualPositionsLeft);
         List<Board> expectedPositionRight = new ArrayList<Board>();
         expectedPositionRight.add(fullParseFen("8/7k/pP6/8/8/8/8/7K " +
-        "b KQkq - 0 2"));
+            "w KQkq - 0 2"));
         List<Board> actualPositionsRight = new ArrayList<Board>(
             MoveGenerator.generatePossibleMovesPerPiece(enPassantRightPosition,1,1));
         assertEquals(expectedPositionRight, actualPositionsRight);
+    }
+
+    @Test
+    public void knightGenerationTest(){
+        Board knightPosition = fullParseFen("7k/1n6/8/P7/8/8/8/7K b KQkq - 0 1");
+        List<Board> expectedPositions = new ArrayList<Board>();
+        expectedPositions.add(fullParseFen("3n3k/8/8/P7/8/8/8/7K w KQkq - 1 2"));
+        expectedPositions.add(fullParseFen("7k/8/3n4/P7/8/8/8/7K w KQkq - 1 2"));
+        expectedPositions.add(fullParseFen("7k/8/8/n7/8/8/8/7K w KQkq - 0 2"));
+        expectedPositions.add(fullParseFen("7k/8/8/P1n5/8/8/8/7K w KQkq - 1 2"));
+        List<Board> actualPositions = new ArrayList<Board>(
+            MoveGenerator.generatePossibleMovesPerPiece(knightPosition,1,1));
+        Collections.sort(expectedPositions);
+        Collections.sort(actualPositions);
+        assertEquals(expectedPositions, actualPositions);
+    }
+
+    @Test
+    public void knightCheckDetectionTest(){
+        Board checkPosition1 = fullParseFen("8/8/R2k2k1/8/8/8/8/K7 " +
+            "b KQkq - 0 1");
+        List<Board> expectedPositions1 = null;
+        assertEquals(expectedPositions1,
+            MoveGenerator.generatePossibleMovesPerPiece(checkPosition1, 2, 2));
+        Board checkPosition2 = fullParseFen("3n4/8/R5k1/8/8/8/8/K7 " +
+            "b KQkq - 0 1");
+        List<Board> expectedPositions2 = new ArrayList<Board>();
+        expectedPositions2.add(fullParseFen("8/8/R1n3k1/8/8/8/8/K7 w KQkq - 1 2"));
+        expectedPositions2.add(fullParseFen("8/8/R3n1k1/8/8/8/8/K7 w KQkq - 1 2"));
+        List<Board> actualPositions2 = new ArrayList<Board>(
+            MoveGenerator.generatePossibleMovesPerPiece(checkPosition2, 0, 3));
+        Collections.sort(expectedPositions2);
+        Collections.sort(actualPositions2);
+        assertEquals(expectedPositions2, actualPositions2);
     }
 }
