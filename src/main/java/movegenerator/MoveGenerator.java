@@ -308,9 +308,169 @@ public abstract class MoveGenerator {
         }
     }
 
-    public static Set<Board> computeKingMoves(Board boardState, int rank, int file) {
+    private static Set<Board> computeKingMoves(Board boardState, int rank, int file) {
         // TODO: Ticket #8 - generate king moves
-        return null;
+        Set<Board> results = new HashSet<>();
+        // Attack north
+        computeKingStep(boardState, results, rank, file, rank-1, file);
+        // Attack northeast
+        computeKingStep(boardState, results, rank, file, rank-1, file+1);
+        // Attack east
+        computeKingStep(boardState, results, rank, file, rank, file+1);
+        // Attack southeast
+        computeKingStep(boardState, results, rank, file, rank+1, file+1);
+        // Attack south
+        computeKingStep(boardState, results, rank, file, rank+1, file);
+        // Attack southwest
+        computeKingStep(boardState, results, rank, file, rank+1, file-1);
+        // Attack west
+        computeKingStep(boardState, results, rank, file, rank, file-1);
+        // Attack northwest
+        computeKingStep(boardState, results, rank, file, rank-1, file-1);
+        
+        computeCastlingKingside(boardState, results);
+        computeCastlingQueenside(boardState, results);
+        return results;
+    }
+
+    private static void computeCastling(Board bs, Set<Board> results) {
+        
+    }
+
+    private static void computeCastlingKingside(Board bs, Set<Board> results){
+        boolean[][] relevantAttackMap = null;
+        int relevantRank = -1;
+        boolean relevantCastlingRight = false;
+        if (bs.getWhitesTurn()){
+            if (bs.getWhiteInCheck()) {
+                return;
+            }
+            relevantAttackMap = bs.getAttackedByBlack();
+            relevantRank = 7;
+            relevantCastlingRight = bs.getWhiteCastlingKingside();
+        } else {
+            if (bs.getBlackInCheck()) {
+                return;
+            }
+            relevantAttackMap = bs.getAttackedByWhite();
+            relevantRank = 0;
+            relevantCastlingRight = bs.getBlackCastlingKingside();
+        }
+        if (relevantCastlingRight){
+            // check whether the traversed spaces are free and not attacked
+            for (int i = 5; i < 7; i++){
+                if (relevantAttackMap[relevantRank][i]){
+                    return;
+                }
+                if (bs.getPieceAt(relevantRank, i) != null){
+                    return;
+                }
+            }
+            // move king first
+            Piece[][] resultingSpaces = getBoardAfterMove(
+                bs.copySpaces(), relevantRank, 4, relevantRank, 6);
+            // then move rook
+            resultingSpaces = getBoardAfterMove(
+                resultingSpaces, relevantRank, 7, relevantRank, 5);
+            addKingMove(bs, results, resultingSpaces, false);
+        }
+    }
+
+    private static void computeCastlingQueenside(Board bs, Set<Board> results){
+        boolean[][] relevantAttackMap = null;
+        int relevantRank = -1;
+        boolean relevantCastlingRight = false;
+        if (bs.getWhitesTurn()){
+            if (bs.getWhiteInCheck()) {
+                return;
+            }
+            relevantAttackMap = bs.getAttackedByBlack();
+            relevantRank = 7;
+            relevantCastlingRight = bs.getWhiteCastlingQueenside();
+        } else {
+            if (bs.getBlackInCheck()) {
+                return;
+            }
+            relevantAttackMap = bs.getAttackedByWhite();
+            relevantRank = 0;
+            relevantCastlingRight = bs.getBlackCastlingQueenside();
+        }
+        if (relevantCastlingRight){
+            // check whether the traversed spaces are free and not attacked
+            for (int i = 2; i < 4; i++){
+                if (relevantAttackMap[relevantRank][i]){
+                    return;
+                }
+                if (bs.getPieceAt(relevantRank, i) != null){
+                    return;
+                }
+            }
+            /*  even though the rook can move through attacks the space still 
+                needs to be empty */
+            if (bs.getPieceAt(relevantRank, 1)!=null){
+                return;
+            }
+            // move king first
+            Piece[][] resultingSpaces = getBoardAfterMove(
+                bs.copySpaces(), relevantRank, 4, relevantRank, 2);
+            // then move rook
+            resultingSpaces = getBoardAfterMove(
+                resultingSpaces, relevantRank, 0, relevantRank, 3);
+            addKingMove(bs, results, resultingSpaces, false);
+        }
+    }
+
+
+    private static void computeKingStep(Board boardState, Set<Board> results,
+        int rank, int file, int targetRank, int targetFile){
+        if ((targetRank < 0) || (targetRank > 7) || 
+            (targetFile < 0) || (targetFile > 7)) {
+            return;
+        }
+        boolean hasCaptured = false;
+        Piece targetPiece = boardState.getPieceAt(targetRank, targetFile);
+        if (targetPiece != null){
+            if (targetPiece.getIsWhite() == boardState.getWhitesTurn()){
+                return;
+            } else {
+                hasCaptured = true;
+            }
+        }
+        Piece[][] resultingSpaces =
+            getBoardAfterMove(boardState.copySpaces(), rank, file, targetRank, targetFile);
+        addKingMove(boardState, results, resultingSpaces, hasCaptured);
+    }
+
+    private static void addKingMove(Board bs, Set<Board> results, Piece[][] resultingSpaces, boolean hasCaptured){
+        int fullMoves = bs.getFullMoves();
+        if (!bs.getWhiteNextMove()) {
+            fullMoves ++;
+        }
+        int halfMoves = bs.getHalfMoves()+1;
+        if (hasCaptured){
+            halfMoves = 0;
+        }
+        boolean whiteCastlingKingside = bs.getWhiteCastlingKingside();
+        boolean whiteCastlingQueenside = bs. getWhiteCastlingQueenside();
+        boolean blackCastlingKingside = bs.getBlackCastlingKingside();
+        boolean blackCastlingQueenside = bs.getBlackCastlingQueenside();
+
+        if (bs.getWhitesTurn()){
+            whiteCastlingKingside = false;
+            whiteCastlingQueenside = false;
+        } else {
+            blackCastlingKingside = false;
+            blackCastlingQueenside = false;
+        }
+
+        Board resultingBoard = new Board(resultingSpaces, !bs.getWhiteNextMove(),
+            whiteCastlingKingside, whiteCastlingQueenside,
+            blackCastlingKingside, blackCastlingQueenside,
+            -1,-1, halfMoves, fullMoves);
+        if ( bs.getWhitesTurn() && !resultingBoard.getWhiteInCheck()||
+            !bs.getWhitesTurn() && !resultingBoard.getBlackInCheck()){
+            results.add(resultingBoard);
+        }
     }
 
     public static Set<Board> computeBishopMoves(Board boardState, int rank, int file) {
