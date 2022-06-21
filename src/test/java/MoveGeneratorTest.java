@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import model.Board;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
+import positionevaluator.PositionEvaluator;
 import uciservice.FenParser;
 
 public class MoveGeneratorTest {
@@ -506,5 +507,14 @@ public class MoveGeneratorTest {
         Collections.sort(expectedPosition);
         Collections.sort(actualPositions);
         assertEquals(expectedPosition, actualPositions);
+    }
+
+    @Test
+    public void positionEvaluatorTest(){
+        assertEquals(0, PositionEvaluator.evaluatePosition(startingPosition));
+        assertEquals(-41,PositionEvaluator.evaluatePosition(
+            fullParseFen("rnbqkbnr/pppppppp/8/8/8/8/8/7K b kq - 1 1")));
+        assertEquals(41,PositionEvaluator.evaluatePosition(
+            fullParseFen("k7/8/8/8/8/8/PPPPPPPP/RNBQKBNR b kq - 1 1")));
     }
 }
