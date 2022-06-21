@@ -1,15 +1,11 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import model.Board;
 import movegenerator.AttackMapGenerator;
@@ -454,5 +450,61 @@ public class MoveGeneratorTest {
         Collections.sort(expectedPositions2);
         Collections.sort(actualPositions2);
         assertEquals(expectedPositions2, actualPositions2);
+    }
+
+    @Test
+    public void kingStepGenerationTest(){
+        Board kingPosition = fullParseFen("7K/8/8/8/8/8/3P4/3k4 b - - 0 1");
+        List<Board> expectedPositions = new ArrayList<>();
+        expectedPositions.add(fullParseFen("7K/8/8/8/8/8/3Pk3/8 w - - 1 2"));
+        expectedPositions.add(fullParseFen("7K/8/8/8/8/8/2kP4/8 w - - 1 2"));
+        expectedPositions.add(fullParseFen("7K/8/8/8/8/8/3k4/8 w - - 0 2"));
+        expectedPositions.add(fullParseFen("7K/8/8/8/8/8/3P4/2k5 w - - 1 2"));
+        expectedPositions.add(fullParseFen("7K/8/8/8/8/8/3P4/4k3 w - - 1 2"));
+        List<Board> actualPositions = new ArrayList<>(
+            MoveGenerator.generatePossibleMovesPerPiece(kingPosition, 7, 3));
+        Collections.sort(expectedPositions);
+        Collections.sort(actualPositions);
+        assertEquals(expectedPositions, actualPositions);        
+    }
+
+    @Test
+    public void blackCastlingGenerationTest(){
+        Board castlingPosition = fullParseFen(
+            "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        List<Board> expectedPosition = new ArrayList<>();
+        expectedPosition.add(fullParseFen(
+            "r4k1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
+        expectedPosition.add(fullParseFen(
+            "r2k3r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
+        expectedPosition.add(fullParseFen(
+            "2kr3r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
+        expectedPosition.add(fullParseFen(
+            "r4rk1/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
+        List<Board> actualPositions = new ArrayList<>(
+            MoveGenerator.generatePossibleMovesPerPiece(castlingPosition,0,4));
+        Collections.sort(expectedPosition);
+        Collections.sort(actualPositions);
+        assertEquals(expectedPosition, actualPositions);
+    }
+    
+    @Test
+    public void whiteCastlingGenerationTest(){
+        Board castlingPosition = fullParseFen(
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1");
+        List<Board> expectedPosition = new ArrayList<>();
+        expectedPosition.add(fullParseFen(
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R4RK1 b kq - 1 1"));
+        expectedPosition.add(fullParseFen(
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R4K1R b kq - 1 1"));
+        expectedPosition.add(fullParseFen(
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R2K3R b kq - 1 1"));
+        expectedPosition.add(fullParseFen(
+           "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/2KR3R b kq - 1 1"));
+        List<Board> actualPositions = new ArrayList<>(
+            MoveGenerator.generatePossibleMovesPerPiece(castlingPosition,7,4));
+        Collections.sort(expectedPosition);
+        Collections.sort(actualPositions);
+        assertEquals(expectedPosition, actualPositions);
     }
 }
