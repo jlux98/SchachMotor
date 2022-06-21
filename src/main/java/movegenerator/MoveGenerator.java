@@ -1,6 +1,5 @@
 package movegenerator;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +50,9 @@ public abstract class MoveGenerator {
     public static Set<Board> generatePossibleMovesPerPiece(Board boardState, int rank, int file) {
         Piece currentPiece = boardState.getSpaces()[rank][file];
         if (currentPiece == null) {
+            return null;
+        }
+        if (currentPiece.getIsWhite() != boardState.getWhitesTurn()){
             return null;
         }
         PieceType currentType = currentPiece.getPieceType();
@@ -227,10 +229,14 @@ public abstract class MoveGenerator {
             doubleStepRank = rank+(sign*1);
             doubleStepFile = file;
         }
+        int fullMoves = bs.getFullMoves();
+        if (!bs.getWhiteNextMove()) {
+            fullMoves ++;
+        }
         Board resultingBoard = new Board(resultingSpaces, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-            doubleStepRank,doubleStepFile, 0, bs.getFullMoves()+1);
+            doubleStepRank,doubleStepFile, 0, fullMoves);
         if ((sign == -1) && !resultingBoard.getWhiteInCheck()||
             (sign == 1) && !resultingBoard.getBlackInCheck()){
             int targetRank = -1;
@@ -248,25 +254,58 @@ public abstract class MoveGenerator {
 
     public static Set<Board> computeKnightMoves(Board boardState, int rank, int file) {
         // TODO: Ticket #4 - generate knight moves
-        boolean isWhite = boardState.getPieceAt(rank, file).getIsWhite();
-        int targetRank;
-        int targetFile;
-
-
-        return null;
+        Set<Board> results = new HashSet<Board>();
+        knightMoveSupervisor(boardState, results, rank, file, rank-2, file-1);
+        knightMoveSupervisor(boardState, results, rank, file, rank-2, file+1);
+        knightMoveSupervisor(boardState, results, rank, file, rank-1, file+2);
+        knightMoveSupervisor(boardState, results, rank, file, rank+1, file+2);
+        knightMoveSupervisor(boardState, results, rank, file, rank+2, file+1);
+        knightMoveSupervisor(boardState, results, rank, file, rank+2, file-1);
+        knightMoveSupervisor(boardState, results, rank, file, rank+1, file-2);
+        knightMoveSupervisor(boardState, results, rank, file, rank-1, file-2);
+        return results;
     }
 
-    private boolean targetLegal(int targetRank, int targetFile, boolean isWhite, Board boardState){
-        Piece targetPiece = boardState.getPieceAt(targetRank, targetFile);
-        boolean targetPieceIsWhite;
-        if (targetPiece != null){
-            targetPieceIsWhite = targetPiece.getIsWhite();
-        } else {
-            targetPieceIsWhite = !isWhite;
+    private static void knightMoveSupervisor(Board boardState, Set<Board> results,
+        int rank, int file, int targetRank, int targetFile){
+        if ((targetRank < 0) || (targetRank > 7) || 
+            (targetFile < 0) || (targetFile > 7)) {
+            return;
         }
-        return  (targetRank >= 0) && (targetRank <= 7) && 
-                (targetFile >= 0) && (targetFile <= 7) &&
-                (isWhite != targetPieceIsWhite);
+        boolean hasCaptured = false;
+        Piece targetPiece = boardState.getPieceAt(targetRank, targetFile);
+        if (targetPiece != null){
+            if (targetPiece.getIsWhite() == boardState.getWhitesTurn()){
+                return;
+            } else {
+                hasCaptured = true;
+            }
+        }
+        Piece[][] resultingSpaces =
+            getBoardAfterMove(boardState.copySpaces(), rank, file, targetRank, targetFile);
+        addKnightMove(boardState, results, rank, file, resultingSpaces, hasCaptured);
+    }
+
+
+
+    private static void addKnightMove(Board bs, Set<Board> results, int rank,
+        int file, Piece[][] resultingSpaces, boolean hasCaptured){
+        int fullMoves = bs.getFullMoves();
+        if (!bs.getWhiteNextMove()) {
+            fullMoves ++;
+        }
+        int halfMoves = bs.getHalfMoves()+1;
+        if (hasCaptured){
+            halfMoves = 0;
+        }
+        Board resultingBoard = new Board(resultingSpaces, !bs.getWhiteNextMove(),
+            bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
+            bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
+            -1,-1, halfMoves, fullMoves);
+        if ( bs.getWhitesTurn() && !resultingBoard.getWhiteInCheck()||
+            !bs.getWhitesTurn() && !resultingBoard.getBlackInCheck()){
+            results.add(resultingBoard);
+        }
     }
 
     public static Set<Board> computeKingMoves(Board boardState, int rank, int file) {
