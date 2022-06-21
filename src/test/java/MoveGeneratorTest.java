@@ -516,5 +516,9 @@ public class MoveGeneratorTest {
             fullParseFen("rnbqkbnr/pppppppp/8/8/8/8/8/7K b kq - 1 1")));
         assertEquals(41,PositionEvaluator.evaluatePosition(
             fullParseFen("k7/8/8/8/8/8/PPPPPPPP/RNBQKBNR b kq - 1 1")));
+        assertEquals(-36,PositionEvaluator.evaluatePosition(
+            fullParseFen("rnbqk1nr/pppppppp/8/8/8/8/8/7K b kq - 1 1")));
+        assertEquals(36,PositionEvaluator.evaluatePosition(
+            fullParseFen("k7/8/8/8/8/8/PPPPPPPP/RN1QKBNR b kq - 1 1")));
     }
 }
