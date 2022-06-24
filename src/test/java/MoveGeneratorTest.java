@@ -51,11 +51,10 @@ public class MoveGeneratorTest {
     @Test
     public void moveBishopTest() {
         Board bishopTestBoard = FenParser.parseFen("7K/8/1n6/4P3/3b4/8/8/7k b - - 0 1"); //bishop starts at d4
-        System.out.println(bishopTestBoard);
         Set<Board> followUpBoards = MoveGenerator.computeBishopMoves(bishopTestBoard,4,3);
         List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
         expectedfollowUpBoards.add("7K/8/1n6/2b1P3/8/8/8/7k w - - 0 1"); //move one square to upper left
-        expectedfollowUpBoards.add("7K/8/1n6/4b3/8/8/8/7k w - - 0 1"); //capture pawn to upper right
+        expectedfollowUpBoards.add("7K/8/1n6/4b3/8/8/8/7k w - - 0 1"); //capture pawn on e5 - one square to upper right
         expectedfollowUpBoards.add("7K/8/1n6/4P3/8/2b5/8/7k w - - 0 1"); //move to c3 - one square to bottom left
         expectedfollowUpBoards.add("7K/8/1n6/4P3/8/8/1b6/7k w - - 0 1"); //move to b2 - two squares to bottom left
         expectedfollowUpBoards.add("7K/8/1n6/4P3/8/8/8/b6k w - - 0 1");  //move to a1 - three squares to bottom left
@@ -69,11 +68,44 @@ public class MoveGeneratorTest {
 
     @Test
     public void moveRookTest() {
+        Board rookTestBoard = FenParser.parseFen("2n4K/8/8/8/2r1P3/8/8/7k w - - 0 1"); //rook starts at c4
+        System.out.println(rookTestBoard); //TODO remove
+        Set<Board> followUpBoards = MoveGenerator.computeRookMoves(rookTestBoard,4,2);
+        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+        expectedfollowUpBoards.add("2n4K/8/8/8/1r2P3/8/8/7k w - - 0 1"); //move to b4 - one square to the left
+        expectedfollowUpBoards.add("2n4K/8/8/8/r3P3/8/8/7k w - - 0 1"); //move to a4 - two squares to the left
+        expectedfollowUpBoards.add("2n4K/8/8/2r5/4P3/8/8/7k w - - 0 1"); //move to c5 - one square up
+        expectedfollowUpBoards.add("2n4K/8/2r5/8/4P3/8/8/7k w - - 0 1"); //move to c6 - two squares up
+        expectedfollowUpBoards.add("2n4K/2r5/8/8/4P3/8/8/7k w - - 0 1"); //move to c7 - 3 squares up
+        expectedfollowUpBoards.add("2n4K/8/8/8/3rP3/8/8/7k w - - 0 1"); //move to d4 - one square to the right
+        expectedfollowUpBoards.add("2n4K/8/8/8/4r3/8/8/7k w - - 0 1"); //capture pawn on e4 - two squares to the right
+        expectedfollowUpBoards.add("2n4K/8/8/8/4P3/2r5/8/7k w - - 0 1"); //move to c3 - one square down
+        expectedfollowUpBoards.add("2n4K/8/8/8/4P3/8/2r5/7k w - - 0 1"); //move to c2 - two squares down
+        expectedfollowUpBoards.add("2n4K/8/8/8/4P3/8/8/2r4k w - - 0 1"); //move to c1 - three squares down
+
+
+        compareFenStringsToBoard(expectedfollowUpBoards, new ArrayList<Board>(followUpBoards));
         
     }
 
     @Test
     public void moveQueenTest() {
-        
+        Board queenTestBoard = FenParser.parseFen("7K/8/2n5/8/3P4/2q5/8/7k w - - 0 1"); //queen starts at c3
+        System.out.println(queenTestBoard);
+        Set<Board> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard,5,2);
+        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add(""); //move to
+
+
+        compareFenStringsToBoard(expectedfollowUpBoards, new ArrayList<Board>(followUpBoards));
     }
 }
