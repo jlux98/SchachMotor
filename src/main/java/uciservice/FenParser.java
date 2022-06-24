@@ -47,6 +47,21 @@ public class FenParser {
     }
 
     /**
+     * Parses the fen string and translates it into a instance of board.
+     * <br><br>
+     * This method is static and shorthand for
+     *  {@snippet: 
+     *  FenParser parser = new FenParser(fen);
+     *  return parser.parseFen();
+     *  }
+     * @param fen the fen string that should be translated
+     * @return an instance of Board representing the information that was stored in the fen string
+     */
+    public static Board parseFen(String fen) {
+        FenParser parser = new FenParser(fen);
+        return parser.parseFen();
+    }
+    /**
      * Parses the fen string that was supplied to the constructor.
      * @return an instance of Board representing the information that was stored in the fen string
      */
