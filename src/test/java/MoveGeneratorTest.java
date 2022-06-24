@@ -52,6 +52,7 @@ public class MoveGeneratorTest {
     public void moveBishopTest() {
         Board bishopTestBoard = FenParser.parseFen("7K/8/1n6/4P3/3b4/8/8/7k b - - 0 1"); //bishop starts at d4
         Set<Board> followUpBoards = MoveGenerator.computeBishopMoves(bishopTestBoard,4,3);
+        
         List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
         expectedfollowUpBoards.add("7K/8/1n6/2b1P3/8/8/8/7k w - - 0 1"); //move one square to upper left
         expectedfollowUpBoards.add("7K/8/1n6/4b3/8/8/8/7k w - - 0 1"); //capture pawn on e5 - one square to upper right
@@ -71,6 +72,7 @@ public class MoveGeneratorTest {
         Board rookTestBoard = FenParser.parseFen("2n4K/8/8/8/2r1P3/8/8/7k w - - 0 1"); //rook starts at c4
         System.out.println(rookTestBoard); //TODO remove
         Set<Board> followUpBoards = MoveGenerator.computeRookMoves(rookTestBoard,4,2);
+
         List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
         expectedfollowUpBoards.add("2n4K/8/8/8/1r2P3/8/8/7k w - - 0 1"); //move to b4 - one square to the left
         expectedfollowUpBoards.add("2n4K/8/8/8/r3P3/8/8/7k w - - 0 1"); //move to a4 - two squares to the left
@@ -93,17 +95,26 @@ public class MoveGeneratorTest {
         Board queenTestBoard = FenParser.parseFen("7K/8/2n5/8/3P4/2q5/8/7k w - - 0 1"); //queen starts at c3
         System.out.println(queenTestBoard);
         Set<Board> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard,5,2);
+
         List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
-        expectedfollowUpBoards.add(""); //move to
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/1q6/8/7k w - - 0 1"); //move to b3 - one square left
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/q7/8/7k w - - 0 1"); //move to a3 - two squares left
+        expectedfollowUpBoards.add("7K/8/2n5/8/1q1P4/8/8/7k w - - 0 1"); //move to b4 - one square to upper left
+        expectedfollowUpBoards.add("7K/8/2n5/q7/3P4/8/8/7k w - - 0 1"); //move to a5 - two squares to upper left
+        expectedfollowUpBoards.add("7K/8/2n5/8/2qP4/8/8/7k w - - 0 1"); //move to c4 - one square up
+        expectedfollowUpBoards.add("7K/8/2n5/2q5/3P4/8/8/7k w - - 0 1"); //move to c5 - two squares up
+        expectedfollowUpBoards.add("7K/8/2n5/8/3q4/8/8/7k w - - 0 1"); //capture pawn on d4 - one square to upper right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/3q4/8/7k w - - 0 1"); //move to d3 - one square to the right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/4q3/8/7k w - - 0 1"); //move to e3 - two squares to the right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/5q2/8/7k w - - 0 1"); //move to f3 - three squares to the right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/6q1/8/7k w - - 0 1"); //move to g3 - four quares to the right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/7q/8/7k w - - 0 1"); //move to h3 - five squares to the right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/3q4/7k w - - 0 1"); //move to d2 - one square to bottom right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/8/4q2k w - - 0 1"); //move to e1 - two squares to bottom right
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/2q5/7k w - - 0 1"); //move to c2 - one square down
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/8/2q4k w - - 0 1"); //move to c1 - two squares down
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/1q6/7k w - - 0 1"); //move to b2 - one square to bottom left
+        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/8/q6k w - - 0 1"); //move to a1 - two squares to bottom left
 
 
         compareFenStringsToBoard(expectedfollowUpBoards, new ArrayList<Board>(followUpBoards));
