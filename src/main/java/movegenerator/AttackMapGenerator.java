@@ -5,7 +5,6 @@ import model.PieceType;
 
 public abstract class AttackMapGenerator {
     public static boolean[][] computeChecks(Piece[][] spaces, Boolean isWhite) {
-        //TODO: Implement a method for autonomously tracking which side is in check
         boolean[][] result = new boolean[8][8];
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){

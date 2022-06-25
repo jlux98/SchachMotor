@@ -1,7 +1,6 @@
 package model;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import movegenerator.AttackMapGenerator;
 
@@ -37,7 +36,7 @@ public class Board implements Comparable<Board>{
     private boolean[][] attackedByBlack;
 
     /**
-    * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
+    * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
     * but without requiring point value and whiteInCheck / blackInCheck to be set.
     * These value may be set using the corresponding setter at a later time.
     */
@@ -88,7 +87,7 @@ public class Board implements Comparable<Board>{
     }
 
     /**
-     * Like {@link #Board(int, Optional[][], boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int)}
+     * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
      * but without requiring a point value to be set.
      * The value may be set using Board.setPointValue() at a later time.
      */
@@ -140,6 +139,91 @@ public class Board implements Comparable<Board>{
         }
         return copy;
 
+    }
+
+    /**
+     * Generates a follow-up board without en passant target square.
+     * Same as {@link Board#generateFollowUpBoard(Piece[][], int, int) generateFollowUpBoard(Board, Piece[][], -1, -1)}.
+     */
+    public Board generateFollowUpBoard(Piece[][] newPosition, boolean captureOrPawnMove) {
+        return generateFollowUpBoard(newPosition, -1, -1, captureOrPawnMove);
+    }
+
+    /**
+     * Generates a follow-up board to this board with the specified parameters.
+     * Sets check flags according to the attack maps.
+     * Castling right flags are copied from this board.
+     * <br><br>
+     * <b>Note:</b>
+     * This method is not suitable to generate follow-up boards for rooks and kings since castling rights are copied.
+     * Use {@link #generateFollowUpBoard(Piece[][], int, int, boolean, boolean, boolean, boolean)}  instead.
+     * @param newPosition the piece's  new position 
+     * @param newEnPassantTargetRank rank of the en passant target square
+     * @param newEnPassantTargetFile file of the en passant target square
+     * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
+     * @return a follow-up board to this board  
+     */
+    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
+
+        //use getters over direct field access so additional code can be run if required at a later time
+        boolean newWhiteCastlingKingside = this.getWhiteCastlingKingside();
+        boolean newWhiteCastlingQueenside = this.getWhiteCastlingQueenside();
+        boolean newBlackCastlingKingside = this.getBlackCastlingKingside();
+        boolean newBlackCastlingQueenside = this.getBlackCastlingQueenside();
+
+        return generateFollowUpBoard(newPosition, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
+                newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, captureOrPawnMove);
+    }
+
+    /**
+    * Generates a follow-up board to this board with the specified parameters.
+    * Sets check flags according to the attack maps.
+    * <br><br>  
+    * Castling flags represent permanent loss of castling ability, 
+    * not temporary inability to castle e.g. caused by check or a piece placed in between rook and king.
+    * 
+    * @param newPosition the piece's  new position 
+    * @param newEnPassantTargetRank rank of the en passant target square
+    * @param enPassantTargetFileboolean file of the en passant target square
+    * @param newWhiteCastlingKingside whether white may castle kingside
+    * @param newWhiteCastlingQueenside whether white may castle queenside
+    * @param newBlackCastlingKingside whether black may castle kingside
+    * @param newBlackCastlingQueenside whether black may castle queenside
+    * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
+    * @return a follow-up board to this board 
+    */
+    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+            boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
+            boolean newBlackCastlingQueenside, boolean captureOrPawnMove) {
+
+        //arguments start with "new" to prevent shadowing of / name-clashing with the surrounding board's attributes
+        //such shadowing should be avoided since arguments (e.g. whiteCastlingKingSide) could be missing and the value would be read
+        //from the corresponding attribute, rather than resulting in an error
+
+        int fullMoveCount = this.getFullMoves();
+        if (!this.getWhiteNextMove()) {
+            //the board following this one is black's turn
+            //so the board being generated from this board represents the game's state after black moved
+            //  -> increment fullMoveCounter
+            fullMoveCount += 1;
+        }
+
+        int halfMoveCount = this.getHalfMoves();
+        if (captureOrPawnMove) {
+            //reset half move count if a piece was captured or a pawn was moved
+            halfMoveCount = 0;
+        } else {
+            //increment otherwise
+            halfMoveCount += 1;
+        }
+
+        //TODO set check flags
+        boolean newWhiteInCheck = false;
+        boolean newBlackInCheck = false;
+
+        return new Board(newWhiteInCheck, newBlackInCheck, newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
+                newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
+                newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
 
     @Override

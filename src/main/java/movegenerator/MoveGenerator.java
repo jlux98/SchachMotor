@@ -1,5 +1,6 @@
 package movegenerator;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public abstract class MoveGenerator {
      * @return an array with all possible follow-up-boards
      */
     public static Board[] generatePossibleMoves(Board boardState) {
-        Set<Board> followUpBoards = new HashSet<>();
+        Set<Board> followUpBoards = new HashSet<>(); //is hashset preferable over array for us? set initial size of hashset in constructor
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 Set<Board> results = generatePossibleMovesPerPiece(boardState, rank, file);
@@ -199,6 +200,8 @@ public abstract class MoveGenerator {
         int targetFile = bs.getEnPassantTargetFile(); 
         if (targetRank != -1 &&
             targetFile != -1){
+                //FIXME sign * 1 leftover or typo? (again in addPawnMove)
+                //FIXME: Neither, it's intended behaviour 😅
             if (targetRank == rank+(sign*1) &&
                 (targetFile == file+1 || targetFile == file-1)){
                 Piece[][] resultingSpaces = getBoardAfterMove(bs.copySpaces(),
@@ -253,7 +256,6 @@ public abstract class MoveGenerator {
     }
 
     public static Set<Board> computeKnightMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #4 - generate knight moves
         Set<Board> results = new HashSet<Board>();
         knightMoveSupervisor(boardState, results, rank, file, rank-2, file-1);
         knightMoveSupervisor(boardState, results, rank, file, rank-2, file+1);
@@ -309,7 +311,6 @@ public abstract class MoveGenerator {
     }
 
     private static Set<Board> computeKingMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #8 - generate king moves
         Set<Board> results = new HashSet<>();
         // Attack north
         computeKingStep(boardState, results, rank, file, rank-1, file);
@@ -331,10 +332,6 @@ public abstract class MoveGenerator {
         computeCastlingKingside(boardState, results);
         computeCastlingQueenside(boardState, results);
         return results;
-    }
-
-    private static void computeCastling(Board bs, Set<Board> results) {
-        
     }
 
     private static void computeCastlingKingside(Board bs, Set<Board> results){
@@ -473,69 +470,169 @@ public abstract class MoveGenerator {
         }
     }
 
+    /**
+     * Generates all legal moves for a specific bishop.
+     * @param boardState the board for which a follow-up board should be generated
+     * @param rank the rank of the bishop
+     * @param file the file of the bishop
+     * @return the boards that the generated moves result in
+     */
     public static Set<Board> computeBishopMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #5 - generate bishop moves
-        Piece spaces[][] = boardState.copySpaces();
-        return null;
+        return computeDiagonalMoves(boardState, rank, file);
     }
 
     /**
-     * generates all legal diagonal moves (used for bishop and queen)
+    * Generates all legal moves for a specific rook.
+    * @param boardState the board for which a follow-up board should be generated
+    * @param rank the rank of the rook
+    * @param file the file of the rook
+    * @return the boards that the generated moves result in
+    */
+    public static Set<Board> computeRookMoves(Board boardState, int rank, int file) {
+        return computeHorizontalAndVerticalMoves(boardState, rank, file);
+    }
+
+    /**
+    * Generates all legal moves for a specific queen.
+    * @param boardState the board for which a follow-up board should be generated
+    * @param rank the rank of the queen
+    * @param file the file of the queen
+    * @return the boards that the generated moves result in
+    */
+    public  static Set<Board> computeQueenMoves(Board boardState, int rank, int file) {
+        HashSet<Board> moves = new HashSet<Board>();
+        moves.addAll(computeHorizontalAndVerticalMoves(boardState, rank, file));
+        moves.addAll(computeDiagonalMoves(boardState, rank, file));
+        return moves;
+    }
+
+    /**
+      * Generates all legal horizontal and vertical moves (used for rook and queen).
+      * @param boardState the board for which a follow-up board should be generated
+      * @param rank the rank of the piece to be moved
+      * @param file the file of the piece to be moved
+      * @return the boards that the generated moves result in
+      */
+    private static Set<Board> computeHorizontalAndVerticalMoves(Board boardState, int rank, int file) {
+        HashSet<Board> moves = new HashSet<Board>();
+        //left
+        moves.addAll(computeRay(boardState, rank, file, -1, 0));
+        //right
+        moves.addAll(computeRay(boardState, rank, file, 1, 0));
+        //up
+        moves.addAll(computeRay(boardState, rank, file, 0, -1));
+        //down
+        moves.addAll(computeRay(boardState, rank, file, 0, 1));
+        return moves;
+    }
+
+    /**
+     * Generates all legal diagonal moves (used for bishop and queen).
+     * @param boardState the board for which a follow-up board should be generated
+     * @param rank the rank of the piece to be moved
+     * @param file the file of the piece to be moved
+     * @return the boards that the generated moves result in
      */
 
-    private Set<Board> computeDiagonalMoves(Board boardState, int rank, int file) {
+    private static Set<Board> computeDiagonalMoves(Board boardState, int rank, int file) {
         HashSet<Board> diagonalMoves = new HashSet<Board>();
         //upper left
-        diagonalMoves.addAll(computeDiagonal(boardState, rank, file, -1, -1));
+        diagonalMoves.addAll(computeRay(boardState, rank, file, -1, -1));
         //bottom left
-        diagonalMoves.addAll(computeDiagonal(boardState, rank, file, -1, 1));
+        diagonalMoves.addAll(computeRay(boardState, rank, file, -1, 1));
         //upper right
-        diagonalMoves.addAll(computeDiagonal(boardState, rank, file, 1, -1));
+        diagonalMoves.addAll(computeRay(boardState, rank, file, 1, -1));
         //bottom right
-        diagonalMoves.addAll(computeDiagonal(boardState, rank, file, 1, 1));
+        diagonalMoves.addAll(computeRay(boardState, rank, file, 1, 1));
         return diagonalMoves;
     }
 
+    public static boolean targetLegal(int targetRank, int targetFile, boolean isWhite, Board boardState){
+        if ((targetRank < 0) || (targetRank > 7) || 
+            (targetFile < 0) || (targetFile > 7)) {
+                return false;
+            }
+        Piece targetPiece = boardState.getPieceAt(targetRank, targetFile);
+        boolean targetPieceIsWhite;
+        if (targetPiece != null){
+            targetPieceIsWhite = targetPiece.getIsWhite();
+        } else {
+            targetPieceIsWhite = !isWhite;
+        }
+        return (isWhite != targetPieceIsWhite);
+    }
+
     /**
-     * generates all legal moves along one diagonal (e.g. upper left)
-     * @param xOffset 
-     * @param yOffset 
+     * Generates boards for pieces other than pawns.
+     * Shorthand for {@link #computeRay(Board, int, int, int, int, boolean) computeRay(currentBoard, rank, file, xOffset, yOffset, false)}.
+     * @param currentBoard
+     * @param rank
+     * @param file
+     * @param xOffset
+     * @param yOffset
+     * @return
+     */
+    private static Set<Board> computeRay(Board currentBoard, int rank, int file, int xOffset, int yOffset) {
+        return  computeRay(currentBoard, rank, file, xOffset, yOffset, false);
+    }
+
+    /**
+     * Generates a piece's legal moves along a ray facing the direction specified by xOffset and yOffset (e.g. upper left).
+     * @param currentBoard the board to generate follow-up moves / boards for
+     * @param startingRank starting rank of the piece
+     * @param startingFile starting file of the piece
+     * @param xOffset value added to x coordinate in each step, should range from -1 to 1
+     * @param yOffset value added to y coordinate in each step, should range from -1 to 1
+     * @param isPawnMove whether this board is created for a pawn move. if true, resets half move count
+     * @return a set containing the boards generated by moving along the ray
+     * @throws IllegalArgumentException if both xOffset and yOffset are 0,
+     * which would result in generation of the same space over and over
      *
      */
-    private Set<Board> computeDiagonal(Board boardState, int rank, int file, int xOffset, int yOffset) {
-        HashSet<Board> diagonal = new HashSet<Board>();
-        Piece spaces[][] = boardState.copySpaces();
-        Piece piece = spaces[rank][file];
-
-        Board generatedBoard = null;
-        boolean legal = true;
-        while (legal) {
-            //todo test if legal before placing
-            //walk along diagonal
-            spaces[rank][file] = null;
-            spaces[rank + xOffset][file + yOffset] = piece;
-            //FIXME how to determine check and castling data
-            //generatedBoard = new Board(whiteInCheck, blackInCheck, spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves)
-            diagonal.add(generatedBoard);
-
+    private static Set<Board> computeRay(Board currentBoard, int startingRank, int startingFile, int xOffset, int yOffset, boolean isPawnMove) {
+        if (xOffset == 0 && yOffset == 0) {
+            throw new IllegalArgumentException("must specify an offset (other than 0,0) for ray generation");
         }
-        return diagonal;
-    }
 
-    private boolean isMoveLegal() {
-        //TODO implement
-        return false;
-    }
+        Piece piece = currentBoard.getPieceAt(startingRank, startingFile);
+        if (piece == null) {
+            throw new IllegalArgumentException("the specified square does not contain a piece");
+        }
+        HashSet<Board> moves = new HashSet<Board>();
+        Board generatedBoard = null;
+        Piece newSpaces[][] = null;
+        boolean didCapture = false;
 
+        int rank = startingRank;
+        int file = startingFile;
+        
+        
+        //TODO adjust rank and file index in array ([rank][file] or [file][rank])
+        //rank number depends on y axis, file number on x axis
 
-    public static Set<Board> computeRookMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #6 - generate rook moves
-        return null;
-    }
+        //while next step legal and last step did not capture
+        while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentBoard) && !didCapture) {
+            //get a new copy every time
+            newSpaces = currentBoard.copySpaces();
 
-    public static Set<Board> computeQueenMoves(Board boardState, int rank, int file) {
-        // TODO: Ticket #7 - generate queen moves
-        return null;
+            //leave starting space
+            newSpaces[startingRank][startingFile] = null;
+
+            //move to next space, capture by overwriting existing pieces if needed
+            if (newSpaces[rank + yOffset][file + xOffset] != null) {
+                didCapture = true;
+            }
+            newSpaces[rank + yOffset][file + xOffset] = piece;
+
+            generatedBoard = currentBoard.generateFollowUpBoard(newSpaces, didCapture || isPawnMove);
+            moves.add(generatedBoard);
+
+            //current position is the space that was moved on
+            rank += yOffset;
+            file += xOffset;
+        }
+
+        return moves;
     }
 
     /**
@@ -560,7 +657,6 @@ public abstract class MoveGenerator {
         Piece movingPiece = spaces[startingRank][startingFile];
         spaces[startingRank][startingFile] = null;
         spaces[targetRank][targetFile] = movingPiece;
-        // TODO: Notieren, ob eine Figur geschlagen wurde - somehow
         return spaces;
     }
 }
