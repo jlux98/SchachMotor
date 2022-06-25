@@ -144,12 +144,9 @@ public class Board implements Comparable<Board>{
     /**
      * Generates a follow-up board without en passant target square.
      * Same as {@link Board#generateFollowUpBoard(Piece[][], int, int) generateFollowUpBoard(Board, Piece[][], -1, -1)}.
-     * @param previousBoard
-     * @param newPosition
-     * @return
      */
-    public Board generateFollowUpBoard(Piece[][] newPosition) {
-        return generateFollowUpBoard(newPosition, -1, -1);
+    public Board generateFollowUpBoard(Piece[][] newPosition, boolean captureOrPawnMove) {
+        return generateFollowUpBoard(newPosition, -1, -1, captureOrPawnMove);
     }
 
     /**
@@ -163,9 +160,10 @@ public class Board implements Comparable<Board>{
      * @param newPosition the piece's  new position 
      * @param newEnPassantTargetRank rank of the en passant target square
      * @param newEnPassantTargetFile file of the en passant target square
+     * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
      * @return a follow-up board to this board  
      */
-    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile) {
+    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
 
         //use getters over direct field access so additional code can be run if required at a later time
         boolean newWhiteCastlingKingside = this.getWhiteCastlingKingside();
@@ -174,7 +172,7 @@ public class Board implements Comparable<Board>{
         boolean newBlackCastlingQueenside = this.getBlackCastlingQueenside();
 
         return generateFollowUpBoard(newPosition, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
-                newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside);
+                newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, captureOrPawnMove);
     }
 
     /**
@@ -191,11 +189,12 @@ public class Board implements Comparable<Board>{
     * @param newWhiteCastlingQueenside whether white may castle queenside
     * @param newBlackCastlingKingside whether black may castle kingside
     * @param newBlackCastlingQueenside whether black may castle queenside
+    * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
     * @return a follow-up board to this board 
     */
     public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
-            boolean newBlackCastlingQueenside) {
+            boolean newBlackCastlingQueenside, boolean captureOrPawnMove) {
 
         //arguments start with "new" to prevent shadowing of / name-clashing with the surrounding board's attributes
         //such shadowing should be avoided since arguments (e.g. whiteCastlingKingSide) could be missing and the value would be read
@@ -207,13 +206,22 @@ public class Board implements Comparable<Board>{
             fullMoveCount += 1;
         }
 
+        int halfMoveCount = this.getHalfMoves();
+        if (captureOrPawnMove) {
+            //reset half move count if a piece was captured or a pawn was moved
+            halfMoveCount = 0;
+        } else {
+            //increment otherwise
+            halfMoveCount += 1;
+        }
+
         //TODO set check flags
         boolean newWhiteInCheck = false;
         boolean newBlackInCheck = false;
 
         return new Board(newWhiteInCheck, newBlackInCheck, newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
-                newEnPassantTargetFile, this.getHalfMoves() + 1, fullMoveCount);
+                newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
 
     @Override
