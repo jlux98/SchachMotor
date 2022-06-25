@@ -3,6 +3,8 @@ package model;
 import java.util.Arrays;
 import java.util.Optional;
 
+import movegenerator.AttackMapGenerator;
+
 /**
  * Class representing the game state.
  * <br><br>
@@ -13,7 +15,7 @@ import java.util.Optional;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Board {
+public class Board implements Comparable<Board>{
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -31,6 +33,8 @@ public class Board {
     private int enPassantTargetFile;
     private int halfMovesSincePawnMoveOrCapture;
     private int fullMoveCount;
+    private boolean[][] attackedByWhite;
+    private boolean[][] attackedByBlack;
 
     /**
     * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
@@ -67,11 +71,20 @@ public class Board {
         this.enPassantTargetFile = enPassantTargetFile;
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
-        computeChecks();
-    }
-
-    private void computeChecks() {
-        //TODO: Implement a method for autonomously tracking which side is in check
+        this.attackedByWhite = AttackMapGenerator.computeChecks(spaces, true);
+        this.attackedByBlack = AttackMapGenerator.computeChecks(spaces, false);
+        Coordinate whiteKing = getKingPosition(true);
+        if (whiteKing != null){
+            this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
+        } else {
+            throw new IllegalStateException("There must not be a game state without a white King!");
+        }
+        Coordinate blackKing = getKingPosition(false);
+        if (blackKing != null){
+            this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
+        } else {
+            throw new IllegalStateException("There must not be a game state without a black King!");
+        }
     }
 
     /**
@@ -131,7 +144,6 @@ public class Board {
 
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
         if (obj instanceof Board){
             Board board = (Board) obj;
             return  (blackCastlingKingside == board.getBlackCastlingKingside()) &&
@@ -142,7 +154,7 @@ public class Board {
                     (fullMoveCount == board.getFullMoves()) &&
                     (halfMovesSincePawnMoveOrCapture == board.getHalfMoves()) &&
                     (pointValue == board.getPointValue()) &&
-                    (spaces.equals(board.getSpaces())) &&
+                    (spacesEquals(board.getSpaces())) &&
                     (whiteCastlingKingside == board.getWhiteCastlingKingside()) &&
                     (whiteCastlingQueenside == board.getWhiteCastlingQueenside()) &&
                     (whiteInCheck == board.getWhiteInCheck()) &&
@@ -154,22 +166,21 @@ public class Board {
 
     public static String spacesToString(Piece[][] inputSpaces){
         String[] spaceStrings = new String [8];
-        for (int i = 0; i < 8; i++) {
+        for (int rank = 0; rank < 8; rank++) {
             String result = "";
-            for (int j = 0; j < 8; j++){
-                /*  Ordering: it is more intuive for code to write [x][y] for coordinates
-                    but this leads to the toString depicting the board on its
-                    side without swapping i and j here */
-                Piece currentPiece = inputSpaces[j][i]; 
+            for (int file = 0; file < 8; file++){
+                /*  Ordering: see the FIXME in FenParser.java */
+                Piece currentPiece = inputSpaces[rank][file]; 
                 if (currentPiece != null){
                     result += currentPiece.toString();
                 } else {
                     result += "0";
                 }
             }
-            spaceStrings[i] = result;
+            spaceStrings[rank] = result;
         }
-        return Arrays.toString(spaceStrings);
+        
+        return Arrays.toString(spaceStrings).replace(", ", ",\n");
     }
 
     public boolean spacesEquals(Object o){
@@ -323,5 +334,43 @@ public class Board {
 
     public Piece getPieceAt(int rank, int file){
         return spaces[rank][file];
+    }
+
+    public boolean[][] getAttackedByWhite() {
+        return attackedByWhite;
+    }
+
+    public void setAttackedByWhite(boolean[][] attackedByWhite) {
+        this.attackedByWhite = attackedByWhite;
+    }
+
+    public boolean[][] getAttackedByBlack() {
+        return attackedByBlack;
+    }
+
+    public void setAttackedByBlack(boolean[][] attackedByBlack) {
+        this.attackedByBlack = attackedByBlack;
+    }
+
+    public Coordinate getKingPosition(boolean isWhite){
+        for (int rank = 0; rank < 8; rank++){
+            for (int file = 0; file < 8; file++){
+                Piece currentPiece = spaces[rank][file];
+                if (isWhite && currentPiece != null &&
+                    currentPiece.toString().equals("K")){
+                    return new Coordinate(rank, file);
+                }
+                if (!isWhite && currentPiece != null &&
+                    currentPiece.toString().equals("k")){
+                    return new Coordinate(rank, file);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public int compareTo(Board otherBoard) {
+        return this.toString().compareTo(otherBoard.toString());
     }
 }
