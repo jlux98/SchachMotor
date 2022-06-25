@@ -1,5 +1,6 @@
 package movegenerator;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -578,8 +579,8 @@ public abstract class MoveGenerator {
     /**
      * Generates a piece's legal moves along a ray facing the direction specified by xOffset and yOffset (e.g. upper left).
      * @param currentBoard the board to generate follow-up moves / boards for
-     * @param rank starting rank of the piece
-     * @param file starting file of the piece
+     * @param startingRank starting rank of the piece
+     * @param startingFile starting file of the piece
      * @param xOffset value added to x coordinate in each step, should range from -1 to 1
      * @param yOffset value added to y coordinate in each step, should range from -1 to 1
      * @param isPawnMove whether this board is created for a pawn move. if true, resets half move count
@@ -588,36 +589,42 @@ public abstract class MoveGenerator {
      * which would result in generation of the same space over and over
      *
      */
-    private static Set<Board> computeRay(Board currentBoard, int rank, int file, int xOffset, int yOffset, boolean isPawnMove) {
+    private static Set<Board> computeRay(Board currentBoard, int startingRank, int startingFile, int xOffset, int yOffset, boolean isPawnMove) {
         if (xOffset == 0 && yOffset == 0) {
             throw new IllegalArgumentException("must specify an offset (other than 0,0) for ray generation");
         }
 
-        Piece piece = currentBoard.getPieceAt(rank, file);
+        Piece piece = currentBoard.getPieceAt(startingRank, startingFile);
         if (piece == null) {
             throw new IllegalArgumentException("the specified square does not contain a piece");
         }
         HashSet<Board> moves = new HashSet<Board>();
         Board generatedBoard = null;
         Piece newSpaces[][] = null;
-        boolean capture = false;
+        boolean didCapture = false;
+
+        int rank = startingRank;
+        int file = startingFile;
+        
+        
         //TODO adjust rank and file index in array ([rank][file] or [file][rank])
         //rank number depends on y axis, file number on x axis
+
         //while next step legal and last step did not capture
-        while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentBoard) && !capture) {
+        while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentBoard) && !didCapture) {
             //get a new copy every time
             newSpaces = currentBoard.copySpaces();
 
-            //leave current space
-            newSpaces[rank][file] = null;
+            //leave starting space
+            newSpaces[startingRank][startingFile] = null;
 
             //move to next space, capture by overwriting existing pieces if needed
             if (newSpaces[rank + yOffset][file + xOffset] != null) {
-                capture = true;
+                didCapture = true;
             }
             newSpaces[rank + yOffset][file + xOffset] = piece;
 
-            generatedBoard = currentBoard.generateFollowUpBoard(newSpaces, capture || isPawnMove);
+            generatedBoard = currentBoard.generateFollowUpBoard(newSpaces, didCapture || isPawnMove);
             moves.add(generatedBoard);
 
             //current position is the space that was moved on
