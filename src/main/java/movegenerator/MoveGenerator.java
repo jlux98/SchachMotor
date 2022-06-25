@@ -600,23 +600,24 @@ public abstract class MoveGenerator {
         HashSet<Board> moves = new HashSet<Board>();
         Board generatedBoard = null;
         Piece newSpaces[][] = null;
-        boolean captureOrPawnMove = isPawnMove;
+        boolean capture = false;
         //TODO adjust rank and file index in array ([rank][file] or [file][rank])
         //rank number depends on y axis, file number on x axis
-        //while next step legal
-        while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentBoard)) {
+        //while next step legal and last step did not capture
+        while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentBoard) && !capture) {
+            //get a new copy every time
             newSpaces = currentBoard.copySpaces();
 
             //leave current space
             newSpaces[rank][file] = null;
 
             //move to next space, capture by overwriting existing pieces if needed
-            if (newSpaces[rank + xOffset][file + yOffset] != null) {
-                captureOrPawnMove = true;
+            if (newSpaces[rank + yOffset][file + xOffset] != null) {
+                capture = true;
             }
-            newSpaces[rank + xOffset][file + yOffset] = piece;
+            newSpaces[rank + yOffset][file + xOffset] = piece;
 
-            generatedBoard = currentBoard.generateFollowUpBoard(newSpaces, captureOrPawnMove);
+            generatedBoard = currentBoard.generateFollowUpBoard(newSpaces, capture || isPawnMove);
             moves.add(generatedBoard);
 
             //current position is the space that was moved on
