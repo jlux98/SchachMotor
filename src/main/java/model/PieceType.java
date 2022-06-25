@@ -15,7 +15,8 @@ public enum PieceType {
     BISHOP(3),
     ROOK(5),
     QUEEN(9),
-    KING(0);
+    // As proposed by https://www.chessprogramming.org/Point_Value the King gets a large constant
+    KING(100);
 
     private int pointValue;
 
