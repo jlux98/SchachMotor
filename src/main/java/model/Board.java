@@ -201,8 +201,10 @@ public class Board implements Comparable<Board>{
         //from the corresponding attribute, rather than resulting in an error
 
         int fullMoveCount = this.getFullMoves();
-        if (this.getWhiteNextMove()) {
-            //the board to be generated is white's turn. since black just moved, increment fullMoveCounter
+        if (!this.getWhiteNextMove()) {
+            //the board following this one is black's turn
+            //so the board being generated from this board represents the game's state after black moved
+            //  -> increment fullMoveCounter
             fullMoveCount += 1;
         }
 
