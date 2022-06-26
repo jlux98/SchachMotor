@@ -58,7 +58,7 @@ public class Board implements Comparable<Board>{
         }
         if (fullMoves < 1) {
             //full move counter starts at 1
-            throw new IllegalArgumentException("full move count must be greater than 1");
+            throw new IllegalArgumentException("full move count must be greater than 0");
         }
         this.spaces = spaces;
         this.whiteNextMove = whiteNextMove;
