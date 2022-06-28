@@ -488,6 +488,7 @@ public abstract class MoveGenerator {
     * @return the boards that the generated moves result in
     */
     public static Set<Board> computeRookMoves(Board boardState, int rank, int file) {
+        // TODO: manipulate castling rights
         return computeHorizontalAndVerticalMoves(boardState, rank, file);
     }
 
