@@ -615,7 +615,6 @@ public class MoveGeneratorTest {
      */
     public void pieceInA8CornerTest() {
         Board queenTestBoard = FenParser.parseFen("qr6/rr6/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at a8
-        System.out.println(queenTestBoard);
         Set<Board> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 0, 0);
         List<String> emptyList = new ArrayList<String>();
         compareFenStringsToBoard(emptyList, followUpBoards);
@@ -629,7 +628,6 @@ public class MoveGeneratorTest {
      */
     public void pieceInH8CornerTest() {
         Board queenTestBoard = FenParser.parseFen("6rq/6rr/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at h8
-        System.out.println(queenTestBoard);
         Set<Board> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 0, 7);
         List<String> emptyList = new ArrayList<String>();
         compareFenStringsToBoard(emptyList, followUpBoards);
@@ -643,7 +641,6 @@ public class MoveGeneratorTest {
      */
     public void pieceInA1CornerTest() {
         Board queenTestBoard = FenParser.parseFen("8/8/8/8/3Kk3/8/rr6/qr6 w - - 0 1"); //queen starts at a1
-        System.out.println(queenTestBoard);
         Set<Board> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 7, 0);
         List<String> emptyList = new ArrayList<String>();
         compareFenStringsToBoard(emptyList, followUpBoards);
@@ -657,7 +654,6 @@ public class MoveGeneratorTest {
      */
     public void pieceInH1CornerTest() {
         Board queenTestBoard = FenParser.parseFen("8/8/8/8/3Kk3/8/6rr/6rq w - - 0 1"); //queen starts at h1
-        System.out.println(queenTestBoard);
         Set<Board> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 7, 7);
         List<String> emptyList = new ArrayList<String>();
         compareFenStringsToBoard(emptyList, followUpBoards);
