@@ -56,6 +56,26 @@ public class BoardTest {
     }
 
     @Test
+    public void constructorTest() {
+        Board constructedBoard = new Board(Integer.MAX_VALUE, true, false, testSpaces, true, true, false, false, true, 3, 5, 1297, 4289);
+        assertEquals(Integer.MAX_VALUE, constructedBoard.getPointValue());
+        assertTrue(constructedBoard.getWhiteInCheck());
+        assertFalse(constructedBoard.getBlackInCheck());
+        assertTrue(testSpaces == constructedBoard.getSpaces());
+        assertTrue(constructedBoard.getWhiteNextMove());
+        assertTrue(constructedBoard.getWhiteCastlingKingside());
+        assertFalse(constructedBoard.getWhiteCastlingQueenside());
+        assertFalse(constructedBoard.getBlackCastlingKingside());
+        assertTrue(constructedBoard.getBlackCastlingQueenside());
+        assertEquals(3, constructedBoard.getEnPassantTargetRank());
+        assertEquals(5, constructedBoard.getEnPassantTargetFile());
+        assertEquals(1297, constructedBoard.getHalfMoves());
+        assertEquals(4289, constructedBoard.getFullMoves());
+
+
+    }
+
+    @Test
     public void copySpacesTest() {
         Board board = new Board(false, false, testSpaces, false, false, false, false, false, 0, 0, 0, 1);
         Piece[][] copy = board.copySpaces();
@@ -191,5 +211,5 @@ public class BoardTest {
         assertFalse(testBoard.equals(comparedBoard));
     }
 
-    //test
+    
 }
