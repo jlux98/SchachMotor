@@ -513,9 +513,9 @@ public class MoveGeneratorTest {
     @Test
     public void positionEvaluatorTest(){
         assertEquals(0, PositionEvaluator.evaluatePosition(startingPosition));
-        assertEquals(-41,PositionEvaluator.evaluatePosition(
+        assertEquals(-40,PositionEvaluator.evaluatePosition(
             fullParseFen("rnbqkbnr/pppppppp/8/8/8/8/8/7K b kq - 1 1")));
-        assertEquals(41,PositionEvaluator.evaluatePosition(
+        assertEquals(40,PositionEvaluator.evaluatePosition(
             fullParseFen("k7/8/8/8/8/8/PPPPPPPP/RNBQKBNR b kq - 1 1")));
         assertEquals(-36,PositionEvaluator.evaluatePosition(
             fullParseFen("rnbqk1nr/pppppppp/8/8/8/8/8/7K b kq - 1 1")));
