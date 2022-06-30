@@ -1,7 +1,6 @@
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -96,7 +95,7 @@ public class BoardTest {
         Board base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
         Piece[][] copiedSpaces = base.copySpaces();
         Board followUpBoard = base.generateFollowUpBoard(copiedSpaces, false);
-        assertTrue(followUpBoard.getBlackInCheck());
+        assertFalse(followUpBoard.getBlackInCheck());
         assertFalse(followUpBoard.getWhiteInCheck());
     }
 
