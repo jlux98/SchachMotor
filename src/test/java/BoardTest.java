@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import model.Board;
 import model.Piece;
+import uciservice.FenParser;
 
 public class BoardTest {
 
@@ -88,6 +89,46 @@ public class BoardTest {
         assertEquals(4289, constructedBoard.getFullMoves());
 
 
+    }
+
+    @Test
+    public void followUpBoardNoCheckTest() {
+        Board base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
+        Piece[][] copiedSpaces = base.copySpaces();
+        Board followUpBoard = base.generateFollowUpBoard(copiedSpaces, false);
+        assertTrue(followUpBoard.getBlackInCheck());
+        assertFalse(followUpBoard.getWhiteInCheck());
+    }
+
+    @Test
+    public void followUpBoardWhiteInCheckTest() {
+        Board base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
+        Piece[][] copiedSpaces = base.copySpaces();
+        copiedSpaces[1][2] = new Piece('n');// white in check
+        Board followUpBoard = base.generateFollowUpBoard(copiedSpaces, false);
+        assertFalse(followUpBoard.getBlackInCheck());
+        assertTrue(followUpBoard.getWhiteInCheck());
+    }
+
+    @Test
+    public void followUpBoardBlackInCheckTest() {
+        Board base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
+        Piece[][] copiedSpaces = base.copySpaces();
+        copiedSpaces[3][0] = new Piece('R');// black in check
+        Board followUpBoard = base.generateFollowUpBoard(copiedSpaces, false);
+        assertTrue(followUpBoard.getBlackInCheck());
+        assertFalse(followUpBoard.getWhiteInCheck());
+    }
+
+    @Test
+    public void followUpBoardBothInCheckTest() {
+        Board base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
+        Piece[][] copiedSpaces = base.copySpaces();
+        copiedSpaces[3][0] = new Piece('R'); // black in check
+        copiedSpaces[1][2] = new Piece('n'); // white in check
+        Board followUpBoard = base.generateFollowUpBoard(copiedSpaces, false);
+        assertTrue(followUpBoard.getBlackInCheck());
+        assertTrue(followUpBoard.getWhiteInCheck());
     }
 
     @Test

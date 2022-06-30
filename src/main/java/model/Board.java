@@ -217,11 +217,7 @@ public class Board implements Comparable<Board>, Cloneable{
             halfMoveCount += 1;
         }
 
-        //TODO set check flags
-        boolean newWhiteInCheck = false;
-        boolean newBlackInCheck = false;
-
-        return new Board(newWhiteInCheck, newBlackInCheck, newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
+        return new Board(newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
