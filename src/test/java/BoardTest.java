@@ -190,4 +190,6 @@ public class BoardTest {
                 0, 0, 2);
         assertFalse(testBoard.equals(comparedBoard));
     }
+
+    //test
 }
