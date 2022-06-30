@@ -97,4 +97,19 @@ public class Piece {
         }
         return result;
     }
+
+    @Override
+    public boolean equals(Object otherObject) {
+        if (otherObject == null) {
+            return false;
+        }
+        if (this == otherObject) {
+            return true;
+        }
+        if (!(otherObject instanceof Piece)) {
+            return false;
+        }
+        Piece otherPiece = (Piece) otherObject;
+        return this.getIsWhite() == otherPiece.getIsWhite() && this.getPieceType() == otherPiece.getPieceType();
+    }
 }

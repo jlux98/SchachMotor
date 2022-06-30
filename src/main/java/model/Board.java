@@ -14,7 +14,7 @@ import movegenerator.AttackMapGenerator;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Board implements Comparable<Board>{
+public class Board implements Comparable<Board>, Cloneable{
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -58,7 +58,7 @@ public class Board implements Comparable<Board>{
         }
         if (fullMoves < 1) {
             //full move counter starts at 1
-            throw new IllegalArgumentException("full move count must be greater than 1");
+            throw new IllegalArgumentException("full move count must be greater than 0");
         }
         this.spaces = spaces;
         this.whiteNextMove = whiteNextMove;
@@ -113,8 +113,8 @@ public class Board implements Comparable<Board>{
      * @param blackCastlingQueenside whether black can castle queenside
      * @param enPassantTargetRank if a pawn performed a double-step in the last turn, the rank of the traversed space; -1 otherwise
      * @param enPassantTargetFile if a pawn performed a double-step in the last turn, the file of the traversed space; -1 otherwise
-     * @param halfMoves the number of half moves since a piece was captured or a pawn was moved 
-     * @param fullMoves the number of full moves that have been played since the start of this game
+     * @param halfMoves the number of half moves since a piece was captured or a pawn was moved . Starts at 0.
+     * @param fullMoves the number of full moves that have been played since the start of this game. Starts at 1.
      */
     public Board(int pointValue, boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
@@ -128,7 +128,7 @@ public class Board implements Comparable<Board>{
     /**
      * Copies the spaces array to facilitate generation of follow-up boards wtihout affecting this board.
      * <br><br>
-     * <b>Note:</b> the pieces themselves are not copied (the same piece instances are returned inside the copied array)
+     * <b>Note:</b> Because pieces are immutable the pieces themselves are not copied (the same piece instances are returned within the copied array).
      * @return a copy of the two dimensional array representing the chess pieces' positions.
      */
     public Piece[][] copySpaces() {
@@ -217,11 +217,7 @@ public class Board implements Comparable<Board>{
             halfMoveCount += 1;
         }
 
-        //TODO set check flags
-        boolean newWhiteInCheck = false;
-        boolean newBlackInCheck = false;
-
-        return new Board(newWhiteInCheck, newBlackInCheck, newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
+        return new Board(newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
@@ -320,6 +316,19 @@ public class Board implements Comparable<Board>{
         return result;
     }
 
+    @Override
+    /**
+     * Clones this board.
+     * While a new spaces array is created, the contained pieces are the same instances.
+     * Thus modifying the array is possible without affecting this board.
+     * As pieces are immutable it is valid to use the same instances.
+     */
+    public Board clone() {
+        Piece[][] copiedSpaces = this.copySpaces();
+        return new Board(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
+                this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
+                this.enPassantTargetRank, this.enPassantTargetFile, this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
+    }
 
     /**
      * Sets the point value of this board.
