@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,8 +26,17 @@ public class MoveGeneratorTest {
     private Board kingTestPosition;
     private Board knightTestPosition;
 
+    private static Board blackCastlingBoard;
+    private static Board whiteCastlingBoard;
+
+    @BeforeAll
+    public static void setup() {
+       blackCastlingBoard = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R b KQkq - 0 1");
+       whiteCastlingBoard = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
+    }
     @BeforeEach
     public void initialize(){
+        //TODO is before each required over before all?
         startingPosition = fullParseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
             "w KQkq - 0 1");
         emptyPosition = fullParseFen("k7/8/8/8/8/8/8/7K " +
@@ -578,6 +588,54 @@ public class MoveGeneratorTest {
 
         compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
 
+    }
+
+    @Test
+    public void moveBlackKingsideRookTest() {
+        Set<Board> followUpBoards = MoveGenerator.computeRookMoves(blackCastlingBoard, 0, 7);
+        
+        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+
+        expectedfollowUpBoards.add("r3k1r1/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to g8 - one square to the left
+        expectedfollowUpBoards.add("r3kr2/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to f8 - two squares to the left
+
+        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+    }
+
+    @Test
+    public void moveBlackQueensideRookTest() {
+        Set<Board> followUpBoards = MoveGenerator.computeRookMoves(blackCastlingBoard, 0, 0);
+        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+
+        expectedfollowUpBoards.add("1r2k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to b8 - one square to the right
+        expectedfollowUpBoards.add("2r1k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to c8 - two squares to the right
+        expectedfollowUpBoards.add("3rk2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to d8 - three squares to the right
+
+        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        
+    }
+
+    @Test
+    public void moveWhiteKingSideRookTest() {
+        Set<Board> followUpBoards = MoveGenerator.computeRookMoves(whiteCastlingBoard, 7, 7);
+        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+
+        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 0 1"); //move to g1 - one square to the left
+        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 0 1"); //move to f1 - two squares to the left
+
+        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+    }
+
+    @Test
+    public void moveWhiteQueensideRookTest() {
+        Set<Board> followUpBoards = MoveGenerator.computeRookMoves(whiteCastlingBoard, 7, 0);
+        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+
+        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/1R2K2R b Kkq - 1 1"); //move to b1 - one square to the right
+        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/2R1K2R b Kkq - 1 1"); //move to c1 - two squares to the right
+        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/3RK2R b Kkq - 1 1"); //move to d1 - three squares to the right
+        
+        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
     }
 
     @Test
