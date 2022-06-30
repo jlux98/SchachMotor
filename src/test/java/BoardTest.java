@@ -49,10 +49,25 @@ public class BoardTest {
             { new Piece('N'), new Piece('R'), null, new Piece('b'), null, new Piece('p'), new Piece('r'), null },
     };
 
+    /**
+     * Returns a board that is equal to testBoard except for one square.
+     * @param rank the rank of the square that should be changed
+     * @param file the file of the square that should be changed
+     * @param pieceCharacter the piece that should be placed on the square
+     * @return
+     */
     private Board generateBoardWithModififedSpaces(int rank, int file, char pieceCharacter) {
         Piece[][] modifiedSpaces = testBoard.copySpaces();
         modifiedSpaces[rank][file] = new Piece(pieceCharacter);
         return new Board(0, false, false, modifiedSpaces, false, false, false, false, false, 0, 0, 0, 1);
+    }
+
+    /**
+     * Asserts that the board has en passant target rank and file of -1.
+     */
+    private void assertNoEnPassantTargetSquare(Board board) {
+        assertEquals(-1, board.getEnPassantTargetRank());
+        assertEquals(-1, board.getEnPassantTargetFile());
     }
 
     @Test
@@ -88,6 +103,83 @@ public class BoardTest {
                 assertEquals(testSpaces[i][j], copy[i][j]);
             }
         }
+    }
+
+    @Test
+    public void generateFollowUpBoardForBlack() {
+        //white next move == false
+        Piece[][] copiedSpaces = testBoard.copySpaces();
+        Board followUpBoard = testBoard.generateFollowUpBoard(copiedSpaces, false);
+
+        //check active player swap etc
+        assertNoEnPassantTargetSquare(followUpBoard);
+        assertEquals(!testBoard.getWhiteNextMove(), followUpBoard.getWhiteNextMove());
+        assertTrue(followUpBoard.getSpaces() == copiedSpaces);
+        assertEquals(testBoard.getHalfMoves() + 1, followUpBoard.getHalfMoves());
+        assertEquals(testBoard.getFullMoves() + 1, followUpBoard.getFullMoves());
+    }
+
+    @Test
+    public void generateFollowUpBoardForWhite() {
+        //white next move == true
+        Board baseBoard = new Board(0, false, false, testSpaces, true, false, false, false, false, 0, 0, 0, 1);
+        Piece[][] copiedSpaces = baseBoard.copySpaces();
+        Board followUpBoard = baseBoard.generateFollowUpBoard(copiedSpaces, false);
+
+        //check active player swap etc
+        assertNoEnPassantTargetSquare(followUpBoard);
+        assertEquals(!baseBoard.getWhiteNextMove(), followUpBoard.getWhiteNextMove());
+        assertTrue(followUpBoard.getSpaces() == copiedSpaces);
+        assertEquals(baseBoard.getHalfMoves() + 1, followUpBoard.getHalfMoves());
+        assertEquals(baseBoard.getFullMoves() + 0, followUpBoard.getFullMoves());
+    }
+
+    @Test
+    public void generateFollowUpBoardForBlackWithHalfMoveResetTest() {
+        //white next move == false
+        Piece[][] copiedSpaces = testBoard.copySpaces();
+        Board followUpBoard = testBoard.generateFollowUpBoard(copiedSpaces, true);
+
+        //check active player swap etc
+        assertNoEnPassantTargetSquare(followUpBoard);
+        assertEquals(!testBoard.getWhiteNextMove(), followUpBoard.getWhiteNextMove());
+        assertTrue(followUpBoard.getSpaces() == copiedSpaces);
+        assertEquals(0, followUpBoard.getHalfMoves());
+        assertEquals(testBoard.getFullMoves() + 1, followUpBoard.getFullMoves());
+    }
+
+    @Test
+    public void generateFollowUpBoardWithEnPassantTargetSquare() {
+        //white next move == false
+        Piece[][] copiedSpaces = testBoard.copySpaces();
+        Board followUpBoard = testBoard.generateFollowUpBoard(copiedSpaces, 4,7, true);
+
+        //check active player swap etc
+        assertEquals(4, followUpBoard.getEnPassantTargetRank());
+        assertEquals(7, followUpBoard.getEnPassantTargetFile());
+        assertEquals(!testBoard.getWhiteNextMove(), followUpBoard.getWhiteNextMove());
+        assertTrue(followUpBoard.getSpaces() == copiedSpaces);
+        assertEquals(0, followUpBoard.getHalfMoves());
+        assertEquals(testBoard.getFullMoves() + 1, followUpBoard.getFullMoves());
+    }
+
+    @Test
+    public void generateFollowUpBoardAllParameters() {
+                //white next move == false
+                Piece[][] copiedSpaces = testBoard.copySpaces();
+                Board followUpBoard = testBoard.generateFollowUpBoard(copiedSpaces, 6, 1, false, true, false, true, false);
+        
+                //check active player swap etc
+                assertEquals(6, followUpBoard.getEnPassantTargetRank());
+                assertEquals(1, followUpBoard.getEnPassantTargetFile());
+                assertEquals(!testBoard.getWhiteNextMove(), followUpBoard.getWhiteNextMove());
+                assertTrue(followUpBoard.getSpaces() == copiedSpaces);
+                assertEquals(testBoard.getHalfMoves() + 1, followUpBoard.getHalfMoves());
+                assertEquals(testBoard.getFullMoves() + 1, followUpBoard.getFullMoves());
+                assertFalse(followUpBoard.getWhiteCastlingKingside());
+                assertTrue(followUpBoard.getWhiteCastlingQueenside());
+                assertFalse(followUpBoard.getBlackCastlingKingside());
+                assertTrue(followUpBoard.getBlackCastlingQueenside());
     }
 
     @Test
