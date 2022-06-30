@@ -620,8 +620,8 @@ public class MoveGeneratorTest {
         Set<Board> followUpBoards = MoveGenerator.computeRookMoves(whiteCastlingBoard, 7, 7);
         List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
 
-        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 0 1"); //move to g1 - one square to the left
-        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 0 1"); //move to f1 - two squares to the left
+        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 1 1"); //move to g1 - one square to the left
+        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 1 1"); //move to f1 - two squares to the left
 
         compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
     }

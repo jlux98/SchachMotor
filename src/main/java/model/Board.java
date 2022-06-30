@@ -410,6 +410,7 @@ public class Board implements Comparable<Board>, Cloneable{
     }
 
     public Piece getPieceAt(int rank, int file){
+        //TODO might be worth throwing an exception if the square is empty (instead of returning null)?
         return spaces[rank][file];
     }
 
