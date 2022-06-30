@@ -199,8 +199,6 @@ public abstract class MoveGenerator {
         int targetFile = bs.getEnPassantTargetFile(); 
         if (targetRank != -1 &&
             targetFile != -1){
-                //FIXME sign * 1 leftover or typo? (again in addPawnMove)
-                //FIXME: Neither, it's intended behaviour 😅
             if (targetRank == rank+(sign*1) &&
                 (targetFile == file+1 || targetFile == file-1)){
                 Piece[][] resultingSpaces = getBoardAfterMove(bs.copySpaces(),
@@ -634,10 +632,6 @@ public abstract class MoveGenerator {
 
         int rank = startingRank;
         int file = startingFile;
-        
-        
-        //TODO adjust rank and file index in array ([rank][file] or [file][rank])
-        //rank number depends on y axis, file number on x axis
 
         //while next step legal and last step did not capture
         while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentBoard) && !didCapture) {
