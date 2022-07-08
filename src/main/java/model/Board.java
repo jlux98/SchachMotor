@@ -34,6 +34,7 @@ public class Board implements Comparable<Board>, Cloneable{
     private int fullMoveCount;
     private boolean[][] attackedByWhite;
     private boolean[][] attackedByBlack;
+    private Move move;
 
     /**
     * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
@@ -76,13 +77,19 @@ public class Board implements Comparable<Board>, Cloneable{
         if (whiteKing != null){
             this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
         } else {
-            throw new IllegalStateException("There must not be a game state without a white King!");
+            /*  This is done to prevent a board without a king from generating
+                moves without while allowing such a board state to exist for the
+                sake of point evaluation */
+            this.whiteInCheck = true;
         }
         Coordinate blackKing = getKingPosition(false);
         if (blackKing != null){
             this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
         } else {
-            throw new IllegalStateException("There must not be a game state without a black King!");
+            /*  This is done to prevent a board without a king from generating
+                moves without while allowing such a board state to exist for the
+                sake of point evaluation */
+            this.blackInCheck = true;
         }
     }
 
@@ -445,6 +452,17 @@ public class Board implements Comparable<Board>, Cloneable{
             }
         }
         return null;
+    }
+
+    
+
+    public Move getMove() {
+        return move;
+    }
+
+    public void setMove(int startingRank, int startingFile, int targetRank, int targetFile) {
+        this.move = new Move(new Coordinate(startingRank, startingFile),
+            new Coordinate(targetRank, targetFile));
     }
 
     @Override
