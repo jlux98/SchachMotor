@@ -105,34 +105,42 @@ public abstract class MoveGenerator {
      * method calls the promotion function .
      * @param bs the current board state
      * @param results the set in which to add the promotions
-     * @param rank the horizontal position of the pawn whose promotion is checked
-     * @param file the vertical position of the pawn whose promotion is checked
+     * @param targetRank the horizontal position of the pawn whose promotion is checked
+     * @param targetFile the vertical position of the pawn whose promotion is checked
      * @param sign the direction in which the pawn moves (-1 is up, 1 is down)
+     * @param sign2
+     * @param sign3
      * @return true if the pawn was able to be promoted, false if not
      */
-    private static boolean checkForPawnPromotions(Board bs, Set<Board> results, int rank,
-        int file, int sign) {
-        if ((sign == -1) && rank == 0 ||
-            (sign == 1) && rank == 7){
-            computePawnPromotion(bs, results, rank, file, sign, PieceType.BISHOP);
-            computePawnPromotion(bs, results, rank, file, sign, PieceType.KNIGHT);
-            computePawnPromotion(bs, results, rank, file, sign, PieceType.QUEEN);
-            computePawnPromotion(bs, results, rank, file, sign, PieceType.ROOK);
+    private static boolean checkForPawnPromotions(Board bs, Set<Board> results, 
+    int startingRank, int startingFile, int targetRank, int targetFile, int sign) {
+        if ((sign == -1) && targetRank == 0 ||
+            (sign == 1) && targetRank == 7){
+            computePawnPromotion(bs, results, startingRank, startingFile, 
+                targetRank, targetFile, sign, PieceType.BISHOP);
+            computePawnPromotion(bs, results, startingRank, startingFile, 
+                targetRank, targetFile, sign, PieceType.KNIGHT);
+            computePawnPromotion(bs, results, startingRank, startingFile, 
+                targetRank, targetFile, sign, PieceType.QUEEN);
+            computePawnPromotion(bs, results, startingRank, startingFile, 
+                targetRank, targetFile, sign, PieceType.ROOK);
             return true;
         } else {
             return false;
         }
     }
 
-    private static void computePawnPromotion(Board bs, Set<Board> results, int rank,
-        int file, int sign, PieceType promoteTo){
+    private static void computePawnPromotion(Board bs, Set<Board> results,
+    int startingRank, int startingFile, int targetRank, int targetFile, int sign, PieceType promoteTo){
         Piece[][] promotion = bs.copySpaces();
-            promotion[rank][file] = new Piece(promoteTo,
+            promotion[targetRank][targetFile] = new Piece(promoteTo,
                 (sign == -1));
-            results.add(new Board(promotion, bs.getWhiteNextMove(),
+            Board resultingBoard = new Board(promotion, bs.getWhiteNextMove(),
                 bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
                 bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-                -1,-1, bs.getHalfMoves(), bs.getFullMoves()));
+                -1,-1, bs.getHalfMoves(), bs.getFullMoves());
+            resultingBoard.setMove(startingRank, startingFile, targetRank, targetFile);
+            results.add(resultingBoard);
     }
 
     private static void computePawnSingleStep(Board bs, Set<Board> results, int rank,
@@ -221,13 +229,13 @@ public abstract class MoveGenerator {
      * 1 then the pawn moves from bottom to top, if sign is -1 then the pawn
      * moves from top to bottom)
      */
-    private static void addPawnMove(Board bs, Set<Board> results, int rank,
-        int file, int sign, Piece[][] resultingSpaces, boolean doubleStep){
+    private static void addPawnMove(Board bs, Set<Board> results, int startingRank,
+        int startingFile, int sign, Piece[][] resultingSpaces, boolean doubleStep){
         int doubleStepRank = -1;
         int doubleStepFile = -1;
         if (doubleStep){
-            doubleStepRank = rank+(sign*1);
-            doubleStepFile = file;
+            doubleStepRank = startingRank+(sign*1);
+            doubleStepFile = startingFile;
         }
         int fullMoves = bs.getFullMoves();
         if (!bs.getWhiteNextMove()) {
@@ -241,12 +249,13 @@ public abstract class MoveGenerator {
             (sign == 1) && !resultingBoard.getBlackInCheck()){
             int targetRank = -1;
             if (doubleStep){
-                targetRank = rank + (sign*2);
+                targetRank = startingRank + (sign*2);
             } else {
-                targetRank = rank + (sign*1);
+                targetRank = startingRank + (sign*1);
             }
-            if (!checkForPawnPromotions(resultingBoard, results, targetRank,
-                file, sign)){
+            if (!checkForPawnPromotions(resultingBoard, results, startingRank,
+                startingFile, targetRank, startingFile, sign)){
+                resultingBoard.setMove(startingRank, startingFile, targetRank, startingFile);
                 results.add(resultingBoard);
             }
         }
@@ -282,13 +291,15 @@ public abstract class MoveGenerator {
         }
         Piece[][] resultingSpaces =
             getBoardAfterMove(boardState.copySpaces(), rank, file, targetRank, targetFile);
-        addKnightMove(boardState, results, rank, file, resultingSpaces, hasCaptured);
+        addKnightMove(boardState, results, rank, file, targetRank, targetFile,
+            resultingSpaces, hasCaptured);
     }
 
 
 
-    private static void addKnightMove(Board bs, Set<Board> results, int rank,
-        int file, Piece[][] resultingSpaces, boolean hasCaptured){
+    private static void addKnightMove(Board bs, Set<Board> results,
+        int startingRank, int startingFile, int targetRank, int targetFile,
+        Piece[][] resultingSpaces, boolean hasCaptured){
         int fullMoves = bs.getFullMoves();
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
@@ -303,6 +314,7 @@ public abstract class MoveGenerator {
             -1,-1, halfMoves, fullMoves);
         if ( bs.getWhitesTurn() && !resultingBoard.getWhiteInCheck()||
             !bs.getWhitesTurn() && !resultingBoard.getBlackInCheck()){
+            resultingBoard.setMove(startingRank, startingFile, targetRank, targetFile);
             results.add(resultingBoard);
         }
     }
@@ -366,7 +378,8 @@ public abstract class MoveGenerator {
             // then move rook
             resultingSpaces = getBoardAfterMove(
                 resultingSpaces, relevantRank, 7, relevantRank, 5);
-            addKingMove(bs, results, resultingSpaces, false);
+            addKingMove(bs, results, relevantRank, 4, relevantRank, 6,
+                resultingSpaces, false);
         }
     }
 
@@ -410,13 +423,14 @@ public abstract class MoveGenerator {
             // then move rook
             resultingSpaces = getBoardAfterMove(
                 resultingSpaces, relevantRank, 0, relevantRank, 3);
-            addKingMove(bs, results, resultingSpaces, false);
+            addKingMove(bs, results, relevantRank, 4, relevantRank, 2,
+                resultingSpaces, false);
         }
     }
 
 
     private static void computeKingStep(Board boardState, Set<Board> results,
-        int rank, int file, int targetRank, int targetFile){
+        int startingRank, int startingFile, int targetRank, int targetFile){
         if ((targetRank < 0) || (targetRank > 7) || 
             (targetFile < 0) || (targetFile > 7)) {
             return;
@@ -431,11 +445,14 @@ public abstract class MoveGenerator {
             }
         }
         Piece[][] resultingSpaces =
-            getBoardAfterMove(boardState.copySpaces(), rank, file, targetRank, targetFile);
-        addKingMove(boardState, results, resultingSpaces, hasCaptured);
+            getBoardAfterMove(boardState.copySpaces(), startingRank, startingFile, targetRank, targetFile);
+        addKingMove(boardState, results, startingRank, startingFile, targetRank,
+            targetFile, resultingSpaces, hasCaptured);
     }
 
-    private static void addKingMove(Board bs, Set<Board> results, Piece[][] resultingSpaces, boolean hasCaptured){
+    private static void addKingMove(Board bs, Set<Board> results, 
+        int startingRank, int startingFile, int targetRank, int targetFile,
+        Piece[][] resultingSpaces, boolean hasCaptured){
         int fullMoves = bs.getFullMoves();
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
@@ -463,6 +480,7 @@ public abstract class MoveGenerator {
             -1,-1, halfMoves, fullMoves);
         if ( bs.getWhitesTurn() && !resultingBoard.getWhiteInCheck()||
             !bs.getWhitesTurn() && !resultingBoard.getBlackInCheck()){
+            resultingBoard.setMove(startingRank, startingFile, targetRank, targetFile);
             results.add(resultingBoard);
         }
     }
@@ -641,14 +659,18 @@ public abstract class MoveGenerator {
             //leave starting space
             newSpaces[startingRank][startingFile] = null;
 
+            int targetFile = file + xOffset;
+            int targetRank = rank + yOffset;
+
             //move to next space, capture by overwriting existing pieces if needed
-            if (newSpaces[rank + yOffset][file + xOffset] != null) {
+            if (newSpaces[targetRank][targetFile] != null) {
                 didCapture = true;
             }
-            newSpaces[rank + yOffset][file + xOffset] = piece;
+            newSpaces[targetRank][targetFile] = piece;
 
             generatedBoard = currentBoard.generateFollowUpBoard(newSpaces, -1, -1, newWhiteCastlingKingside,
                     newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, didCapture);
+            generatedBoard.setMove(startingRank, startingFile, targetRank, targetFile);
             moves.add(generatedBoard);
 
             //current position is the space that was moved on
