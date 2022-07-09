@@ -37,6 +37,7 @@ public class MoveGeneratorTest {
     @BeforeEach
     public void initialize(){
         //TODO is before each required over before all?
+        // TODO: BeforeAll led to some weird error messages which is why I used BeforeEach 
         startingPosition = fullParseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
             "w KQkq - 0 1");
         emptyPosition = fullParseFen("k7/8/8/8/8/8/8/7K " +
