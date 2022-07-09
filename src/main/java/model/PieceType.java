@@ -10,13 +10,13 @@ package model;
  */
 public enum PieceType {
     //TODO use a more elaborate piece value system
-    PAWN(1),
-    KNIGHT(3),
-    BISHOP(3),
-    ROOK(5),
-    QUEEN(9),
+    PAWN(100),
+    KNIGHT(350),
+    BISHOP(375),
+    ROOK(500),
+    QUEEN(900),
     // As proposed by https://www.chessprogramming.org/Point_Value the King gets a large constant
-    KING(100);
+    KING(20000);
 
     private int pointValue;
 
