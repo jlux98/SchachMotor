@@ -31,10 +31,10 @@ public abstract class PositionEvaluator {
             }
         }
         if (whiteBishops >= 2){
-            result += 1;
+            result += 150;
         }
         if (blackBishops >= 2){
-            result -= 1;
+            result -= 150;
         }
         return result;
     }
