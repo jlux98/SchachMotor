@@ -3,6 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,31 @@ public class BoardTest {
      */
     private Board testBoard;
 
+
+    private static Board queenTestPosition;
+    private static Board rookTestPosition;
+    private static Board bishopTestPosition;
+    private static Board pawnAttackMapTestPosition;
+    private static Board kingTestPosition;
+    private static Board knightTestPosition;
+
+
+    @BeforeAll
+    public static void setup() {
+        queenTestPosition = FenParser.parseFen("8/1q4k1/8/8/8/8/1Q4K1/8 " +
+            "w KQkq - 0 1");
+        rookTestPosition = FenParser.parseFen("8/1r4k1/8/8/8/8/1K4Q1/8 " +
+            "w KQkq - 0 1");
+        bishopTestPosition = FenParser.parseFen("8/1b4k1/8/8/8/8/1Q4K1/8 " +
+            "w KQkq - 0 1");  
+        kingTestPosition = FenParser.parseFen("8/1k4R1/8/8/8/8/1K4Q1/8 " +
+            "w KQkq - 0 1");
+        pawnAttackMapTestPosition = FenParser.parseFen("8/1p4k1/8/8/8/8/1K4Q1/8 " +
+            "w KQkq - 0 1");
+        knightTestPosition = FenParser.parseFen("8/1n4k1/8/8/8/8/1K4Q1/8 " +
+            "w KQkq - 0 1");
+    }
+
     @BeforeEach
     /**
      * Sets up the test board with every boolean set to false and every numberic
@@ -28,6 +54,17 @@ public class BoardTest {
     public void setUpBoard() {
         this.testBoard = new Board(0, false, false, testSpaces, false, false, false, false, false, 0, 0, 0, 1);
     }
+
+    @Test
+    public void checkTestTest(){
+        assertTrue(queenTestPosition.getWhiteInCheck());
+        assertTrue(bishopTestPosition.getWhiteInCheck());
+        assertTrue(rookTestPosition.getWhiteInCheck());
+        assertFalse(knightTestPosition.getWhiteInCheck());
+        assertFalse(pawnAttackMapTestPosition.getWhiteInCheck());
+        assertFalse(kingTestPosition.getWhiteInCheck());
+    }
+
 
     /**
      * take care not to make changes to this array as it is shared between tests
