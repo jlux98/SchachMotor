@@ -15,13 +15,6 @@ import uciservice.FenParser;
 public class MoveGeneratorTest {
 
     private static Board startingPosition;
-    private static Board queenTestPosition;
-    private static Board rookTestPosition;
-    private static Board bishopTestPosition;
-    private static Board pawnAttackMapTestPosition;
-    private static Board kingTestPosition;
-    private static Board knightTestPosition;
-
     private static Board blackCastlingBoard;
     private static Board whiteCastlingBoard;
 
@@ -30,18 +23,6 @@ public class MoveGeneratorTest {
        blackCastlingBoard = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R b KQkq - 0 1");
        whiteCastlingBoard = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
        startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
-            "w KQkq - 0 1");
-        queenTestPosition = FenParser.parseFen("8/1q4k1/8/8/8/8/1Q4K1/8 " +
-            "w KQkq - 0 1");
-        rookTestPosition = FenParser.parseFen("8/1r4k1/8/8/8/8/1K4Q1/8 " +
-            "w KQkq - 0 1");
-        bishopTestPosition = FenParser.parseFen("8/1b4k1/8/8/8/8/1Q4K1/8 " +
-            "w KQkq - 0 1");  
-        kingTestPosition = FenParser.parseFen("8/1k4R1/8/8/8/8/1K4Q1/8 " +
-            "w KQkq - 0 1");
-        pawnAttackMapTestPosition = FenParser.parseFen("8/1p4k1/8/8/8/8/1K4Q1/8 " +
-            "w KQkq - 0 1");
-        knightTestPosition = FenParser.parseFen("8/1n4k1/8/8/8/8/1K4Q1/8 " +
             "w KQkq - 0 1");
     }
 
