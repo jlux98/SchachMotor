@@ -15,6 +15,7 @@ import uciservice.FenParser;
 public class MoveGeneratorTest {
 
     private static Board startingPosition;
+    //TODO remove leftover attributes
     private static Board queenTestPosition;
     private static Board rookTestPosition;
     private static Board bishopTestPosition;
