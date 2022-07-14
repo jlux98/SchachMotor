@@ -5,6 +5,7 @@ package gametree;
  * Interface for the nodes of a game tree. 
  */
 public interface GameNode {
+
     //TODO doc
     public abstract void insertChild(GameNode node);
 
@@ -14,7 +15,7 @@ public interface GameNode {
 
     public abstract boolean hasChildren();
 
-    public abstract void setValue();
+    public abstract void setValue(int value);
 
     public abstract void computeChildren();
 
