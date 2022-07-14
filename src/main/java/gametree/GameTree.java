@@ -2,6 +2,9 @@ package gametree;
 
 import model.Board;
 
+/**
+ * Interface for classes implementing a game tree.
+ */
 public interface GameTree {
 
     /**

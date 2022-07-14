@@ -1,7 +1,11 @@
 package gametree;
 
-//TODO doc
+
+/**
+ * Interface for the nodes of a game tree. 
+ */
 public interface GameNode {
+    //TODO doc
     public abstract void insertChild(GameNode node);
 
     public abstract void deleteChild(GameNode node);
