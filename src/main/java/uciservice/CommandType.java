@@ -16,7 +16,7 @@ public enum CommandType {
     PONDER,
     PONDERHIT,
     POSITION,
-    QUIT
+    QUIT,
     SETOPTION,
     STOP,
     UCI,
