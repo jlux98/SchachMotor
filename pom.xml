@@ -8,7 +8,7 @@
   <version>1.0-SNAPSHOT</version>
   <url>https://github.com/tk1/ChessEngine</url>
   <description>
-    <!-- FIXME create a description -->
+    A chessengine using UCI implemented in Java.
   </description>
 
   <properties>
