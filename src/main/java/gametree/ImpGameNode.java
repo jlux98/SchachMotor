@@ -146,7 +146,7 @@ public class ImpGameNode implements GameNode {
      * <br>
      * <br>
      * <b>Note:</b>
-     * Be aware that this removes all formerly attached child nodes.
+     * Be aware that this removes (overwrites) all formerly attached child nodes.
      * 
      * @param children list of nodes that should be attached to this node
      */
