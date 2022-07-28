@@ -1,17 +1,17 @@
 package positionevaluator;
 
-import model.Board;
+import model.Position;
 import model.Piece;
 import model.PieceType;
 
 public abstract class PositionEvaluator {
-    public static int evaluatePosition(Board boardState){
+    public static int evaluatePosition(Position position){
         int result = 0;
         int blackBishops = 0;
         int whiteBishops = 0;
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
-                Piece currentPiece = boardState.getPieceAt(rank, file);
+                Piece currentPiece = position.getPieceAt(rank, file);
                 if (currentPiece == null){
                     continue;
                 }

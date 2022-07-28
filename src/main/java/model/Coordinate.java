@@ -76,7 +76,7 @@ public class Coordinate {
         return "[" + rank + "][" + file + "]";
     }
 
-    public String toStringTraditional() {
+    public String toStringAlgebraic() {
         return getFileString() + getRankString();
     }
 

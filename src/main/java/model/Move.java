@@ -39,8 +39,8 @@ public class Move {
         return result;
     }
 
-    public String toStringTraditional(){
-        String result = startingSpace.toStringTraditional() + targetSpace.toStringTraditional();
+    public String toStringAlgebraic(){
+        String result = startingSpace.toStringAlgebraic() + targetSpace.toStringAlgebraic();
         if (promotedTo != null) {
             result += promotedTo.toString();
         }

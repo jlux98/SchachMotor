@@ -1,6 +1,6 @@
 package gametree;
 
-import model.Board;
+import model.Position;
 
 /**
  * Interface for classes implementing a game tree.
@@ -8,5 +8,6 @@ import model.Board;
 public interface GameTree {
     
     //TODO doc
-    public abstract GameNode calculateBestMove(Board incoming, int maxDepth);
+    public abstract GameNode calculateBestMove(Position incoming, int maxTime);
+
 }
