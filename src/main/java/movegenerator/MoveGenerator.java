@@ -3,7 +3,7 @@ package movegenerator;
 import java.util.HashSet;
 import java.util.Set;
 
-import model.Board;
+import model.Position;
 import model.Piece;
 import model.PieceType;
 
@@ -24,17 +24,17 @@ public abstract class MoveGenerator {
      * @param boardState the given game state
      * @return an array with all possible follow-up-boards
      */
-    public static Board[] generatePossibleMoves(Board boardState) {
-        Set<Board> followUpBoards = new HashSet<>(); //is hashset preferable over array for us? set initial size of hashset in constructor
+    public static Position[] generatePossibleMoves(Position boardState) {
+        Set<Position> followUpBoards = new HashSet<>(); //is hashset preferable over array for us? set initial size of hashset in constructor
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                Set<Board> results = generatePossibleMovesPerPiece(boardState, rank, file);
+                Set<Position> results = generatePossibleMovesPerPiece(boardState, rank, file);
                 if (results != null){
                     followUpBoards.addAll(results);
                 }
             }
         }
-        Board[] output = new Board[followUpBoards.size()];
+        Position[] output = new Position[followUpBoards.size()];
         followUpBoards.toArray(output);
         return output;
     }
@@ -47,7 +47,7 @@ public abstract class MoveGenerator {
      * @return a set with all possible follow-up-boards for the given board
      * and the given piece
      */
-    public static Set<Board> generatePossibleMovesPerPiece(Board boardState, int rank, int file) {
+    public static Set<Position> generatePossibleMovesPerPiece(Position boardState, int rank, int file) {
         Piece currentPiece = boardState.getSpaces()[rank][file];
         if (currentPiece == null) {
             return null;
@@ -83,9 +83,9 @@ public abstract class MoveGenerator {
      * @return a set with all possible follow-up-boards for the given board
      * and the given pawn
      */
-    public static Set<Board> computePawnMoves(Board boardState, int rank, int file) {
+    public static Set<Position> computePawnMoves(Position boardState, int rank, int file) {
         Piece currentPiece = boardState.getPieceAt(rank, file);
-        Set<Board> results = new HashSet<Board>();
+        Set<Position> results = new HashSet<Position>();
         int sign = 0;
         if (currentPiece.getIsWhite()){
             sign = -1;
@@ -112,7 +112,7 @@ public abstract class MoveGenerator {
      * @param sign3
      * @return true if the pawn was able to be promoted, false if not
      */
-    private static boolean checkForPawnPromotions(Board bs, Set<Board> results, 
+    private static boolean checkForPawnPromotions(Position bs, Set<Position> results, 
     int startingRank, int startingFile, int targetRank, int targetFile, int sign) {
         if ((sign == -1) && targetRank == 0 ||
             (sign == 1) && targetRank == 7){
@@ -130,12 +130,12 @@ public abstract class MoveGenerator {
         }
     }
 
-    private static void computePawnPromotion(Board bs, Set<Board> results,
+    private static void computePawnPromotion(Position bs, Set<Position> results,
     int startingRank, int startingFile, int targetRank, int targetFile, int sign, PieceType promoteTo){
         Piece[][] promotion = bs.copySpaces();
             promotion[targetRank][targetFile] = new Piece(promoteTo,
                 (sign == -1));
-            Board resultingBoard = new Board(promotion, bs.getWhiteNextMove(),
+            Position resultingBoard = new Position(promotion, bs.getWhiteNextMove(),
                 bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
                 bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
                 -1,-1, bs.getHalfMoves(), bs.getFullMoves());
@@ -143,7 +143,7 @@ public abstract class MoveGenerator {
             results.add(resultingBoard);
     }
 
-    private static void computePawnSingleStep(Board bs, Set<Board> results, int rank,
+    private static void computePawnSingleStep(Position bs, Set<Position> results, int rank,
         int file, int sign){
         if (bs.getPieceAt(rank+(sign*1), file) == null){
             Piece[][] resultingSpaces = getBoardAfterMove(bs.copySpaces(), rank,
@@ -152,7 +152,7 @@ public abstract class MoveGenerator {
         }
     }
 
-    private static void computePawnDoubleStep(Board bs, Set<Board> results, int rank,
+    private static void computePawnDoubleStep(Position bs, Set<Position> results, int rank,
         int file, int sign){
         if (rank < 6 &&
             bs.getPieceAt(rank+(sign*1), file) == null &&
@@ -163,7 +163,7 @@ public abstract class MoveGenerator {
         }
     }
 
-    public static void computePawnCaptureLeft(Board bs, Set<Board> results, int rank,
+    public static void computePawnCaptureLeft(Position bs, Set<Position> results, int rank,
         int file, int sign){
         if (file != 0){
             Piece targetPiece = bs.getPieceAt(rank+(sign*1), file-1);
@@ -176,7 +176,7 @@ public abstract class MoveGenerator {
         }
     }
 
-    public static void computePawnCaptureRight(Board bs, Set<Board> results, int rank,
+    public static void computePawnCaptureRight(Position bs, Set<Position> results, int rank,
         int file, int sign){
         if (file != 7){
             Piece targetPiece = bs.getPieceAt(rank+(sign*1), file+1);
@@ -201,7 +201,7 @@ public abstract class MoveGenerator {
      * 1 then the pawn moves from bottom to top, if sign is -1 then the pawn
      * moves from top to bottom)
      */
-    public static void computeEnPassant(Board bs, Set<Board> results, int rank,
+    public static void computeEnPassant(Position bs, Set<Position> results, int rank,
         int file, int sign){
         int targetRank = bs.getEnPassantTargetRank();
         int targetFile = bs.getEnPassantTargetFile(); 
@@ -229,7 +229,7 @@ public abstract class MoveGenerator {
      * 1 then the pawn moves from bottom to top, if sign is -1 then the pawn
      * moves from top to bottom)
      */
-    private static void addPawnMove(Board bs, Set<Board> results, int startingRank,
+    private static void addPawnMove(Position bs, Set<Position> results, int startingRank,
         int startingFile, int sign, Piece[][] resultingSpaces, boolean doubleStep){
         int doubleStepRank = -1;
         int doubleStepFile = -1;
@@ -241,7 +241,7 @@ public abstract class MoveGenerator {
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
         }
-        Board resultingBoard = new Board(resultingSpaces, !bs.getWhiteNextMove(),
+        Position resultingBoard = new Position(resultingSpaces, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
             doubleStepRank,doubleStepFile, 0, fullMoves);
@@ -261,8 +261,8 @@ public abstract class MoveGenerator {
         }
     }
 
-    public static Set<Board> computeKnightMoves(Board boardState, int rank, int file) {
-        Set<Board> results = new HashSet<Board>();
+    public static Set<Position> computeKnightMoves(Position boardState, int rank, int file) {
+        Set<Position> results = new HashSet<Position>();
         knightMoveSupervisor(boardState, results, rank, file, rank-2, file-1);
         knightMoveSupervisor(boardState, results, rank, file, rank-2, file+1);
         knightMoveSupervisor(boardState, results, rank, file, rank-1, file+2);
@@ -274,7 +274,7 @@ public abstract class MoveGenerator {
         return results;
     }
 
-    private static void knightMoveSupervisor(Board boardState, Set<Board> results,
+    private static void knightMoveSupervisor(Position boardState, Set<Position> results,
         int rank, int file, int targetRank, int targetFile){
         if ((targetRank < 0) || (targetRank > 7) || 
             (targetFile < 0) || (targetFile > 7)) {
@@ -297,7 +297,7 @@ public abstract class MoveGenerator {
 
 
 
-    private static void addKnightMove(Board bs, Set<Board> results,
+    private static void addKnightMove(Position bs, Set<Position> results,
         int startingRank, int startingFile, int targetRank, int targetFile,
         Piece[][] resultingSpaces, boolean hasCaptured){
         int fullMoves = bs.getFullMoves();
@@ -308,7 +308,7 @@ public abstract class MoveGenerator {
         if (hasCaptured){
             halfMoves = 0;
         }
-        Board resultingBoard = new Board(resultingSpaces, !bs.getWhiteNextMove(),
+        Position resultingBoard = new Position(resultingSpaces, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
             -1,-1, halfMoves, fullMoves);
@@ -319,8 +319,8 @@ public abstract class MoveGenerator {
         }
     }
 
-    private static Set<Board> computeKingMoves(Board boardState, int rank, int file) {
-        Set<Board> results = new HashSet<>();
+    private static Set<Position> computeKingMoves(Position boardState, int rank, int file) {
+        Set<Position> results = new HashSet<>();
         // Attack north
         computeKingStep(boardState, results, rank, file, rank-1, file);
         // Attack northeast
@@ -343,7 +343,7 @@ public abstract class MoveGenerator {
         return results;
     }
 
-    private static void computeCastlingKingside(Board bs, Set<Board> results){
+    private static void computeCastlingKingside(Position bs, Set<Position> results){
         boolean[][] relevantAttackMap = null;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
@@ -383,7 +383,7 @@ public abstract class MoveGenerator {
         }
     }
 
-    private static void computeCastlingQueenside(Board bs, Set<Board> results){
+    private static void computeCastlingQueenside(Position bs, Set<Position> results){
         boolean[][] relevantAttackMap = null;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
@@ -429,7 +429,7 @@ public abstract class MoveGenerator {
     }
 
 
-    private static void computeKingStep(Board boardState, Set<Board> results,
+    private static void computeKingStep(Position boardState, Set<Position> results,
         int startingRank, int startingFile, int targetRank, int targetFile){
         if ((targetRank < 0) || (targetRank > 7) || 
             (targetFile < 0) || (targetFile > 7)) {
@@ -450,7 +450,7 @@ public abstract class MoveGenerator {
             targetFile, resultingSpaces, hasCaptured);
     }
 
-    private static void addKingMove(Board bs, Set<Board> results, 
+    private static void addKingMove(Position bs, Set<Position> results, 
         int startingRank, int startingFile, int targetRank, int targetFile,
         Piece[][] resultingSpaces, boolean hasCaptured){
         int fullMoves = bs.getFullMoves();
@@ -474,7 +474,7 @@ public abstract class MoveGenerator {
             blackCastlingQueenside = false;
         }
 
-        Board resultingBoard = new Board(resultingSpaces, !bs.getWhiteNextMove(),
+        Position resultingBoard = new Position(resultingSpaces, !bs.getWhiteNextMove(),
             whiteCastlingKingside, whiteCastlingQueenside,
             blackCastlingKingside, blackCastlingQueenside,
             -1,-1, halfMoves, fullMoves);
@@ -492,7 +492,7 @@ public abstract class MoveGenerator {
      * @param file the file of the bishop
      * @return the boards that the generated moves result in
      */
-    public static Set<Board> computeBishopMoves(Board boardState, int rank, int file) {
+    public static Set<Position> computeBishopMoves(Position boardState, int rank, int file) {
         return computeDiagonalMoves(boardState, rank, file);
     }
 
@@ -503,7 +503,7 @@ public abstract class MoveGenerator {
     * @param file the file of the rook
     * @return the boards that the generated moves result in
     */
-    public static Set<Board> computeRookMoves(Board boardState, int rank, int file) {
+    public static Set<Position> computeRookMoves(Position boardState, int rank, int file) {
         return computeHorizontalAndVerticalMoves(boardState, rank, file, true);
     }
 
@@ -514,8 +514,8 @@ public abstract class MoveGenerator {
     * @param file the file of the queen
     * @return the boards that the generated moves result in
     */
-    public  static Set<Board> computeQueenMoves(Board boardState, int rank, int file) {
-        HashSet<Board> moves = new HashSet<Board>();
+    public  static Set<Position> computeQueenMoves(Position boardState, int rank, int file) {
+        HashSet<Position> moves = new HashSet<Position>();
         moves.addAll(computeHorizontalAndVerticalMoves(boardState, rank, file, false));
         moves.addAll(computeDiagonalMoves(boardState, rank, file));
         return moves;
@@ -529,8 +529,8 @@ public abstract class MoveGenerator {
       * @param isRook whether the piece is a rook
       * @return the boards that the generated moves result in
       */
-    private static Set<Board> computeHorizontalAndVerticalMoves(Board boardState, int rank, int file, boolean isRook) {
-        HashSet<Board> moves = new HashSet<Board>();
+    private static Set<Position> computeHorizontalAndVerticalMoves(Position boardState, int rank, int file, boolean isRook) {
+        HashSet<Position> moves = new HashSet<Position>();
         boolean blackCastlingKingside = boardState.getBlackCastlingKingside();
         boolean blackCastlingQueenside = boardState.getBlackCastlingQueenside();
         boolean whiteCastlingKingSide = boardState.getWhiteCastlingKingside();
@@ -577,8 +577,8 @@ public abstract class MoveGenerator {
      * @return the boards that the generated moves result in
      */
 
-    private static Set<Board> computeDiagonalMoves(Board boardState, int rank, int file) {
-        HashSet<Board> diagonalMoves = new HashSet<Board>();
+    private static Set<Position> computeDiagonalMoves(Position boardState, int rank, int file) {
+        HashSet<Position> diagonalMoves = new HashSet<Position>();
         //upper left
         diagonalMoves.addAll(computeRay(boardState, rank, file, -1, -1));
         //bottom left
@@ -590,7 +590,7 @@ public abstract class MoveGenerator {
         return diagonalMoves;
     }
 
-    public static boolean targetLegal(int targetRank, int targetFile, boolean isWhite, Board boardState){
+    public static boolean targetLegal(int targetRank, int targetFile, boolean isWhite, Position boardState){
         if ((targetRank < 0) || (targetRank > 7) || 
             (targetFile < 0) || (targetFile > 7)) {
                 return false;
@@ -606,11 +606,11 @@ public abstract class MoveGenerator {
     }
 
     /**
-     * Shorthand for {@link #computeRay(Board, int, int, int, int, boolean, boolean, boolean, boolean)}
+     * Shorthand for {@link #computeRay(Position, int, int, int, int, boolean, boolean, boolean, boolean)}
      * using the current castling rights (= the castling rights stored in currentBoard) 
      * @return a set containing the boards generated by moving along the ray
      */
-    private static Set<Board> computeRay(Board currentBoard, int rank, int file, int xOffset, int yOffset) {
+    private static Set<Position> computeRay(Position currentBoard, int rank, int file, int xOffset, int yOffset) {
         return computeRay(currentBoard, rank, file, xOffset, yOffset, currentBoard.getBlackCastlingKingside(),
                 currentBoard.getBlackCastlingQueenside(), currentBoard.getWhiteCastlingKingside(),
                 currentBoard.getWhiteCastlingQueenside());
@@ -632,7 +632,7 @@ public abstract class MoveGenerator {
      * which would result in generation of the same space over and over
      *
      */
-    private static Set<Board> computeRay(Board currentBoard, int startingRank, int startingFile, int xOffset, int yOffset,
+    private static Set<Position> computeRay(Position currentBoard, int startingRank, int startingFile, int xOffset, int yOffset,
             boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
             boolean newBlackCastlingQueenside) {
         if (xOffset == 0 && yOffset == 0) {
@@ -643,8 +643,8 @@ public abstract class MoveGenerator {
         if (piece == null) {
             throw new IllegalArgumentException("the specified square does not contain a piece");
         }
-        HashSet<Board> moves = new HashSet<Board>();
-        Board generatedBoard = null;
+        HashSet<Position> moves = new HashSet<Position>();
+        Position generatedBoard = null;
         Piece newSpaces[][] = null;
         boolean didCapture = false;
 

@@ -23,21 +23,9 @@ public interface GameNode {
      * of implementation.
      * 
      * @param node the node that should be removed from this parent
-     * @return true if the node was successfully removed, false if the node could not be found
-     */
-    public abstract boolean deleteChild(GameNode node);
-
-    /**
-     * Removes the specified child node.
-     * <br>
-     * <br>
-     * <b>Note:</b> Nodes are compared by reference for better performance and ease
-     * of implementation.
-     * 
-     * @param node the node that should be removed from this parent
      * @throws IllegalArgumentException if the node could not be found
      */
-    public abstract void deleteChildExceptionIfNotFound(GameNode node);
+    public abstract void deleteChild(GameNode node);
 
     /**
      * Removes all children of this node.

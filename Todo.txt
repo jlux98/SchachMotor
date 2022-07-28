@@ -1,0 +1,21 @@
+x Branches aufräumen
+x Board umbenennen
+- Refactor
+; int rank, int file ersetzen durch Coordinate in MoveGeneration etc.
+- GameTree und Node Interfaces
+- abstrakte Klassen Wrapper diskutieren
+- wohin Minmax etc Code
+- fixme index should be xy -> in doc aufnehmen und fixme entfernen
+- Targetrank/file in Position (former Board) durch Coordinate ersetzen
+
+
+---------------
+
+geg: GameTree Tiefe x
+Task: Berechne besten Move ohne Zeit zu überschreiten.
+
+falls Tree weniger tief als durch aktuelle Iteration von Iterative Deepening gefordert:
+    MoveGeneration auf Blättern aufrufen um Tiefe des Baumes um 1 zu erhöhen
+Minimax/Alphabeta-Pruning auf Tree ausführen -> Bewertung für jede Node gemäß aktueller Tiefe
+falls Zeitbudget knapp: GameNode (in Tiefe 1) mit höchster Bewertung spielen
+sonst: wiederholen

@@ -2,11 +2,11 @@ package uciservice;
 
 import java.util.regex.Pattern;
 
-import model.Board;
+import model.Position;
 import model.Piece;
 
 /**
- * Class used to translate FEN-Strings to instances of {@link Board}.
+ * Class used to translate FEN-Strings to instances of {@link Position}.
  */
 public class FenParser {
     /**
@@ -56,7 +56,7 @@ public class FenParser {
      * @param fen the fen string that should be translated
      * @return an instance of Board representing the information that was stored in the fen string
      */
-    public static Board parseFen(String fen) {
+    public static Position parseFen(String fen) {
         FenParser parser = new FenParser(fen);
         return parser.parseFen();
     }
@@ -64,7 +64,7 @@ public class FenParser {
      * Parses the fen string that was supplied to the constructor.
      * @return an instance of Board representing the information that was stored in the fen string
      */
-    public Board parseFen() {
+    public Position parseFen() {
         parseTokens();
         return createBoard();
     }
@@ -87,8 +87,8 @@ public class FenParser {
      * Constructs a board instance from the values extracted from a fen string.
      * @return an instance of Board representing the information that was stored in the fen string
      */
-    private Board createBoard() {
-        return new Board(piecePositions, isWhiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside,
+    private Position createBoard() {
+        return new Position(piecePositions, isWhiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside,
                 blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
 
     }

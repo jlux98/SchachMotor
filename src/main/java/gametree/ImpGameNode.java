@@ -3,22 +3,22 @@ package gametree;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Board;
+import model.Position;
 import movegenerator.MoveGenerator;
 
 public class ImpGameNode implements GameNode {
 
     private GameNode parent;
     private List<GameNode> children;
-    private Board gameState;
+    private Position gameState;
     private int pointValue;
 
-    private ImpGameNode(Board board) {
-        this.gameState = board;
+    private ImpGameNode(Position position) {
+        this.gameState = position;
     }
 
-    private ImpGameNode(Board board, GameNode parent) {
-        this(board);
+    private ImpGameNode(Position position, GameNode parent) {
+        this(position);
         this.parent = parent;
         // other attributes are null here
     }
@@ -26,20 +26,20 @@ public class ImpGameNode implements GameNode {
     /**
      * Creates a node without parent.
      * 
-     * @param board the board to be stored in the node
+     * @param position the position to be stored in the node
      * @return a node serving as root for a gametree
      */
-    public static GameNode createRoot(Board board) {
-        return new ImpGameNode(board);
+    public static GameNode createRoot(Position position) {
+        return new ImpGameNode(position);
     }
 
     /**
-     * @param board  the board to be stored in the node
+     * @param position  the position to be stored in the node
      * @param parent this node's parent
      * @return a node with parent
      */
-    public static GameNode createNode(Board board, GameNode parent) {
-        return new ImpGameNode(board, parent);
+    public static GameNode createNode(Position position, GameNode parent) {
+        return new ImpGameNode(position, parent);
     }
 
     /**
@@ -57,9 +57,9 @@ public class ImpGameNode implements GameNode {
         if (this.children.size() != 0) {
             throw new IllegalStateException("node already has children");
         }
-        Board[] followUpBoards = MoveGenerator.generatePossibleMoves(gameState);
-        for (Board board : followUpBoards) {
-            this.children.add(new ImpGameNode(board));
+        Position[] followUpPositions = MoveGenerator.generatePossibleMoves(gameState);
+        for (Position position : followUpPositions) {
+            this.children.add(new ImpGameNode(position));
         }
     }
     
@@ -101,37 +101,31 @@ public class ImpGameNode implements GameNode {
 
     @Override
     public void deleteSelf() {
+        try {
         this.parent.deleteChild(this);
+        } catch (IllegalArgumentException exception) {
+            //if this node cannot be found as a child of it's parent,
+            //it is deemed to already have been removed -> void exception
+        }
     }
 
-
     @Override
-    public boolean deleteChild(GameNode node) {
+    public void deleteChild(GameNode node) {
         // removing with ArrayList.remove(node) would require gamenode.equals()
         // which would probably have to compare boards which is inefficient
 
         // removing by equals also does not guarantee removal of the correct node if 2
         // equal nodes are present,
         // though in that case either all or none of the nodes should be removed
-        boolean found = false;
-
         GameNode child = null;
         for (int i = 0; i < children.size(); i++) {
             child = children.get(i);
             if (child == node) {
-                found = true;
                 children.remove(i);
+                return;
             }
         }
-        return found;
-    }
-
-    @Override
-    public void deleteChildExceptionIfNotFound(GameNode node) {
-        boolean success = this.deleteChild(node);
-        if (!success) {
-            throw new IllegalArgumentException("child to remove could not be found");
-        }
+        throw new IllegalArgumentException("child to remove could not be found");
     }
 
 

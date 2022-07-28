@@ -3,19 +3,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import model.Board;
+import model.Position;
 import movegenerator.AttackMapGenerator;
 import uciservice.FenParser;
 
 public class AttackMapTest {
 
-    private static Board emptyPosition;
-    private static Board queenTestPosition;
-    private static Board rookTestPosition;
-    private static Board bishopTestPosition;
-    private static Board pawnAttackMapTestPosition;
-    private static Board kingTestPosition;
-    private static Board knightTestPosition;
+    private static Position emptyPosition;
+    private static Position queenTestPosition;
+    private static Position rookTestPosition;
+    private static Position bishopTestPosition;
+    private static Position pawnAttackMapTestPosition;
+    private static Position kingTestPosition;
+    private static Position knightTestPosition;
 
     @BeforeAll
     public static void initialize(){

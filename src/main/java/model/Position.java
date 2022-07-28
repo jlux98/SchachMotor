@@ -14,7 +14,7 @@ import movegenerator.AttackMapGenerator;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Board implements Comparable<Board>, Cloneable{
+public class Position implements Comparable<Position>, Cloneable{
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -34,14 +34,14 @@ public class Board implements Comparable<Board>, Cloneable{
     private int fullMoveCount;
     private boolean[][] attackedByWhite;
     private boolean[][] attackedByBlack;
-    private Move move;
+    private Move generatedByMove;
 
     /**
     * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
     * but without requiring point value and whiteInCheck / blackInCheck to be set.
     * These value may be set using the corresponding setter at a later time.
     */
-    public Board(Piece[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
+    public Position(Piece[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
             boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
             int halfMoves, int fullMoves) {
        if (spaces == null) {
@@ -98,7 +98,7 @@ public class Board implements Comparable<Board>, Cloneable{
      * but without requiring a point value to be set.
      * The value may be set using Board.setPointValue() at a later time.
      */
-    public Board(boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
+    public Position(boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
@@ -123,7 +123,7 @@ public class Board implements Comparable<Board>, Cloneable{
      * @param halfMoves the number of half moves since a piece was captured or a pawn was moved . Starts at 0.
      * @param fullMoves the number of full moves that have been played since the start of this game. Starts at 1.
      */
-    public Board(int pointValue, boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
+    public Position(int pointValue, boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         //value may be less than 0 (minimax / negamax)
@@ -150,9 +150,9 @@ public class Board implements Comparable<Board>, Cloneable{
 
     /**
      * Generates a follow-up board without en passant target square.
-     * Same as {@link Board#generateFollowUpBoard(Piece[][], int, int) generateFollowUpBoard(Board, Piece[][], -1, -1)}.
+     * Same as {@link Position#generateFollowUpBoard(Piece[][], int, int) generateFollowUpBoard(Board, Piece[][], -1, -1)}.
      */
-    public Board generateFollowUpBoard(Piece[][] newPosition, boolean captureOrPawnMove) {
+    public Position generateFollowUpBoard(Piece[][] newPosition, boolean captureOrPawnMove) {
         return generateFollowUpBoard(newPosition, -1, -1, captureOrPawnMove);
     }
 
@@ -170,7 +170,7 @@ public class Board implements Comparable<Board>, Cloneable{
      * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
      * @return a follow-up board to this board  
      */
-    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
+    public Position generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
 
         //use getters over direct field access so additional code can be run if required at a later time
         boolean newWhiteCastlingKingside = this.getWhiteCastlingKingside();
@@ -199,7 +199,7 @@ public class Board implements Comparable<Board>, Cloneable{
     * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
     * @return a follow-up board to this board 
     */
-    public Board generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+    public Position generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
             boolean newBlackCastlingQueenside, boolean captureOrPawnMove) {
 
@@ -224,15 +224,15 @@ public class Board implements Comparable<Board>, Cloneable{
             halfMoveCount += 1;
         }
 
-        return new Board(newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
+        return new Position(newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Board){
-            Board board = (Board) obj;
+        if (obj instanceof Position){
+            Position board = (Position) obj;
             return  (blackCastlingKingside == board.getBlackCastlingKingside()) &&
                     (blackCastlingQueenside == board.getBlackCastlingQueenside()) &&
                     (blackInCheck == board.getBlackInCheck()) &&
@@ -330,9 +330,9 @@ public class Board implements Comparable<Board>, Cloneable{
      * Thus modifying the array is possible without affecting this board.
      * As pieces are immutable it is valid to use the same instances.
      */
-    public Board clone() {
+    public Position clone() {
         Piece[][] copiedSpaces = this.copySpaces();
-        return new Board(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
+        return new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
                 this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
                 this.enPassantTargetRank, this.enPassantTargetFile, this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
     }
@@ -457,16 +457,16 @@ public class Board implements Comparable<Board>, Cloneable{
     
 
     public Move getMove() {
-        return move;
+        return generatedByMove;
     }
 
     public void setMove(int startingRank, int startingFile, int targetRank, int targetFile) {
-        this.move = new Move(new Coordinate(startingRank, startingFile),
+        this.generatedByMove = new Move(new Coordinate(startingRank, startingFile),
             new Coordinate(targetRank, targetFile));
     }
 
     @Override
-    public int compareTo(Board otherBoard) {
+    public int compareTo(Position otherBoard) {
         return this.toString().compareTo(otherBoard.toString());
     }
 }
