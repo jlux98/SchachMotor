@@ -15,13 +15,13 @@ import uciservice.FenParser;
 public class MoveGeneratorTest {
 
     private static Position startingPosition;
-    private static Position blackCastlingBoard;
-    private static Position whiteCastlingBoard;
+    private static Position blackCastlingPosition;
+    private static Position whiteCastlingPosition;
 
     @BeforeAll
     public static void setup() {
-       blackCastlingBoard = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R b KQkq - 0 1");
-       whiteCastlingBoard = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
+       blackCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R b KQkq - 0 1");
+       whiteCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
        startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
             "w KQkq - 0 1");
     }
@@ -228,131 +228,131 @@ public class MoveGeneratorTest {
      * @param positions
      * @return true if and only if 
      */
-    private void compareFenStringsToBoard(List<String> fenStrings, Set<Position> positions) {
-        List<Position> calculatedBoards = new ArrayList<Position>(positions);
-        List<Position> fenStringBoards = new ArrayList<Position>(fenStrings.size());
+    private void compareFenStringsToPosition(List<String> fenStrings, Set<Position> positions) {
+        List<Position> calculatedPositions = new ArrayList<Position>(positions);
+        List<Position> fenStringPositions = new ArrayList<Position>(fenStrings.size());
         for (String fen : fenStrings) {
-            fenStringBoards.add(FenParser.parseFen(fen));
+            fenStringPositions.add(FenParser.parseFen(fen));
 
         }
-        Collections.sort(fenStringBoards);
-        Collections.sort(calculatedBoards);
-        assertEquals(fenStringBoards, calculatedBoards);
+        Collections.sort(fenStringPositions);
+        Collections.sort(calculatedPositions);
+        assertEquals(fenStringPositions, calculatedPositions);
     }
 
     @Test
     public void moveBishopTest() {
-        Position bishopTestBoard = FenParser.parseFen("7K/8/1n6/4P3/3b4/8/8/7k b - - 0 1"); //bishop starts at d4
-        Set<Position> followUpBoards = MoveGenerator.computeBishopMoves(bishopTestBoard, 4, 3);
+        Position bishopTestPosition = FenParser.parseFen("7K/8/1n6/4P3/3b4/8/8/7k b - - 0 1"); //bishop starts at d4
+        Set<Position> followUpPositions = MoveGenerator.computeBishopMoves(bishopTestPosition, 4, 3);
 
-        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
-        expectedfollowUpBoards.add("7K/8/1n6/2b1P3/8/8/8/7k w - - 1 2"); //move one square to upper left
-        expectedfollowUpBoards.add("7K/8/1n6/4b3/8/8/8/7k w - - 0 2"); //capture pawn on e5 - one square to upper right
-        expectedfollowUpBoards.add("7K/8/1n6/4P3/8/2b5/8/7k w - - 1 2"); //move to c3 - one square to bottom left
-        expectedfollowUpBoards.add("7K/8/1n6/4P3/8/8/1b6/7k w - - 1 2"); //move to b2 - two squares to bottom left
-        expectedfollowUpBoards.add("7K/8/1n6/4P3/8/8/8/b6k w - - 1 2"); //move to a1 - three squares to bottom left
-        expectedfollowUpBoards.add("7K/8/1n6/4P3/8/4b3/8/7k w - - 1 2"); //move to e3 - one square to bottom right
-        expectedfollowUpBoards.add("7K/8/1n6/4P3/8/8/5b2/7k w - - 1 2"); //move to f2 - two squares to bottom right
-        expectedfollowUpBoards.add("7K/8/1n6/4P3/8/8/8/6bk w - - 1 2"); //move to g1 - three squares to bottom right
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        expectedfollowUpPositions.add("7K/8/1n6/2b1P3/8/8/8/7k w - - 1 2"); //move one square to upper left
+        expectedfollowUpPositions.add("7K/8/1n6/4b3/8/8/8/7k w - - 0 2"); //capture pawn on e5 - one square to upper right
+        expectedfollowUpPositions.add("7K/8/1n6/4P3/8/2b5/8/7k w - - 1 2"); //move to c3 - one square to bottom left
+        expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/1b6/7k w - - 1 2"); //move to b2 - two squares to bottom left
+        expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/8/b6k w - - 1 2"); //move to a1 - three squares to bottom left
+        expectedfollowUpPositions.add("7K/8/1n6/4P3/8/4b3/8/7k w - - 1 2"); //move to e3 - one square to bottom right
+        expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/5b2/7k w - - 1 2"); //move to f2 - two squares to bottom right
+        expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/8/6bk w - - 1 2"); //move to g1 - three squares to bottom right
 
-        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
     public void moveRookTest() {
-        Position rookTestBoard = FenParser.parseFen("2n4K/8/8/8/2r1P3/8/8/7k b - - 0 1"); //rook starts at c4
-        Set<Position> followUpBoards = MoveGenerator.computeRookMoves(rookTestBoard, 4, 2);
+        Position rookTestPosition = FenParser.parseFen("2n4K/8/8/8/2r1P3/8/8/7k b - - 0 1"); //rook starts at c4
+        Set<Position> followUpPositions = MoveGenerator.computeRookMoves(rookTestPosition, 4, 2);
 
-        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
-        expectedfollowUpBoards.add("2n4K/8/8/8/1r2P3/8/8/7k w - - 1 2"); //move to b4 - one square to the left
-        expectedfollowUpBoards.add("2n4K/8/8/8/r3P3/8/8/7k w - - 1 2"); //move to a4 - two squares to the left
-        expectedfollowUpBoards.add("2n4K/8/8/2r5/4P3/8/8/7k w - - 1 2"); //move to c5 - one square up
-        expectedfollowUpBoards.add("2n4K/8/2r5/8/4P3/8/8/7k w - - 1 2"); //move to c6 - two squares up
-        expectedfollowUpBoards.add("2n4K/2r5/8/8/4P3/8/8/7k w - - 1 2"); //move to c7 - 3 squares up
-        expectedfollowUpBoards.add("2n4K/8/8/8/3rP3/8/8/7k w - - 1 2"); //move to d4 - one square to the right
-        expectedfollowUpBoards.add("2n4K/8/8/8/4r3/8/8/7k w - - 0 2"); //capture pawn on e4 - two squares to the right
-        expectedfollowUpBoards.add("2n4K/8/8/8/4P3/2r5/8/7k w - - 1 2"); //move to c3 - one square down
-        expectedfollowUpBoards.add("2n4K/8/8/8/4P3/8/2r5/7k w - - 1 2"); //move to c2 - two squares down
-        expectedfollowUpBoards.add("2n4K/8/8/8/4P3/8/8/2r4k w - - 1 2"); //move to c1 - three squares down
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        expectedfollowUpPositions.add("2n4K/8/8/8/1r2P3/8/8/7k w - - 1 2"); //move to b4 - one square to the left
+        expectedfollowUpPositions.add("2n4K/8/8/8/r3P3/8/8/7k w - - 1 2"); //move to a4 - two squares to the left
+        expectedfollowUpPositions.add("2n4K/8/8/2r5/4P3/8/8/7k w - - 1 2"); //move to c5 - one square up
+        expectedfollowUpPositions.add("2n4K/8/2r5/8/4P3/8/8/7k w - - 1 2"); //move to c6 - two squares up
+        expectedfollowUpPositions.add("2n4K/2r5/8/8/4P3/8/8/7k w - - 1 2"); //move to c7 - 3 squares up
+        expectedfollowUpPositions.add("2n4K/8/8/8/3rP3/8/8/7k w - - 1 2"); //move to d4 - one square to the right
+        expectedfollowUpPositions.add("2n4K/8/8/8/4r3/8/8/7k w - - 0 2"); //capture pawn on e4 - two squares to the right
+        expectedfollowUpPositions.add("2n4K/8/8/8/4P3/2r5/8/7k w - - 1 2"); //move to c3 - one square down
+        expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/2r5/7k w - - 1 2"); //move to c2 - two squares down
+        expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/8/2r4k w - - 1 2"); //move to c1 - three squares down
 
-        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
 
     }
 
     @Test
     public void moveBlackKingsideRookTest() {
-        Set<Position> followUpBoards = MoveGenerator.computeRookMoves(blackCastlingBoard, 0, 7);
+        Set<Position> followUpPositions = MoveGenerator.computeRookMoves(blackCastlingPosition, 0, 7);
         
-        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
 
-        expectedfollowUpBoards.add("r3k1r1/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to g8 - one square to the left
-        expectedfollowUpBoards.add("r3kr2/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to f8 - two squares to the left
+        expectedfollowUpPositions.add("r3k1r1/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to g8 - one square to the left
+        expectedfollowUpPositions.add("r3kr2/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to f8 - two squares to the left
 
-        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
     public void moveBlackQueensideRookTest() {
-        Set<Position> followUpBoards = MoveGenerator.computeRookMoves(blackCastlingBoard, 0, 0);
-        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+        Set<Position> followUpPositions = MoveGenerator.computeRookMoves(blackCastlingPosition, 0, 0);
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
 
-        expectedfollowUpBoards.add("1r2k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to b8 - one square to the right
-        expectedfollowUpBoards.add("2r1k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to c8 - two squares to the right
-        expectedfollowUpBoards.add("3rk2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to d8 - three squares to the right
+        expectedfollowUpPositions.add("1r2k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to b8 - one square to the right
+        expectedfollowUpPositions.add("2r1k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to c8 - two squares to the right
+        expectedfollowUpPositions.add("3rk2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to d8 - three squares to the right
 
-        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
         
     }
 
     @Test
     public void moveWhiteKingSideRookTest() {
-        Set<Position> followUpBoards = MoveGenerator.computeRookMoves(whiteCastlingBoard, 7, 7);
-        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+        Set<Position> followUpPositions = MoveGenerator.computeRookMoves(whiteCastlingPosition, 7, 7);
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
 
-        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 1 1"); //move to g1 - one square to the left
-        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 1 1"); //move to f1 - two squares to the left
+        expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 1 1"); //move to g1 - one square to the left
+        expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 1 1"); //move to f1 - two squares to the left
 
-        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
     public void moveWhiteQueensideRookTest() {
-        Set<Position> followUpBoards = MoveGenerator.computeRookMoves(whiteCastlingBoard, 7, 0);
-        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
+        Set<Position> followUpPositions = MoveGenerator.computeRookMoves(whiteCastlingPosition, 7, 0);
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
 
-        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/1R2K2R b Kkq - 1 1"); //move to b1 - one square to the right
-        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/2R1K2R b Kkq - 1 1"); //move to c1 - two squares to the right
-        expectedfollowUpBoards.add("r3k2r/p6p/8/8/8/8/P6P/3RK2R b Kkq - 1 1"); //move to d1 - three squares to the right
+        expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/1R2K2R b Kkq - 1 1"); //move to b1 - one square to the right
+        expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/2R1K2R b Kkq - 1 1"); //move to c1 - two squares to the right
+        expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/3RK2R b Kkq - 1 1"); //move to d1 - three squares to the right
         
-        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
     public void moveQueenTest() {
-        Position queenTestBoard = FenParser.parseFen("7K/8/2n5/8/3P4/2q5/8/7k b - - 0 1"); //queen starts at c3
-        Set<Position> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 5, 2);
+        Position queenTestPosition = FenParser.parseFen("7K/8/2n5/8/3P4/2q5/8/7k b - - 0 1"); //queen starts at c3
+        Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 5, 2);
 
-        List<String> expectedfollowUpBoards = new ArrayList<String>(followUpBoards.size());
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/1q6/8/7k w - - 1 2"); //move to b3 - one square left
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/q7/8/7k w - - 1 2"); //move to a3 - two squares left
-        expectedfollowUpBoards.add("7K/8/2n5/8/1q1P4/8/8/7k w - - 1 2"); //move to b4 - one square to upper left
-        expectedfollowUpBoards.add("7K/8/2n5/q7/3P4/8/8/7k w - - 1 2"); //move to a5 - two squares to upper left
-        expectedfollowUpBoards.add("7K/8/2n5/8/2qP4/8/8/7k w - - 1 2"); //move to c4 - one square up
-        expectedfollowUpBoards.add("7K/8/2n5/2q5/3P4/8/8/7k w - - 1 2"); //move to c5 - two squares up
-        expectedfollowUpBoards.add("7K/8/2n5/8/3q4/8/8/7k w - - 0 2"); //capture pawn on d4 - one square to upper right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/3q4/8/7k w - - 1 2"); //move to d3 - one square to the right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/4q3/8/7k w - - 1 2"); //move to e3 - two squares to the right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/5q2/8/7k w - - 1 2"); //move to f3 - three squares to the right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/6q1/8/7k w - - 1 2"); //move to g3 - four quares to the right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/7q/8/7k w - - 1 2"); //move to h3 - five squares to the right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/3q4/7k w - - 1 2"); //move to d2 - one square to bottom right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/8/4q2k w - - 1 2"); //move to e1 - two squares to bottom right
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/2q5/7k w - - 1 2"); //move to c2 - one square down
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/8/2q4k w - - 1 2"); //move to c1 - two squares down
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/1q6/7k w - - 1 2"); //move to b2 - one square to bottom left
-        expectedfollowUpBoards.add("7K/8/2n5/8/3P4/8/8/q6k w - - 1 2"); //move to a1 - two squares to bottom left
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/1q6/8/7k w - - 1 2"); //move to b3 - one square left
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/q7/8/7k w - - 1 2"); //move to a3 - two squares left
+        expectedfollowUpPositions.add("7K/8/2n5/8/1q1P4/8/8/7k w - - 1 2"); //move to b4 - one square to upper left
+        expectedfollowUpPositions.add("7K/8/2n5/q7/3P4/8/8/7k w - - 1 2"); //move to a5 - two squares to upper left
+        expectedfollowUpPositions.add("7K/8/2n5/8/2qP4/8/8/7k w - - 1 2"); //move to c4 - one square up
+        expectedfollowUpPositions.add("7K/8/2n5/2q5/3P4/8/8/7k w - - 1 2"); //move to c5 - two squares up
+        expectedfollowUpPositions.add("7K/8/2n5/8/3q4/8/8/7k w - - 0 2"); //capture pawn on d4 - one square to upper right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/3q4/8/7k w - - 1 2"); //move to d3 - one square to the right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/4q3/8/7k w - - 1 2"); //move to e3 - two squares to the right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/5q2/8/7k w - - 1 2"); //move to f3 - three squares to the right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/6q1/8/7k w - - 1 2"); //move to g3 - four quares to the right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/7q/8/7k w - - 1 2"); //move to h3 - five squares to the right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/3q4/7k w - - 1 2"); //move to d2 - one square to bottom right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/8/4q2k w - - 1 2"); //move to e1 - two squares to bottom right
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/2q5/7k w - - 1 2"); //move to c2 - one square down
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/8/2q4k w - - 1 2"); //move to c1 - two squares down
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/1q6/7k w - - 1 2"); //move to b2 - one square to bottom left
+        expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/8/q6k w - - 1 2"); //move to a1 - two squares to bottom left
 
-        compareFenStringsToBoard(expectedfollowUpBoards, followUpBoards);
+        compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -361,10 +361,10 @@ public class MoveGeneratorTest {
      * A black queen starts in the a8 corner surrounded by black rooks. No moves are possible.
      */
     public void pieceInA8CornerTest() {
-        Position queenTestBoard = FenParser.parseFen("qr6/rr6/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at a8
-        Set<Position> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 0, 0);
+        Position queenTestPosition = FenParser.parseFen("qr6/rr6/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at a8
+        Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 0, 0);
         List<String> emptyList = new ArrayList<String>();
-        compareFenStringsToBoard(emptyList, followUpBoards);
+        compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -374,10 +374,10 @@ public class MoveGeneratorTest {
      * A black queen starts in the h8 corner surrounded by black rooks. No moves are possible.
      */
     public void pieceInH8CornerTest() {
-        Position queenTestBoard = FenParser.parseFen("6rq/6rr/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at h8
-        Set<Position> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 0, 7);
+        Position queenTestPosition = FenParser.parseFen("6rq/6rr/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at h8
+        Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 0, 7);
         List<String> emptyList = new ArrayList<String>();
-        compareFenStringsToBoard(emptyList, followUpBoards);
+        compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -387,10 +387,10 @@ public class MoveGeneratorTest {
      * A black queen starts in the a1 corner surrounded by black rooks. No moves are possible.
      */
     public void pieceInA1CornerTest() {
-        Position queenTestBoard = FenParser.parseFen("8/8/8/8/3Kk3/8/rr6/qr6 w - - 0 1"); //queen starts at a1
-        Set<Position> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 7, 0);
+        Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/rr6/qr6 w - - 0 1"); //queen starts at a1
+        Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 7, 0);
         List<String> emptyList = new ArrayList<String>();
-        compareFenStringsToBoard(emptyList, followUpBoards);
+        compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -400,10 +400,10 @@ public class MoveGeneratorTest {
      * A black queen starts in the h1 corner surrounded by black rooks. No moves are possible.
      */
     public void pieceInH1CornerTest() {
-        Position queenTestBoard = FenParser.parseFen("8/8/8/8/3Kk3/8/6rr/6rq w - - 0 1"); //queen starts at h1
-        Set<Position> followUpBoards = MoveGenerator.computeQueenMoves(queenTestBoard, 7, 7);
+        Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/6rr/6rq w - - 0 1"); //queen starts at h1
+        Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 7, 7);
         List<String> emptyList = new ArrayList<String>();
-        compareFenStringsToBoard(emptyList, followUpBoards);
+        compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 

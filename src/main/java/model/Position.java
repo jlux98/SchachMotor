@@ -37,7 +37,7 @@ public class Position implements Comparable<Position>, Cloneable{
     private Move generatedByMove;
 
     /**
-    * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
+    * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
     * but without requiring point value and whiteInCheck / blackInCheck to be set.
     * These value may be set using the corresponding setter at a later time.
     */
@@ -94,9 +94,9 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     /**
-     * Like {@link #Board(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
+     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
      * but without requiring a point value to be set.
-     * The value may be set using Board.setPointValue() at a later time.
+     * The value may be set using Position.setPointValue() at a later time.
      */
     public Position(boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
@@ -150,10 +150,10 @@ public class Position implements Comparable<Position>, Cloneable{
 
     /**
      * Generates a follow-up position without en passant target square.
-     * Same as {@link Position#generateFollowUpBoard(Piece[][], int, int) generateFollowUpBoard(Board, Piece[][], -1, -1)}.
+     * Same as {@link Position#generateFollowUpPosition(Piece[][], int, int) generateFollowUpPosition(Position, Piece[][], -1, -1)}.
      */
-    public Position generateFollowUpBoard(Piece[][] newPosition, boolean captureOrPawnMove) {
-        return generateFollowUpBoard(newPosition, -1, -1, captureOrPawnMove);
+    public Position generateFollowUpPosition(Piece[][] newPosition, boolean captureOrPawnMove) {
+        return generateFollowUpPosition(newPosition, -1, -1, captureOrPawnMove);
     }
 
     /**
@@ -163,14 +163,14 @@ public class Position implements Comparable<Position>, Cloneable{
      * <br><br>
      * <b>Note:</b>
      * This method is not suitable to generate follow-up positions for rooks and kings since castling rights are copied.
-     * Use {@link #generateFollowUpBoard(Piece[][], int, int, boolean, boolean, boolean, boolean)}  instead.
+     * Use {@link #generateFollowUpPosition(Piece[][], int, int, boolean, boolean, boolean, boolean)}  instead.
      * @param newPosition the piece's  new position 
      * @param newEnPassantTargetRank rank of the en passant target square
      * @param newEnPassantTargetFile file of the en passant target square
      * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
      * @return a follow-up position to this position  
      */
-    public Position generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
+    public Position generateFollowUpPosition(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
 
         //use getters over direct field access so additional code can be run if required at a later time
         boolean newWhiteCastlingKingside = this.getWhiteCastlingKingside();
@@ -178,7 +178,7 @@ public class Position implements Comparable<Position>, Cloneable{
         boolean newBlackCastlingKingside = this.getBlackCastlingKingside();
         boolean newBlackCastlingQueenside = this.getBlackCastlingQueenside();
 
-        return generateFollowUpBoard(newPosition, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
+        return generateFollowUpPosition(newPosition, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, captureOrPawnMove);
     }
 
@@ -199,7 +199,7 @@ public class Position implements Comparable<Position>, Cloneable{
     * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
     * @return a follow-up position to this position 
     */
-    public Position generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+    public Position generateFollowUpPosition(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
             boolean newBlackCastlingQueenside, boolean captureOrPawnMove) {
 
@@ -466,7 +466,7 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     @Override
-    public int compareTo(Position otherBoard) {
-        return this.toString().compareTo(otherBoard.toString());
+    public int compareTo(Position otherPosition) {
+        return this.toString().compareTo(otherPosition.toString());
     }
 }

@@ -34,7 +34,7 @@ public class FenParser {
     private int fullMoves;
 
     /**
-     * Constructs a new FenParser that can be used to parse the specified fen string to a Board by calling {@link #parseFen()}.
+     * Constructs a new FenParser that can be used to parse the specified fen string to a Position by calling {@link #parseFen()}.
      * @param fen the fen string that should be translated into a position
      */
     public FenParser(String fen) {
@@ -54,7 +54,7 @@ public class FenParser {
      *  return parser.parseFen();
      *  }
      * @param fen the fen string that should be translated
-     * @return an instance of Board representing the information that was stored in the fen string
+     * @return an instance of Position representing the information that was stored in the fen string
      */
     public static Position parseFen(String fen) {
         FenParser parser = new FenParser(fen);
@@ -62,7 +62,7 @@ public class FenParser {
     }
     /**
      * Parses the fen string that was supplied to the constructor.
-     * @return an instance of Board representing the information that was stored in the fen string
+     * @return an instance of Position representing the information that was stored in the fen string
      */
     public Position parseFen() {
         parseTokens();
@@ -85,7 +85,7 @@ public class FenParser {
 
     /**
      * Constructs a position instance from the values extracted from a fen string.
-     * @return an instance of Board representing the information that was stored in the fen string
+     * @return an instance of Position representing the information that was stored in the fen string
      */
     private Position createPosition() {
         return new Position(piecePositions, isWhiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside,
