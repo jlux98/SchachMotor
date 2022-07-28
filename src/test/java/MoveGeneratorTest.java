@@ -223,13 +223,13 @@ public class MoveGeneratorTest {
     }
 
     /**
-     * Compares the positions denoted as fen strings against the list of boards.
+     * Compares the positions denoted as fen strings against the list of positions.
      * @param fenStrings
-     * @param boards
+     * @param positions
      * @return true if and only if 
      */
-    private void compareFenStringsToBoard(List<String> fenStrings, Set<Position> boards) {
-        List<Position> calculatedBoards = new ArrayList<Position>(boards);
+    private void compareFenStringsToBoard(List<String> fenStrings, Set<Position> positions) {
+        List<Position> calculatedBoards = new ArrayList<Position>(positions);
         List<Position> fenStringBoards = new ArrayList<Position>(fenStrings.size());
         for (String fen : fenStrings) {
             fenStringBoards.add(FenParser.parseFen(fen));

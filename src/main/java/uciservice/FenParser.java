@@ -21,7 +21,7 @@ public class FenParser {
     //parser attributes
     private String fen;
 
-    //board attributes
+    //position attributes
     private Piece[][] piecePositions;
     private boolean isWhiteNextMove;
     private boolean whiteCastlingKingside = false;
@@ -35,7 +35,7 @@ public class FenParser {
 
     /**
      * Constructs a new FenParser that can be used to parse the specified fen string to a Board by calling {@link #parseFen()}.
-     * @param fen the fen string that should be translated into a board
+     * @param fen the fen string that should be translated into a position
      */
     public FenParser(String fen) {
         if (fen == null) {
@@ -46,7 +46,7 @@ public class FenParser {
     }
 
     /**
-     * Parses the fen string and translates it into a instance of board.
+     * Parses the fen string and translates it into a instance of position.
      * <br><br>
      * This method is static and shorthand for
      *  {@snippet: 
@@ -66,7 +66,7 @@ public class FenParser {
      */
     public Position parseFen() {
         parseTokens();
-        return createBoard();
+        return createPosition();
     }
 
     /**
@@ -84,10 +84,10 @@ public class FenParser {
     }
 
     /**
-     * Constructs a board instance from the values extracted from a fen string.
+     * Constructs a position instance from the values extracted from a fen string.
      * @return an instance of Board representing the information that was stored in the fen string
      */
-    private Position createBoard() {
+    private Position createPosition() {
         return new Position(piecePositions, isWhiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside,
                 blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
 

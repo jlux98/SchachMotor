@@ -112,7 +112,7 @@ public class ImpGameNode implements GameNode {
     @Override
     public void deleteChild(GameNode node) {
         // removing with ArrayList.remove(node) would require gamenode.equals()
-        // which would probably have to compare boards which is inefficient
+        // which would probably have to compare positions which is inefficient
 
         // removing by equals also does not guarantee removal of the correct node if 2
         // equal nodes are present,

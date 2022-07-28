@@ -46,7 +46,7 @@ public class BoardTest {
 
     @BeforeEach
     /**
-     * Sets up the test board with every boolean set to false and every numberic
+     * Sets up the test position with every boolean set to false and every numberic
      * value set to the lowest possible value.
      * Do not make changes to the Board constructor invocation, it is mirrored in
      * some test methods.
@@ -87,24 +87,24 @@ public class BoardTest {
     };
 
     /**
-     * Returns a board that is equal to testBoard except for one square.
+     * Returns a position that is equal to testBoard except for one square.
      * @param rank the rank of the square that should be changed
      * @param file the file of the square that should be changed
      * @param pieceCharacter the piece that should be placed on the square
      * @return
      */
-    private Position generateBoardWithModififedSpaces(int rank, int file, char pieceCharacter) {
+    private Position generatePositionWithModififedSpaces(int rank, int file, char pieceCharacter) {
         Piece[][] modifiedSpaces = testBoard.copySpaces();
         modifiedSpaces[rank][file] = new Piece(pieceCharacter);
         return new Position(0, false, false, modifiedSpaces, false, false, false, false, false, 0, 0, 0, 1);
     }
 
     /**
-     * Asserts that the board has en passant target rank and file of -1.
+     * Asserts that the position has en passant target rank and file of -1.
      */
-    private void assertNoEnPassantTargetSquare(Position board) {
-        assertEquals(-1, board.getEnPassantTargetRank());
-        assertEquals(-1, board.getEnPassantTargetFile());
+    private void assertNoEnPassantTargetSquare(Position position) {
+        assertEquals(-1, position.getEnPassantTargetRank());
+        assertEquals(-1, position.getEnPassantTargetFile());
     }
 
     @Test
@@ -169,8 +169,8 @@ public class BoardTest {
 
     @Test
     public void copySpacesTest() {
-        Position board = new Position(false, false, testSpaces, false, false, false, false, false, 0, 0, 0, 1);
-        Piece[][] copy = board.copySpaces();
+        Position position = new Position(false, false, testSpaces, false, false, false, false, false, 0, 0, 0, 1);
+        Piece[][] copy = position.copySpaces();
         // verify that a new array was created
         // pieces need not be new instances
         assertTrue(testSpaces != copy);
@@ -267,7 +267,7 @@ public class BoardTest {
     @Test
     public void cloneReturnsEqualBoardTest() {
         Position clonedBoard = testBoard.clone();
-        //cloned board needs to be a new instance
+        //cloned position needs to be a new instance
         assertTrue(clonedBoard != testBoard);
         assertEquals(testBoard, clonedBoard);
     }
@@ -295,25 +295,25 @@ public class BoardTest {
 
     @Test
     public void notEqualsSpacesTest() {
-        Position comparedBoard = generateBoardWithModififedSpaces(4, 7, 'b');
+        Position comparedBoard = generatePositionWithModififedSpaces(4, 7, 'b');
         assertFalse(testBoard.equals(comparedBoard));
     }
 
     @Test
     public void notEqualsA8SpaceTest() {
-        Position comparedBoard = generateBoardWithModififedSpaces(0, 0, 'b');
+        Position comparedBoard = generatePositionWithModififedSpaces(0, 0, 'b');
         assertFalse(testBoard.equals(comparedBoard));
     }
 
     @Test
     public void notEqualsH1SpaceTest() {
-        Position comparedBoard = generateBoardWithModififedSpaces(7, 7, 'N');
+        Position comparedBoard = generatePositionWithModififedSpaces(7, 7, 'N');
         assertFalse(testBoard.equals(comparedBoard));
     }
 
     @Test
     public void notEqualsA5SpaceTest() {
-        Position comparedBoard = generateBoardWithModififedSpaces(0, 3, 'N');
+        Position comparedBoard = generatePositionWithModififedSpaces(0, 3, 'N');
         assertFalse(testBoard.equals(comparedBoard));
     }
 

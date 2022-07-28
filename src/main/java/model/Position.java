@@ -77,8 +77,8 @@ public class Position implements Comparable<Position>, Cloneable{
         if (whiteKing != null){
             this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
         } else {
-            /*  This is done to prevent a board without a king from generating
-                moves without while allowing such a board state to exist for the
+            /*  This is done to prevent a position without a king from generating
+                moves without while allowing such a position state to exist for the
                 sake of point evaluation */
             this.whiteInCheck = true;
         }
@@ -86,8 +86,8 @@ public class Position implements Comparable<Position>, Cloneable{
         if (blackKing != null){
             this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
         } else {
-            /*  This is done to prevent a board without a king from generating
-                moves without while allowing such a board state to exist for the
+            /*  This is done to prevent a position without a king from generating
+                moves without while allowing such a position state to exist for the
                 sake of point evaluation */
             this.blackInCheck = true;
         }
@@ -108,8 +108,8 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     /**
-     * Creates a new board with the specified values.
-     * @param pointValue the boards evaluated value
+     * Creates a new position with the specified values.
+     * @param pointValue the positions evaluated value
      * @param spaces two dimensional array holding the chess pieces, represents the chess position
      * @param whiteNextMove whether the enxt turn is white's
      * @param whiteInCheck whether white is in checks
@@ -133,7 +133,7 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     /**
-     * Copies the spaces array to facilitate generation of follow-up boards wtihout affecting this board.
+     * Copies the spaces array to facilitate generation of follow-up positions wtihout affecting this position.
      * <br><br>
      * <b>Note:</b> Because pieces are immutable the pieces themselves are not copied (the same piece instances are returned within the copied array).
      * @return a copy of the two dimensional array representing the chess pieces' positions.
@@ -149,7 +149,7 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     /**
-     * Generates a follow-up board without en passant target square.
+     * Generates a follow-up position without en passant target square.
      * Same as {@link Position#generateFollowUpBoard(Piece[][], int, int) generateFollowUpBoard(Board, Piece[][], -1, -1)}.
      */
     public Position generateFollowUpBoard(Piece[][] newPosition, boolean captureOrPawnMove) {
@@ -157,18 +157,18 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     /**
-     * Generates a follow-up board to this board with the specified parameters.
+     * Generates a follow-up position to this position with the specified parameters.
      * Sets check flags according to the attack maps.
-     * Castling right flags are copied from this board.
+     * Castling right flags are copied from this position.
      * <br><br>
      * <b>Note:</b>
-     * This method is not suitable to generate follow-up boards for rooks and kings since castling rights are copied.
+     * This method is not suitable to generate follow-up positions for rooks and kings since castling rights are copied.
      * Use {@link #generateFollowUpBoard(Piece[][], int, int, boolean, boolean, boolean, boolean)}  instead.
      * @param newPosition the piece's  new position 
      * @param newEnPassantTargetRank rank of the en passant target square
      * @param newEnPassantTargetFile file of the en passant target square
      * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
-     * @return a follow-up board to this board  
+     * @return a follow-up position to this position  
      */
     public Position generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
 
@@ -183,7 +183,7 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     /**
-    * Generates a follow-up board to this board with the specified parameters.
+    * Generates a follow-up position to this position with the specified parameters.
     * Sets check flags according to the attack maps.
     * <br><br>  
     * Castling flags represent permanent loss of castling ability, 
@@ -197,20 +197,20 @@ public class Position implements Comparable<Position>, Cloneable{
     * @param newBlackCastlingKingside whether black may castle kingside
     * @param newBlackCastlingQueenside whether black may castle queenside
     * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
-    * @return a follow-up board to this board 
+    * @return a follow-up position to this position 
     */
     public Position generateFollowUpBoard(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
             boolean newBlackCastlingQueenside, boolean captureOrPawnMove) {
 
-        //arguments start with "new" to prevent shadowing of / name-clashing with the surrounding board's attributes
+        //arguments start with "new" to prevent shadowing of / name-clashing with the surrounding position's attributes
         //such shadowing should be avoided since arguments (e.g. whiteCastlingKingSide) could be missing and the value would be read
         //from the corresponding attribute, rather than resulting in an error
 
         int fullMoveCount = this.getFullMoves();
         if (!this.getWhiteNextMove()) {
-            //the board following this one is black's turn
-            //so the board being generated from this board represents the game's state after black moved
+            //the position following this one is black's turn
+            //so the position being generated from this position represents the game's state after black moved
             //  -> increment fullMoveCounter
             fullMoveCount += 1;
         }
@@ -232,20 +232,20 @@ public class Position implements Comparable<Position>, Cloneable{
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Position){
-            Position board = (Position) obj;
-            return  (blackCastlingKingside == board.getBlackCastlingKingside()) &&
-                    (blackCastlingQueenside == board.getBlackCastlingQueenside()) &&
-                    (blackInCheck == board.getBlackInCheck()) &&
-                    (enPassantTargetFile == board.getEnPassantTargetFile()) &&
-                    (enPassantTargetRank == board.getEnPassantTargetRank()) &&
-                    (fullMoveCount == board.getFullMoves()) &&
-                    (halfMovesSincePawnMoveOrCapture == board.getHalfMoves()) &&
-                    (pointValue == board.getPointValue()) &&
-                    (spacesEquals(board.getSpaces())) &&
-                    (whiteCastlingKingside == board.getWhiteCastlingKingside()) &&
-                    (whiteCastlingQueenside == board.getWhiteCastlingQueenside()) &&
-                    (whiteInCheck == board.getWhiteInCheck()) &&
-                    (whiteNextMove == board.getWhiteNextMove());
+            Position position = (Position) obj;
+            return  (blackCastlingKingside == position.getBlackCastlingKingside()) &&
+                    (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
+                    (blackInCheck == position.getBlackInCheck()) &&
+                    (enPassantTargetFile == position.getEnPassantTargetFile()) &&
+                    (enPassantTargetRank == position.getEnPassantTargetRank()) &&
+                    (fullMoveCount == position.getFullMoves()) &&
+                    (halfMovesSincePawnMoveOrCapture == position.getHalfMoves()) &&
+                    (pointValue == position.getPointValue()) &&
+                    (spacesEquals(position.getSpaces())) &&
+                    (whiteCastlingKingside == position.getWhiteCastlingKingside()) &&
+                    (whiteCastlingQueenside == position.getWhiteCastlingQueenside()) &&
+                    (whiteInCheck == position.getWhiteInCheck()) &&
+                    (whiteNextMove == position.getWhiteNextMove());
         } else {
         return false;
         }
@@ -325,9 +325,9 @@ public class Position implements Comparable<Position>, Cloneable{
 
     @Override
     /**
-     * Clones this board.
+     * Clones this position.
      * While a new spaces array is created, the contained pieces are the same instances.
-     * Thus modifying the array is possible without affecting this board.
+     * Thus modifying the array is possible without affecting this position.
      * As pieces are immutable it is valid to use the same instances.
      */
     public Position clone() {
@@ -338,9 +338,9 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     /**
-     * Sets the point value of this board.
-     * Required to allow for boards to be generated first and evaluated at a later time.
-     * @param pointValue the board's value
+     * Sets the point value of this position.
+     * Required to allow for positions to be generated first and evaluated at a later time.
+     * @param pointValue the position's value
      */
     public void setPointValue(int pointValue) {
         //pointvalue may be negative
