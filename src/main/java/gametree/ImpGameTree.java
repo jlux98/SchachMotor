@@ -35,6 +35,25 @@ public class ImpGameTree implements GameTree {
         this.evaluator = evaluator;
     }
 
+    
+    @Override
+    public GameNode getRoot() {
+        //does not need to be null checked since no game tree can be constructed without setting the root node
+        return this.root;
+    }
+
+    
+
+
+    @Override
+    public List<GameNode> getLeafList() {
+        if (this.leafList == null || this.leafList.size() == 0) {
+            throw new IllegalStateException("leaf list is empty");
+        }
+        return this.leafList;
+    }
+
+
     /**
      * Guarantees that the tree has the desired depth after this call.
      * If the current depth of the tree is less than targetDepth a new level of nodes is calculated.
