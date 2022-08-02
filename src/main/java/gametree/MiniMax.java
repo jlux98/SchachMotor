@@ -14,9 +14,13 @@ public class MiniMax implements TreeEvaluator {
         GameNode root = gameTree.getRoot();
         evaluateLeaves(gameTree);
         updateNode(root);
-        root.getPosition().getWhiteNextMove();
-        // TODO Auto-generated method stub
-        return null;
+        int rootValue = root.getValue();
+        for (GameNode playableChild : root.getChildren()) {
+            if (playableChild.getValue() == rootValue) {
+                return playableChild;
+            }
+        }
+        throw new IllegalStateException("root does not have children or none of the chilren match root's value");
     }
 
 
