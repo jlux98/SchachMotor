@@ -77,21 +77,10 @@ public class AlphaBetaPruning implements TreeEvaluator {
 
     }
 
-    //TODO somehow invoke alphaBetaPruningMinMax and determine the node to be played
-    //issue: values are not stored in the tree -> cant iterate over level 1 nodes to pick the one with root value
-    //solutions:
-    //a) store values in tree
-    //b) change alphaBetaPruningMiniMax somehow to make it work e.g. if depth max (root layer) put the node with highest value in some data structure
-
     /**
-     * Determines the value of the node and returns it.
-     * @param node
-     * @param depth
-     * @param alpha
-     * @param beta
-     * @return
+     * What evaluateTree code could look like if you did not have to reference the node to be played.
      */
-    private int alphaBetaPruningMiniMax(GameNode node, int depth, int alpha, int beta) {
+/*     private int alphaBetaPruningMiniMax(GameNode node, int depth, int alpha, int beta) {
         //assign static evaluation to leaves
         if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
             return PositionEvaluator.evaluatePosition(node.getPosition());
@@ -106,7 +95,7 @@ public class AlphaBetaPruning implements TreeEvaluator {
             return alphaBetaMinimize(node, depth - 1, alpha, beta);
 
         }
-    }
+    } */
 
     /**
      * Minimizes this node (value = min(child values)) and returns its value.
