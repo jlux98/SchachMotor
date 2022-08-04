@@ -12,6 +12,7 @@ public class ImpGameNode implements GameNode {
     private List<GameNode> children;
     private Position gameState;
     private int pointValue;
+    private boolean evaluated = false;
 
     private ImpGameNode(Position position) {
         this.gameState = position;
@@ -53,6 +54,7 @@ public class ImpGameNode implements GameNode {
 
     @Override
     public void computeChildren() {
+        //TODO testing!
         createChildListIfNotExists();
         if (this.children.size() != 0) {
             throw new IllegalStateException("node already has children");
@@ -151,7 +153,7 @@ public class ImpGameNode implements GameNode {
     @Override
     public void setValue(int value) {
         this.pointValue = value;
-
+        this.evaluated = true;
     }
 
     public int getValue() {
@@ -162,5 +164,25 @@ public class ImpGameNode implements GameNode {
     public GameNode getParent() {
         return this.parent;
     }
+
+    @Override
+    public Position getPosition() {
+        return this.gameState;
+    }
+
+    /**
+     * May return null.
+     * @return this node's children
+     */
+    @Override
+    public List<GameNode> getChildren() {
+        return children;
+    }
+
+    @Override
+    public boolean isEvaluated() {
+        return evaluated;
+    }  
+    
 
 }

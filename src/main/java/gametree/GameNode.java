@@ -1,5 +1,9 @@
 package gametree;
 
+import java.util.List;
+
+import model.Position;
+
 /**
  * Interface for the nodes of a game tree.
  */
@@ -57,5 +61,23 @@ public interface GameNode {
      * @return this node's parent
      */
     public abstract GameNode getParent();
+
+    /**
+     * @return the position stored by this node
+     */
+    public abstract Position getPosition();
+
+    public abstract List<GameNode> getChildren();
+
+    /**
+     * @return this node's stored value
+     */
+    public int getValue();
+
+    /**
+     * @return true - if a value has been assigned to this node,
+     * false - otherwise
+     */
+    public boolean isEvaluated();
 
 }

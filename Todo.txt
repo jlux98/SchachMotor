@@ -9,6 +9,13 @@ x wohin Minmax etc Code
 - Targetrank/file in Position (former Board) durch Coordinate ersetzen
 
 
+interfaces evaluable tree und evaluable node hinzufügeun
+gametree und gamenode erweitern diese interfaces
+
+generisches Interface Evaluator<T>
+und Datentyp Evaluable auf dem dieses Interface arbeitet
+
+generisches Tree und Node interface
 ---------------
 
 geg: GameTree Tiefe x

@@ -7,6 +7,6 @@ public interface TreeEvaluator {
      * @param gameTree the tree to be evaluated
      * @return the GameNode representing the turn to be played
      */
-    public abstract GameNode evaluateTree(GameTree gameTree);
+    public abstract GameNode evaluateTree(GameTree gameTree, int depth);
     
 }
