@@ -9,6 +9,8 @@ public class MiniMax implements TreeEvaluator {
     //white maximizes score
     //black minimizes score
 
+    //FIXME replace with an implementation based on alpha beta implementation
+
     @Override
     public GameNode evaluateTree(GameTree gameTree) {
         GameNode root = gameTree.getRoot();
