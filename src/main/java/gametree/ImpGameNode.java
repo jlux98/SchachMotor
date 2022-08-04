@@ -5,14 +5,12 @@ import java.util.List;
 
 import model.Position;
 import movegenerator.MoveGenerator;
-import positionevaluator.PositionEvaluator;
 
 public class ImpGameNode implements GameNode {
 
     private GameNode parent;
     private List<GameNode> children;
     private Position gameState;
-    private int pointValue;
     private boolean evaluated = false;
 
     private ImpGameNode(Position position) {
@@ -53,31 +51,6 @@ public class ImpGameNode implements GameNode {
         }
     }
 
-    
-    @Override
-    public GameNode findPlayableAncestor() {
-        //TODO testing!
-        if (this.parent == null) {
-            throw new IllegalStateException("looking for ancestor of root");
-        }
-        return ((ImpGameNode) this.getParent()).findPlayableAncestor(this); //parent.findPlayableAncestor(this)
-    }
-
-    /**
-     * @param lastNode the child from which this node was found
-     * @return the node corresponding to the turn that has to be played for this node to be reachable
-     */
-    private ImpGameNode findPlayableAncestor(ImpGameNode lastNode) {
-        // recursively traverse to root and return the last node before it
-        
-        //return previous node if this node is root
-        if (this.parent == null) {
-            return lastNode;
-        }
-        //repeat for parent node
-        return ((ImpGameNode) lastNode.getParent()).findPlayableAncestor(this);
-    }
-
     @Override
     public boolean hasChildren() {
         return this.children == null || this.children.size() != 0;
@@ -93,7 +66,7 @@ public class ImpGameNode implements GameNode {
     @Override
     public void deleteSelf() {
         try {
-        this.parent.deleteChild(this);
+            this.parent.deleteChild(this);
         } catch (IllegalArgumentException exception) {
             //if this node cannot be found as a child of it's parent,
             //it is deemed to already have been removed -> void exception
@@ -119,69 +92,13 @@ public class ImpGameNode implements GameNode {
         throw new IllegalArgumentException("child to remove could not be found");
     }
 
-
     @Override
     public void deleteChildren() {
         this.children.clear();
-
-    }
-
-    /**
-     * Sets the child list of this node.
-     * <br>
-     * <br>
-     * <b>Note:</b>
-     * Be aware that this removes (overwrites) all formerly attached child nodes.
-     * 
-     * @param children list of nodes that should be attached to this node
-     */
-    private void setChildren(List<GameNode> children) {
-        this.children = children;
     }
 
     @Override
-    public void setValue(int value) {
-        this.pointValue = value;
-        this.evaluated = true;
-    }
-
-    public int getValue() {
-        return this.pointValue;
-    }
-
-    @Override
-    public GameNode getParent() {
-        return this.parent;
-    }
-
-    @Override
-    public Position getPosition() {
-        return this.gameState;
-    }
-
-    /**
-     * May return null.
-     * @return this node's children
-     */
-    @Override
-    public List<GameNode> getChildren() {
-        return children;
-    }
-
-    @Override
-    public boolean isEvaluated() {
-        return evaluated;
-    }
-
-    @Override
-    public Position getContent() {
-        return gameState;
-    }
-
-    
-
-    @Override
-    public  List<GameNode> queryChildren() {
+    public List<GameNode> queryChildren() {
         if (!hasChildren()) {
             computeChildren();
         }
@@ -198,18 +115,47 @@ public class ImpGameNode implements GameNode {
             throw new IllegalStateException("node already has children");
         }
         Position[] followUpPositions = MoveGenerator.generatePossibleMoves(gameState);
-        for (Position position : followUpPositions) {
-            this.children.add(new ImpGameNode(position));
+        for (Position position : followUpPositions) {            
+            this.children.add(createNode(position, this));
         }
     }
 
     @Override
     public int queryValue() {
         return this.gameState.queryValue();
-    } 
+    }
 
-    
+    /**
+     * Sets the child list of this node.
+     * <br>
+     * <br>
+     * <b>Note:</b>
+     * Be aware that this removes (overwrites) all formerly attached child nodes.
+     * 
+     * @param children list of nodes that should be attached to this node
+     */
+    private void setChildren(List<GameNode> children) {
+        this.children = children;
+    }
 
-    
+    @Override
+    public GameNode getParent() {
+        return this.parent;
+    }
+
+    @Override
+    public Position getPosition() {
+        return this.gameState;
+    }
+
+    @Override
+    public boolean isEvaluated() {
+        return evaluated;
+    }
+
+    @Override
+    public Position getContent() {
+        return gameState;
+    }
 
 }
