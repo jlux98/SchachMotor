@@ -77,7 +77,7 @@ public class ImpGameTree implements GameTree {
         while (hasTime(maxTime)) {
             deepenIfNecessary(iteratingDepth);
             iteratingDepth++;
-            nextMove = evaluator.evaluateTree(this, depth); 
+            nextMove = evaluator.evaluateTree(this, depth, this.root.getPosition().getWhitesTurn()); 
         }
         if (nextMove == null) {
             //FIXME emergency calculation if time is not even sufficient for the first iteration

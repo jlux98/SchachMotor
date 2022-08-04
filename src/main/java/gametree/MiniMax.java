@@ -1,11 +1,13 @@
 package gametree;
 
-public class MiniMax implements TreeEvaluator<GameNode> {
+import positionevaluator.Evaluable;
+
+public class MiniMax implements TreeEvaluator<Node<Evaluable>> {
 
     @Override
-    public GameNode evaluateTree(Tree<GameNode> gameTree, int depth) {
+    public Node<Evaluable> evaluateTree(Tree<Node<Evaluable>> gameTree, int depth, boolean whitesTurn) {
         // TODO implemented by #50
         return null;
     }
-    
+ 
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import movegenerator.AttackMapGenerator;
 import positionevaluator.Evaluable;
+import positionevaluator.PositionEvaluator;
 
 /**
  * Class representing the game state.
@@ -228,6 +229,11 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
         return new Position(newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
+    }
+
+    @Override
+    public int queryValue() {
+        return PositionEvaluator.evaluatePosition(this);
     }
 
     @Override
@@ -470,18 +476,5 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
     public int compareTo(Position otherPosition) {
         return this.toString().compareTo(otherPosition.toString());
     }
-
-    @Override
-    public int getValue() {
-        // TODO Auto-generated method stub
-        return this.getPointValue();
-    }
-
-    @Override
-    public void setValue(int value) {
-        // TODO Auto-generated method stub
-        this.setPointValue(value);
-    }
-
-    
+   
 }

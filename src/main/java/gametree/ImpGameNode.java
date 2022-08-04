@@ -5,6 +5,7 @@ import java.util.List;
 
 import model.Position;
 import movegenerator.MoveGenerator;
+import positionevaluator.PositionEvaluator;
 
 public class ImpGameNode implements GameNode {
 
@@ -200,7 +201,15 @@ public class ImpGameNode implements GameNode {
         for (Position position : followUpPositions) {
             this.children.add(new ImpGameNode(position));
         }
+    }
+
+    @Override
+    public int queryValue() {
+        return this.gameState.queryValue();
     } 
+
+    
+
     
 
 }
