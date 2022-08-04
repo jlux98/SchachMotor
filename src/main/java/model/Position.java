@@ -3,6 +3,7 @@ package model;
 import java.util.Arrays;
 
 import movegenerator.AttackMapGenerator;
+import positionevaluator.Evaluable;
 
 /**
  * Class representing the game state.
@@ -14,7 +15,7 @@ import movegenerator.AttackMapGenerator;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Position implements Comparable<Position>, Cloneable{
+public class Position implements Comparable<Position>, Cloneable, Evaluable{
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -469,4 +470,18 @@ public class Position implements Comparable<Position>, Cloneable{
     public int compareTo(Position otherPosition) {
         return this.toString().compareTo(otherPosition.toString());
     }
+
+    @Override
+    public int getValue() {
+        // TODO Auto-generated method stub
+        return this.getPointValue();
+    }
+
+    @Override
+    public void setValue(int value) {
+        // TODO Auto-generated method stub
+        this.setPointValue(value);
+    }
+
+    
 }

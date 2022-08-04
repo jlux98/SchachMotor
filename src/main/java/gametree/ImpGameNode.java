@@ -12,6 +12,7 @@ public class ImpGameNode implements GameNode {
     private List<GameNode> children;
     private Position gameState;
     private int pointValue;
+    private boolean evaluated = false;
 
     private ImpGameNode(Position position) {
         this.gameState = position;
@@ -51,17 +52,6 @@ public class ImpGameNode implements GameNode {
         }
     }
 
-    @Override
-    public void computeChildren() {
-        createChildListIfNotExists();
-        if (this.children.size() != 0) {
-            throw new IllegalStateException("node already has children");
-        }
-        Position[] followUpPositions = MoveGenerator.generatePossibleMoves(gameState);
-        for (Position position : followUpPositions) {
-            this.children.add(new ImpGameNode(position));
-        }
-    }
     
     @Override
     public GameNode findPlayableAncestor() {
@@ -151,7 +141,7 @@ public class ImpGameNode implements GameNode {
     @Override
     public void setValue(int value) {
         this.pointValue = value;
-
+        this.evaluated = true;
     }
 
     public int getValue() {
@@ -162,5 +152,55 @@ public class ImpGameNode implements GameNode {
     public GameNode getParent() {
         return this.parent;
     }
+
+    @Override
+    public Position getPosition() {
+        return this.gameState;
+    }
+
+    /**
+     * May return null.
+     * @return this node's children
+     */
+    @Override
+    public List<GameNode> getChildren() {
+        return children;
+    }
+
+    @Override
+    public boolean isEvaluated() {
+        return evaluated;
+    }
+
+    @Override
+    public Position getContent() {
+        return gameState;
+    }
+
+    
+
+    @Override
+    public  List<GameNode> queryChildren() {
+        if (!hasChildren()) {
+            computeChildren();
+        }
+        return children;
+    }
+
+    /**
+     * Computes this node's children and overwrites its current child list.
+     */
+    private void computeChildren() {
+        //TODO testing!
+        createChildListIfNotExists();
+        if (this.children.size() != 0) {
+            throw new IllegalStateException("node already has children");
+        }
+        Position[] followUpPositions = MoveGenerator.generatePossibleMoves(gameState);
+        for (Position position : followUpPositions) {
+            this.children.add(new ImpGameNode(position));
+        }
+    } 
+    
 
 }

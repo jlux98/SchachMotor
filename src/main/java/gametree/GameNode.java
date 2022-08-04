@@ -1,9 +1,15 @@
 package gametree;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import model.Position;
+import positionevaluator.Evaluable;
+
 /**
  * Interface for the nodes of a game tree.
  */
-public interface GameNode {
+public interface GameNode extends Node<Position>, Evaluable {
 
     /**
      * @param node adds the passed node as child to this node
@@ -43,12 +49,6 @@ public interface GameNode {
     public abstract void setValue(int value);
 
     /**
-     * Computes this node's children.
-     * (children are added to the node's child list)
-     */
-    public abstract void computeChildren();
-
-    /**
      * @return the node corresponding to the turn that has to be played for this node to be reachable.
      */
     public abstract GameNode findPlayableAncestor();
@@ -57,5 +57,24 @@ public interface GameNode {
      * @return this node's parent
      */
     public abstract GameNode getParent();
+
+    /**
+     * @return the position stored by this node
+     */
+    public abstract Position getPosition();
+
+    public abstract List<GameNode> getChildren();
+
+
+    /**
+     * @return this node's stored value
+     */
+    public int getValue();
+
+    /**
+     * @return true - if a value has been assigned to this node,
+     * false - otherwise
+     */
+    public boolean isEvaluated();
 
 }

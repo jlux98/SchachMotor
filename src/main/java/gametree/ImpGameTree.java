@@ -12,13 +12,13 @@ public class ImpGameTree implements GameTree {
     private int depth = -1;
     private GameNode root;
     private List<GameNode> leafList; //TODO will this actually be used?
-    private TreeEvaluator evaluator;
+    private TreeEvaluator<GameNode> evaluator;
 
     /**
      * Used to create the initial game tree from a position.
      * @param gameState the game state that the root node should represent
      */
-    public ImpGameTree(Position position, TreeEvaluator evaluator) {
+    public ImpGameTree(Position position, TreeEvaluator<GameNode> evaluator) {
         this.root = ImpGameNode.createRoot(position);
         this.evaluator = evaluator;
     }
@@ -30,10 +30,27 @@ public class ImpGameTree implements GameTree {
      * The tree is then deepened further.
      * @param root the root node of the new tree
      */
-    public ImpGameTree(GameNode root, TreeEvaluator evaluator) {
+    public ImpGameTree(GameNode root, TreeEvaluator<GameNode> evaluator) {
         this.root = root;
         this.evaluator = evaluator;
     }
+
+    
+    @Override
+    public GameNode getRoot() {
+        //does not need to be null checked since no game tree can be constructed without setting the root node
+        return this.root;
+    }  
+
+
+    @Override
+    public List<GameNode> getLeafList() {
+        if (this.leafList == null || this.leafList.size() == 0) {
+            throw new IllegalStateException("leaf list is empty");
+        }
+        return this.leafList;
+    }
+
 
     /**
      * Guarantees that the tree has the desired depth after this call.
@@ -53,13 +70,14 @@ public class ImpGameTree implements GameTree {
     @Override
     // Ich würde den calculateBestMove evtl einen Namen geben wie kickOffCalculation oder startCalculatingBestMove
     // und dann irgendwo in ner privaten Methode im GameTree eine Hauptschleife für das Iterative Deepening haben
-    public GameNode calculateBestMove(Position incoming, int maxTime) {
+    public GameNode calculateBestMove(int maxTime) {
+        //TODO outdated pseudocode
         GameNode nextMove = null;
         int iteratingDepth = 1;
         while (hasTime(maxTime)) {
             deepenIfNecessary(iteratingDepth);
             iteratingDepth++;
-            nextMove = evaluator.evaluateTree(this);
+            nextMove = evaluator.evaluateTree(this, depth); 
         }
         if (nextMove == null) {
             //FIXME emergency calculation if time is not even sufficient for the first iteration
