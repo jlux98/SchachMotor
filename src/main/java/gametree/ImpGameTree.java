@@ -52,16 +52,6 @@ public class ImpGameTree implements GameTree {
     }
 
 
-    /**
-     * Guarantees that the tree has the desired depth after this call.
-     * If the current depth of the tree is less than targetDepth a new level of nodes is calculated.
-     * If the tree's depth is already sufficient when calling this methode, nothing happens.
-     * @param targetDepth depth that this tree must have
-     */
-    private void deepenIfNecessary(int targetDepth) {
-        //TODO implement
-    }
-
     private boolean hasTime(int maxTime) {
         //TODO implement time management; extract this into its own different class
         return false;
@@ -71,8 +61,10 @@ public class ImpGameTree implements GameTree {
     // Ich würde den calculateBestMove evtl einen Namen geben wie kickOffCalculation oder startCalculatingBestMove
     // und dann irgendwo in ner privaten Methode im GameTree eine Hauptschleife für das Iterative Deepening haben
     public GameNode calculateBestMove(int maxTime) {
+        int depth = 3; //FIXME determine depth
+        return new AlphaBetaPruning<GameNode>().evaluateTree(this.getRoot(), depth, this.getRoot().getContent().getWhitesTurn());
         //TODO outdated pseudocode
-        GameNode nextMove = null;
+        /* GameNode nextMove = null;
         int iteratingDepth = 1;
         while (hasTime(maxTime)) {
             deepenIfNecessary(iteratingDepth);
@@ -84,6 +76,6 @@ public class ImpGameTree implements GameTree {
             //or "surrender" (not supported by UCI but we could stop playing)
             throw new IllegalArgumentException("time was not sufficient to calculate a move");
         }
-        return nextMove;    
+        return nextMove;   */  
     }
 }

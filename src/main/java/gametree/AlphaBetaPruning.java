@@ -2,14 +2,54 @@ package gametree;
 
 import java.util.List;
 
+import model.Position;
 import positionevaluator.Evaluable;
 
-public class AlphaBetaPruning implements TreeEvaluator<Node<Evaluable>> {
+public class AlphaBetaPruning<T extends Node<? extends Evaluable>> implements TreeEvaluator<T> {
     
 
+/* public static void main(String[] args) {
+    Tree<Node<Position>> tree;
+    new AlphaBetaPruning().evaluateTree(tree, 1,true);
+
+    
+    Node<Position> positionNode;
+    Node<? extends Evaluable> evNode = positionNode;
+
+    Tree<Node<Position>> positionTree;
+    Tree<Node<? extends Evaluable>> evTree = positionTree;
+
+    Tree<Node<Position>> positionTree2;
+    Tree<? extends Node<? extends Evaluable>> evTree2 = positionTree2;
+
+    GameNode x;
+    Node<? extends Evaluable> ghhjkj = x;
+} */
     
     @Override
-    public Node<Evaluable> evaluateTree(Tree<Node<Evaluable>> gameTree, int depth, boolean whitesTurn) {
+    public T evaluateTree(T node, int depth, boolean whitesTurn) {
+/* 
+        Evaluable c = node.getContent();
+        //GameTree extends Tree<GameNode>
+        //GameNode extends Evaluable
+        //GameNode extends Node<Position>
+        //Position imeplements Evaluable
+
+        // GameTree gt;
+        // Tree<Node<? extends Evaluable>> t = gt; 
+        //should work right?
+
+        //!!! GameNode DOES NOT extend Node<Evaluable> !!!
+
+        //evaluable is super typ of position
+
+        GameTree gt;
+        Tree<GameNode> tgn = gt;
+        Tree<Node<? extends Evaluable>> treeqEv = tgn; // Tree<Node<? extends Evaluable>> !super Tree<GameNode>
+
+        Tree<? extends Node<? extends Evaluable>> qNodeqEv = tgn;
+        Node<? extends Evaluable> nodeqEv = qNodeqEv.getRoot();
+        Evaluable ev = nodeqEv.getContent(); */
 
         //do one non recursive iteration of alpha beta so you can reference the gamenode that should be played and return it
         Node<Evaluable> bestMove = null; //specific to this first iteration
