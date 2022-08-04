@@ -1,10 +1,10 @@
 package gametree;
 
-public class MiniMax implements TreeEvaluator {
+public class MiniMax implements TreeEvaluator<GameNode> {
 
     @Override
-    public GameNode evaluateTree(GameTree gameTree) {
-        // TODO Auto-generated method stub
+    public GameNode evaluateTree(Tree<GameNode> gameTree, int depth) {
+        // TODO implemented by #50
         return null;
     }
     

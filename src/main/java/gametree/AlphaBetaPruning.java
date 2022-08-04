@@ -1,10 +1,10 @@
 package gametree;
 
-public class AlphaBetaPruning implements TreeEvaluator {
+public class AlphaBetaPruning implements TreeEvaluator<GameNode> {
 
     @Override
-    public GameNode evaluateTree(GameTree gameTree) {
-        // TODO Auto-generated method stub
+    public GameNode evaluateTree(Tree<GameNode> gameTree, int depth) {
+        //implemented by #50
         return null;
     }
 
