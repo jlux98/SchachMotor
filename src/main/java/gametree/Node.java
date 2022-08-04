@@ -55,6 +55,8 @@ public interface Node<T> {
     //only casues issues when using references to Node and calling queryChildren() on that
     //Node<Position> casted = this;
     //return type of "casted.queryChildren();" is List<? extends Node<Position>>
+
+    //TODO specify behavior if no children can be generated (terminal node)
     public abstract List<? extends Node<T>> queryChildren();
 
     //in case of GameNode this Class is Node<Position>
