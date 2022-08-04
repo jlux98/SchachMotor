@@ -10,9 +10,10 @@ public class MiniMax implements TreeEvaluator {
     //black minimizes score
 
     //FIXME replace with an implementation based on alpha beta implementation
+    //also does not limit depth
 
     @Override
-    public GameNode evaluateTree(GameTree gameTree) {
+    public GameNode evaluateTree(GameTree gameTree,int depth) {
         GameNode root = gameTree.getRoot();
         evaluateLeaves(gameTree);
         updateNode(root);
