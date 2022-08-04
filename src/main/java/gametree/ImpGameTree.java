@@ -9,7 +9,7 @@ public class ImpGameTree implements GameTree {
      * The current depth of this tree.
      * If tree consists of a root only, it's depth is 0.
      */
-    private int depth = -1;
+    private int depth = -1; //TODO depth
     private GameNode root;
     private List<GameNode> leafList; //TODO will this actually be used?
     private TreeEvaluator evaluator;
@@ -78,7 +78,7 @@ public class ImpGameTree implements GameTree {
         while (hasTime(maxTime)) {
             deepenIfNecessary(iteratingDepth);
             iteratingDepth++;
-            nextMove = evaluator.evaluateTree(this);
+            nextMove = evaluator.evaluateTree(this, depth);
         }
         if (nextMove == null) {
             //FIXME emergency calculation if time is not even sufficient for the first iteration
