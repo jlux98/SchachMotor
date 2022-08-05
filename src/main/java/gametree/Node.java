@@ -57,6 +57,9 @@ public interface Node<T> {
     //return type of "casted.queryChildren();" is List<? extends Node<Position>>
 
     //TODO specify behavior if no children can be generated (terminal node)
+
+    //List<Node<T>> would not allow GameNode to return a List<GameNode> as List<GameNode> is not a subtype of List<Node<Position>>
+
     public abstract List<? extends Node<T>> queryChildren();
 
     //in case of GameNode this Class is Node<Position>
