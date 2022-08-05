@@ -2,7 +2,7 @@ package gametree;
 
 import positionevaluator.Evaluable;
 
-public interface TreeEvaluator<T extends Node<? extends Evaluable>> {
+public interface TreeEvaluator<T extends Evaluable> {
 
     /**
      * Evaluates the game tree and returns the GameNode that should be played.
@@ -12,6 +12,6 @@ public interface TreeEvaluator<T extends Node<? extends Evaluable>> {
      * @return the GameNode representing the turn to be played
      */
     //TODO documentation (depth, whitesturn)
-    public abstract T evaluateTree(T node, int depth, boolean whitesTurn);
+    public abstract Node<T> evaluateTree(Node<T> node, int depth, boolean whitesTurn);
     
 }

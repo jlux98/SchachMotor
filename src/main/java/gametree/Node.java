@@ -6,7 +6,7 @@ public interface Node<T> {
      /**
      * @param node adds the passed node as child to this node
      */
-    public abstract void insertChild(GameNode node);
+    public abstract void insertChild(Node<T> node);
 
     /**
      * Removes this node from its parent's child list.
@@ -23,7 +23,12 @@ public interface Node<T> {
      * @param node the node that should be removed from this parent
      * @throws IllegalArgumentException if the node could not be found
      */
-    public abstract void deleteChild(GameNode node);
+    public abstract void deleteChild(Node<T> node);
+
+    /**
+     * @return this node's parent
+     */
+    public abstract Node<T> getParent();
 
     /**
      * Removes all children of this node.
@@ -36,10 +41,7 @@ public interface Node<T> {
     public abstract boolean hasChildren();
 
 
-    /**
-     * @return this node's parent
-     */
-    public abstract Node<T> getParent();
+
 
     /**
      * @return the content stored by this node

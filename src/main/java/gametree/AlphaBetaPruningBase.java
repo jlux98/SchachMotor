@@ -2,28 +2,29 @@ package gametree;
 
 import java.util.List;
 
-import model.Position;
 import positionevaluator.Evaluable;
 
-public class AlphaBetaPruning<T extends Node<? extends Evaluable>> implements TreeEvaluator<T> {
+public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<T> {
 
     //FIXME replace with clean implementation from git
+
+    //maybe just return Node<Evaluable> and let the user cast it to the required type
+    //Should be type safe as long as the tree consist only of one node type and subtypes of that type
     
     @Override
-    public T evaluateTree(T node, int depth, boolean whitesTurn) {
+    public Node<T> evaluateTree(Node<T> node, int depth, boolean whitesTurn) {
 
         //do one non recursive iteration of alpha beta so you can reference the gamenode that should be played and return it
-        Node<Evaluable> bestMove = null; //specific to this first iteration
+        Node<T> bestMove = null; //specific to this first iteration
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
-        Node<Evaluable> root = gameTree.getRoot();
-        List<? extends Node<Evaluable>> children = root.queryChildren(); //get or calculate children
+        List<? extends Node<T>> children = node.queryChildren(); //get or calculate children
         if (whitesTurn) {
 
             //maximize
             int parentValue = Integer.MIN_VALUE;
             int childValue;
-            for (Node<Evaluable> child : children) {
+            for (Node<T> child : children) {
                 //evaluate all children recursively by minimizing them
                 childValue = alphaBetaMinimize(child, depth - 1, alpha, beta);
                 if (childValue >= beta) {
@@ -52,7 +53,7 @@ public class AlphaBetaPruning<T extends Node<? extends Evaluable>> implements Tr
             //minimize
             int parentValue = Integer.MAX_VALUE;
             int childValue;
-            for (Node<Evaluable> child : children) {
+            for (Node<T> child : children) {
                 //evaluate all children recursively by maximizing them
                 childValue = alphaBetaMaximize(child, depth - 1, alpha, beta);
                 if (childValue <= alpha) {
@@ -108,7 +109,7 @@ public class AlphaBetaPruning<T extends Node<? extends Evaluable>> implements Tr
      * @param beta
      * @return
      */
-    private int alphaBetaMinimize(Node<Evaluable> parent, int depth, int alpha, int beta) {
+    private int alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
         //assign static evaluation to leaves
         if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
@@ -118,8 +119,8 @@ public class AlphaBetaPruning<T extends Node<? extends Evaluable>> implements Tr
         //minimize
         int parentValue = Integer.MAX_VALUE;
         int childValue;
-        List<? extends Node<Evaluable>> children = parent.queryChildren(); //get or calculate children
-        for (Node<Evaluable> child : children) {
+        List<? extends Node<T>> children = parent.queryChildren(); //get or calculate children
+        for (Node<T> child : children) {
             //evaluate all children
             //if this node is minimizing child nodes are maximizing
             childValue = alphaBetaMaximize(child, depth - 1, alpha, beta);
@@ -154,7 +155,7 @@ public class AlphaBetaPruning<T extends Node<? extends Evaluable>> implements Tr
      * @param beta
      * @return
      */
-    private int alphaBetaMaximize(Node<Evaluable> parent, int depth, int alpha, int beta) {
+    private int alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
         //assign static evaluation to leaves
         if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
@@ -164,8 +165,8 @@ public class AlphaBetaPruning<T extends Node<? extends Evaluable>> implements Tr
         //maximize
         int parentValue = Integer.MIN_VALUE;
         int childValue;
-        List<? extends Node<Evaluable>> children = parent.queryChildren(); //get or calculate children
-        for (Node<Evaluable> child : children) {
+        List<? extends Node<T>> children = parent.queryChildren(); //get or calculate children
+        for (Node<T> child : children) {
             //evaluate all children
             //if this node is maximizing child nodes are minimizing
             //child nodes are passed the determined alpha and beta values

@@ -11,7 +11,6 @@ public class ImpGameNode implements GameNode {
     private GameNode parent;
     private List<GameNode> children;
     private Position gameState;
-    private boolean evaluated = false;
 
     private ImpGameNode(Position position) {
         this.gameState = position;
@@ -56,10 +55,14 @@ public class ImpGameNode implements GameNode {
         return this.children == null || this.children.size() != 0;
     }
 
+    /**
+     * <b> Only type safe if only GameNodes and subtypes of GameNode are passed into this method.
+     * Otherwise a class cast exception might arise.
+     */
     @Override
-    public void insertChild(GameNode node) {
+    public void insertChild(Node<Position> node) {
         createChildListIfNotExists();
-        this.children.add(node);
+        this.children.add((GameNode)node);
 
     }
 
@@ -74,7 +77,7 @@ public class ImpGameNode implements GameNode {
     }
 
     @Override
-    public void deleteChild(GameNode node) {
+    public  void deleteChild(Node<Position> node) {
         // removing with ArrayList.remove(node) would require gamenode.equals()
         // which would probably have to compare positions which is inefficient
 
@@ -125,32 +128,9 @@ public class ImpGameNode implements GameNode {
         return this.gameState.queryValue();
     }
 
-    /**
-     * Sets the child list of this node.
-     * <br>
-     * <br>
-     * <b>Note:</b>
-     * Be aware that this removes (overwrites) all formerly attached child nodes.
-     * 
-     * @param children list of nodes that should be attached to this node
-     */
-    private void setChildren(List<GameNode> children) {
-        this.children = children;
-    }
-
     @Override
     public GameNode getParent() {
         return this.parent;
-    }
-
-    @Override
-    public Position getPosition() {
-        return this.gameState;
-    }
-
-    @Override
-    public boolean isEvaluated() {
-        return evaluated;
     }
 
     @Override
