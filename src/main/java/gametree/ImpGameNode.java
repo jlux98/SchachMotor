@@ -6,6 +6,12 @@ import java.util.List;
 import model.Position;
 import movegenerator.MoveGenerator;
 
+/**
+ * Class implementing the GameNode Interface.
+ * <br><br>
+ * <b>Important Note:</b>
+ * While some methods of this class accept any Node &lt; Position &gt; only GameNodes and subtypes of GameNode should be passed to these methods.
+ */
 public class ImpGameNode implements GameNode {
 
     private GameNode parent;
@@ -50,13 +56,21 @@ public class ImpGameNode implements GameNode {
         }
     }
 
+    /**
+     * Whether this node has children. Note that returning false does not imply that this note cannot generate 
+     * children when calling {@link #queryChildren()}.
+     * @return true - if this node currently has any children, false - if not
+     */
     @Override
     public boolean hasChildren() {
         return this.children == null || this.children.size() != 0;
     }
 
     /**
-     * <b> Only type safe if only GameNodes and subtypes of GameNode are passed into this method.
+     * Adds a child node to this node.
+     * <br><br>
+     * <b>Note:</b>
+     * Only type safe if only GameNodes and subtypes of GameNode are passed into this method.
      * Otherwise a class cast exception might arise.
      */
     @Override

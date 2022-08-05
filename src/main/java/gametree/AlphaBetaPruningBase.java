@@ -8,9 +8,6 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
 
     //FIXME replace with clean implementation from git
 
-    //maybe just return Node<Evaluable> and let the user cast it to the required type
-    //Should be type safe as long as the tree consist only of one node type and subtypes of that type
-    
     @Override
     public Node<T> evaluateTree(Node<T> node, int depth, boolean whitesTurn) {
 
@@ -84,20 +81,20 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
     /**
      * What evaluateTree code could look like if you did not have to reference the node to be played.
      */
-/*     private int alphaBetaPruningMiniMax(GameNode node, int depth, int alpha, int beta) {
+    /*     private int alphaBetaPruningMiniMax(GameNode node, int depth, int alpha, int beta) {
         //assign static evaluation to leaves
         if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
             return PositionEvaluator.evaluatePosition(node.getPosition());
         }
-
+    
         if (node.getPosition().getWhiteNextMove()) {
             //maximize this node
             return alphaBetaMaximize(node, depth - 1, alpha, beta);
-
+    
         } else {
             //minimize this node
             return alphaBetaMinimize(node, depth - 1, alpha, beta);
-
+    
         }
     } */
 

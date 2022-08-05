@@ -1,7 +1,5 @@
 package gametree;
 
-import java.util.List;
-
 import model.Position;
 
 public class ImpGameTree implements GameTree {
@@ -11,7 +9,6 @@ public class ImpGameTree implements GameTree {
      */
     private int depth = -1;
     private GameNode root;
-    private List<GameNode> leafList; //TODO will this actually be used?
     private TreeEvaluator<GameNode> evaluator;
 
     /**
@@ -41,15 +38,6 @@ public class ImpGameTree implements GameTree {
         //does not need to be null checked since no game tree can be constructed without setting the root node
         return this.root;
     }  
-
-
-    @Override
-    public List<GameNode> getLeafList() {
-        if (this.leafList == null || this.leafList.size() == 0) {
-            throw new IllegalStateException("leaf list is empty");
-        }
-        return this.leafList;
-    }
 
 
     private boolean hasTime(int maxTime) {
