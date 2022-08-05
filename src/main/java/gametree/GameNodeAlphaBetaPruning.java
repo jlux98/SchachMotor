@@ -9,7 +9,7 @@ import model.Position;
  * This class performs casts from Node < Position > to GameNode which should be safe so long as the passed tree consists only of gamenodes
  * and subtypes of gamenode.
  */
-public class GameNodeAlphaBetaPruning extends AlphaBetaPruningBase<Position> {
+public class GameNodeAlphaBetaPruning extends AlphaBetaPruningBase<Position> implements GameTreeEvaluator {
 
     /**
      * See {@link AlphaBetaPruningBase#evaluateTree(Node, int, boolean)}.

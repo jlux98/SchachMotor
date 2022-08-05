@@ -9,7 +9,7 @@ import model.Position;
  * This class performs casts from Node < Position > to GameNode which should be safe so long as the passed tree consists only of gamenodes
  * and subtypes of gamenode.
  */
-public class GameNodeMiniMax extends MiniMaxBase<Position> {
+public class GameNodeMiniMax extends MiniMaxBase<Position> implements GameTreeEvaluator {
 
     /**
      * 

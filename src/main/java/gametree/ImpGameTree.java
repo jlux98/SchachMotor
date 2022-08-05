@@ -1,6 +1,7 @@
 package gametree;
 
 import model.Position;
+import uciservice.FenParser;
 
 public class ImpGameTree implements GameTree {
     /**
@@ -9,13 +10,17 @@ public class ImpGameTree implements GameTree {
      */
     private int depth = -1;
     private GameNode root;
-    private TreeEvaluator<GameNode> evaluator;
+    private GameTreeEvaluator evaluator;
 
+    //FIXME temp code
+    public static void typingTest() {
+        new ImpGameTree(ImpGameNode.createRoot(FenParser.parseFen("fen")), new GameNodeAlphaBetaPruning());
+    }
     /**
      * Used to create the initial game tree from a position.
      * @param gameState the game state that the root node should represent
      */
-    public ImpGameTree(Position position, TreeEvaluator<GameNode> evaluator) {
+    public ImpGameTree(Position position, GameTreeEvaluator evaluator) {
         this.root = ImpGameNode.createRoot(position);
         this.evaluator = evaluator;
     }
@@ -27,7 +32,7 @@ public class ImpGameTree implements GameTree {
      * The tree is then deepened further.
      * @param root the root node of the new tree
      */
-    public ImpGameTree(GameNode root, TreeEvaluator<GameNode> evaluator) {
+    public ImpGameTree(GameNode root, GameTreeEvaluator evaluator) {
         this.root = root;
         this.evaluator = evaluator;
     }
@@ -39,19 +44,13 @@ public class ImpGameTree implements GameTree {
         return this.root;
     }  
 
-
-    private boolean hasTime(int maxTime) {
-        //TODO implement time management; extract this into its own different class
-        return false;
-    }
-
     @Override
     // Ich würde den calculateBestMove evtl einen Namen geben wie kickOffCalculation oder startCalculatingBestMove
     // und dann irgendwo in ner privaten Methode im GameTree eine Hauptschleife für das Iterative Deepening haben
     public GameNode calculateBestMove(int maxTime) {
-        int depth = 3; //FIXME determine depth
-        return new GameNodeAlphaBetaPruning().evaluateTree(this.getRoot(), depth, this.getRoot().getContent().getWhitesTurn());
-        //TODO outdated pseudocode
+        int calculationDepth = 3; //TODO determine depth from maxTime
+        return this.evaluator.evaluateTree(this.getRoot(), calculationDepth, this.getRoot().getContent().getWhitesTurn());
+        //TODO remove outdated pseudocode
         /* GameNode nextMove = null;
         int iteratingDepth = 1;
         while (hasTime(maxTime)) {
