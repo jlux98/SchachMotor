@@ -10,26 +10,20 @@ import positionevaluator.Evaluable;
 public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<T> {
 
     //FIXME replace with clean implementation from git
-    //TODO doc
-    //FIXME remove redundant code.
-    //originally implemented it this way because root node has to use the full alpha-beta code to properly
-    //update alpha/beta of its children and method calls can return only one value (in this case determined node value)
-    //option A: create a class storing a value and a node to pass the determined value and best child to parent?
-    //option B: make nodes store values again, return best child instead of value, value can be determined from child
-    //issue: if the tree is reused, values have to actively be reset
-    //unless validity of a node value depends on a counter that is static and increased after every evaluated tree
-    //this way all node values would be invalid when the next evaluation starts, but the tree would not have to be iterated
-    //over to reset a flag or the stored values
-    //option C: like B write value to nodes, but iterate over children of root and look for one with the determined value
-    //instead of having a mechanism to invalidate node values
+
+    //Note on storing values in nodes:
+    //values stored by nodes do not have to be marked as invalid
+    //leaves overwrite their old value (they could have an old value because iterative deepening doesnt start with old
+    //max depth, so nodes that are leaves for this iteration might not actually be leaves in the gametree)
+    //inner nodes do not read their own value and overwrite it with values of their children
+
     @Override
+    //TODO accept Tree instead of node 
     public Node<T> evaluateTree(Node<T> node, int depth, boolean whitesTurn) {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         return alphaBetaPruningMiniMax(node, depth, alpha, beta, whitesTurn);
     }
-
-
 
     /**
      * Applies alpha-beta-pruning minimax to the passed node and returns the child node that should be played.
@@ -43,11 +37,9 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
      * (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    //TODO doc
-    //TODO accept Tree instead of node 
     public Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
         //assign static evaluation to leaves
-        if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
+        if (isLeaf(parent, depth)) {
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
             parent.getContent().evaluate();
             return parent;
@@ -64,7 +56,29 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
         }
     }
 
-    //FIXME are old values read if tree is recycled?
+    /**
+     * Returns whether the passed node is a leaf node when inspected by alpha-beta-pruning.
+     * <br><br>
+     * A node is a leaf if <b>at least one</b> of these conditions is true:
+     * <ul>
+     *      <li>
+     *          depth = 0 or
+     *      </li>
+     *      <li>
+     *          no children can be calculated for it
+     *      </li>
+     * </ul>
+     * @param parent
+     * @param depth the
+     * @return whether the passed node is a leaf node
+     */
+    private boolean isLeaf(Node<T> parent, int depth) {
+        if (depth == 0) {
+            return true;
+        }
+        parent.queryChildren(); //TODO specify behavior of querychildren if no children can be calculated
+        return parent.hasChildren();
+    }
 
     /**
      * Minimizes the passed node (value = min(child values)) and returns the child node with
@@ -81,7 +95,7 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
      */
     private Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
         //assign static evaluation to leaves
-        if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
+        if (isLeaf(parent, depth)) {
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
             parent.getContent().evaluate();
             return parent;
@@ -143,7 +157,7 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
      */
     private Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
         //assign static evaluation to leaves
-        if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
+        if (isLeaf(parent, depth)) {
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
             parent.getContent().evaluate();
             return parent;

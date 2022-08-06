@@ -53,10 +53,14 @@ public interface Node<T> {
     /**
      * Returns this node's children.
      * If necessary, calculates the children.
+     * <br><br>
+     * If children are calculated, they should be stored so invoking queryChildren() again can
+     * read the stored children instead of recalculating them.
+     * <br><br>
      * <b>Specify behavior if no children can be generated (e.g. no possible follow-up moves)</b>
      */
 
-    //TODO specify behavior if no children can be generated (terminal node)
+    //FIXME specify behavior if no children can be generated (terminal node)
 
     //List<Node<T>> would not allow GameNode to return a List<GameNode> as List<GameNode> is not a subtype of List<Node<Position>>
     //in case of GameNode this Class is Node<Position>
