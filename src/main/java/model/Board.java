@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Classes implementing this interface store the position of chess pieces on the board.
+ */
 public interface Board {
 
     //toString

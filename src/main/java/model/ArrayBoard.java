@@ -2,6 +2,9 @@ package model;
 
 import java.util.Arrays;
 
+/**
+ * An implementation of Board based on a two-dimensional array of Pieces representing the board.
+ */
 public class ArrayBoard implements Board {
     private Piece[][] spaces;
 
