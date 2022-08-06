@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Arrays;
 
 import movegenerator.AttackMapGenerator;
 
@@ -19,7 +18,7 @@ public class Position implements Comparable<Position>, Cloneable{
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
      */
-    private Piece[][] spaces;
+    private Board board;
     private int pointValue;
     private boolean whiteInCheck;
     private boolean blackInCheck;
@@ -61,7 +60,7 @@ public class Position implements Comparable<Position>, Cloneable{
             //full move counter starts at 1
             throw new IllegalArgumentException("full move count must be greater than 0");
         }
-        this.spaces = spaces;
+        this.board = new ArrayBoard(spaces);
         this.whiteNextMove = whiteNextMove;
         this.whiteCastlingKingside = whiteCastlingKingside;
         this.whiteCastlingQueenside = whiteCastlingQueenside;
@@ -139,12 +138,7 @@ public class Position implements Comparable<Position>, Cloneable{
      * @return a copy of the two dimensional array representing the chess pieces' positions.
      */
     public Piece[][] copySpaces() {
-        Piece[][] copy = new Piece[8][8];
-        for (int index = 0; index < spaces.length; index++) {
-            //copy the 8 inner arrays
-            copy[index] = spaces[index].clone();
-        }
-        return copy;
+        return board.copySpaces();
 
     }
 
@@ -241,7 +235,7 @@ public class Position implements Comparable<Position>, Cloneable{
                     (fullMoveCount == position.getFullMoves()) &&
                     (halfMovesSincePawnMoveOrCapture == position.getHalfMoves()) &&
                     (pointValue == position.getPointValue()) &&
-                    (spacesEquals(position.getSpaces())) &&
+                    (board.equals(position.getBoard())) &&
                     (whiteCastlingKingside == position.getWhiteCastlingKingside()) &&
                     (whiteCastlingQueenside == position.getWhiteCastlingQueenside()) &&
                     (whiteInCheck == position.getWhiteInCheck()) &&
@@ -251,38 +245,10 @@ public class Position implements Comparable<Position>, Cloneable{
         }
     }
 
-    public static String spacesToString(Piece[][] inputSpaces){
-        String[] spaceStrings = new String [8];
-        for (int rank = 0; rank < 8; rank++) {
-            String result = "";
-            for (int file = 0; file < 8; file++){
-                /*  Ordering: see the FIXME in FenParser.java */
-                Piece currentPiece = inputSpaces[rank][file]; 
-                if (currentPiece != null){
-                    result += currentPiece.toString();
-                } else {
-                    result += "0";
-                }
-            }
-            spaceStrings[rank] = result;
-        }
-        
-        return Arrays.toString(spaceStrings).replace(", ", ",\n");
-    }
-
-    public boolean spacesEquals(Object o){
-        if (o instanceof Piece[][]){
-            Piece[][] otherSpaces = (Piece[][]) o;
-            return spacesToString(spaces).equals(spacesToString(otherSpaces));
-        } else {
-            return false;
-        }
-    }
-
     @Override
     public String toString() {
         String result;
-        result = spacesToString(spaces) + "\n";
+        result = board.toString() + "\n";
         if (whiteNextMove) {
             result += "White Next Move\n";
         } else {
@@ -337,7 +303,20 @@ public class Position implements Comparable<Position>, Cloneable{
                 this.enPassantTargetRank, this.enPassantTargetFile, this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
     }
 
-    /**
+    @Override
+    public int compareTo(Position otherPosition) {
+        return this.toString().compareTo(otherPosition.toString());
+    }
+
+
+
+    /*
+     **********************************
+     * Getters and Setters
+     **********************************
+     */
+
+         /**
      * Sets the point value of this position.
      * Required to allow for positions to be generated first and evaluated at a later time.
      * @param pointValue the position's value
@@ -354,18 +333,12 @@ public class Position implements Comparable<Position>, Cloneable{
     public void setBlackInCheck(boolean blackInCheck) {
         this.blackInCheck = blackInCheck;
     }
-
-    /*
-     **********************************
-     * Getters
-     **********************************
-     */
     public int getPointValue() {
         return pointValue;
     };
 
     public Piece[][] getSpaces() {
-        return spaces;
+        return board.getSpaces();
     }
 
     public boolean getWhitesTurn() {
@@ -417,8 +390,7 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     public Piece getPieceAt(int rank, int file){
-        //TODO might be worth throwing an exception if the square is empty (instead of returning null)?
-        return spaces[rank][file];
+        return board.getPieceAt(rank, file);
     }
 
     public boolean[][] getAttackedByWhite() {
@@ -438,22 +410,8 @@ public class Position implements Comparable<Position>, Cloneable{
     }
 
     public Coordinate getKingPosition(boolean isWhite){
-        for (int rank = 0; rank < 8; rank++){
-            for (int file = 0; file < 8; file++){
-                Piece currentPiece = spaces[rank][file];
-                if (isWhite && currentPiece != null &&
-                    currentPiece.toString().equals("K")){
-                    return new Coordinate(rank, file);
-                }
-                if (!isWhite && currentPiece != null &&
-                    currentPiece.toString().equals("k")){
-                    return new Coordinate(rank, file);
-                }
-            }
-        }
-        return null;
+        return board.getKingPosition(isWhite);
     }
-
     
 
     public Move getMove() {
@@ -465,8 +423,7 @@ public class Position implements Comparable<Position>, Cloneable{
             new Coordinate(targetRank, targetFile));
     }
 
-    @Override
-    public int compareTo(Position otherPosition) {
-        return this.toString().compareTo(otherPosition.toString());
+    public Board getBoard() {
+        return this.board;
     }
 }
