@@ -231,10 +231,6 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
 
-    @Override
-    public int queryValue() {
-        return PositionEvaluator.evaluatePosition(this);
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -344,14 +340,22 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
                 this.enPassantTargetRank, this.enPassantTargetFile, this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
     }
 
-    /**
-     * Sets the point value of this position.
-     * Required to allow for positions to be generated first and evaluated at a later time.
-     * @param pointValue the position's value
-     */
-    public void setPointValue(int pointValue) {
+
+    
+    @Override
+    public int evaluate() {
+        this.pointValue = PositionEvaluator.evaluatePosition(this);
+        return this.pointValue;
+    }
+
+    public void setValue(int pointValue) {
         //pointvalue may be negative
         this.pointValue = pointValue;
+    }
+    
+    @Override
+    public int getValue() {
+        return this.pointValue;
     }
 
     public void setWhiteInCheck(boolean whiteInCheck) {

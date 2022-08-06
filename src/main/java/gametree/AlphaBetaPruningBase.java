@@ -124,7 +124,8 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
         //assign static evaluation to leaves
         if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
-            return parent.getContent().queryValue();
+            //TODO replace with parent.evaluate()
+            return parent.getContent().evaluate();
         }
 
         //minimize
@@ -170,7 +171,8 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
         //assign static evaluation to leaves
         if (depth == 0) { //FIXME nodes may be leaves before depth = 0 e.g. check mate boards have no children
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
-            return parent.getContent().queryValue();
+            //TODO replace with parent.evaluate()
+            return parent.getContent().evaluate();
         }
 
         //maximize

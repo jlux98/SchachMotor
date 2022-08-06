@@ -138,8 +138,21 @@ public class ImpGameNode implements GameNode {
     }
 
     @Override
-    public int queryValue() {
-        return this.gameState.queryValue();
+    public int evaluate() {
+        //gameState evaluates itself and stores that value
+        return this.gameState.evaluate();
+    }
+
+    
+
+    @Override
+    public int getValue() {
+        return this.gameState.getValue();
+    }
+
+    @Override
+    public void setValue(int pointValue) {
+        this.gameState.setValue(pointValue);        
     }
 
     @Override
