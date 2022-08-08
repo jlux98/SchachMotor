@@ -1,7 +1,5 @@
 package gametree;
 
-import java.util.List;
-
 import model.Position;
 import movegenerator.MoveGenerator;
 import positionevaluator.Evaluable;
@@ -53,12 +51,6 @@ public class GameNode extends BaseNode<Position> implements Evaluable {
      */
     public static GameNode createNode(Position position, GameNode parent) {
         return new GameNode(position, parent);
-    }
-
-    @Override
-    //narrows return type to List<GameNode>
-    public List<GameNode> queryChildren() {
-        return queryChildren();
     }
 
     @Override

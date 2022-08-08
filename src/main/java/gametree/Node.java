@@ -60,7 +60,12 @@ public interface Node<T> {
      * If children are calculated, they should be stored so invoking queryChildren() again can
      * read the stored children instead of recalculating them.
      * <br><br>
+     * <b>Note:</b>
+     * Results of this methods should be referenced as List < ? extends Node < Type > > which allows reading Node < Type > from the list.
+     * Writing to the list is not possible.
+     * <br><br>
      * <b>Specify behavior if no children can be generated (e.g. no possible follow-up moves)</b>
+     * @return this node's children
      */
 
     //FIXME specify behavior if no children can be generated (terminal node)
