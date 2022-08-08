@@ -7,7 +7,7 @@ import positionevaluator.Evaluable;
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes that store any kind of Evaluable.
  */
-public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<T> {
+public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluator<T> {
 
     //Note on storing values in nodes:
     //values stored by nodes do not have to be marked as invalid

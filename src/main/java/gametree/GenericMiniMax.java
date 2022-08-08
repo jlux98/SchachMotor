@@ -5,7 +5,7 @@ import positionevaluator.Evaluable;
 /**
  * Class implementing Minimax for trees consisting of Nodes that store any kind of Evaluable.
  */
-public class MiniMaxBase<T extends Evaluable> implements TreeEvaluator<T> {
+public class GenericMiniMax<T extends Evaluable> implements TreeEvaluator<T> {
 
 
 
