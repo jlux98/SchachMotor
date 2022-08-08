@@ -16,7 +16,7 @@ public class MiniMaxBase<T extends Evaluable> implements TreeEvaluator<T> {
 
     @Override
     public Node<T> evaluateNode(Node<T> gameTree, int depth, boolean whitesTurn) {
-        // TODO use trimmed down alpha-beta code (useful for testing)
+        // TODO implement using trimmed down alpha-beta code (useful for testing)
         return null;
     }
  

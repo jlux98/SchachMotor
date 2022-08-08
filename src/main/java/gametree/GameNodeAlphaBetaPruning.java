@@ -3,7 +3,8 @@ package gametree;
 import model.Position;
 
 /**
- * GameNodeAlphaBetaPruning extends serves as a wrapper for the generic class AlphaBetaPruningBase < Position > and extends it.
+ * GameNodeAlphaBetaPruning serves as a wrapper for the generic class AlphaBetaPruningBase < Position > which it extends.
+ * This class narrows the return types of methods from Node < Position > to GameNode.
  * <br><br>
  * <b>Note:</b>
  * This class performs casts from Node < Position > to GameNode which should be safe so long as the passed tree consists only of gamenodes
@@ -18,11 +19,7 @@ public class GameNodeAlphaBetaPruning extends AlphaBetaPruningBase<Position> imp
     }
 
     /**
-     * See {@link AlphaBetaPruningBase#evaluateTree(Node, int, boolean)}.
-     * <br><br>
-     * <b>Note:</b>
-     * Only type safe if the subtree starting with node consists only of GameNodes or subtypes of GameNodes.
-     * If a subtype of Node<Position> that is not also subtype of GameNode is used a CastException might arise.
+     * @deprecated
      */
     @Override
     public GameNode evaluateNode(Node<Position> node, int depth, boolean whitesTurn) {

@@ -143,8 +143,6 @@ public class ImpGameNode implements GameNode {
         return this.gameState.evaluate();
     }
 
-    
-
     @Override
     public int getValue() {
         return this.gameState.getValue();
