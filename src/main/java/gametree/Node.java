@@ -31,6 +31,12 @@ public interface Node<T> {
     public abstract Node<T> getParent();
 
     /**
+     * Sets this node's parent.
+     * @param parent this node's parent
+     */
+    public abstract void setParent(Node<T> parent);
+
+    /**
      * Removes all children of this node.
      */
     public abstract void deleteChildren();
@@ -41,9 +47,6 @@ public interface Node<T> {
      * @return true - if this node currently has any children, false - if not
      */
     public abstract boolean hasChildren();
-
-
-
 
     /**
      * @return the content stored by this node

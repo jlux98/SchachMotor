@@ -14,14 +14,14 @@ public class ImpGameTree implements GameTree {
 
     //FIXME temp code
     public static void typingTest() {
-        new ImpGameTree(ImpGameNode.createRoot(FenParser.parseFen("fen")), new GameNodeAlphaBetaPruning());
+        new ImpGameTree(GameNode.createRoot(FenParser.parseFen("fen")), new GameNodeAlphaBetaPruning());
     }
     /**
      * Used to create the initial game tree from a position.
      * @param gameState the game state that the root node should represent
      */
     public ImpGameTree(Position position, GameTreeEvaluator evaluator) {
-        this.root = ImpGameNode.createRoot(position);
+        this.root = GameNode.createRoot(position);
         this.evaluator = evaluator;
     }
 
