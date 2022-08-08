@@ -9,8 +9,6 @@ import positionevaluator.Evaluable;
  */
 public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<T> {
 
-    //FIXME replace with clean implementation from git
-
     //Note on storing values in nodes:
     //values stored by nodes do not have to be marked as invalid
     //leaves overwrite their old value (they could have an old value because iterative deepening doesnt start with old
@@ -18,8 +16,15 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
     //inner nodes do not read their own value and overwrite it with values of their children
 
     @Override
-    //TODO accept Tree instead of node 
-    public Node<T> evaluateTree(Node<T> node, int depth, boolean whitesTurn) {
+    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
+        return evaluateNode(tree.getRoot(), depth, whitesTurn);
+    }
+
+    /**
+     * @deprecated
+     */
+    @Override
+    public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         return alphaBetaPruningMiniMax(node, depth, alpha, beta, whitesTurn);
