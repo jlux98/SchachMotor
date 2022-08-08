@@ -10,7 +10,12 @@ import model.Position;
  */
 public interface GameTreeEvaluator extends TreeEvaluator<Position>{
 
+
+
     @Override
-    public abstract GameNode evaluateTree(Node<Position> node, int depth, boolean whitesTurn);
+    public abstract GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn);
+
+    @Override
+    public abstract GameNode evaluateNode(Node<Position> node, int depth, boolean whitesTurn);
     
 }

@@ -49,7 +49,7 @@ public class ImpGameTree implements GameTree {
     // und dann irgendwo in ner privaten Methode im GameTree eine Hauptschleife für das Iterative Deepening haben
     public GameNode calculateBestMove(int maxTime) {
         int calculationDepth = 3; //TODO determine depth from maxTime
-        return this.evaluator.evaluateTree(this.getRoot(), calculationDepth, this.getRoot().getContent().getWhitesTurn());
+        return this.evaluator.evaluateTree(this, calculationDepth, this.getRoot().getContent().getWhitesTurn());
         //TODO remove outdated pseudocode
         /* GameNode nextMove = null;
         int iteratingDepth = 1;

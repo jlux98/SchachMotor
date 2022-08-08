@@ -10,6 +10,12 @@ import model.Position;
  * and subtypes of gamenode.
  */
 public class GameNodeMiniMax extends MiniMaxBase<Position> implements GameTreeEvaluator {
+    
+
+    @Override
+    public GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn) {
+        return evaluateNode(tree.getRoot(), depth, whitesTurn);
+    }
 
     /**
      * 
@@ -20,8 +26,8 @@ public class GameNodeMiniMax extends MiniMaxBase<Position> implements GameTreeEv
      * If a subtype of Node<Position> that is not also subtype of GameNode is used a CastException might arise. 
      */
     @Override
-    public GameNode evaluateTree(Node<Position> gameTree, int depth, boolean whitesTurn) {
-        return (GameNode) super.evaluateTree(gameTree, depth, whitesTurn);
+    public GameNode evaluateNode(Node<Position> gameTree, int depth, boolean whitesTurn) {
+        return (GameNode) super.evaluateNode(gameTree, depth, whitesTurn);
     }
 
 }

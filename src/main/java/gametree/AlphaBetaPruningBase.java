@@ -18,8 +18,13 @@ public class AlphaBetaPruningBase<T extends Evaluable> implements TreeEvaluator<
     //inner nodes do not read their own value and overwrite it with values of their children
 
     @Override
+    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
+        return evaluateNode(tree.getRoot(), depth, whitesTurn);
+    }
+
+    @Override
     //TODO accept Tree instead of node 
-    public Node<T> evaluateTree(Node<T> node, int depth, boolean whitesTurn) {
+    public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         return alphaBetaPruningMiniMax(node, depth, alpha, beta, whitesTurn);

@@ -11,6 +11,12 @@ import model.Position;
  */
 public class GameNodeAlphaBetaPruning extends AlphaBetaPruningBase<Position> implements GameTreeEvaluator {
 
+    
+    @Override
+    public GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn) {
+        return evaluateNode(tree.getRoot(), depth, whitesTurn);
+    }
+
     /**
      * See {@link AlphaBetaPruningBase#evaluateTree(Node, int, boolean)}.
      * <br><br>
@@ -19,8 +25,8 @@ public class GameNodeAlphaBetaPruning extends AlphaBetaPruningBase<Position> imp
      * If a subtype of Node<Position> that is not also subtype of GameNode is used a CastException might arise.
      */
     @Override
-    public GameNode evaluateTree(Node<Position> node, int depth, boolean whitesTurn) {
-        return (GameNode) super.evaluateTree(node, depth, whitesTurn);
+    public GameNode evaluateNode(Node<Position> node, int depth, boolean whitesTurn) {
+        return (GameNode) super.evaluateNode(node, depth, whitesTurn);
     }
 
 }
