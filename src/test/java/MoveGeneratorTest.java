@@ -409,7 +409,16 @@ public class MoveGeneratorTest {
 
     @Test
     public void arrayIndexOutOfBoundsBugTest() {
-        MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/PPPPPPPP/6n1/8/8/8/8/2k5 w - - 0 1"));
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/PPPPPPPP/6n1/8/8/8/8/2k5 w - - 0 1"));
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/P4PPP/6n1/8/8/8/8/2k5 w - - 0 1"));
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/5PPP/6n1/8/8/8/8/2k5 w - - 0 1"));
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/5P1P/6n1/8/8/8/8/2k5 w - - 0 1"));
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/6n1/8/8/8/8/2k5 w - - 0 1"));
+        
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/8/8/8/8/8/2k5 w - - 0 1"));
+        MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/4P3/8/8/8/8/8/2k5 w - - 0 1"));
+
+        
     }
 
 }
