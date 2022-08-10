@@ -2,7 +2,16 @@ package gametree;
 
 import java.util.List;
 
+/**
+ * Interface for nodes that store values of a specific type.
+ * Nodes can be linked to create tree structures.
+ */
 public interface Node<T> {
+
+    /**
+     * @return the content stored by this node
+     */
+    public abstract T getContent();
 
     /**
      * Adds a child node to this node.
@@ -26,6 +35,11 @@ public interface Node<T> {
     public abstract void deleteChild(Node<T> node);
 
     /**
+     * Removes all children of this node.
+     */
+    public abstract void deleteChildren();
+
+    /**
      * @return this node's parent
      */
     public abstract Node<T> getParent();
@@ -37,11 +51,6 @@ public interface Node<T> {
     public abstract void setParent(Node<T> parent);
 
     /**
-     * Removes all children of this node.
-     */
-    public abstract void deleteChildren();
-
-    /**
      * Whether this node has children. Note that returning false does not imply that this note cannot generate 
      * children when calling {@link #queryChildren()}.
      * @return true - if this node currently has any children, false - if not
@@ -49,24 +58,19 @@ public interface Node<T> {
     public abstract boolean hasChildren();
 
     /**
-     * @return the content stored by this node
-     */
-    public abstract T getContent();
-
-    /**
-     * Returns this node's children.
-     * If necessary, calculates the children.
-     * <br><br>
-     * If children are calculated, they should be stored so invoking queryChildren() again can
-     * read the stored children instead of recalculating them.
-     * <br><br>
-     * <b>Note:</b>
-     * Results of this methods should be referenced as List < ? extends Node < Type > > which allows reading Node < Type > from the list.
-     * Writing to the list is not possible.
-     * <br><br>
-     * <b>Specify behavior if no children can be generated (e.g. no possible follow-up moves)</b>
-     * @return this node's children
-     */
+    * Returns this node's children.
+    * If necessary, calculates the children.
+    * <br><br>
+    * If children are calculated, they should be stored so invoking queryChildren() again can
+    * read the stored children instead of recalculating them.
+    * <br><br>
+    * <b>Note:</b>
+    * Results of this methods should be referenced as List < ? extends Node < Type > > which allows reading Node < Type > from the list.
+    * Writing to the list is not possible.
+    * <br><br>
+    * <b>Specify behavior if no children can be generated (e.g. no possible follow-up moves)</b>
+    * @return this node's children
+    */
 
     //FIXME specify behavior if no children can be generated (terminal node)
 
@@ -78,7 +82,5 @@ public interface Node<T> {
     //List<S extends T> list = new List<A>;
     //list.add(new B()) <- not type safe as a List<A> does not accept B
     public abstract List<? extends Node<T>> queryChildren();
-
-
 
 }
