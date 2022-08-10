@@ -20,6 +20,7 @@ public interface Node<T> {
 
     /**
      * Removes this node from its parent's child list.
+     * Does nothing if this node has no parent.
      */
     public abstract void deleteSelf();
 
@@ -30,7 +31,7 @@ public interface Node<T> {
      * of implementation.
      * 
      * @param node the node that should be removed from this parent
-     * @throws IllegalArgumentException if the node could not be found
+     * @throws NoSuchElementException if the node could not be found
      */
     public abstract void deleteChild(Node<T> node);
 
@@ -46,9 +47,18 @@ public interface Node<T> {
 
     /**
      * Sets this node's parent.
+     * <br><br>
+     * Cannot be used to unset the parent (parent = null).
+     * Use {@link #unsetParent()} instead.
      * @param parent this node's parent
+     * @throws IllegalStateException if this node already has a parent
      */
     public abstract void setParent(Node<T> parent);
+
+    /**
+     * Unsets this node's parent (deletes the reference to it).
+     */
+    public abstract void unsetParent();
 
     /**
      * Whether this node has children. Note that returning false does not imply that this note cannot generate 

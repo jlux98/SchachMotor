@@ -3,7 +3,6 @@ package testclasses;
 import gametree.BaseNode;
 import gametree.Node;
 import gametree.TreeEvaluator;
-import positionevaluator.Evaluable;
 
 /**
  * Class used to mock instances of Node < Evaluable >.
@@ -11,43 +10,14 @@ import positionevaluator.Evaluable;
  * and to test the implementation of AlphaBetaPruning.
  * BaseNode is an abstract class and thus can't be used for testing.
  */
-public class IntNode extends BaseNode<EvaluableInteger> implements Evaluable {
+public class IntNode extends BaseNode<EvaluableInteger>  {
 
-    public IntNode(EvaluableInteger value) {
-        super(value);
+    public IntNode(Integer value) {
+        super(new EvaluableInteger(value));
     }
 
-    public IntNode(EvaluableInteger value, Node<EvaluableInteger> parent) {
-        super(value, parent);
-    }
-
-    /**
-     * Does not actually evaluate this node but simply returns its stored value.
-     * Same as getValue().
-     * @return the value of this node
-     */
-    @Override
-    public int evaluate() {
-        return getContent().evaluate();
-    }
-
-    /**
-    * This method returns the value that is currently stored by this node.
-    * Values can be stored by calls to setValue().
-    * @return the value stored by this node
-    */
-    @Override
-    public int getValue() {
-        return getContent().getValue();
-    }
-
-    /**
-    * Overwrites the current value of this evaluable with the specified value.
-    * @param value the value that should be stored
-    */
-    @Override
-    public void setValue(int value) {
-        this.getContent().setValue(value);
+    public IntNode(Integer value, Node<EvaluableInteger> parent) {
+        super(new EvaluableInteger(value), parent);
     }
 
     /**

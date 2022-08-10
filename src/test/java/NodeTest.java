@@ -1,9 +1,11 @@
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -111,6 +113,10 @@ public class NodeTest {
         if (leftOver == null || leftOver.length == 0) {
             //parent has no leftover children
             assertFalse(parent.hasChildren());
+            //queryChildren() cannot be called:
+            //calling queryChildren() calls computeChildren() because node has no children
+            //computeChildren() is not implemented by inttnode -> UnsupportedOperationException
+            //assertEquals(0, parent.queryChildren().size());
         } else {
             //parent has leftover children
             List<? extends Node<EvaluableInteger>> children = parent.queryChildren();
@@ -165,61 +171,49 @@ public class NodeTest {
         IntNode child = layer4Node3;
         child.deleteSelf();
         IntNode parent = layer3Node2;
-        assertFalse(parent.hasChildren());
-        //calling queryChildren() attempts to computeChildren() because node has none
-        //computeChildren() is not implemented by inttnode -> UnsupportedOperationException
-        //assertEquals(0, parent.queryChildren().size()); 
-        assertTrue(child.getParent() == null);
+
+        verifyDeletion(parent, child, null);
     }
 
     @Test
     public void deleteSelfLeafTest() {
         IntNode child = layer4Node4;
-        child.deleteSelf();
         IntNode parent = layer3Node3;
-        List<? extends Node<EvaluableInteger>> children = parent.queryChildren();
-        assertTrue(parent.hasChildren());
-        assertEquals(1, children.size());
-        assertTrue(child.getParent() == null);
-        Node<EvaluableInteger> leftOverChild = children.get(0);
-        assertTrue(leftOverChild == layer4Node5);
+
+        child.deleteSelf();
+        verifyDeletion(parent, child, layer4Node5);
     }
 
     @Test
     public void deleteSelfInnerNodeTest() {
         IntNode child = layer2Node0;
         IntNode parent = layer1Node0;
+
         child.deleteSelf();
-        List<? extends Node<EvaluableInteger>> children = parent.queryChildren();
-        assertTrue(parent.hasChildren());
-        assertEquals(1, children.size());
-        assertTrue(child.getParent() == null);
-        Node<EvaluableInteger> leftOverChild = children.get(0);
-        assertTrue(leftOverChild == layer2Node1);
+        verifyDeletion(parent, child, layer2Node1);
     }
 
     @Test
 
     public void deleteSelfNoParentTest() {
+        assertTrue(treeRoot.getParent() == null);
         treeRoot.deleteSelf();
+        assertTrue(treeRoot.getParent() == null);
     }
 
     @Test
     public void deleteExistingChild() {
         IntNode parent = layer1Node1;
         IntNode deleted = layer2Node2;
-        List<? extends Node<EvaluableInteger>> children = parent.queryChildren();
+
         parent.deleteChild(deleted);
-        assertEquals(1, children.size());
-        assertTrue(parent.hasChildren());
-        Node<EvaluableInteger> leftOverChild = children.get(0);
-        assertTrue(leftOverChild == layer2Node3);
-        assertTrue(deleted.getParent() == null);
+        verifyDeletion(parent, deleted, layer2Node3);
     }
 
     @Test
     public void deleteInexistentChild() {
-
+        IntNode parent = layer2Node2;
+        assertThrows(NoSuchElementException.class, () -> parent.deleteChild(new IntNode(42)));
     }
 
     //TODO deleteChild, deleteChildreN, getparent, setParent, unsetParent, queryChildren (if neccessary)

@@ -2,6 +2,7 @@ package gametree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Abstract class providing a basic node implementation.
@@ -20,6 +21,7 @@ public abstract class BaseNode<T> implements Node<T> {
      */
     public BaseNode(T content) {
         this.content = content;
+        //parent == null here
     }
 
     /**
@@ -29,9 +31,7 @@ public abstract class BaseNode<T> implements Node<T> {
      */
     public BaseNode(T content, Node<T> parent) {
         this(content);
-        this.parent = parent;
         parent.insertChild(this);
-        // other attributes are null here
     }
 
     /**
@@ -56,28 +56,30 @@ public abstract class BaseNode<T> implements Node<T> {
             child = children.get(i);
             if (child == node) {
                 children.remove(i);
-                child.setParent(null);
+                child.unsetParent();
                 return;
             }
         }
-        throw new IllegalArgumentException("child to remove could not be found");
+        throw new NoSuchElementException("child to remove could not be found");
     }
 
     @Override
     public void deleteChildren() {
         for (Node<T> child : children) {
-            child.setParent(null);
+            child.unsetParent();
         }
         this.children.clear();
     }
 
     @Override
     public void deleteSelf() {
-        try {
-            this.parent.deleteChild(this);
-        } catch (IllegalArgumentException exception) {
-            //if this node cannot be found as a child of it's parent,
-            //it is deemed to already have been removed -> void exception
+        if (this.parent != null) {
+            try {
+                this.parent.deleteChild(this);
+            } catch (NoSuchElementException exception) {
+                //if this node cannot be found as a child of it's parent,
+                //it is deemed to already have been removed -> void exception
+            }
         }
     }
 
@@ -118,7 +120,15 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public void setParent(Node<T> parent) {
+        if (this.parent != null) {
+            throw new IllegalStateException("a node can only be child to a single node, this node already has a parent");
+        }
         this.parent = parent;
+    }
+
+    @Override
+    public void unsetParent() {
+        this.parent = null;
     }
 
     /**
