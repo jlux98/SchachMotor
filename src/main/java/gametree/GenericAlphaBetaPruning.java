@@ -11,9 +11,9 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
 
     //Note on storing values in nodes:
     //values stored by nodes do not have to be marked as invalid
-    //leaves overwrite their old value (they could have an old value because iterative deepening doesnt start with old
+    //leaves overwrite their old value (they can have an old value because iterative deepening doesn't start with old
     //max depth, so nodes that are leaves for this iteration might not actually be leaves in the gametree)
-    //inner nodes do not read their own value and overwrite it with values of their children
+    //inner nodes overwrite their own value with values of their children
 
     @Override
     public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
@@ -43,20 +43,14 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
      * @return the child node that has the best value
      */
     public Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
-        //assign static evaluation to leaves
-        if (isLeaf(parent, depth)) {
-            //return PositionEvaluator.evaluatePosition(parent.getPosition());
-            parent.getContent().evaluate();
-            return parent;
-        }
 
         if (whiteNextMove) {
             //maximize this node
-            return alphaBetaMaximize(parent, depth - 1, alpha, beta);
+            return alphaBetaMaximize(parent, depth, alpha, beta);
 
         } else {
             //minimize this node
-            return alphaBetaMinimize(parent, depth - 1, alpha, beta);
+            return alphaBetaMinimize(parent, depth, alpha, beta);
 
         }
     }
@@ -82,7 +76,7 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
             return true;
         }
         parent.queryChildren(); //TODO specify behavior of querychildren if no children can be calculated
-        return parent.hasChildren();
+        return !parent.hasChildren();
     }
 
     /**
@@ -135,6 +129,7 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
             if (childValue < parentValue) {
                 //minimizing player's turn -> value of this parent node = min of child values
                 parentValue = childValue;
+                parent.getContent().setValue(childValue); //save value in node
                 //store current child as best child
                 bestChild = child;
             }
@@ -197,6 +192,7 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
             if (childValue > parentValue) {
                 //maximizing player's turn -> value of this parent node = max of child values
                 parentValue = childValue;
+                parent.getContent().setValue(childValue); //save value in node
                 //store current child as best child
                 bestChild = child;
             }
