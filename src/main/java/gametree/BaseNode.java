@@ -30,6 +30,7 @@ public abstract class BaseNode<T> implements Node<T> {
     public BaseNode(T content, Node<T> parent) {
         this(content);
         this.parent = parent;
+        parent.insertChild(this);
         // other attributes are null here
     }
 
