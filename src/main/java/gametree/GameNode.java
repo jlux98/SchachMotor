@@ -1,83 +1,90 @@
 package gametree;
 
-import java.util.List;
-
 import model.Position;
-
+import movegenerator.MoveGenerator;
+import positionevaluator.Evaluable;
 /**
- * Interface for the nodes of a game tree.
+ * Class implementing Nodes containing Positions.
+ * Extends BaseNode < Position > for node operations and implements the Evaluable interface on top.
+ * Additionally, this class narrows the return types of node methods from Node < Position > to GameNode.
+ * <br><br>
+ * <b>Important Note:</b>
+ * While some methods of this class accept any Node &lt; Position &gt; only GameNodes and subtypes of GameNode should be passed to these methods.
  */
-public interface GameNode {
+public class GameNode extends BaseNode<Position> implements Evaluable {
+
+    private GameNode parent;
 
     /**
-     * @param node adds the passed node as child to this node
+     * Creates a root node.
+     * @param position position stored by the node
      */
-    public abstract void insertChild(GameNode node);
+    private GameNode(Position position) {
+        super(position);
+    }
 
     /**
-     * Removes this node from its parent's child list.
+     * Creates a child node.
+     * @param position position stored by the node
+     * @param parent parent of the created node
      */
-    public abstract void deleteSelf();
+    private GameNode(Position position, GameNode parent) {
+        super(position, parent);
+        // other attributes e.g. children are null here
+    }
 
     /**
-     * Removes the specified child node.
-     * <br>
-     * <br>
-     * <b>Note:</b> Nodes are compared by reference for better performance and ease
-     * of implementation.
+     * Creates a node without parent.
      * 
-     * @param node the node that should be removed from this parent
-     * @throws IllegalArgumentException if the node could not be found
+     * @param position the position to be stored in the node
+     * @return a node serving as root for a gametree
      */
-    public abstract void deleteChild(GameNode node);
+    public static GameNode createRoot(Position position) {
+        return new GameNode(position);
+    }
 
     /**
-     * Removes all children of this node.
+     * @param position  the position to be stored in the node
+     * @param parent this node's parent
+     * @return a node with parent
      */
-    public abstract void deleteChildren();
+    public static GameNode createNode(Position position, GameNode parent) {
+        return new GameNode(position, parent);
+    }
 
-    /**
-     * @return true if this node has children, false otherwise
-     */
-    public abstract boolean hasChildren();
+    @Override
+    //narrows return type from Node<T> to GameNode
+    public GameNode getParent() {
+        return this.parent; //possibly null
+    }
 
-    /**
-     * @param value the value to be set for this node
-     */
-    public abstract void setValue(int value);
+    @Override
+    protected void computeChildren() {
+        //TODO testing!
+        if (hasChildren()) {
+            throw new IllegalStateException("node already has children");
+        }
+        createChildListIfNotExists();
+        Position[] followUpPositions = MoveGenerator.generatePossibleMoves(this.getContent());
+        for (Position position : followUpPositions) {
+            this.insertChild(createNode(position, this));
+        }
+    }
 
-    /**
-     * Computes this node's children.
-     * (children are added to the node's child list)
-     */
-    public abstract void computeChildren();
+    @Override
+    public int evaluate() {
+        //gameState evaluates itself and stores that value
+        return this.getContent().evaluate();
+    }
 
-    /**
-     * @return the node corresponding to the turn that has to be played for this node to be reachable.
-     */
-    public abstract GameNode findPlayableAncestor();
+    @Override
+    public int getValue() {
+        return this.getContent().getValue();
+    }
 
-    /**
-     * @return this node's parent
-     */
-    public abstract GameNode getParent();
-
-    /**
-     * @return the position stored by this node
-     */
-    public abstract Position getPosition();
-
-    public abstract List<GameNode> getChildren();
-
-    /**
-     * @return this node's stored value
-     */
-    public int getValue();
-
-    /**
-     * @return true - if a value has been assigned to this node,
-     * false - otherwise
-     */
-    public boolean isEvaluated();
+    @Override
+    public void setValue(int pointValue) {
+        this.getContent().setValue(pointValue);
+    }
 
 }

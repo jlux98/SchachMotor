@@ -4,7 +4,14 @@ import model.Position;
 import model.Piece;
 import model.PieceType;
 
-public abstract class PositionEvaluator {
+public class PositionEvaluator implements Evaluator<Position>{
+
+
+    @Override
+    public int evaluate(Position position) {
+        //TODO merge with evaluatePosition when refactoring is defintive
+        return PositionEvaluator.evaluatePosition(position);
+    }
     public static int evaluatePosition(Position position){
         int result = 0;
         int blackBishops = 0;
