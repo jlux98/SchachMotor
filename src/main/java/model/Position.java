@@ -2,6 +2,8 @@ package model;
 
 
 import movegenerator.AttackMapGenerator;
+import positionevaluator.Evaluable;
+import positionevaluator.PositionEvaluator;
 
 /**
  * Class representing the game state.
@@ -13,7 +15,7 @@ import movegenerator.AttackMapGenerator;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Position implements Comparable<Position>, Cloneable{
+public class Position implements Comparable<Position>, Cloneable, Evaluable{
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -223,6 +225,7 @@ public class Position implements Comparable<Position>, Cloneable{
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
 
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Position){
@@ -308,6 +311,24 @@ public class Position implements Comparable<Position>, Cloneable{
         return this.toString().compareTo(otherPosition.toString());
     }
 
+        
+    
+    @Override
+    public int evaluate() {
+        this.pointValue = PositionEvaluator.evaluatePosition(this);
+        return this.pointValue;
+    }
+
+    @Override
+    public void setValue(int pointValue) {
+        //pointvalue may be negative
+        this.pointValue = pointValue;
+    }
+
+    @Override
+    public int getValue() {
+        return this.pointValue;
+    }
 
 
     /*
@@ -316,15 +337,7 @@ public class Position implements Comparable<Position>, Cloneable{
      **********************************
      */
 
-         /**
-     * Sets the point value of this position.
-     * Required to allow for positions to be generated first and evaluated at a later time.
-     * @param pointValue the position's value
-     */
-    public void setPointValue(int pointValue) {
-        //pointvalue may be negative
-        this.pointValue = pointValue;
-    }
+ 
 
     public void setWhiteInCheck(boolean whiteInCheck) {
         this.whiteInCheck = whiteInCheck;
@@ -426,4 +439,5 @@ public class Position implements Comparable<Position>, Cloneable{
     public Board getBoard() {
         return this.board;
     }
+   
 }

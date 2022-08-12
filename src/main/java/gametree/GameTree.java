@@ -1,18 +1,14 @@
 package gametree;
 
-import java.util.List;
-
-import model.Position;
 
 /**
  * Interface for classes implementing a game tree.
+ * GameTree extends Tree < GameNode > and adds a method calculateBestMove().
  */
-public interface GameTree {
-    
-    //TODO doc
-    public abstract GameNode calculateBestMove(Position incoming, int maxTime);
+public interface GameTree extends Tree<GameNode> {
 
-    public abstract GameNode getRoot();
-    public abstract List<GameNode> getLeafList();
+
+    //TODO doc
+    public abstract GameNode calculateBestMove(int maxTime);
 
 }

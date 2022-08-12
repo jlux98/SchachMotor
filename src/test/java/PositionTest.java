@@ -275,7 +275,7 @@ public class PositionTest {
     @Test
     public void notEqualsPointValuePositionTest() {
         Position clonedPosition = testPosition.clone();
-        clonedPosition.setPointValue(1);
+        clonedPosition.setValue(1);
         assertFalse(testPosition.equals(clonedPosition));
     }
 
