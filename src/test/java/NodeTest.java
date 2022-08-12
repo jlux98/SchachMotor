@@ -172,7 +172,7 @@ public class NodeTest {
         child.deleteSelf();
         IntNode parent = layer3Node2;
 
-        verifyDeletion(parent, child, null);
+        verifyDeletion(parent, child, (IntNode[]) null);
     }
 
     @Test

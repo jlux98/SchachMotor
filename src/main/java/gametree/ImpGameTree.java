@@ -1,7 +1,6 @@
 package gametree;
 
 import model.Position;
-import uciservice.FenParser;
 
 public class ImpGameTree implements GameTree {
     /**
