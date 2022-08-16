@@ -67,7 +67,7 @@ public class GameNode extends BaseNode<Position> implements Evaluable {
         createChildListIfNotExists();
         Position[] followUpPositions = MoveGenerator.generatePossibleMoves(this.getContent());
         for (Position position : followUpPositions) {
-            this.insertChild(createNode(position, this));
+            createNode(position, this);
         }
     }
 
