@@ -26,6 +26,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     /**
      * Creates a child node.
+     * The nodes are properly linked toe ach other by this constructor.
      * @param content content stored by the node
      * @param parent parent of the created node
      */
@@ -65,21 +66,21 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public void deleteChildren() {
-        for (Node<T> child : children) {
-            child.unsetParent();
+        if (hasChildren()) {
+            for (Node<T> child : children) {
+                child.unsetParent();
+            }
+            this.children.clear();
         }
-        this.children.clear();
     }
 
+    /**
+     * @throws NoSuchElementException if this node has a parent but it could not be deleted from it
+     */
     @Override
     public void deleteSelf() {
         if (this.parent != null) {
-            try {
-                this.parent.deleteChild(this);
-            } catch (NoSuchElementException exception) {
-                //if this node cannot be found as a child of it's parent,
-                //it is deemed to already have been removed -> void exception
-            }
+            this.parent.deleteChild(this);
         }
     }
 

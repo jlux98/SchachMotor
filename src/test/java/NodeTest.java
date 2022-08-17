@@ -20,6 +20,7 @@ public class NodeTest {
      * Root node of a tree consisting of IntNodes.
      * Leaf values are the same as in https://en.wikipedia.org/wiki/File:Minimax.svg.
      * Inner nodes have a value of 0.
+     * Tree structure is the same as in the image.
      */
     private IntNode treeRoot;
     //layer 4
@@ -84,7 +85,6 @@ public class NodeTest {
 
     }
 
-    //TODO verify/test data setup
 
     /**
     * Creates a parent node for the passed children.
@@ -100,35 +100,83 @@ public class NodeTest {
     }
 
     /**
-     * Verified that the node passed as "deleted" was deleted.
-     * If the deleted node was the parent's only child, an empty array must be passed to this method.
+     * Verify that the node passed as "deleted" was deleted.
+     * If the deleted node was the parent's only child, an empty array or null must be passed to this method.
      * @param parent the parent of the node that was deleted
      * @param deleted the node that was deleted
      * @param leftOver the leftover children of the parent node, in the same order as returned by parent.queryChildren()
      */
     private void verifyDeletion(IntNode parent, IntNode deleted, IntNode... leftOver) {
-
         assertTrue(deleted.getParent() == null);
+        verifyChildren(parent, leftOver);
+    }
 
-        if (leftOver == null || leftOver.length == 0) {
-            //parent has no leftover children
+    /**
+     * Verify that the node passed as parent has exactly the specified children (compared by reference).
+     * If the node has no children, an empty array or null must be passed to this method.
+     * <br><br>
+     * If this method throws UnsupportedOperationException, 
+     * queryChildren() attempted to generate children although parent stores children that should simply be returned instead.
+     * @param parent the node whose children should be verified
+     * @param expectedChildren the expected children of the parent node, in the same order as returned by parent.queryChildren()
+     */
+    private void verifyChildren(IntNode parent, IntNode... expectedChildren) {
+        if (expectedChildren == null || expectedChildren.length == 0) {
+            //verify that parent has no children
             assertFalse(parent.hasChildren());
             //queryChildren() cannot be called:
             //calling queryChildren() calls computeChildren() because node has no children
             //computeChildren() is not implemented by inttnode -> UnsupportedOperationException
             //assertEquals(0, parent.queryChildren().size());
         } else {
-            //parent has leftover children
-            List<? extends Node<EvaluableInteger>> children = parent.queryChildren();
+            //verify that parent has the expected children
             assertTrue(parent.hasChildren());
-            assertEquals(leftOver.length, children.size());
+            List<? extends Node<EvaluableInteger>> actualChildren = parent.queryChildren();
+            assertEquals(expectedChildren.length, actualChildren.size());
 
-            //compare children with leftOver
-            for (int i = 0; i < leftOver.length; i++) {
-                assertTrue(leftOver[i] == children.get(i));
+            //compare expected and actual children
+            //also verify reference to parent
+            for (int i = 0; i < expectedChildren.length; i++) {
+                assertTrue(expectedChildren[i] == actualChildren.get(i));
+                assertTrue(actualChildren.get(i).getParent() == parent);
             }
-
         }
+    }
+
+    /**
+     * verifies that the tree starting with treeRoot was successfully build to represent
+     * https://en.wikipedia.org/wiki/File:Minimax.svg
+     */
+    @Test
+    public void verifyTestTree() {
+    verifyChildren(treeRoot, layer1Node0, layer1Node1);
+    //layer 1
+    verifyChildren(layer1Node0, layer2Node0, layer2Node1);
+    verifyChildren(layer1Node1, layer2Node2, layer2Node3);
+    //layer2
+    verifyChildren(layer2Node0, layer3Node0, layer3Node1);
+    verifyChildren(layer2Node1, layer3Node2);
+    verifyChildren(layer2Node2, layer3Node3, layer3Node4);
+    verifyChildren(layer2Node3, layer3Node5);
+    //layer 3
+    verifyChildren(layer3Node0, layer4Node0, layer4Node1);
+    verifyChildren(layer3Node1, layer4Node2);
+    verifyChildren(layer3Node2, layer4Node3);
+    verifyChildren(layer3Node3, layer4Node4, layer4Node5);
+    verifyChildren(layer3Node4, layer4Node6);
+    verifyChildren(layer3Node5, layer4Node7, layer4Node8);
+    //layer 4: leaf values
+    assertEquals(10, layer4Node0.getContent().getValue());
+    assertEquals(Integer.MAX_VALUE, layer4Node1.getContent().getValue());
+    assertEquals(5, layer4Node2.getContent().getValue());
+    assertEquals(-10, layer4Node3.getContent().getValue());
+    assertEquals(7, layer4Node4.getContent().getValue());
+    assertEquals(5, layer4Node5.getContent().getValue());
+    assertEquals(Integer.MIN_VALUE, layer4Node6.getContent().getValue());
+    assertEquals(-7, layer4Node7.getContent().getValue());
+    assertEquals(-5, layer4Node8.getContent().getValue());
+
+
     }
 
     @Test
@@ -201,6 +249,17 @@ public class NodeTest {
         assertTrue(treeRoot.getParent() == null);
     }
 
+    /**
+     * calls node.deleteSelf() on a node that has a parent reference,
+     * but is not stored as a child in that parent node (not part of the parent's child list)
+     */
+    @Test
+    public void deleteSelfInvalidParentReference() {
+        IntNode faultyLinkedNode = new IntNode(12);
+        faultyLinkedNode.setParent(treeRoot);
+        assertThrows(NoSuchElementException.class, () -> faultyLinkedNode.deleteSelf());
+    }
+
     @Test
     public void deleteExistingChild() {
         IntNode parent = layer1Node1;
@@ -216,6 +275,46 @@ public class NodeTest {
         assertThrows(NoSuchElementException.class, () -> parent.deleteChild(new IntNode(42)));
     }
 
-    //TODO deleteChild, deleteChildreN, getparent, setParent, unsetParent, queryChildren (if neccessary)
+    @Test
+    public void deleteChildren1Child() {
+        IntNode parent = layer3Node1;
+        parent.deleteChildren();
+        verifyDeletion(parent, layer4Node2, (IntNode[]) null);
+    }
+
+    @Test
+    public void deleteChildren2Children() {
+        IntNode parent = layer2Node2;
+        parent.deleteChildren();
+        verifyDeletion(parent, layer3Node3, (IntNode[]) null);
+        verifyDeletion(parent, layer3Node4, (IntNode[]) null);
+    }
+
+    @Test
+    public void deleteChildrenNoChildren() {
+        IntNode leaf = layer4Node1;
+        leaf.deleteChildren();
+    }
+
+    /**
+     * Calls queryChildren() on a node without children,
+     * which calls computeChildren() to generate children.
+     * IntNode does not implemented computeChildren() and throws an UnsupportedOperationException instead.
+     */
+    @Test
+    public void queryChildrenCallsComputeChildrenIfNoChildrenStored() {
+        IntNode leaf = layer4Node3;
+        assertThrows(UnsupportedOperationException.class, () -> leaf.queryChildren());
+    }
+
+    /**
+    * Calls queryChildren() on a node with children,
+    * returning the stored children without calling computeChildren().
+    */
+    @Test
+    public void queryChildrenReturnsStoredChildren() {
+        IntNode parent = layer3Node3;
+        verifyChildren(parent, layer4Node4, layer4Node5);
+    }
 
 }

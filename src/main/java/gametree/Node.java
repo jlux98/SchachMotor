@@ -21,6 +21,7 @@ public interface Node<T> {
     /**
      * Removes this node from its parent's child list.
      * Does nothing if this node has no parent.
+     * @throws NoSuchElementException if this node has a parent but it could not be deleted from it
      */
     public abstract void deleteSelf();
 
@@ -37,6 +38,7 @@ public interface Node<T> {
 
     /**
      * Removes all children of this node.
+     * Does nothing if this node has no children.
      */
     public abstract void deleteChildren();
 
@@ -48,6 +50,11 @@ public interface Node<T> {
     /**
      * Sets this node's parent.
      * <br><br>
+     * <b>Note:</b>
+     * This is a low level method.
+     * Do not use this to add children to a node.
+     * Use {@link #insertChild()} or a suitable constructor instead.
+     * <br><br>
      * Cannot be used to unset the parent (parent = null).
      * Use {@link #unsetParent()} instead.
      * @param parent this node's parent
@@ -56,7 +63,12 @@ public interface Node<T> {
     public abstract void setParent(Node<T> parent);
 
     /**
-     * Unsets this node's parent (deletes the reference to it).
+     * Deletes this node's parent reference.
+     * <br><br>
+     * <b>Note:</b>
+     * This is a low level method.
+     * Do not use this to remove children from a node.
+     * Use {@link #deleteChild()} or {@link #deleteSelf()} instead.
      */
     public abstract void unsetParent();
 
