@@ -2,7 +2,7 @@ package gametree;
 
 import model.Position;
 import movegenerator.MoveGenerator;
-import positionevaluator.Evaluable;
+
 /**
  * Class implementing Nodes containing Positions.
  * Extends BaseNode < Position > for node operations and implements the Evaluable interface on top.
@@ -11,7 +11,7 @@ import positionevaluator.Evaluable;
  * <b>Important Note:</b>
  * While some methods of this class accept any Node &lt; Position &gt; only GameNodes and subtypes of GameNode should be passed to these methods.
  */
-public class GameNode extends BaseNode<Position> implements Evaluable {
+public class GameNode extends BaseNode<Position> {
 
     private GameNode parent;
 
@@ -70,21 +70,4 @@ public class GameNode extends BaseNode<Position> implements Evaluable {
             createNode(position, this);
         }
     }
-
-    @Override
-    public int evaluate() {
-        //gameState evaluates itself and stores that value
-        return this.getContent().evaluate();
-    }
-
-    @Override
-    public int getValue() {
-        return this.getContent().getValue();
-    }
-
-    @Override
-    public void setValue(int pointValue) {
-        this.getContent().setValue(pointValue);
-    }
-
 }
