@@ -20,6 +20,11 @@ public class IntNode extends BaseNode<EvaluableInteger>  {
         super(new EvaluableInteger(value), parent);
     }
 
+    @Override
+    //narrows return type from Node<T> to GameNode
+    public IntNode getParent() {
+        return (IntNode) super.getParent();
+    }
     /**
      * Not supported by IntNode.
      * <br><br>

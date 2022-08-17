@@ -85,7 +85,6 @@ public class NodeTest {
 
     }
 
-
     /**
     * Creates a parent node for the passed children.
     * @param children nodes that a parent should be generated for
@@ -149,33 +148,32 @@ public class NodeTest {
      */
     @Test
     public void verifyTestTree() {
-    verifyChildren(treeRoot, layer1Node0, layer1Node1);
-    //layer 1
-    verifyChildren(layer1Node0, layer2Node0, layer2Node1);
-    verifyChildren(layer1Node1, layer2Node2, layer2Node3);
-    //layer2
-    verifyChildren(layer2Node0, layer3Node0, layer3Node1);
-    verifyChildren(layer2Node1, layer3Node2);
-    verifyChildren(layer2Node2, layer3Node3, layer3Node4);
-    verifyChildren(layer2Node3, layer3Node5);
-    //layer 3
-    verifyChildren(layer3Node0, layer4Node0, layer4Node1);
-    verifyChildren(layer3Node1, layer4Node2);
-    verifyChildren(layer3Node2, layer4Node3);
-    verifyChildren(layer3Node3, layer4Node4, layer4Node5);
-    verifyChildren(layer3Node4, layer4Node6);
-    verifyChildren(layer3Node5, layer4Node7, layer4Node8);
-    //layer 4: leaf values
-    assertEquals(10, layer4Node0.getContent().getValue());
-    assertEquals(Integer.MAX_VALUE, layer4Node1.getContent().getValue());
-    assertEquals(5, layer4Node2.getContent().getValue());
-    assertEquals(-10, layer4Node3.getContent().getValue());
-    assertEquals(7, layer4Node4.getContent().getValue());
-    assertEquals(5, layer4Node5.getContent().getValue());
-    assertEquals(Integer.MIN_VALUE, layer4Node6.getContent().getValue());
-    assertEquals(-7, layer4Node7.getContent().getValue());
-    assertEquals(-5, layer4Node8.getContent().getValue());
-
+        verifyChildren(treeRoot, layer1Node0, layer1Node1);
+        //layer 1
+        verifyChildren(layer1Node0, layer2Node0, layer2Node1);
+        verifyChildren(layer1Node1, layer2Node2, layer2Node3);
+        //layer2
+        verifyChildren(layer2Node0, layer3Node0, layer3Node1);
+        verifyChildren(layer2Node1, layer3Node2);
+        verifyChildren(layer2Node2, layer3Node3, layer3Node4);
+        verifyChildren(layer2Node3, layer3Node5);
+        //layer 3
+        verifyChildren(layer3Node0, layer4Node0, layer4Node1);
+        verifyChildren(layer3Node1, layer4Node2);
+        verifyChildren(layer3Node2, layer4Node3);
+        verifyChildren(layer3Node3, layer4Node4, layer4Node5);
+        verifyChildren(layer3Node4, layer4Node6);
+        verifyChildren(layer3Node5, layer4Node7, layer4Node8);
+        //layer 4: leaf values
+        assertEquals(10, layer4Node0.getContent().getValue());
+        assertEquals(Integer.MAX_VALUE, layer4Node1.getContent().getValue());
+        assertEquals(5, layer4Node2.getContent().getValue());
+        assertEquals(-10, layer4Node3.getContent().getValue());
+        assertEquals(7, layer4Node4.getContent().getValue());
+        assertEquals(5, layer4Node5.getContent().getValue());
+        assertEquals(Integer.MIN_VALUE, layer4Node6.getContent().getValue());
+        assertEquals(-7, layer4Node7.getContent().getValue());
+        assertEquals(-5, layer4Node8.getContent().getValue());
 
     }
 
@@ -316,5 +314,4 @@ public class NodeTest {
         IntNode parent = layer3Node3;
         verifyChildren(parent, layer4Node4, layer4Node5);
     }
-
 }

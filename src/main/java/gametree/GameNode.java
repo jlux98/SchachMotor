@@ -8,12 +8,19 @@ import movegenerator.MoveGenerator;
  * Extends BaseNode < Position > for node operations and implements the Evaluable interface on top.
  * Additionally, this class narrows the return types of node methods from Node < Position > to GameNode.
  * <br><br>
- * <b>Important Note:</b>
- * While some methods of this class accept any Node &lt; Position &gt; only GameNodes and subtypes of GameNode should be passed to these methods.
+ * <b>Important Notes:</b>
+ * <ul>
+ *      <li>
+ *          While some methods of this class accept any Node &lt; Position &gt;
+ *          only GameNodes and subtypes of GameNode should be passed to these methods.
+ *      </li>
+ *      <li>
+ *          This class performs casts from Node < Position > to GameNode which should be safe
+ *          so long as the containing tree consists only of gamenodes and subtypes of gamenode.
+ *      </li>
+ * </ul>
  */
 public class GameNode extends BaseNode<Position> {
-
-    private GameNode parent;
 
     /**
      * Creates a root node.
@@ -55,7 +62,7 @@ public class GameNode extends BaseNode<Position> {
     @Override
     //narrows return type from Node<T> to GameNode
     public GameNode getParent() {
-        return this.parent; //possibly null
+        return (GameNode) super.getParent();
     }
 
     @Override
