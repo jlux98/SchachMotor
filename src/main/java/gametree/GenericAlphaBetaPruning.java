@@ -105,6 +105,7 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
         int childValue;
         Node<T> bestChild = null;
         Node<T> childBestMove = null;
+        //FIXME handle queryChildren() not being able to generate children by statically evaluating this position
         List<? extends Node<T>> children = parent.queryChildren(); //get or calculate children
         for (Node<T> child : children) {
             //evaluate all children
@@ -166,6 +167,7 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
         //maximize
         int parentValue = Integer.MIN_VALUE;
         int childValue;
+        //FIXME handle queryChildren() not being able to generate children by statically evaluating this position
         List<? extends Node<T>> children = parent.queryChildren(); //get or calculate children
         Node<T> bestChild = null; //the child that determines the value of this parent node
         Node<T> childBestMove; //the node that determines the value of the current child of this parent

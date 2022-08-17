@@ -146,6 +146,7 @@ public abstract class BaseNode<T> implements Node<T> {
         if (!hasChildren()) {
             computeChildren();
         }
+        //FIXME might return null, evaluate statically in that case
         return children;
     }
 
