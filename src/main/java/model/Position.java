@@ -1,6 +1,5 @@
 package model;
 
-
 import movegenerator.AttackMapGenerator;
 import positionevaluator.Evaluable;
 import positionevaluator.PositionEvaluator;
@@ -15,7 +14,7 @@ import positionevaluator.PositionEvaluator;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Position implements Comparable<Position>, Cloneable, Evaluable{
+public class Position implements Comparable<Position>, Cloneable, Evaluable {
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -38,6 +37,12 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
     private Move generatedByMove;
 
     /**
+     * Stores whether this Position is marked as interesting as required by {@link Evaluable}.
+     * This field does not affect equals(), compareTo(), toString() and is not copied by clone().
+     */
+    private boolean isInteresting;
+
+    /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
     * but without requiring point value and whiteInCheck / blackInCheck to be set.
     * These value may be set using the corresponding setter at a later time.
@@ -45,9 +50,9 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
     public Position(Piece[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
             boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
             int halfMoves, int fullMoves) {
-       if (spaces == null) {
+        if (spaces == null) {
             throw new NullPointerException("spaces array may not be null");
-        } 
+        }
         // en passant target coordiantes of -1 are used if no en passant captures are possbile
         /* if (enPassantTargetRank <= 0 || enPassantTargetFile <= 0) {
             throw new IllegalArgumentException("coordinates must be greater than 0");
@@ -63,6 +68,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
             throw new IllegalArgumentException("full move count must be greater than 0");
         }
         this.board = new ArrayBoard(spaces);
+        this.isInteresting = false;
         this.whiteNextMove = whiteNextMove;
         this.whiteCastlingKingside = whiteCastlingKingside;
         this.whiteCastlingQueenside = whiteCastlingQueenside;
@@ -75,7 +81,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
         this.attackedByWhite = AttackMapGenerator.computeChecks(spaces, true);
         this.attackedByBlack = AttackMapGenerator.computeChecks(spaces, false);
         Coordinate whiteKing = getKingPosition(true);
-        if (whiteKing != null){
+        if (whiteKing != null) {
             this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
         } else {
             /*  This is done to prevent a position without a king from generating
@@ -84,7 +90,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
             this.whiteInCheck = true;
         }
         Coordinate blackKing = getKingPosition(false);
-        if (blackKing != null){
+        if (blackKing != null) {
             this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
         } else {
             /*  This is done to prevent a position without a king from generating
@@ -166,7 +172,8 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
      * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
      * @return a follow-up position to this position  
      */
-    public Position generateFollowUpPosition(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile, boolean captureOrPawnMove) {
+    public Position generateFollowUpPosition(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+            boolean captureOrPawnMove) {
 
         //use getters over direct field access so additional code can be run if required at a later time
         boolean newWhiteCastlingKingside = this.getWhiteCastlingKingside();
@@ -225,7 +232,6 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Position){
@@ -244,7 +250,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
                     (whiteInCheck == position.getWhiteInCheck()) &&
                     (whiteNextMove == position.getWhiteNextMove());
         } else {
-        return false;
+            return false;
         }
     }
 
@@ -292,13 +298,16 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
         return result;
     }
 
-    @Override
+
     /**
      * Clones this position.
      * While a new spaces array is created, the contained pieces are the same instances.
      * Thus modifying the array is possible without affecting this position.
      * As pieces are immutable it is valid to use the same instances.
+     * <br><br>
+     * The created Position will not be marked as interesting, even if this Position is.
      */
+    @Override
     public Position clone() {
         Piece[][] copiedSpaces = this.copySpaces();
         return new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
@@ -311,10 +320,9 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
         return this.toString().compareTo(otherPosition.toString());
     }
 
-        
-    
     @Override
     public int evaluate() {
+        this.isInteresting = false;
         this.pointValue = PositionEvaluator.evaluatePosition(this);
         return this.pointValue;
     }
@@ -330,14 +338,21 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
         return this.pointValue;
     }
 
+    @Override
+    public boolean isInteresting() {
+        return isInteresting;
+    }
+
+    @Override
+    public void markAsInteresting() {
+        this.isInteresting = true;
+    }
 
     /*
      **********************************
      * Getters and Setters
      **********************************
      */
-
- 
 
     public void setWhiteInCheck(boolean whiteInCheck) {
         this.whiteInCheck = whiteInCheck;
@@ -346,6 +361,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
     public void setBlackInCheck(boolean blackInCheck) {
         this.blackInCheck = blackInCheck;
     }
+
     public int getPointValue() {
         return pointValue;
     };
@@ -402,7 +418,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
         return fullMoveCount;
     }
 
-    public Piece getPieceAt(int rank, int file){
+    public Piece getPieceAt(int rank, int file) {
         return board.getPieceAt(rank, file);
     }
 
@@ -422,10 +438,9 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
         this.attackedByBlack = attackedByBlack;
     }
 
-    public Coordinate getKingPosition(boolean isWhite){
+    public Coordinate getKingPosition(boolean isWhite) {
         return board.getKingPosition(isWhite);
     }
-    
 
     public Move getMove() {
         return generatedByMove;
@@ -439,5 +454,5 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable{
     public Board getBoard() {
         return this.board;
     }
-   
+
 }

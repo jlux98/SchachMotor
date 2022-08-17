@@ -11,18 +11,22 @@ import positionevaluator.Evaluable;
 public class EvaluableInteger implements Evaluable {
 
     private Integer value;
+    private boolean interesting;
 
     public EvaluableInteger(int value) {
         this.value = value;
+        this.interesting = false;
     }
 
     /**
      * Does not actually evaluate this Evaluable but simply returns its stored value.
      * Same as getValue().
+     * Unmarks nodes as specified by {@link Evaluable}.
      * @return the value of this evaluable
      */
     @Override
     public int evaluate() {
+        this.interesting = false;
         return getValue();
     }
 
@@ -43,6 +47,16 @@ public class EvaluableInteger implements Evaluable {
     @Override
     public void setValue(int value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean isInteresting() {
+        return interesting;
+    }
+
+    @Override
+    public void markAsInteresting() {
+        this.interesting = true;
     }
 
 }
