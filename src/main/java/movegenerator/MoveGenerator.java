@@ -154,13 +154,24 @@ public abstract class MoveGenerator {
 
     private static void computePawnDoubleStep(Position bs, Set<Position> results, int rank,
         int file, int sign){
-        if (rank < 6 &&
-            bs.getPieceAt(rank+(sign*1), file) == null &&
-            bs.getPieceAt(rank+(sign*2), file) == null){
+        if (checkPawnDoubleStep(bs, rank, file, sign)){
             Piece[][] resultingSpaces = getPositionAfterMove(bs.copySpaces(), rank,
                 file, rank+(sign*2), file);
             addPawnMove(bs, results, rank, file, sign, resultingSpaces, true);
         }
+    }
+
+    private static boolean checkPawnDoubleStep(Position bs, int rank, int file, int sign){
+        int relevantRank = -1;
+        if (sign == 1){
+            relevantRank = 1;
+        }
+        if (sign == -1){
+            relevantRank = 6;
+        }
+        return rank == relevantRank &&
+                bs.getPieceAt(rank+(sign*1), file) == null &&
+                bs.getPieceAt(rank+(sign*2), file) == null;
     }
 
     public static void computePawnCaptureLeft(Position bs, Set<Position> results, int rank,
