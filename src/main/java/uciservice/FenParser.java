@@ -272,17 +272,18 @@ public class FenParser {
         enPassantTargetRank = translateRankCharacter(enPassantTargetSquareToken.charAt(1));
     }
 
-    /**
+/**
     * Translates the character denoting a square's rank (row) to the corresponding number.
-    * This character is a number from 1 to 8 (e.g. '2').
-    * FIXME: it should map 1 -> 7, 2 -> 6 ... 8 -> 0 since our arrays start at index 0, ends at index 7 and counts upside down
+    * The character has to be a number from 1 to 8 (e.g. '2') and is mapped to 8 - its value.
+    * This is neccessary because our array starts at index 0, ends at index 7 and counts upside down.
+    * e.g.: 1 -> 7, 2 -> 6 ... 8 -> 0
     * @param c the character denoting a file
     * @return the corresponding number
     * @throws IllegalArgumentException if the character is not within '1' to '8'
     */
     private int translateRankCharacter(char c) {
         int rank = 8 - Character.getNumericValue(c);
-        if (rank < 0 || rank > 8) {
+        if (rank < 0 || rank > 7) {
             throw new IllegalArgumentException(
                     "en passant target rank must be a number (represented as character) in the range of '1' to '8', not " + c);
         }
@@ -293,21 +294,22 @@ public class FenParser {
      * Translates the character denoting a square's file (column) to the corresponding number.
      * This character is a letter from a to h.
      * <br><br>
-     * Characters in the range of a to h are mapped to integers in the range of 1 to 8.
+     * Characters in the range of a to h are mapped to integers in the range of 0 to 7.
      * <br><br>
-     * E.g.: a -> 1, b -> 2, ... g -> 7, h -> 8
-     * FIXME: it should map a -> 0, b -> 1 ... h -> 7 since our arrays start at index 0 and end at index 7
+     * E.g.: a -> 0, b -> 1, ... g -> 6, h -> 7
      * @param c the character denoting a file
      * @return the corresponding number
      * @throws IllegalArgumentException if the character is not within 'a' to 'h'
      */
     private int translateFileCharacter(char c) {
         int file = Character.getNumericValue(c) - 10;
-        if (file < 0 || file > 8) {
+        if (file < 0 || file > 7) {
             throw new IllegalArgumentException("en passant target file must be a character in the range of a to h, not " + c);
         }
         return file;
     }
+
+
 
     /**
      * Parses the half move count provided by a fen string.
