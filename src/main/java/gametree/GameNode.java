@@ -67,6 +67,7 @@ public class GameNode extends BaseNode<Position> {
 
     @Override
     protected void computeChildren() {
+        //FIXME throw ComputeChildrenException if no children can be generated
         //TODO testing!
         if (hasChildren()) {
             throw new IllegalStateException("node already has children");
