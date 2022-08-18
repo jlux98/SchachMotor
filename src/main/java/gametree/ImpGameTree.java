@@ -3,11 +3,7 @@ package gametree;
 import model.Position;
 
 public class ImpGameTree implements GameTree {
-    /**
-     * The current depth of this tree.
-     * If tree consists of a root only, it's depth is 0.
-     */
-    private int depth = -1; //TODO depth
+
     private GameNode root;
     private GameTreeEvaluator evaluator;
 
@@ -20,7 +16,6 @@ public class ImpGameTree implements GameTree {
         this.evaluator = evaluator;
     }
 
-
     /**
      * Used to create a game tree from an existing game tree.
      * The tree is created as a subtree of the existing tree with the specified node as root.
@@ -32,18 +27,17 @@ public class ImpGameTree implements GameTree {
         this.evaluator = evaluator;
     }
 
-    
     @Override
     public GameNode getRoot() {
         //does not need to be null checked since no game tree can be constructed without setting the root node
         return this.root;
-    }  
+    }
 
     @Override
     // Ich würde den calculateBestMove evtl einen Namen geben wie kickOffCalculation oder startCalculatingBestMove
     // und dann irgendwo in ner privaten Methode im GameTree eine Hauptschleife für das Iterative Deepening haben
     public GameNode calculateBestMove(int maxTime) {
-        int calculationDepth = 1; //TODO determine depth from maxTime
+        int calculationDepth = 3; //TODO determine depth from maxTime instead of hardwiring it
         return this.evaluator.evaluateTree(this, calculationDepth, this.getRoot().getContent().getWhitesTurn());
         //TODO remove outdated pseudocode
         /* GameNode nextMove = null;
@@ -58,6 +52,6 @@ public class ImpGameTree implements GameTree {
             //or "surrender" (not supported by UCI but we could stop playing)
             throw new IllegalArgumentException("time was not sufficient to calculate a move");
         }
-        return nextMove;   */  
+        return nextMove;   */
     }
 }

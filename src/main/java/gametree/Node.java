@@ -73,7 +73,7 @@ public interface Node<T> {
     public abstract void unsetParent();
 
     /**
-     * Whether this node has children. Note that returning false does not imply that this note cannot generate 
+     * Whether this node has children. Note that returning false does not imply that this node cannot generate 
      * children when calling {@link #queryChildren()}.
      * @return true - if this node currently has any children, false - if not
      */
@@ -89,12 +89,9 @@ public interface Node<T> {
     * <b>Note:</b>
     * Results of this methods should be referenced as List < ? extends Node < Type > > which allows reading Node < Type > from the list.
     * Writing to the list is not possible.
-    * <br><br>
-    * <b>Specify behavior if no children can be generated (e.g. no possible follow-up moves)</b>
     * @return this node's children
+    * @throws ComputeChildrenException if this node has no children and no children can be generated
     */
-
-    //FIXME specify behavior if no children can be generated (terminal node)
 
     //List<Node<T>> would not allow GameNode to return a List<GameNode> as List<GameNode> is not a subtype of List<Node<Position>>
     //in case of GameNode this Class is Node<Position>
@@ -103,6 +100,6 @@ public interface Node<T> {
     //e.g: A extends T, B extends T
     //List<S extends T> list = new List<A>;
     //list.add(new B()) <- not type safe as a List<A> does not accept B
-    public abstract List<? extends Node<T>> queryChildren();
+    public abstract List<? extends Node<T>> queryChildren() throws ComputeChildrenException;
 
 }

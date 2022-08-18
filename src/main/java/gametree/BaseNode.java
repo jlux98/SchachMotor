@@ -138,15 +138,15 @@ public abstract class BaseNode<T> implements Node<T> {
     * <b>Note:</b> Do not use this method directly to generate children of this node.
     * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
     * Use queryChildren() to generate children of this node.
+    * @throws ComputeChildrenException if no children can be computed
     */
-    protected abstract void computeChildren();
+    protected abstract void computeChildren() throws ComputeChildrenException;
 
     @Override
-    public List<? extends Node<T>> queryChildren() {
+    public List<? extends Node<T>> queryChildren() throws ComputeChildrenException {
         if (!hasChildren()) {
             computeChildren();
         }
-        //FIXME might return null, evaluate statically in that case
         return children;
     }
 
