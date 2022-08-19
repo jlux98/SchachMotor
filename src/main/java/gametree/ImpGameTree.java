@@ -39,19 +39,5 @@ public class ImpGameTree implements GameTree {
     public GameNode calculateBestMove(int maxTime) {
         int calculationDepth = 3; //TODO determine depth from maxTime instead of hardwiring it
         return this.evaluator.evaluateTree(this, calculationDepth, this.getRoot().getContent().getWhitesTurn());
-        //TODO remove outdated pseudocode
-        /* GameNode nextMove = null;
-        int iteratingDepth = 1;
-        while (hasTime(maxTime)) {
-            deepenIfNecessary(iteratingDepth);
-            iteratingDepth++;
-            nextMove = evaluator.evaluateTree(this, depth, this.root.getPosition().getWhitesTurn()); 
-        }
-        if (nextMove == null) {
-            //FIXME emergency calculation if time is not even sufficient for the first iteration
-            //or "surrender" (not supported by UCI but we could stop playing)
-            throw new IllegalArgumentException("time was not sufficient to calculate a move");
-        }
-        return nextMove;   */
     }
 }

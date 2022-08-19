@@ -8,7 +8,7 @@ package gametree;
 public interface GameTree extends Tree<GameNode> {
 
 
-    //TODO doc
+    //TODO specification
     public abstract GameNode calculateBestMove(int maxTime);
 
 }
