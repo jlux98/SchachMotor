@@ -66,14 +66,19 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    protected void computeChildren() {
-        //FIXME throw ComputeChildrenException if no children can be generated
-        //TODO testing!
+    protected void computeChildren() throws ComputeChildrenException {
         if (hasChildren()) {
             throw new IllegalStateException("node already has children");
         }
         createChildListIfNotExists();
         Position[] followUpPositions = MoveGenerator.generatePossibleMoves(this.getContent());
+
+        if (followUpPositions.length == 0) {
+            //no moves were generated
+            throw new ComputeChildrenException("no children could be generated for this position: " + this.getContent().toString());
+        }
+
+        //add follow-up moves as child nodes to this node
         for (Position position : followUpPositions) {
             createNode(position, this);
         }
