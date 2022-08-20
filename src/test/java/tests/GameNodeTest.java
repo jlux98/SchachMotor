@@ -1,3 +1,4 @@
+package tests;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import gametree.GameNode;
 import gametree.Node;
 import model.Position;
 import movegenerator.MoveGenerator;
+import testclasses.TestHelper;
 import uciservice.FenParser;
 
 public class GameNodeTest {

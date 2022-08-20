@@ -1,3 +1,4 @@
+package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import model.Position;
 import movegenerator.MoveGenerator;
+import testclasses.TestHelper;
 import uciservice.FenParser;
 
 public class MoveGeneratorTest {

@@ -59,4 +59,8 @@ public class EvaluableInteger implements Evaluable {
         this.interesting = true;
     }
 
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }
