@@ -2,7 +2,7 @@ package gametree;
 
 import model.Position;
 
-public class ImpGameTree extends BaseTree<GameNode> implements GameTree {
+public class ImpGameTree extends ImpTree<GameNode> implements GameTree {
 
     private GameTreeEvaluator evaluator;
 

@@ -125,6 +125,12 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
                 //read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 // = value of the Evaluable stored by that node (retrieved with getContent())
                 childValue = child.getContent().getValue();
+                //parentValue has to be updated before alpha
+                //because the value of the child causing the cut-off has to be propagated
+                //as it is guaranteed not to affect the remaining tree
+                //returning a previous child's value currently stored in childValue
+                //might return a value that is not guaranteed to not affect the remaining tree
+                //i.e. a value that is greater than all sibling's values
                 if (childValue < parentValue) {
                     //since parentValue is initialized to Integer.MAX_VALUE this will always be true for the first child (unless a child has a value of Integer.MIN_VALUE itself)
                     //minimizing player's turn -> value of this parent node = min of child values
@@ -195,8 +201,13 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
                 alphaBetaMinimize(child, depth - 1, alpha, beta);
                 //read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 // = value of the Evaluable stored by that node (retrieved with getContent())
-                childValue = child.getContent().getValue();
-
+                childValue = child.getContent().getValue();                
+                //parentValue has to be updated before alpha
+                //because the value of the child causing the cut-off has to be propagated
+                //as it is guaranteed not to affect the remaining tree
+                //returning a previous child's value currently stored in childValue
+                //might return a value that is not guaranteed to not affect the remaining tree
+                //i.e. a value that is less than all sibling's values
                 if (childValue > parentValue) {
                     //since parentValue is initialized to Integer.MIN_VALUE this will always be true for the first child (unless a child has a value of Integer.MIN_VALUE itself)
                     //maximizing player's turn -> value of this parent node = max of child values

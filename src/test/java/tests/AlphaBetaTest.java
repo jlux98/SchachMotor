@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import gametree.BaseTree;
+import gametree.ImpTree;
 import gametree.GenericAlphaBetaPruning;
 import gametree.Node;
 import gametree.TreeEvaluator;
@@ -75,7 +75,7 @@ public class AlphaBetaTest {
     @Test
     public void alphaBetaRespectsDepthTest() {
         GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        new GenericAlphaBetaPruning<EvaluableInteger>().evaluateTree(new BaseTree<GeneratingIntNode>(parent), 2, true);
+        new GenericAlphaBetaPruning<EvaluableInteger>().evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, true);
         assertTrue(parent.hasChildren());
         List<? extends Node<EvaluableInteger>> children = parent.getChildren();
         GeneratingIntNode layer1Node0 = (GeneratingIntNode) children.get(0);
