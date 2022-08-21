@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import data.MoveGeneratorData;
-import helper.FenHelper;
+import helper.PositionHelper;
 import model.Position;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;
@@ -285,7 +285,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/5b2/7k w - - 1 2"); //move to f2 - two squares to bottom right
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/8/6bk w - - 1 2"); //move to g1 - three squares to bottom right
 
-        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -305,7 +305,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/2r5/7k w - - 1 2"); //move to c2 - two squares down
         expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/8/2r4k w - - 1 2"); //move to c1 - three squares down
 
-        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
 
     }
 
@@ -318,7 +318,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k1r1/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to g8 - one square to the left
         expectedfollowUpPositions.add("r3kr2/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to f8 - two squares to the left
 
-        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -330,7 +330,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("2r1k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to c8 - two squares to the right
         expectedfollowUpPositions.add("3rk2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to d8 - three squares to the right
 
-        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
 
     }
 
@@ -342,7 +342,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 1 1"); //move to g1 - one square to the left
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 1 1"); //move to f1 - two squares to the left
 
-        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -354,7 +354,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/2R1K2R b Kkq - 1 1"); //move to c1 - two squares to the right
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/3RK2R b Kkq - 1 1"); //move to d1 - three squares to the right
 
-        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -382,7 +382,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/1q6/7k w - - 1 2"); //move to b2 - one square to bottom left
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/8/q6k w - - 1 2"); //move to a1 - two squares to bottom left
 
-        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     /**
@@ -396,7 +396,7 @@ public class MoveGeneratorTest {
         Set<Position> followUpPositionsSet = new HashSet<Position>();
         Collections.addAll(followUpPositionsSet, followUpPositions);
 
-        FenHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositionsSet);
+        PositionHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositionsSet);
     }
 
     @Test
@@ -408,7 +408,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("qr6/rr6/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at a8
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 0, 0);
         List<String> emptyList = new ArrayList<String>();
-        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -421,7 +421,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("6rq/6rr/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at h8
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 0, 7);
         List<String> emptyList = new ArrayList<String>();
-        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -434,7 +434,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/rr6/qr6 w - - 0 1"); //queen starts at a1
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 7, 0);
         List<String> emptyList = new ArrayList<String>();
-        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -447,7 +447,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/6rr/6rq w - - 0 1"); //queen starts at h1
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 7, 7);
         List<String> emptyList = new ArrayList<String>();
-        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -462,5 +462,116 @@ public class MoveGeneratorTest {
         //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/8/8/8/8/8/2k5 w - - 0 1"));
         MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/4P3/8/8/8/8/8/2k5 w - - 0 1"));
 
+    }
+
+    @Test
+    public void whiteStalemateByRooks() {
+        PositionHelper.verifyStaleMate("k7/8/8/1r6/8/8/4r3/K7 w - - 0 1");
+    }
+
+    @Test
+    public void blackStaleMateByRooks() {
+        PositionHelper.verifyStaleMate("k7/4R3/8/1R6/8/8/8/K7 b - - 0 1");
+    }
+
+    @Test
+    public void whiteCheckMateByRooksTest() {
+        PositionHelper.verifyCheckMate("8/3K4/8/2rrr3/8/8/8/3k4 w - - 0 1", true);
+    }
+
+    @Test
+    public void blackCheckMateByRooksTest() {
+        PositionHelper.verifyCheckMate("8/3k4/8/2RRR3/8/8/8/3K4 b - - 0 1", false);
+    }
+
+    @Test
+    public void whiteStaleMateByKnightsTest() {
+        PositionHelper.verifyStaleMate("1n3n2/8/n2K2n1/8/1n3n2/8/8/k7 w - - 0 1");
+    }
+
+    @Test
+    public void blackStaleMateByKnightsTest() {
+        PositionHelper.verifyStaleMate("1N3N2/8/N2k2N1/8/1N3N2/8/8/K7 b - - 0 1");
+    }
+
+    @Test
+    public void whiteCheckMateByKnightsTest() {
+        PositionHelper.verifyCheckMate("1n3n2/8/n2K2n1/8/1n2nn2/8/8/k7 w - - 0 1", true);
+    }
+
+    @Test
+    public void blackCheckMateByKnightsTest() {
+        PositionHelper.verifyCheckMate("1N3N2/8/N2k2N1/8/1N2NN2/8/8/K7 b - - 0 1", false);
+    }
+
+    @Test
+    public void whiteStaleMateByBishopTest() {
+        PositionHelper.verifyStaleMate("8/8/3K4/b7/6b1/2b2b2/8/k7 w - - 0 1");
+    }
+
+    @Test
+    public void blackStaleMateByBishopTest() {
+        PositionHelper.verifyStaleMate("8/8/3k4/B7/6B1/2B2B2/8/K7 b - - 0 1");
+    }
+
+    @Test
+    public void whiteCheckMateByBishopTest() {
+        PositionHelper.verifyCheckMate("8/8/3K4/b7/5bb1/2b2b2/8/k7 w - - 0 1", true);
+    }
+
+    @Test
+    public void blackCheckMateByBishopTest() {
+        PositionHelper.verifyCheckMate("8/8/3k4/B7/5BB1/2B2B2/8/K7 b - - 0 1", false);
+    }
+
+    @Test
+    public void whiteStaleMateByQueenTest() {
+        
+        PositionHelper.verifyStaleMate("8/1q6/3K4/8/4q3/8/8/k7 w - - 0 1");
+    }
+
+    @Test
+    public void blackStaleMateByQueenTest() {
+        PositionHelper.verifyStaleMate("8/1Q6/3k4/8/4Q3/8/8/K7 b - - 0 1");
+    }
+
+    @Test
+    public void whiteCheckMateByQueenTest() {
+        PositionHelper.verifyCheckMate("8/1q2q3/3K4/8/4q3/8/8/k7 w - - 0 1", true);
+    }
+
+    @Test
+    public void blackCheckMateByQueenTest() {
+        PositionHelper.verifyCheckMate("8/1Q2Q3/3k4/8/4Q3/8/8/K7 b - - 0 1", false);
+    }
+
+    @Test
+    public void whiteStaleMateByPawnTest() {
+        PositionHelper.verifyStaleMate("3K4/1p1p1p2/2ppp3/8/8/8/8/k7 w - - 0 1");
+    }
+
+    @Test
+    public void blackStaleMateByPawnTest() {
+        PositionHelper.verifyStaleMate("3k4/1P1P1P2/2PPP3/8/8/8/8/K7 b - - 0 1");
+    }
+
+    @Test
+    public void whiteCheckMateByPawnTest() {
+        PositionHelper.verifyCheckMate("3K4/1p1ppp2/2ppp3/8/8/8/8/k7 w - - 0 1", true);
+    }
+
+    @Test
+    public void blackCheckMateByPawnTest() {
+        PositionHelper.verifyCheckMate("3k4/1P1PPP2/2PPP3/8/8/8/8/K7 b - - 0 1", false);
+    }
+
+    @Test
+    public void whiteStaleMateByKingTest() {
+        PositionHelper.verifyStaleMate("K7/P1k5/8/8/8/8/8/8 w - - 0 1");
+    }
+
+    @Test
+    public void blackStaleMateByKingTest() {
+        PositionHelper.verifyStaleMate("8/8/8/8/8/8/p7/k1K5 b - - 0 1");
     }
 }
