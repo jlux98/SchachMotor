@@ -1,6 +1,7 @@
 package testclasses;
 
 import gametree.BaseNode;
+import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.TreeEvaluator;
 
@@ -33,7 +34,7 @@ public class IntNode extends BaseNode<EvaluableInteger>  {
      * before passing them to a method like {@link TreeEvaluator#evaluateTree(gametree.Tree, int, boolean)}
      */
     @Override
-    protected void computeChildren() {
+    protected void computeChildren() throws ComputeChildrenException {
         throw new UnsupportedOperationException("int node cannot dynamically generate children");
     }
 

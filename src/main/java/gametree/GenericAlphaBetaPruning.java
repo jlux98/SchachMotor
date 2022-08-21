@@ -42,7 +42,7 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
      * (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    public Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
+    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
 
         if (whiteNextMove) {
             //maximize this node

@@ -11,6 +11,8 @@ import uciservice.FenParser;
 
 public class TestHelper {
 
+    //TODO extract generatePossibleMovesFen and followUpMoves to its own class (create test.data package)
+
     /**
      * used to test {@link MoveGenerator#generatePossibleMoves(Position)}
      * and {@link GameNode#queryChildren()}

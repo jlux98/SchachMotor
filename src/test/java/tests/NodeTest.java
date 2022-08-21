@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import testclasses.EvaluableInteger;
+import testclasses.GeneratingIntNode;
 import testclasses.IntNode;
 import testclasses.TestTree;
 
@@ -181,14 +182,14 @@ public class NodeTest {
      * but is not stored as a child in that parent node (not part of the parent's child list)
      */
     @Test
-    public void deleteSelfInvalidParentReference() {
+    public void deleteSelfInvalidParentReferenceTest() {
         IntNode faultyLinkedNode = new IntNode(12);
         faultyLinkedNode.setParent(testTree.root);
         assertThrows(NoSuchElementException.class, () -> faultyLinkedNode.deleteSelf());
     }
 
     @Test
-    public void deleteExistingChild() throws ComputeChildrenException {
+    public void deleteExistingChildTest() throws ComputeChildrenException {
         IntNode parent = testTree.layer1Node1;
         IntNode deleted = testTree.layer2Node2;
 
@@ -197,20 +198,20 @@ public class NodeTest {
     }
 
     @Test
-    public void deleteInexistentChild() {
+    public void deleteInexistentChildTest() {
         IntNode parent = testTree.layer2Node2;
         assertThrows(NoSuchElementException.class, () -> parent.deleteChild(new IntNode(42)));
     }
 
     @Test
-    public void deleteChildren1Child() throws ComputeChildrenException {
+    public void deleteChildren1ChildTest() throws ComputeChildrenException {
         IntNode parent = testTree.layer3Node1;
         parent.deleteChildren();
         verifyDeletion(parent, testTree.layer4Node2, (IntNode[]) null);
     }
 
     @Test
-    public void deleteChildren2Children() throws ComputeChildrenException {
+    public void deleteChildren2ChildrenTest() throws ComputeChildrenException {
         IntNode parent = testTree.layer2Node2;
         parent.deleteChildren();
         verifyDeletion(parent, testTree.layer3Node3, (IntNode[]) null);
@@ -218,7 +219,7 @@ public class NodeTest {
     }
 
     @Test
-    public void deleteChildrenNoChildren() {
+    public void deleteChildrenNoChildrenTest() {
         IntNode leaf = testTree.layer4Node1;
         leaf.deleteChildren();
     }
@@ -229,7 +230,7 @@ public class NodeTest {
      * IntNode does not implemented computeChildren() and throws an UnsupportedOperationException instead.
      */
     @Test
-    public void queryChildrenCallsComputeChildrenIfNoChildrenStored() {
+    public void queryChildrenCallsComputeChildrenIfNoChildrenStoredTest() {
         IntNode leaf = testTree.layer4Node3;
         assertThrows(UnsupportedOperationException.class, () -> leaf.queryChildren());
     }
@@ -239,8 +240,22 @@ public class NodeTest {
     * returning the stored children without calling computeChildren().
     */
     @Test
-    public void queryChildrenReturnsStoredChildren() throws ComputeChildrenException {
+    public void queryChildrenReturnsStoredChildrenTest() throws ComputeChildrenException {
         IntNode parent = testTree.layer3Node3;
-        verifyChildren(parent, testTree.layer4Node4,testTree.layer4Node5);
+        verifyChildren(parent, testTree.layer4Node4, testTree.layer4Node5);
     }
+
+    @Test
+    public void queryChildrenGeneratesChildrenTest() throws ComputeChildrenException {
+        GeneratingIntNode parent = new GeneratingIntNode(0,3);
+        List<? extends Node<EvaluableInteger>> children = parent.queryChildren();
+        //test that parent generated exactly 3 children
+        assertTrue(parent.hasChildren());
+        assertEquals(3, children.size());
+        //test that no children were generated recursively
+        assertFalse(children.get(0).hasChildren());
+        assertFalse(children.get(1).hasChildren());
+        assertFalse(children.get(2).hasChildren());
+    }
+
 }

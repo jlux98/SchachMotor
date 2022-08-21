@@ -2,9 +2,8 @@ package gametree;
 
 import model.Position;
 
-public class ImpGameTree implements GameTree {
+public class ImpGameTree extends BaseTree<GameNode> implements GameTree {
 
-    private GameNode root;
     private GameTreeEvaluator evaluator;
 
     /**
@@ -12,7 +11,7 @@ public class ImpGameTree implements GameTree {
      * @param gameState the game state that the root node should represent
      */
     public ImpGameTree(Position position, GameTreeEvaluator evaluator) {
-        this.root = GameNode.createRoot(position);
+        super(GameNode.createRoot(position));
         this.evaluator = evaluator;
     }
 
@@ -23,14 +22,8 @@ public class ImpGameTree implements GameTree {
      * @param root the root node of the new tree
      */
     public ImpGameTree(GameNode root, GameTreeEvaluator evaluator) {
-        this.root = root;
+        super(root);
         this.evaluator = evaluator;
-    }
-
-    @Override
-    public GameNode getRoot() {
-        //does not need to be null checked since no game tree can be constructed without setting the root node
-        return this.root;
     }
 
     @Override

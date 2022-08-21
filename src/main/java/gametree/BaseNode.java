@@ -150,4 +150,15 @@ public abstract class BaseNode<T> implements Node<T> {
         return children;
     }
 
+    /**
+     * This method is intended <b>for testing only.</b>
+     * Do not use this to retrieve the children of a node.
+     * <br><br>
+     * Use {@link #queryChildren()} instead.
+     * @return this nodes stored children
+     */
+    protected List<? extends Node<T>> getChildren() {
+        return this.children;
+    }
+
 }
