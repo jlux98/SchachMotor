@@ -1,33 +1,24 @@
-package testclasses;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package data;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import model.Position;
-import uciservice.FenParser;
-
-public class TestHelper {
-
-    //TODO extract generatePossibleMovesFen and followUpMoves to its own class (create test.data package)
-
+public class MoveGeneratorData {
     /**
      * used to test {@link MoveGenerator#generatePossibleMoves(Position)}
      * and {@link GameNode#queryChildren()}
      */
-    public static String generatePossibleMovesFen = "8/6K1/2Rp4/3np3/2r2p2/5qp1/1kb4p/8 b - - 0 1";
+    public static String allBlackPiecesFen = "8/6K1/2Rp4/3np3/2r2p2/5qp1/1kb4p/8 b - - 0 1";
 
     /**
-     * follow-up moves to {@link #generatePossibleMovesFen}
+     * follow-up moves to {@link #allBlackPiecesFen}
      */
-    public static List<String> followUpMoves = getFollowUpMoves();
+    public static List<String> allBlacKPiecesFenFollowUpMoves = getAllBlackPiecesFenFollowUpMoves();
 
     /**
-     * @return the follow-up moves to {@link #generatePossibleMovesFen}
+     * @return the follow-up moves to {@link #allBlackPiecesFen}
      */
-    private static List<String> getFollowUpMoves() {
+    private static List<String> getAllBlackPiecesFenFollowUpMoves() {
 
         List<String> expectedFollowUpPositions = new ArrayList<String>(50);
 
@@ -100,45 +91,5 @@ public class TestHelper {
         expectedFollowUpPositions.add("8/6K1/2Rp4/3np3/2r2p2/5qp1/1kb5/7n w - - 0 2"); //promote pawn on h2 to knight
 
         return expectedFollowUpPositions;
-    }
-    /**
-     * Compares the positions denoted as fen strings against the list of positions.
-     */
-    public static void compareFenStringsToPosition(Collection<String> fenStrings, Collection<Position> positions) {
-        //assure that the caluclated positions are stored in a sortable data structure
-        List<Position> calculatedPositions = new ArrayList<Position>(positions);
-        //translate the fen strings into boards
-        List<Position> fenStringPositions = new ArrayList<Position>(fenStrings.size());
-        for (String fen : fenStrings) {
-            fenStringPositions.add(FenParser.parseFen(fen));
-
-        }
-        //sort expected and calculated boards
-        Collections.sort(fenStringPositions);
-        Collections.sort(calculatedPositions);
-        //compare both lists
-        assertEquals(fenStringPositions, calculatedPositions);
-    }
-
-    /**
-    * Creates a parent IntNode for the passed children.
-    * @param children IntNodes that a parent should be generated for
-    * @return a parent IntNode with the specified nodes as children
-    */
-    public static IntNode createParent(IntNode... children) {
-        IntNode parent = new IntNode(0);
-        for (IntNode child : children) {
-            parent.insertChild(child);
-        }
-        return parent;
-    }
-
-    /**
-     * asserts that the IntNode holds the specified value
-     * @param expected the expected value
-     * @param node the IntNode that should be storing this value
-     */
-    public static void compareIntNodeValue(int expected, IntNode node) {
-        assertEquals(expected, node.getContent().getValue());
     }
 }

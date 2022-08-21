@@ -9,21 +9,21 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import classes.EvaluableInteger;
+import classes.GeneratingIntNode;
+import data.IntNodeTestTree;
 import gametree.ImpTree;
 import gametree.GenericAlphaBetaPruning;
 import gametree.Node;
 import gametree.TreeEvaluator;
-import testclasses.EvaluableInteger;
-import testclasses.GeneratingIntNode;
-import testclasses.TestHelper;
-import testclasses.TestTree;
+import helper.IntNodeHelper;
 
 public class AlphaBetaTest {
-    private TestTree testTree;
+    private IntNodeTestTree testTree;
 
     @BeforeEach
     public void setUpTree() {
-        this.testTree = new TestTree();
+        this.testTree = new IntNodeTestTree();
     }
 
     @Test
@@ -31,32 +31,32 @@ public class AlphaBetaTest {
         TreeEvaluator<EvaluableInteger> alphaBeta = new GenericAlphaBetaPruning<EvaluableInteger>();
         alphaBeta.evaluateTree(testTree, 4, true);
         //root
-        TestHelper.compareIntNodeValue(-7, testTree.root);
+        IntNodeHelper.compareIntNodeValue(-7, testTree.root);
         //layer1
-        TestHelper.compareIntNodeValue(-10, testTree.layer1Node0);
-        TestHelper.compareIntNodeValue(-7, testTree.layer1Node1);
+        IntNodeHelper.compareIntNodeValue(-10, testTree.layer1Node0);
+        IntNodeHelper.compareIntNodeValue(-7, testTree.layer1Node1);
         //layer2
-        TestHelper.compareIntNodeValue(10, testTree.layer2Node0);
-        TestHelper.compareIntNodeValue(-10, testTree.layer2Node1);
-        TestHelper.compareIntNodeValue(5, testTree.layer2Node2);
-        TestHelper.compareIntNodeValue(-7, testTree.layer2Node3);
+        IntNodeHelper.compareIntNodeValue(10, testTree.layer2Node0);
+        IntNodeHelper.compareIntNodeValue(-10, testTree.layer2Node1);
+        IntNodeHelper.compareIntNodeValue(5, testTree.layer2Node2);
+        IntNodeHelper.compareIntNodeValue(-7, testTree.layer2Node3);
         //layer3
-        TestHelper.compareIntNodeValue(10, testTree.layer3Node0);
-        TestHelper.compareIntNodeValue(5, testTree.layer3Node1);
-        TestHelper.compareIntNodeValue(-10, testTree.layer3Node2);
-        TestHelper.compareIntNodeValue(5, testTree.layer3Node3);
-        TestHelper.compareIntNodeValue(Integer.MIN_VALUE, testTree.layer3Node4);
-        TestHelper.compareIntNodeValue(-7, testTree.layer3Node5);
+        IntNodeHelper.compareIntNodeValue(10, testTree.layer3Node0);
+        IntNodeHelper.compareIntNodeValue(5, testTree.layer3Node1);
+        IntNodeHelper.compareIntNodeValue(-10, testTree.layer3Node2);
+        IntNodeHelper.compareIntNodeValue(5, testTree.layer3Node3);
+        IntNodeHelper.compareIntNodeValue(Integer.MIN_VALUE, testTree.layer3Node4);
+        IntNodeHelper.compareIntNodeValue(-7, testTree.layer3Node5);
         //assure that leaf layer was not changed
-        TestHelper.compareIntNodeValue(10, testTree.layer4Node0);
-        TestHelper.compareIntNodeValue(Integer.MAX_VALUE, testTree.layer4Node1);
-        TestHelper.compareIntNodeValue(5, testTree.layer4Node2);
-        TestHelper.compareIntNodeValue(-10, testTree.layer4Node3);
-        TestHelper.compareIntNodeValue(7, testTree.layer4Node4);
-        TestHelper.compareIntNodeValue(5, testTree.layer4Node5);
-        TestHelper.compareIntNodeValue(Integer.MIN_VALUE, testTree.layer4Node6);
-        TestHelper.compareIntNodeValue(-7, testTree.layer4Node7);
-        TestHelper.compareIntNodeValue(-5, testTree.layer4Node8);
+        IntNodeHelper.compareIntNodeValue(10, testTree.layer4Node0);
+        IntNodeHelper.compareIntNodeValue(Integer.MAX_VALUE, testTree.layer4Node1);
+        IntNodeHelper.compareIntNodeValue(5, testTree.layer4Node2);
+        IntNodeHelper.compareIntNodeValue(-10, testTree.layer4Node3);
+        IntNodeHelper.compareIntNodeValue(7, testTree.layer4Node4);
+        IntNodeHelper.compareIntNodeValue(5, testTree.layer4Node5);
+        IntNodeHelper.compareIntNodeValue(Integer.MIN_VALUE, testTree.layer4Node6);
+        IntNodeHelper.compareIntNodeValue(-7, testTree.layer4Node7);
+        IntNodeHelper.compareIntNodeValue(-5, testTree.layer4Node8);
     }
 
     //the first line's whitespace within the <pre> block is trimmed ("Tree:" has to be inside <pre></pre>)

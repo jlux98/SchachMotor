@@ -2,53 +2,33 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import data.MoveGeneratorData;
 import gametree.ComputeChildrenException;
 import gametree.GameNode;
-import gametree.Node;
+import helper.FenHelper;
+import helper.GameNodeHelper;
 import model.Position;
-import movegenerator.MoveGenerator;
-import testclasses.TestHelper;
 import uciservice.FenParser;
 
 public class GameNodeTest {
-    public static void main(String[] args) {
-        Position mate = FenParser.parseFen("8/3k4/8/2RRR3/8/2rrr3/8/3K4 b - - 0 1");
-        Position[] followUps = MoveGenerator.generatePossibleMoves(mate);
-        System.out.println(followUps.length);
-    }
 
-    /**
-     * Extracts the positions stored by nodes children.
-     * Calls queryChildren() to retrieve the nodes children.
-     * @param parent the node whose childrens' positions should be extracted
-     * @return a list of the positions stored by the node's children
-     */
-    private List<Position> extractChildPositions(GameNode parent) throws ComputeChildrenException {
-        List<? extends Node<Position>> children = parent.queryChildren();
-        List<Position> childPositions = new ArrayList<Position>(children.size());
-        for (int i = 0; i < children.size(); i++) {
-            childPositions.add(children.get(i).getContent());
-        }
-        return childPositions;
-    }
 
     /**
      * uses data from {@link MoveGeneratorTest#generatePossibleMovesTest()}()
      */
     @Test
     public void queryChildrenGeneratesChildren() throws ComputeChildrenException {
-        Position position = FenParser.parseFen(TestHelper.generatePossibleMovesFen);
+        Position position = FenParser.parseFen(MoveGeneratorData.allBlackPiecesFen);
         GameNode root = GameNode.createRoot(position);
 
         //extract positions from child nodes
-        List<Position> followUpPositions = extractChildPositions(root);
+        List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root);
 
-        TestHelper.compareFenStringsToPosition(TestHelper.followUpMoves, followUpPositions);
+        FenHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
     }
 
     /**
@@ -59,12 +39,12 @@ public class GameNodeTest {
     @Test
     public void queryChildrenCalledTwice() throws ComputeChildrenException {
 
-        Position position = FenParser.parseFen(TestHelper.generatePossibleMovesFen);
+        Position position = FenParser.parseFen(MoveGeneratorData.allBlackPiecesFen);
         GameNode root = GameNode.createRoot(position);
         root.queryChildren(); //initial call; computes children
-        List<Position> followUpPositions = extractChildPositions(root); //2nd call, retrieves stored children
+        List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root); //2nd call, retrieves stored children
 
-        TestHelper.compareFenStringsToPosition(TestHelper.followUpMoves, followUpPositions);
+        FenHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
     }
 
     /**

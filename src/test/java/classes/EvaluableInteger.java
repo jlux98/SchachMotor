@@ -1,4 +1,4 @@
-package testclasses;
+package classes;
 
 import positionevaluator.Evaluable;
 

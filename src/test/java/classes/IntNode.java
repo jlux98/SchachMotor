@@ -1,4 +1,4 @@
-package testclasses;
+package classes;
 
 import gametree.BaseNode;
 import gametree.ComputeChildrenException;

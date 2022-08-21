@@ -11,100 +11,22 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import classes.EvaluableInteger;
+import classes.GeneratingIntNode;
+import classes.IntNode;
+import data.IntNodeTestTree;
 import gametree.ComputeChildrenException;
 import gametree.Node;
-import testclasses.EvaluableInteger;
-import testclasses.GeneratingIntNode;
-import testclasses.IntNode;
-import testclasses.TestTree;
+import helper.NodeHelper;
 
 public class NodeTest {
 
-    private TestTree testTree;
+    private IntNodeTestTree testTree;
 
     @BeforeEach
     //tree data source: https://en.wikipedia.org/wiki/File:Minimax.svg
     public void setUpTree() {
-        testTree = new TestTree();
-    }
-
-    /**
-     * Verify that the node passed as "deleted" was deleted.
-     * If the deleted node was the parent's only child, an empty array or null must be passed to this method.
-     * @param parent the parent of the node that was deleted
-     * @param deleted the node that was deleted
-     * @param leftOver the leftover children of the parent node, in the same order as returned by parent.queryChildren()
-     */
-    private void verifyDeletion(IntNode parent, IntNode deleted, IntNode... leftOver) throws ComputeChildrenException {
-        assertTrue(deleted.getParent() == null);
-        verifyChildren(parent, leftOver);
-    }
-
-    /**
-     * Verify that the node passed as parent has exactly the specified children (compared by reference).
-     * If the node has no children, an empty array or null must be passed to this method.
-     * <br><br>
-     * If this method throws UnsupportedOperationException, 
-     * queryChildren() attempted to generate children although parent stores children that should simply be returned instead.
-     * @param parent the node whose children should be verified
-     * @param expectedChildren the expected children of the parent node, in the same order as returned by parent.queryChildren()
-     */
-    private void verifyChildren(IntNode parent, IntNode... expectedChildren) throws ComputeChildrenException {
-        if (expectedChildren == null || expectedChildren.length == 0) {
-            //verify that parent has no children
-            assertFalse(parent.hasChildren());
-            //queryChildren() cannot be called:
-            //calling queryChildren() calls computeChildren() because node has no children
-            //computeChildren() is not implemented by inttnode -> UnsupportedOperationException
-            //assertEquals(0, parent.queryChildren().size());
-        } else {
-            //verify that parent has the expected children
-            assertTrue(parent.hasChildren());
-            List<? extends Node<EvaluableInteger>> actualChildren = parent.queryChildren();
-            assertEquals(expectedChildren.length, actualChildren.size());
-
-            //compare expected and actual children
-            //also verify reference to parent
-            for (int i = 0; i < expectedChildren.length; i++) {
-                assertTrue(expectedChildren[i] == actualChildren.get(i));
-                assertTrue(actualChildren.get(i).getParent() == parent);
-            }
-        }
-    }
-
-    /**
-     * verifies that the tree starting with testTree.root was successfully build to represent
-     * https://en.wikipedia.org/wiki/File:Minimax.svg
-     */
-    @Test
-    public void verifyTestTree() throws ComputeChildrenException {
-        verifyChildren(testTree.root, testTree.layer1Node0, testTree.layer1Node1);
-        //layer 1
-        verifyChildren(testTree.layer1Node0, testTree.layer2Node0, testTree.layer2Node1);
-        verifyChildren(testTree.layer1Node1, testTree.layer2Node2, testTree.layer2Node3);
-        //layer2
-        verifyChildren(testTree.layer2Node0, testTree.layer3Node0, testTree.layer3Node1);
-        verifyChildren(testTree.layer2Node1, testTree.layer3Node2);
-        verifyChildren(testTree.layer2Node2, testTree.layer3Node3, testTree.layer3Node4);
-        verifyChildren(testTree.layer2Node3, testTree.layer3Node5);
-        //layer 3
-        verifyChildren(testTree.layer3Node0, testTree.layer4Node0, testTree.layer4Node1);
-        verifyChildren(testTree.layer3Node1, testTree.layer4Node2);
-        verifyChildren(testTree.layer3Node2, testTree.layer4Node3);
-        verifyChildren(testTree.layer3Node3, testTree.layer4Node4, testTree.layer4Node5);
-        verifyChildren(testTree.layer3Node4, testTree.layer4Node6);
-        verifyChildren(testTree.layer3Node5, testTree.layer4Node7, testTree.layer4Node8);
-        //layer 4: leaf values
-        assertEquals(10, testTree.layer4Node0.getContent().getValue());
-        assertEquals(Integer.MAX_VALUE, testTree.layer4Node1.getContent().getValue());
-        assertEquals(5, testTree.layer4Node2.getContent().getValue());
-        assertEquals(-10, testTree.layer4Node3.getContent().getValue());
-        assertEquals(7, testTree.layer4Node4.getContent().getValue());
-        assertEquals(5, testTree.layer4Node5.getContent().getValue());
-        assertEquals(Integer.MIN_VALUE, testTree.layer4Node6.getContent().getValue());
-        assertEquals(-7, testTree.layer4Node7.getContent().getValue());
-        assertEquals(-5, testTree.layer4Node8.getContent().getValue());
-
+        testTree = new IntNodeTestTree();
     }
 
     @Test
@@ -148,7 +70,7 @@ public class NodeTest {
         child.deleteSelf();
         IntNode parent = testTree.layer3Node2;
 
-        verifyDeletion(parent, child, (IntNode[]) null);
+        NodeHelper.verifyDeletion(parent, child, (IntNode[]) null);
     }
 
     @Test
@@ -157,7 +79,7 @@ public class NodeTest {
         IntNode parent = testTree.layer3Node3;
 
         child.deleteSelf();
-        verifyDeletion(parent, child, testTree.layer4Node5);
+        NodeHelper.verifyDeletion(parent, child, testTree.layer4Node5);
     }
 
     @Test
@@ -166,7 +88,7 @@ public class NodeTest {
         IntNode parent = testTree.layer1Node0;
 
         child.deleteSelf();
-        verifyDeletion(parent, child, testTree.layer2Node1);
+        NodeHelper.verifyDeletion(parent, child, testTree.layer2Node1);
     }
 
     @Test
@@ -194,7 +116,7 @@ public class NodeTest {
         IntNode deleted = testTree.layer2Node2;
 
         parent.deleteChild(deleted);
-        verifyDeletion(parent, deleted, testTree.layer2Node3);
+        NodeHelper.verifyDeletion(parent, deleted, testTree.layer2Node3);
     }
 
     @Test
@@ -207,15 +129,15 @@ public class NodeTest {
     public void deleteChildren1ChildTest() throws ComputeChildrenException {
         IntNode parent = testTree.layer3Node1;
         parent.deleteChildren();
-        verifyDeletion(parent, testTree.layer4Node2, (IntNode[]) null);
+        NodeHelper.verifyDeletion(parent, testTree.layer4Node2, (IntNode[]) null);
     }
 
     @Test
     public void deleteChildren2ChildrenTest() throws ComputeChildrenException {
         IntNode parent = testTree.layer2Node2;
         parent.deleteChildren();
-        verifyDeletion(parent, testTree.layer3Node3, (IntNode[]) null);
-        verifyDeletion(parent, testTree.layer3Node4, (IntNode[]) null);
+        NodeHelper.verifyDeletion(parent, testTree.layer3Node3, (IntNode[]) null);
+        NodeHelper.verifyDeletion(parent, testTree.layer3Node4, (IntNode[]) null);
     }
 
     @Test
@@ -242,7 +164,7 @@ public class NodeTest {
     @Test
     public void queryChildrenReturnsStoredChildrenTest() throws ComputeChildrenException {
         IntNode parent = testTree.layer3Node3;
-        verifyChildren(parent, testTree.layer4Node4, testTree.layer4Node5);
+        NodeHelper.verifyChildren(parent, testTree.layer4Node4, testTree.layer4Node5);
     }
 
     @Test

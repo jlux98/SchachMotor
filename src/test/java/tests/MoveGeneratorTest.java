@@ -10,9 +10,10 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import data.MoveGeneratorData;
+import helper.FenHelper;
 import model.Position;
 import movegenerator.MoveGenerator;
-import testclasses.TestHelper;
 import uciservice.FenParser;
 
 public class MoveGeneratorTest {
@@ -284,7 +285,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/5b2/7k w - - 1 2"); //move to f2 - two squares to bottom right
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/8/6bk w - - 1 2"); //move to g1 - three squares to bottom right
 
-        TestHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -304,7 +305,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/2r5/7k w - - 1 2"); //move to c2 - two squares down
         expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/8/2r4k w - - 1 2"); //move to c1 - three squares down
 
-        TestHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
 
     }
 
@@ -317,7 +318,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k1r1/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to g8 - one square to the left
         expectedfollowUpPositions.add("r3kr2/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to f8 - two squares to the left
 
-        TestHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -329,7 +330,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("2r1k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to c8 - two squares to the right
         expectedfollowUpPositions.add("3rk2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to d8 - three squares to the right
 
-        TestHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
 
     }
 
@@ -341,7 +342,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 1 1"); //move to g1 - one square to the left
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 1 1"); //move to f1 - two squares to the left
 
-        TestHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -353,7 +354,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/2R1K2R b Kkq - 1 1"); //move to c1 - two squares to the right
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/3RK2R b Kkq - 1 1"); //move to d1 - three squares to the right
 
-        TestHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     @Test
@@ -381,7 +382,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/1q6/7k w - - 1 2"); //move to b2 - one square to bottom left
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/8/q6k w - - 1 2"); //move to a1 - two squares to bottom left
 
-        TestHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        FenHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 
     /**
@@ -389,13 +390,13 @@ public class MoveGeneratorTest {
      */
     @Test
     public void generatePossibleMovesTest() {
-        Position allBlackPiecesPosition = FenParser.parseFen(TestHelper.generatePossibleMovesFen);
+        Position allBlackPiecesPosition = FenParser.parseFen(MoveGeneratorData.allBlackPiecesFen);
         Position[] followUpPositions = MoveGenerator.generatePossibleMoves(allBlackPiecesPosition);
 
         Set<Position> followUpPositionsSet = new HashSet<Position>();
         Collections.addAll(followUpPositionsSet, followUpPositions);
 
-        TestHelper.compareFenStringsToPosition(TestHelper.followUpMoves, followUpPositionsSet);
+        FenHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositionsSet);
     }
 
     @Test
@@ -407,7 +408,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("qr6/rr6/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at a8
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 0, 0);
         List<String> emptyList = new ArrayList<String>();
-        TestHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -420,7 +421,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("6rq/6rr/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at h8
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 0, 7);
         List<String> emptyList = new ArrayList<String>();
-        TestHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -433,7 +434,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/rr6/qr6 w - - 0 1"); //queen starts at a1
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 7, 0);
         List<String> emptyList = new ArrayList<String>();
-        TestHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
@@ -446,7 +447,7 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/6rr/6rq w - - 0 1"); //queen starts at h1
         Set<Position> followUpPositions = MoveGenerator.computeQueenMoves(queenTestPosition, 7, 7);
         List<String> emptyList = new ArrayList<String>();
-        TestHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        FenHelper.compareFenStringsToPosition(emptyList, followUpPositions);
 
     }
 
