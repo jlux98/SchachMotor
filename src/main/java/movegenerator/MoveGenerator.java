@@ -22,7 +22,7 @@ public abstract class MoveGenerator {
      * A method that generates all possible follow-up-positions for a given game
      * state
      * @param position the given game state
-     * @return an array with all possible follow-up-positions
+     * @return an array with all possible follow-up-positions (empty if no moves can be made)
      */
     public static Position[] generatePossibleMoves(Position position) {
         Set<Position> followUpPositions = new HashSet<>(); //is hashset preferable over array for us? set initial size of hashset in constructor

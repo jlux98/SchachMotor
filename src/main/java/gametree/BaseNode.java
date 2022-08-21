@@ -26,6 +26,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     /**
      * Creates a child node.
+     * The nodes are properly linked to ach other by this constructor.
      * @param content content stored by the node
      * @param parent parent of the created node
      */
@@ -65,21 +66,21 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public void deleteChildren() {
-        for (Node<T> child : children) {
-            child.unsetParent();
+        if (hasChildren()) {
+            for (Node<T> child : children) {
+                child.unsetParent();
+            }
+            this.children.clear();
         }
-        this.children.clear();
     }
 
+    /**
+     * @throws NoSuchElementException if this node has a parent but it could not be deleted from it
+     */
     @Override
     public void deleteSelf() {
         if (this.parent != null) {
-            try {
-                this.parent.deleteChild(this);
-            } catch (NoSuchElementException exception) {
-                //if this node cannot be found as a child of it's parent,
-                //it is deemed to already have been removed -> void exception
-            }
+            this.parent.deleteChild(this);
         }
     }
 
@@ -137,15 +138,27 @@ public abstract class BaseNode<T> implements Node<T> {
     * <b>Note:</b> Do not use this method directly to generate children of this node.
     * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
     * Use queryChildren() to generate children of this node.
+    * @throws ComputeChildrenException if no children can be computed
     */
-    protected abstract void computeChildren();
+    protected abstract void computeChildren() throws ComputeChildrenException;
 
     @Override
-    public List<? extends Node<T>> queryChildren() {
+    public List<? extends Node<T>> queryChildren() throws ComputeChildrenException {
         if (!hasChildren()) {
             computeChildren();
         }
         return children;
+    }
+
+    /**
+     * This method is intended <b>for testing only.</b>
+     * Do not use this to retrieve the children of a node.
+     * <br><br>
+     * Use {@link #queryChildren()} instead.
+     * @return this nodes stored children
+     */
+    protected List<? extends Node<T>> getChildren() {
+        return this.children;
     }
 
 }

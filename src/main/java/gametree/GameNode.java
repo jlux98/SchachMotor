@@ -2,18 +2,25 @@ package gametree;
 
 import model.Position;
 import movegenerator.MoveGenerator;
-import positionevaluator.Evaluable;
+
 /**
  * Class implementing Nodes containing Positions.
  * Extends BaseNode < Position > for node operations and implements the Evaluable interface on top.
  * Additionally, this class narrows the return types of node methods from Node < Position > to GameNode.
  * <br><br>
- * <b>Important Note:</b>
- * While some methods of this class accept any Node &lt; Position &gt; only GameNodes and subtypes of GameNode should be passed to these methods.
+ * <b>Important Notes:</b>
+ * <ul>
+ *      <li>
+ *          While some methods of this class accept any Node &lt; Position &gt;
+ *          only GameNodes and subtypes of GameNode should be passed to these methods.
+ *      </li>
+ *      <li>
+ *          This class performs casts from Node < Position > to GameNode which should be safe
+ *          so long as the containing tree consists only of gamenodes and subtypes of gamenode.
+ *      </li>
+ * </ul>
  */
-public class GameNode extends BaseNode<Position> implements Evaluable {
-
-    private GameNode parent;
+public class GameNode extends BaseNode<Position> {
 
     /**
      * Creates a root node.
@@ -55,36 +62,25 @@ public class GameNode extends BaseNode<Position> implements Evaluable {
     @Override
     //narrows return type from Node<T> to GameNode
     public GameNode getParent() {
-        return this.parent; //possibly null
+        return (GameNode) super.getParent();
     }
 
     @Override
-    protected void computeChildren() {
-        //TODO testing!
+    protected void computeChildren() throws ComputeChildrenException {
         if (hasChildren()) {
             throw new IllegalStateException("node already has children");
         }
         createChildListIfNotExists();
         Position[] followUpPositions = MoveGenerator.generatePossibleMoves(this.getContent());
+
+        if (followUpPositions.length == 0) {
+            //no moves were generated
+            throw new ComputeChildrenException("no children could be generated for this position: " + this.getContent().toString());
+        }
+
+        //add follow-up moves as child nodes to this node
         for (Position position : followUpPositions) {
-            this.insertChild(createNode(position, this));
+            createNode(position, this);
         }
     }
-
-    @Override
-    public int evaluate() {
-        //gameState evaluates itself and stores that value
-        return this.getContent().evaluate();
-    }
-
-    @Override
-    public int getValue() {
-        return this.getContent().getValue();
-    }
-
-    @Override
-    public void setValue(int pointValue) {
-        this.getContent().setValue(pointValue);
-    }
-
 }
