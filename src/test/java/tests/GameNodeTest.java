@@ -1,4 +1,5 @@
 package tests;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class GameNodeTest {
      */
     @Test
     public void queryChildrenCalledTwice() throws ComputeChildrenException {
-        
+
         Position position = FenParser.parseFen(TestHelper.generatePossibleMovesFen);
         GameNode root = GameNode.createRoot(position);
         root.queryChildren(); //initial call; computes children
@@ -66,13 +67,24 @@ public class GameNodeTest {
         TestHelper.compareFenStringsToPosition(TestHelper.followUpMoves, followUpPositions);
     }
 
+    /**
+     * checkmate in which the king is currently attacked
+     */
     @Test
-    public void queryChildrenThrowsComputeChildrenException() throws ComputeChildrenException {
-        Position blackMate2 = FenParser.parseFen("k7/4R3/8/1R6/8/8/8/K7 b - - 0 1");
-
-        Position blackMate = FenParser.parseFen("8/3k4/8/2RRR3/8/8/8/3K4 b - - 0 1");
-        Position whiteMate = FenParser.parseFen("8/3K4/8/2rrr3/8/8/8/3k4 b - - 0 1");
-        GameNode mateNode = GameNode.createRoot(blackMate2);
+    public void queryChildrenCheckmateKingAttackedThrowsComputeChildrenException() throws ComputeChildrenException {
+        Position whiteMate = FenParser.parseFen("8/3K4/8/2rrr3/8/8/8/3k4 w - - 0 1");
+        GameNode mateNode = GameNode.createRoot(whiteMate);
         assertThrows(ComputeChildrenException.class, () -> mateNode.queryChildren());
     }
+
+    /**
+     * checkmate in which the king is not currently attacked
+     */
+    @Test
+    public void queryChildrenCheckmateKingNotAttackedThrowsComputeChildrenException() throws ComputeChildrenException {
+        Position blackMate = FenParser.parseFen("k7/4R3/8/1R6/8/8/8/K7 b - - 0 1");
+        GameNode mateNode = GameNode.createRoot(blackMate);
+        assertThrows(ComputeChildrenException.class, () -> mateNode.queryChildren());
+    }
+
 }
