@@ -109,7 +109,7 @@ public class IntNodeHelper {
         while (parents.size() != 1) {
 
             parents = createParentLevel(degree, children);
-            System.out.println("parents: " + parents.size() + " children: " + children.size()); //TODO remove (debug)
+            //System.out.println("parents: " + parents.size() + " children: " + children.size()); //TODO remove (debug)
             children = parents; //last iteration's parents are next iteration's children
         }
 
