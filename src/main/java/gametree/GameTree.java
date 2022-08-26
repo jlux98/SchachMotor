@@ -9,6 +9,6 @@ public interface GameTree extends Tree<GameNode> {
 
 
     //TODO specification
-    public abstract GameNode calculateBestMove(int maxTime);
+    public abstract GameNode calculateBestMove(int depth);
 
 }
