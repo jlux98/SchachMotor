@@ -6,25 +6,36 @@ import gametree.GameNode;
 import gametree.GameNodeAlphaBetaPruning;
 import gametree.GameTree;
 import gametree.ImpGameTree;
-import model.Move;
 import model.Position;
 import uciservice.FenParser;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
+    private boolean debugMode = false;
     private static final int calculationDepth = 5;
 
-    public DemoApplicationFenToAlgebraic() {
+    public DemoApplicationFenToAlgebraic(boolean debug) {
         this.scanner = new Scanner(System.in);
+        this.debugMode = debug;
     }
 
     public static void main(String[] args) {
+
         System.out.println("""
                 This application reads FEN-strings from stdin and answers with a move in algebraic form.
                 Enter exit or hit enter without entering anything to exit.
                 """);
 
-        new DemoApplicationFenToAlgebraic().run();
+        boolean debug = false;
+        //use debug mode if started with argument "debug"
+        if (args.length == 1) {
+            if (args[0].equals("debug")) {
+                debug = true;
+                System.out.println("debug mode activated");
+            }
+        }
+
+        new DemoApplicationFenToAlgebraic(debug).run();
     }
 
     private Position readPosition() {
@@ -39,9 +50,16 @@ public class DemoApplicationFenToAlgebraic {
         }
     }
 
-    private Move calculateMove(Position position) {
+    private Position calculateFollowUpPosition(Position position) {
         GameTree tree = new ImpGameTree(GameNode.createRoot(position), new GameNodeAlphaBetaPruning());
-        return tree.calculateBestMove(calculationDepth).getContent().getMove();
+        return tree.calculateBestMove(calculationDepth).getContent();
+    }
+
+    private void output(Position position, String colorMoved) {
+        System.out.println(colorMoved + " -> " + position.getMove().toStringAlgebraic());
+        if (debugMode) {
+            System.out.println("internal board:\n" + position.toString());
+        }
     }
 
     private void run() {
@@ -52,11 +70,14 @@ public class DemoApplicationFenToAlgebraic {
                     System.out.println("...exiting");
                     return; //exit
                 }
+
                 String movedColor = readPosition.getWhiteNextMove() ? "white" : "black";
-                Move calculatedMove = calculateMove(readPosition);
-                System.out.println(movedColor + " -> " + calculatedMove.toStringAlgebraic());
+                Position calculatedMove = calculateFollowUpPosition(readPosition);
+                output(calculatedMove, movedColor);
+                System.gc();
             } catch (Exception exception) {
-                System.out.println("\tfailure: " + exception.getMessage());
+                System.out.println("\tfailure: ");
+                exception.printStackTrace();
             }
         }
     }
