@@ -12,6 +12,7 @@ import uciservice.FenParser;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
+    private static final int calculationDepth = 5;
 
     public DemoApplicationFenToAlgebraic() {
         this.scanner = new Scanner(System.in);
@@ -22,6 +23,7 @@ public class DemoApplicationFenToAlgebraic {
                 This application reads FEN-strings from stdin and answers with a move in algebraic form.
                 Enter exit or hit enter without entering anything to exit.
                 """);
+
         new DemoApplicationFenToAlgebraic().run();
     }
 
@@ -39,7 +41,7 @@ public class DemoApplicationFenToAlgebraic {
 
     private Move calculateMove(Position position) {
         GameTree tree = new ImpGameTree(GameNode.createRoot(position), new GameNodeAlphaBetaPruning());
-        return tree.calculateBestMove(5).getContent().getMove();
+        return tree.calculateBestMove(calculationDepth).getContent().getMove();
     }
 
     private void run() {
