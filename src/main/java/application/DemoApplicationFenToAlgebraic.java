@@ -19,9 +19,9 @@ public class DemoApplicationFenToAlgebraic {
 
     public static void main(String[] args) {
         System.out.println("""
-            This application reads FEN-strings from stdin and answers with a move in algebraic form.
-            Enter exit or hit enter without entering anything to exit.
-            """);
+                This application reads FEN-strings from stdin and answers with a move in algebraic form.
+                Enter exit or hit enter without entering anything to exit.
+                """);
         new DemoApplicationFenToAlgebraic().run();
     }
 
@@ -50,8 +50,9 @@ public class DemoApplicationFenToAlgebraic {
                     System.out.println("...exiting");
                     return; //exit
                 }
+                String movedColor = readPosition.getWhiteNextMove() ? "white" : "black";
                 Move calculatedMove = calculateMove(readPosition);
-                System.out.println("-> " + calculatedMove.toStringAlgebraic());
+                System.out.println(movedColor + " -> " + calculatedMove.toStringAlgebraic());
             } catch (Exception exception) {
                 System.out.println("\tfailure: " + exception.getMessage());
             }
