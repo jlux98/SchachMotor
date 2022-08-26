@@ -1,10 +1,13 @@
 package helper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import classes.EvaluableInteger;
 import classes.IntNode;
@@ -57,7 +60,7 @@ public class IntNodeHelper {
      * @param level the nodes to which parent nodes should be generated
      * @return a list of nodes that are parents that are parents to the passed nodes
      */
-    private static List<IntNode> createParentsForLevel(int degree, List<IntNode> level) {
+    private static List<IntNode> createParentLevel(int degree, List<IntNode> level) {
         List<IntNode> parents = new ArrayList<IntNode>();
         List<IntNode> children = new ArrayList<IntNode>();
         int index = 0;
@@ -105,7 +108,7 @@ public class IntNodeHelper {
 
         while (parents.size() != 1) {
 
-            parents = createParentsForLevel(degree, children);
+            parents = createParentLevel(degree, children);
             System.out.println("parents: " + parents.size() + " children: " + children.size()); //TODO remove (debug)
             children = parents; //last iteration's parents are next iteration's children
         }
@@ -121,7 +124,7 @@ public class IntNodeHelper {
      * See {@link #createRootIntNode(int, int...)}.
      * @return a tree with the specified leaf values
      */
-    public static Tree<IntNode> createIntNodeTree(int degree, int values) {
+    public static Tree<IntNode> createIntNodeTree(int degree, int... values) {
         return new ImpTree<IntNode>(createRootIntNode(degree, values));
     }
 
@@ -136,13 +139,13 @@ public class IntNodeHelper {
         }
         //create a binary tree by using createParent
         //add a variant of createParent that takes values instead of nodes
-
+    
         //translate values into intnodes wihtout parents
         List<IntNode> children = new ArrayList<IntNode>();
         for (int i : values) {
             children.add(new IntNode(i));
         }
-
+    
         List<IntNode> parents = new ArrayList<IntNode>();
         for (int j = 0; j < depth; j++) { //while(children.size() != 1)
             //System.out.println(children.size());
@@ -160,28 +163,26 @@ public class IntNodeHelper {
         return children.get(0);
     } */
 
-    public static void main(String[] args) throws ComputeChildrenException {
-        //IntNode root = createBinaryTree(2, 1, 2, 3, 4);
-        IntNode root = createRootIntNode(2, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    @Test
+    public void createRootNodeTest() throws ComputeChildrenException {
+        Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4);
+        IntNode root = tree.getRoot();
 
+        //list containing 2 inner nodes
         List<? extends Node<EvaluableInteger>> layer1 = root.queryChildren();
-        for (Node<EvaluableInteger> layer1Node : layer1) {
-            //System.out.println(layer1Node.getContent().getValue());
-            for (Node<EvaluableInteger> layer2Node : layer1Node.queryChildren()) {
-                System.out.println(layer2Node.getContent().getValue());
-                try {
-                    for (Node<EvaluableInteger> layer3Node : layer2Node.queryChildren()) {
+        assertEquals(layer1.size(), 2);
 
-                        System.out.println(layer3Node.getContent().getValue());
-                        for (Node<EvaluableInteger> layer4Node : layer3Node.queryChildren()) {
-                            System.out.println(layer4Node.getContent().getValue());
-                        }
-                    }
+        //lists containing 2 leaf nodes each
+        List<? extends Node<EvaluableInteger>> layer2children1 = layer1.get(0).queryChildren();
+        List<? extends Node<EvaluableInteger>> layer2children2 = layer1.get(1).queryChildren();
 
-                } catch (UnsupportedOperationException e) {
-
-                }
-            }
-        }
+        assertEquals(layer2children1.size(), 2);
+        assertEquals(layer2children2.size(), 2);
+        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).queryChildren());
+        assertEquals(1, layer2children1.get(0).getContent().getValue());
+        assertEquals(2, layer2children1.get(1).getContent().getValue());
+        assertEquals(3, layer2children2.get(0).getContent().getValue());
+        assertEquals(4, layer2children2.get(1).getContent().getValue());
     }
 }

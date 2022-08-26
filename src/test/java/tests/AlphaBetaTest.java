@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import classes.EvaluableInteger;
@@ -16,18 +15,20 @@ import gametree.ImpTree;
 import gametree.GenericAlphaBetaPruning;
 import gametree.Node;
 import gametree.TreeEvaluator;
+import helper.AlphaBetaHelper;
 import helper.IntNodeHelper;
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
 
 public class AlphaBetaTest {
-    private IntNodeTestTree testTree;
 
-    @BeforeEach
-    public void setUpTree() {
-        this.testTree = new IntNodeTestTree();
-    }
-
+    /**
+     * tree data taken from https://en.wikipedia.org/wiki/File:Minimax.svg
+     */
+    //FIXME this test assumes that no pruning is happening whatsoever
     @Test
-    public void alphaBetaPruningTest() {
+    public void incompleteBinaryTreeDepth4Test() {
+        IntNodeTestTree testTree = new IntNodeTestTree();
         TreeEvaluator<EvaluableInteger> alphaBeta = new GenericAlphaBetaPruning<EvaluableInteger>();
         alphaBeta.evaluateTree(testTree, 4, true);
         //root
@@ -45,16 +46,16 @@ public class AlphaBetaTest {
         IntNodeHelper.compareIntNodeValue(5, testTree.layer3Node1);
         IntNodeHelper.compareIntNodeValue(-10, testTree.layer3Node2);
         IntNodeHelper.compareIntNodeValue(5, testTree.layer3Node3);
-        IntNodeHelper.compareIntNodeValue(Integer.MIN_VALUE, testTree.layer3Node4);
+        IntNodeHelper.compareIntNodeValue(MIN_VALUE, testTree.layer3Node4);
         IntNodeHelper.compareIntNodeValue(-7, testTree.layer3Node5);
         //assure that leaf layer was not changed
         IntNodeHelper.compareIntNodeValue(10, testTree.layer4Node0);
-        IntNodeHelper.compareIntNodeValue(Integer.MAX_VALUE, testTree.layer4Node1);
+        IntNodeHelper.compareIntNodeValue(MAX_VALUE, testTree.layer4Node1);
         IntNodeHelper.compareIntNodeValue(5, testTree.layer4Node2);
         IntNodeHelper.compareIntNodeValue(-10, testTree.layer4Node3);
         IntNodeHelper.compareIntNodeValue(7, testTree.layer4Node4);
         IntNodeHelper.compareIntNodeValue(5, testTree.layer4Node5);
-        IntNodeHelper.compareIntNodeValue(Integer.MIN_VALUE, testTree.layer4Node6);
+        IntNodeHelper.compareIntNodeValue(MIN_VALUE, testTree.layer4Node6);
         IntNodeHelper.compareIntNodeValue(-7, testTree.layer4Node7);
         IntNodeHelper.compareIntNodeValue(-5, testTree.layer4Node8);
     }
@@ -89,7 +90,7 @@ public class AlphaBetaTest {
         List<? extends Node<EvaluableInteger>> layer1Node2Children = layer1Node2.getChildren();
         assertEquals(1, layer1Node1Children.size());
         assertEquals(2, layer1Node2Children.size());
-        
+
         //assert that no children were generated in layer 3 (layer0 = root, layer2 = leaves = alpha-beta-depth)
         //layer1Node1 only has one child
         assertFalse(layer1Node1.getChildren().get(0).hasChildren());
@@ -100,6 +101,63 @@ public class AlphaBetaTest {
 
     }
 
+    /**
+     * tree data taken from https://www.youtube.com/watch?v=l-hh51ncgDI
+     */
+    @Test
+    public void lagueDepth3BinaryTreeTest() {
+        AlphaBetaHelper.testBinaryTree(3, 3, true, -1, 3, 5, 1, -6, -4, 0, 9);
+    }
+
+    /**
+     * tree data taken from https://www.youtube.com/watch?v=l-hh51ncgDI.
+     * Same test data as {@link #lagueDepth3BinaryTreeTest()} but with a depth that exceeds the actual depth of the tree.
+     * Alpha-beta pruning is expected to handle this as trees are not guaranteed to be complete.
+     */
+    @Test
+    public void lagueDepth3binaryTreeExaggeratedDepthTest() {
+        AlphaBetaHelper.testBinaryTree(3, 4, true, -1, 3, 5, 1, -6, -4, 0, 9);
+    }
+
+    /**
+     * tree data taken from https://www.youtube.com/watch?v=l-hh51ncgDI
+     */
+    @Test
+    public void lagueDepth4BinaryTreeTest() {
+        //nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due to their siblings' values
+        //they are assigned extreme values to verify that they do not affect the tree
+        AlphaBetaHelper.testBinaryTree(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
+    }
+
+    /**
+    * tree data taken from https://www.youtube.com/watch?v=l-hh51ncgDI
+    */
+    @Test
+    public void lagueDepth4BinaryTreeExaggeratedDepthTest() {
+        //nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due to their siblings' values
+        //they are assigned extreme values to verify that they do not affect the tree
+        AlphaBetaHelper.testBinaryTree(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
+    }
+
+    /**
+     * tree data taken from https://www.javatpoint.com/mini-max-algorithm-in-ai
+     */
+
+    @Test
+    public void javatpointBinaryTreeDepth3Test() {
+        AlphaBetaHelper.testBinaryTree(4, 3, true, -1, 4, 2, 6, -3, -5, 0, 7);
+    }
+
+    /**
+    * tree data taken from https://www.javatpoint.com/mini-max-algorithm-in-ai
+    */
+    @Test
+    public void javatpointBinaryTreeDepth3ExaggeratedDepthTest() {
+        AlphaBetaHelper.testBinaryTree(4, 4, true, -1, 4, 2, 6, -3, -5, 0, 7);
+    }
+
+     //TODO add tests with whitesTurn = false
     //TODO add test with more extensive pruning (black)
     //TODO add test with more extensive pruning (white)
+
 }

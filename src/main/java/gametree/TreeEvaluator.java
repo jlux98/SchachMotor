@@ -6,8 +6,8 @@ public interface TreeEvaluator<T extends Evaluable> {
 
     /**
      * Evaluates the game tree and returns the GameNode that should be played.
-     * @param gameTree the tree to be evaluated
-     * @param depth the maximum depth of the tree
+     * @param tree the tree to be evaluated
+     * @param depth the maximum depth of the tree (a tree consisting only of a root node has depth = 0)
      * @param whitesTurn whether the turn to be searched is played by white
      * @return the GameNode representing the turn to be played
      */

@@ -13,10 +13,20 @@ import gametree.TreeEvaluator;
  */
 public class IntNode extends BaseNode<EvaluableInteger>  {
 
+    /**
+     * Creates an IntNode with the specified value.
+     * @param value
+     */
     public IntNode(Integer value) {
         super(new EvaluableInteger(value));
     }
 
+    /**
+     * Creates an IntNode with the specified value and parent.
+     * The nodes are properly linked to each other by this constructor.
+     * @param value
+     * @param parent
+     */
     public IntNode(Integer value, Node<EvaluableInteger> parent) {
         super(new EvaluableInteger(value), parent);
     }
@@ -35,7 +45,7 @@ public class IntNode extends BaseNode<EvaluableInteger>  {
      */
     @Override
     protected void computeChildren() throws ComputeChildrenException {
-        throw new UnsupportedOperationException("int node cannot dynamically generate children");
+        throw new ComputeChildrenException("int node cannot dynamically generate children");
     }
 
 }
