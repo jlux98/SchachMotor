@@ -461,7 +461,8 @@ public class MoveGeneratorTest {
 
         //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/8/8/8/8/8/2k5 w - - 0 1"));
         MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/4P3/8/8/8/8/8/2k5 w - - 0 1"));
-
+        Position[] actualPositions1 = MoveGenerator.generatePossibleMoves(FenParser.parseFen("k7/8/8/8/8/8/5p2/K3N3 b - - 1 25"));
+        Position[] actualPositions2 = MoveGenerator.generatePossibleMoves(FenParser.parseFen("k7/8/8/8/8/8/5p2/K4N2 b - - 1 25"));
     }
 
     @Test
