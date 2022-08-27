@@ -133,13 +133,13 @@ public abstract class MoveGenerator {
     private static void computePawnPromotion(Position bs, Set<Position> results,
     int startingRank, int startingFile, int targetRank, int targetFile, int sign, PieceType promoteTo){
         Piece[][] promotion = bs.copySpaces();
-            promotion[targetRank][targetFile] = new Piece(promoteTo,
-                (sign == -1));
+        Piece promotedPiece = new Piece(promoteTo, (sign == -1));
+            promotion[targetRank][targetFile] = promotedPiece;
             Position resultingPosition = new Position(promotion, bs.getWhiteNextMove(),
                 bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
                 bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
                 -1,-1, bs.getHalfMoves(), bs.getFullMoves());
-            resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
+            resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile, promotedPiece);
             results.add(resultingPosition);
     }
 

@@ -451,6 +451,11 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
             new Coordinate(targetRank, targetFile));
     }
 
+    public void setMove(int startingRank, int startingFile, int targetRank, int targetFile, Piece promotedTo) {
+        this.generatedByMove = new Move(new Coordinate(startingRank, startingFile),
+            new Coordinate(targetRank, targetFile), promotedTo);
+    }
+
     public Board getBoard() {
         return this.board;
     }
