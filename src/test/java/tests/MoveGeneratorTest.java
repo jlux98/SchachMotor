@@ -582,5 +582,20 @@ public class MoveGeneratorTest {
     @Test
     public void blackStaleMateByKingTest() {
         PositionHelper.verifyStaleMate("8/8/8/8/8/8/p7/k1K5 b - - 0 1");
+
+    @Test
+    public void algebraicNotationTest() {
+        Position position1 = FenParser.parseFen("k7/8/5pr1/5P2/8/8/8/K7 w - - 0 1");
+        String expected1 = "f5g6";
+        List<Position> actualPositions1 = new ArrayList<Position>(
+            MoveGenerator.generatePossibleMovesPerPiece(position1,3,5));
+        String actual1 = actualPositions1.get(0).getMove().toStringAlgebraic();
+        assertEquals(expected1, actual1);
+        Position position2 = FenParser.parseFen("k7/8/8/8/3p4/3PB3/8/K7 b - - 0 1");
+        String expected2 = "d4e3";
+        List<Position> actualPositions2 = new ArrayList<Position>(
+            MoveGenerator.generatePossibleMovesPerPiece(position2,4,3));
+        String actual2 = actualPositions2.get(0).getMove().toStringAlgebraic();
+        assertEquals(expected2, actual2);
     }
 }

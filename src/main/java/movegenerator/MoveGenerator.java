@@ -48,7 +48,7 @@ public abstract class MoveGenerator {
      * and the given piece
      */
     public static Set<Position> generatePossibleMovesPerPiece(Position position, int rank, int file) {
-        Piece currentPiece = position.getSpaces()[rank][file];
+        Piece currentPiece = position.getPieceAt(rank, file);
         if (currentPiece == null) {
             return null;
         }
@@ -148,7 +148,7 @@ public abstract class MoveGenerator {
         if (bs.getPieceAt(rank+(sign*1), file) == null){
             Piece[][] resultingSpaces = getPositionAfterMove(bs.copySpaces(), rank,
                 file, rank+(sign*1), file);
-            addPawnMove(bs, results, rank, file, sign, resultingSpaces, false);
+            addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, false, false);
         }
     }
 
@@ -157,7 +157,7 @@ public abstract class MoveGenerator {
         if (checkPawnDoubleStep(bs, rank, file, sign)){
             Piece[][] resultingSpaces = getPositionAfterMove(bs.copySpaces(), rank,
                 file, rank+(sign*2), file);
-            addPawnMove(bs, results, rank, file, sign, resultingSpaces, true);
+            addPawnMove(bs, results, rank, file, sign, resultingSpaces, true, false, false);
         }
     }
 
@@ -182,7 +182,7 @@ public abstract class MoveGenerator {
                 targetPiece.getIsWhite() != (sign == -1)){
                 Piece[][] resultingSpaces = getPositionAfterMove(bs.copySpaces(),
                     rank, file, rank+(sign*1), file-1);
-                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false);
+                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, true, false);
             }
         }
     }
@@ -195,7 +195,7 @@ public abstract class MoveGenerator {
                 targetPiece.getIsWhite() != (sign == -1)){
                 Piece[][] resultingSpaces = getPositionAfterMove(bs.copySpaces(),
                     rank, file, rank+(sign*1), file+1);
-                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false);
+                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, false, true);
             }
         }
     }
@@ -223,7 +223,7 @@ public abstract class MoveGenerator {
                 Piece[][] resultingSpaces = getPositionAfterMove(position.copySpaces(),
                     rank, file, targetRank, targetFile);
                 resultingSpaces[targetRank-(sign*1)][targetFile] = null;
-                addPawnMove(position, results, rank, file, sign, resultingSpaces, false);
+                addPawnMove(position, results, rank, file, sign, resultingSpaces, false, false, false);
             }
         }
     }
@@ -241,9 +241,15 @@ public abstract class MoveGenerator {
      * moves from top to bottom)
      */
     private static void addPawnMove(Position bs, Set<Position> results, int startingRank,
-        int startingFile, int sign, Piece[][] resultingSpaces, boolean doubleStep){
+        int startingFile, int sign, Piece[][] resultingSpaces, boolean doubleStep, boolean hasCapturedLeft, boolean hasCapturedRight){
         int doubleStepRank = -1;
         int doubleStepFile = -1;
+        int horizontalOffset = 0;
+        if (hasCapturedLeft) {
+            horizontalOffset = -1;
+        } else if (hasCapturedRight) {
+            horizontalOffset = 1;
+        }
         if (doubleStep){
             doubleStepRank = startingRank+(sign*1);
             doubleStepFile = startingFile;
@@ -259,14 +265,16 @@ public abstract class MoveGenerator {
         if ((sign == -1) && !resultingPosition.getWhiteInCheck()||
             (sign == 1) && !resultingPosition.getBlackInCheck()){
             int targetRank = -1;
+            int targetFile = startingFile;
             if (doubleStep){
                 targetRank = startingRank + (sign*2);
             } else {
                 targetRank = startingRank + (sign*1);
+                targetFile = startingFile + horizontalOffset;
             }
             if (!checkForPawnPromotions(resultingPosition, results, startingRank,
-                startingFile, targetRank, startingFile, sign)){
-                resultingPosition.setMove(startingRank, startingFile, targetRank, startingFile);
+                startingFile, targetRank, targetFile, sign)){
+                resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
                 results.add(resultingPosition);
             }
         }

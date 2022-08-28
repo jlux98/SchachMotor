@@ -1,3 +1,4 @@
+package application;
 import model.Position;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;
