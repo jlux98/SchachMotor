@@ -96,4 +96,9 @@ public class ArrayBoard implements Board {
         return result;
     }
 
+    @Override
+    public Board copyBoard() {
+        return new ArrayBoard(copySpaces());
+    }
+
 }

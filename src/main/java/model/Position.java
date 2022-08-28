@@ -146,8 +146,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
      * @return a copy of the two dimensional array representing the chess pieces' positions.
      */
     public Board copyBoard() {
-        return board;
-
+        return board.copyBoard();
     }
 
     /**

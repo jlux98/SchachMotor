@@ -39,5 +39,7 @@ public interface Board {
     * @return a copy of the two dimensional array representing the chess pieces' positions.
     */
     public abstract Piece[][] copySpaces();
-
+    
+    public abstract Board copyBoard();
+    
 }
