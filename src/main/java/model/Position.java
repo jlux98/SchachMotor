@@ -295,6 +295,8 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
         }
         result += "Halfmove Clock: " + halfMovesSincePawnMoveOrCapture + "\n";
         result += "Fullmove Number: " + fullMoveCount + "\n";
+        result += "White in Check: " + whiteInCheck + "\n";
+        result += "Black in Check: " + blackInCheck + "\n";
         return result;
     }
 

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import data.MoveGeneratorData;
 import gametree.ComputeChildrenException;
 import gametree.GameNode;
-import helper.FenHelper;
+import helper.PositionHelper;
 import helper.GameNodeHelper;
 import model.Position;
 import uciservice.FenParser;
@@ -28,7 +28,7 @@ public class GameNodeTest {
         //extract positions from child nodes
         List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root);
 
-        FenHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
     }
 
     /**
@@ -44,7 +44,7 @@ public class GameNodeTest {
         root.queryChildren(); //initial call; computes children
         List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root); //2nd call, retrieves stored children
 
-        FenHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
+        PositionHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
     }
 
     /**

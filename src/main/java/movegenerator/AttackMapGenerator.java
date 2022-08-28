@@ -113,6 +113,8 @@ public abstract class AttackMapGenerator {
                         collision = true;
                         break;
                     }
+                    i = 0;
+                    j = 0;
                 }
             }
         }    
