@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 /**
  * Classes implementing this interface store the position of chess pieces on the board.
  */
@@ -15,6 +17,11 @@ public interface Board {
     //TODO might be worth throwing an exception if the square is empty (instead of returning null)?
     public abstract Piece getPieceAt(int rank, int file);
 
+    public abstract List<Piece> getRank(int rank);
+
+
+    // for better modularity so we can implement BitBoards without much code change
+    public abstract void setPieceAt(int rank, int file, Piece piece);
     /**
      * Returns the position of the white/black king on this board.
      * Calls to getPieceAt(rank,file) with rank and file as returned by this method must return the corresponding king.

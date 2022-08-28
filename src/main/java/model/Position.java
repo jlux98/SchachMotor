@@ -47,7 +47,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
     * but without requiring point value and whiteInCheck / blackInCheck to be set.
     * These value may be set using the corresponding setter at a later time.
     */
-    public Position(Piece[][] spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
+    public Position(Board spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
             boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
             int halfMoves, int fullMoves) {
         if (spaces == null) {
@@ -67,7 +67,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
             //full move counter starts at 1
             throw new IllegalArgumentException("full move count must be greater than 0");
         }
-        this.board = new ArrayBoard(spaces);
+        this.board = spaces;
         this.isInteresting = false;
         this.whiteNextMove = whiteNextMove;
         this.whiteCastlingKingside = whiteCastlingKingside;
@@ -105,7 +105,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
      * but without requiring a point value to be set.
      * The value may be set using Position.setPointValue() at a later time.
      */
-    public Position(boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
+    public Position(boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
@@ -130,7 +130,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
      * @param halfMoves the number of half moves since a piece was captured or a pawn was moved . Starts at 0.
      * @param fullMoves the number of full moves that have been played since the start of this game. Starts at 1.
      */
-    public Position(int pointValue, boolean whiteInCheck, boolean blackInCheck, Piece[][] spaces, boolean whiteNextMove,
+    public Position(int pointValue, boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
         //value may be less than 0 (minimax / negamax)
@@ -145,8 +145,8 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
      * <b>Note:</b> Because pieces are immutable the pieces themselves are not copied (the same piece instances are returned within the copied array).
      * @return a copy of the two dimensional array representing the chess pieces' positions.
      */
-    public Piece[][] copySpaces() {
-        return board.copySpaces();
+    public Board copyBoard() {
+        return board;
 
     }
 
@@ -154,8 +154,8 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
      * Generates a follow-up position without en passant target square.
      * Same as {@link Position#generateFollowUpPosition(Piece[][], int, int) generateFollowUpPosition(Position, Piece[][], -1, -1)}.
      */
-    public Position generateFollowUpPosition(Piece[][] newPosition, boolean captureOrPawnMove) {
-        return generateFollowUpPosition(newPosition, -1, -1, captureOrPawnMove);
+    public Position generateFollowUpPosition(Board newBoard, boolean captureOrPawnMove) {
+        return generateFollowUpPosition(newBoard, -1, -1, captureOrPawnMove);
     }
 
     /**
@@ -172,7 +172,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
      * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
      * @return a follow-up position to this position  
      */
-    public Position generateFollowUpPosition(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+    public Position generateFollowUpPosition(Board newBoard, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean captureOrPawnMove) {
 
         //use getters over direct field access so additional code can be run if required at a later time
@@ -181,7 +181,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
         boolean newBlackCastlingKingside = this.getBlackCastlingKingside();
         boolean newBlackCastlingQueenside = this.getBlackCastlingQueenside();
 
-        return generateFollowUpPosition(newPosition, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
+        return generateFollowUpPosition(newBoard, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, captureOrPawnMove);
     }
 
@@ -192,7 +192,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
     * Castling flags represent permanent loss of castling ability, 
     * not temporary inability to castle e.g. caused by check or a piece placed in between rook and king.
     * 
-    * @param newPosition the piece's  new position 
+    * @param newBoard the piece's  new position 
     * @param newEnPassantTargetRank rank of the en passant target square
     * @param enPassantTargetFileboolean file of the en passant target square
     * @param newWhiteCastlingKingside whether white may castle kingside
@@ -202,7 +202,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
     * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
     * @return a follow-up position to this position 
     */
-    public Position generateFollowUpPosition(Piece[][] newPosition, int newEnPassantTargetRank, int newEnPassantTargetFile,
+    public Position generateFollowUpPosition(Board newBoard, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
             boolean newBlackCastlingQueenside, boolean captureOrPawnMove) {
 
@@ -227,7 +227,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
             halfMoveCount += 1;
         }
 
-        return new Position(newPosition, !this.getWhiteNextMove(), newWhiteCastlingKingside,
+        return new Position(newBoard, !this.getWhiteNextMove(), newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, newEnPassantTargetRank,
                 newEnPassantTargetFile, halfMoveCount, fullMoveCount);
     }
@@ -311,7 +311,7 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
      */
     @Override
     public Position clone() {
-        Piece[][] copiedSpaces = this.copySpaces();
+        Board copiedSpaces = this.copyBoard();
         return new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
                 this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
                 this.enPassantTargetRank, this.enPassantTargetFile, this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
