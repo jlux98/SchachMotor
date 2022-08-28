@@ -582,6 +582,7 @@ public class MoveGeneratorTest {
     @Test
     public void blackStaleMateByKingTest() {
         PositionHelper.verifyStaleMate("8/8/8/8/8/8/p7/k1K5 b - - 0 1");
+    }
 
     @Test
     public void algebraicNotationTest() {
