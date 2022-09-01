@@ -179,7 +179,7 @@ public class MoveGeneratorTest {
             MoveGenerator.generatePossibleMovesPerPiece(enPassantRightPosition,1,1));
         assertEquals(expectedPositionRight, actualPositionsRight);
     }
-
+    
     @Test
     public void knightGenerationTest() {
         Position knightPosition = FenParser.parseFen("7k/1n6/8/P7/8/8/8/7K b KQkq - 0 1");
@@ -599,5 +599,49 @@ public class MoveGeneratorTest {
             MoveGenerator.generatePossibleMovesPerPiece(position2,4,3));
         String actual2 = actualPositions2.get(0).getMove().toStringAlgebraic();
         assertEquals(expected2, actual2);
+    }
+
+    @Test
+    public void pawnCaptureIndexOutOfBoundsBugBlackTest() {
+        Position pawnPosition = FenParser.parseFen("k7/8/8/8/8/8/5p2/K5N1 b - - 1 25");
+        Set<Position> followUpPositions = MoveGenerator.computePawnMoves(pawnPosition, 6, 5);
+
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+
+        //move to f1
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K4qN1 w - - 0 26"); //move to f1, promote to queen
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K4rN1 w - - 0 26"); //move to f1, promote to rook
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K4bN1 w - - 0 26"); //move to f1, promote to bishop
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K4nN1 w - - 0 26"); //move to f1, promote to knight
+
+        //capture on g1
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K5q1 w - - 0 26"); //capture on g1, promote to queen
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K5r1 w - - 0 26"); //capture on g1, promote to rook
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K5b1 w - - 0 26"); //capture on g1, promote to bishop
+        expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K5n1 w - - 0 26"); //capture on g1, promote to knight
+
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+    }
+
+    @Test
+    public void pawnCaptureIndexOutOfBoundsBugWhiteTest() {
+        Position pawnPosition = FenParser.parseFen("k5n1/5P2/8/8/8/8/8/K7 w - - 1 25");
+        Set<Position> followUpPositions = MoveGenerator.computePawnMoves(pawnPosition, 1, 5);
+
+        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+
+        //move to f8
+        expectedfollowUpPositions.add("k4Qn1/8/8/8/8/8/8/K7 b - - 0 25"); //move to f8, promote to queen
+        expectedfollowUpPositions.add("k4Rn1/8/8/8/8/8/8/K7 b - - 0 25"); //move to f8, promote to rook
+        expectedfollowUpPositions.add("k4Bn1/8/8/8/8/8/8/K7 b - - 0 25"); //move to f8, promote to bishop
+        expectedfollowUpPositions.add("k4Nn1/8/8/8/8/8/8/K7 b - - 0 25"); //move to f8, promote to knight
+
+        //capture on g1
+        expectedfollowUpPositions.add("k5Q1/8/8/8/8/8/8/K7 b - - 0 25"); //capture on g8, promote to queen
+        expectedfollowUpPositions.add("k5R1/8/8/8/8/8/8/K7 b - - 0 25"); //capture on g8, promote to rook
+        expectedfollowUpPositions.add("k5B1/8/8/8/8/8/8/K7 b - - 0 25"); //capture on g8, promote to bishop
+        expectedfollowUpPositions.add("k5N1/8/8/8/8/8/8/K7 b - - 0 25"); //capture on g8, promote to knight
+
+        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
     }
 }
