@@ -1,6 +1,6 @@
 package uciservice;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class UCITokenizer implements Tokenizer {
@@ -56,8 +56,7 @@ public class UCITokenizer implements Tokenizer {
 
             case "go":
                 result = new Command(CommandType.GO, parent);
-                result.addChild(tokenizeWord(sentence, i+1, result));
-                // TODO: Implement a dynamic number of non-constant arguments
+                result.addAll(grabChildren(sentence, i+1, parent, false));
             break;
                 
             case "infinite":
@@ -80,8 +79,7 @@ public class UCITokenizer implements Tokenizer {
 
             case "moves":
                 result = new Command(CommandType.MOVES, parent);
-                result.addChild(tokenizeWord(sentence, i+1, result));
-                // TODO: Implement a dynamic number of constant arguments
+                result.addAll(grabChildren(sentence, i+1, parent, true));
             break;
 
             case "movestogo":
@@ -123,14 +121,12 @@ public class UCITokenizer implements Tokenizer {
 
             case "register":            
                 result = new Command(CommandType.REGISTER, parent);
-                result.addChild(tokenizeWord(sentence, i+1, result));
-                // TODO: Implement a dynamic number of non-constant arguments
+                result.addAll(grabChildren(sentence, i+1, parent, false));
             break;
             
             case "searchmoves":
                 result = new Command(CommandType.SEARCHMOVES, parent);
-                result.addChild(tokenizeWord(sentence, i+1, result));
-                // TODO: Implement a dynamic number of constant arguments
+                result.addAll(grabChildren(sentence, i+1, parent, true));
             break;
 
             case "setoption":
@@ -175,4 +171,18 @@ public class UCITokenizer implements Tokenizer {
         }
         return result;
     }
+
+    private List<Command> grabChildren(String[] sentence, int substring, Command parent,boolean lookingForConstants){
+        List<Command> results = new LinkedList<Command>();
+        for (int i = substring; i < sentence.length; i++){
+            Command tempResult = tokenizeWord(sentence, i, parent);
+            if ((tempResult.getType() == CommandType.CONSTANT) == lookingForConstants){
+                results.add(tempResult);
+            } else {
+                break;
+            }
+        }
+        return results;
+    }
+
 }

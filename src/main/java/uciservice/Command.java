@@ -112,6 +112,12 @@ public class Command {
         children.add(toAdd);
     }
 
+    public void addAll(List<Command> children){
+        for (int i = 0; i < children.size(); i++){
+            addChild(children.get(i));
+        }
+    }
+
     public void deleteChild(Command toDelete){
         children.remove(toDelete);
     }
