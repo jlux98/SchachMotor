@@ -113,6 +113,7 @@ public class UCITokenizer implements Tokenizer {
             case "position":
                 result = new Command(CommandType.POSITION, parent);
                 result.addChild(tokenizeWord(sentence, i+1, result));
+                result.addAll(grabChildren(sentence, i+2, parent, true));
             break;
 
             case "quit":
@@ -176,11 +177,11 @@ public class UCITokenizer implements Tokenizer {
         List<Command> results = new LinkedList<Command>();
         for (int i = substring; i < sentence.length; i++){
             Command tempResult = tokenizeWord(sentence, i, parent);
-            if ((tempResult.getType() == CommandType.CONSTANT) == lookingForConstants){
+            // if ((tempResult.getType() == CommandType.CONSTANT) == lookingForConstants){
                 results.add(tempResult);
-            } else {
-                break;
-            }
+            // } else {
+                // break;
+            // }
         }
         return results;
     }

@@ -13,7 +13,7 @@ public class TestArena {
         Tokenizer tokenizer = new UCITokenizer();
         while (contd){
             String input = inputScanner.nextLine();
-            UCIParser.executeCommand(tokenizer.tokenize(input));
+            contd = UCIParser.executeCommand(tokenizer.tokenize(input));
         }
         inputScanner.close();
     }

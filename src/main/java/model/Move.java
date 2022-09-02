@@ -10,7 +10,14 @@ public class Move {
         this.promotedTo = null;
     }
 
-    
+    public Move(String moveString){
+        if (moveString.matches("[a-h][1-8][a-h][1-8]")){
+            this.startingSpace = new Coordinate(moveString.substring(0,2));
+            this.targetSpace = new Coordinate(moveString.substring(2,4));
+        } else {
+            throw new IllegalArgumentException("Error: Move not correctly formatted");
+        }
+    }    
 
     public Move(Coordinate startingSpace, Coordinate targetSpace, Piece promotedTo) {
         this.startingSpace = startingSpace;
