@@ -3,6 +3,8 @@ package uciservice;
 import java.util.regex.Pattern;
 
 import model.Position;
+import model.ArrayBoard;
+import model.Board;
 import model.Piece;
 
 /**
@@ -22,7 +24,7 @@ public class FenParser {
     private String fen;
 
     //position attributes
-    private Piece[][] piecePositions;
+    private Board piecePositions;
     private boolean isWhiteNextMove;
     private boolean whiteCastlingKingside = false;
     private boolean whiteCastlingQueenside = false;
@@ -42,7 +44,7 @@ public class FenParser {
             throw new NullPointerException("fen string may not be null");
         }
         this.fen = fen;
-        this.piecePositions = new Piece[8][8];
+        this.piecePositions = new ArrayBoard(new Piece[8][8]);
     }
 
     /**
@@ -156,7 +158,7 @@ public class FenParser {
                 xPosition += Character.getNumericValue(character);
             } else {
                 Piece piece = new Piece(character);
-                piecePositions[yPosition][xPosition] = piece;
+                piecePositions.setPieceAt(yPosition, xPosition, piece);
                 xPosition++;
             }
         }

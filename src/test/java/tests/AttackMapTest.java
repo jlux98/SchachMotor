@@ -70,13 +70,13 @@ public class AttackMapTest {
         };
 
         boolean[][] attackMapActualDiagonal =
-            AttackMapGenerator.paintRayAttack(emptyPosition.getSpaces(), 
+            AttackMapGenerator.paintRayAttack(emptyPosition.getBoard(), 
             new boolean[8][8], 1,1,1,1);
         boolean[][] attackMapActualHorizontal =
-            AttackMapGenerator.paintRayAttack(emptyPosition.getSpaces(),
+            AttackMapGenerator.paintRayAttack(emptyPosition.getBoard(),
             new boolean[8][8], 1,1,0,1);
         boolean[][] attackMapActualVertical =
-            AttackMapGenerator.paintRayAttack(emptyPosition.getSpaces(),
+            AttackMapGenerator.paintRayAttack(emptyPosition.getBoard(),
             new boolean[8][8], 1,1,1,0);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
@@ -127,13 +127,13 @@ public class AttackMapTest {
         };
 
         boolean[][] attackMapActualDiagonal =
-            AttackMapGenerator.paintRayAttack(queenTestPosition.getSpaces(), 
+            AttackMapGenerator.paintRayAttack(queenTestPosition.getBoard(), 
             new boolean[8][8], 2,2,1,1);
         boolean[][] attackMapActualHorizontal =
-            AttackMapGenerator.paintRayAttack(queenTestPosition.getSpaces(), 
+            AttackMapGenerator.paintRayAttack(queenTestPosition.getBoard(), 
             new boolean[8][8], 1,2,0,1);
         boolean[][] attackMapActualVertical =
-            AttackMapGenerator.paintRayAttack(queenTestPosition.getSpaces(), 
+            AttackMapGenerator.paintRayAttack(queenTestPosition.getBoard(), 
             new boolean[8][8], 2,1,1,0);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
@@ -187,7 +187,7 @@ public class AttackMapTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            AttackMapGenerator.computeChecks(bishopTestPosition.getSpaces(),
+            AttackMapGenerator.computeChecks(bishopTestPosition.getBoard(),
             false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
@@ -211,7 +211,7 @@ public class AttackMapTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            AttackMapGenerator.computeChecks(queenTestPosition.getSpaces(), false);
+            AttackMapGenerator.computeChecks(queenTestPosition.getBoard(), false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -234,7 +234,7 @@ public class AttackMapTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            AttackMapGenerator.computeChecks(kingTestPosition.getSpaces(),false);
+            AttackMapGenerator.computeChecks(kingTestPosition.getBoard(),false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -257,7 +257,7 @@ public class AttackMapTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            AttackMapGenerator.computeChecks(pawnAttackMapTestPosition.getSpaces(), false);
+            AttackMapGenerator.computeChecks(pawnAttackMapTestPosition.getBoard(), false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(
@@ -280,7 +280,7 @@ public class AttackMapTest {
             {false, false, false, false, false, false, false, false}
         };
         boolean[][] attackMapActual =
-            AttackMapGenerator.computeChecks(knightTestPosition.getSpaces(),false);
+            AttackMapGenerator.computeChecks(knightTestPosition.getBoard(),false);
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 assertEquals(

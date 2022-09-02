@@ -1,6 +1,8 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * An implementation of Board based on a two-dimensional array of Pieces representing the board.
@@ -77,6 +79,26 @@ public class ArrayBoard implements Board {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void setPieceAt(int rank, int file, Piece piece) {
+        spaces[rank][file] = piece;
+        return;
+    }
+
+    @Override
+    public List<Piece> getRank(int rank) {
+        List<Piece> result = new ArrayList<>();
+        for (int i = 0; i < spaces.length; i++) {
+            result.add(spaces[rank][i]);
+        }
+        return result;
+    }
+
+    @Override
+    public Board copyBoard() {
+        return new ArrayBoard(copySpaces());
     }
 
 }
