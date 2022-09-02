@@ -1,7 +1,5 @@
 package uciservice;
 
-import java.io.OutputStreamWriter;
-
 import model.Move;
 
 public abstract class UCIOperator {
@@ -45,6 +43,6 @@ public abstract class UCIOperator {
     }
 
     private static void sendOff(String message){
-        // TODO: write message output
+        System.out.println(message);
     }
 }
