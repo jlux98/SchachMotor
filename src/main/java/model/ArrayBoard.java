@@ -101,4 +101,14 @@ public class ArrayBoard implements Board {
         return new ArrayBoard(copySpaces());
     }
 
+    @Override
+    public Piece getPieceAt(Coordinate space) {
+        return getPieceAt(space.getRank(), space.getFile());
+    }
+
+    @Override
+    public void setPieceAt(Coordinate space, Piece piece) {
+        this.setPieceAt(space.getRank(), space.getFile(), piece);        
+    }
+
 }
