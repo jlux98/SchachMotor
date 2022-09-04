@@ -56,7 +56,7 @@ public class UCITokenizer implements Tokenizer {
 
             case "go":
                 result = new Command(CommandType.GO, parent);
-                result.addAll(grabChildren(sentence, i+1, parent, false));
+                result.addAll(grabChildren(sentence, i+1, parent));
             break;
                 
             case "infinite":
@@ -79,7 +79,7 @@ public class UCITokenizer implements Tokenizer {
 
             case "moves":
                 result = new Command(CommandType.MOVES, parent);
-                result.addAll(grabChildren(sentence, i+1, parent, true));
+                // result.addAll(grabChildren(sentence, i+1, parent));
             break;
 
             case "movestogo":
@@ -112,8 +112,7 @@ public class UCITokenizer implements Tokenizer {
 
             case "position":
                 result = new Command(CommandType.POSITION, parent);
-                result.addChild(tokenizeWord(sentence, i+1, result));
-                result.addAll(grabChildren(sentence, i+2, parent, true));
+                result.addAll(grabChildren(sentence, i+1, result));
             break;
 
             case "quit":
@@ -122,12 +121,12 @@ public class UCITokenizer implements Tokenizer {
 
             case "register":            
                 result = new Command(CommandType.REGISTER, parent);
-                result.addAll(grabChildren(sentence, i+1, parent, false));
+                result.addAll(grabChildren(sentence, i+1, parent));
             break;
             
             case "searchmoves":
                 result = new Command(CommandType.SEARCHMOVES, parent);
-                result.addAll(grabChildren(sentence, i+1, parent, true));
+                result.addAll(grabChildren(sentence, i+1, parent));
             break;
 
             case "setoption":
@@ -173,7 +172,7 @@ public class UCITokenizer implements Tokenizer {
         return result;
     }
 
-    private List<Command> grabChildren(String[] sentence, int substring, Command parent,boolean lookingForConstants){
+    private List<Command> grabChildren(String[] sentence, int substring, Command parent){
         List<Command> results = new LinkedList<Command>();
         for (int i = substring; i < sentence.length; i++){
             Command tempResult = tokenizeWord(sentence, i, parent);
@@ -183,7 +182,32 @@ public class UCITokenizer implements Tokenizer {
                 // break;
             // }
         }
+        if (checkForFenString(results)){
+            results = glueFenTogether(results);
+        }
         return results;
     }
+    
+    private boolean checkForFenString(List<Command> children){
+        if (children.size() > 5){
+            if (children.get(0).getParent() != null &&
+                children.get(0).getParent().getType() == CommandType.POSITION &&
+                children.get(0).getType() != CommandType.STARTPOS){
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private List<Command> glueFenTogether(List<Command> children){
+        String fenString = children.get(0).getData();
+        for (int i = 1; i < 6; i++){
+            fenString = fenString + " " + children.get(i).getData();
+        }
+        for (int i = 5; i > 0; i--){
+            children.remove(i);
+        }
+        children.get(0).setData(fenString);
+        return children;
+    }
 }

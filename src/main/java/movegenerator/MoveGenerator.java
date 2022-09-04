@@ -690,9 +690,17 @@ public abstract class MoveGenerator {
 
             generatedPosition = currentPosition.generateFollowUpPosition(newSpaces, -1, -1, newWhiteCastlingKingside,
                     newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, didCapture);
-            generatedPosition.setMove(startingRank, startingFile, targetRank, targetFile);
-            moves.add(generatedPosition);
-
+            if (currentPosition.getWhiteNextMove()){
+                if (!generatedPosition.getWhiteInCheck()){
+                    generatedPosition.setMove(startingRank, startingFile, targetRank, targetFile);
+                    moves.add(generatedPosition);
+                }
+            } else {
+                if (!generatedPosition.getBlackInCheck()){
+                    generatedPosition.setMove(startingRank, startingFile, targetRank, targetFile);
+                    moves.add(generatedPosition);
+                }
+            }
             //current position is the space that was moved on
             rank += yOffset;
             file += xOffset;

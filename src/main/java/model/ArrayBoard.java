@@ -68,7 +68,12 @@ public class ArrayBoard implements Board {
             }
             spaceStrings[rank] = result;
         }
-        return Arrays.toString(spaceStrings).replace(", ", ",\n");
+        String result = addChar(Arrays.toString(spaceStrings).replace(", ", ",\n"), '\n', 1);
+        return result;
+    }
+
+    private String addChar(String str, char ch, int position) {
+        return str.substring(0, position) + ch + str.substring(position);
     }
 
     @Override
