@@ -26,7 +26,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     /**
      * Creates a child node.
-     * The nodes are properly linked to ach other by this constructor.
+     * The nodes are properly linked to each other by this constructor.
      * @param content content stored by the node
      * @param parent parent of the created node
      */

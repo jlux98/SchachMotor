@@ -149,12 +149,12 @@ public class NodeTest {
     /**
      * Calls queryChildren() on a node without children,
      * which calls computeChildren() to generate children.
-     * IntNode does not implemented computeChildren() and throws an UnsupportedOperationException instead.
+     * IntNode does not implemented computeChildren() and throws an ComputeChildrenException instead.
      */
     @Test
     public void queryChildrenCallsComputeChildrenIfNoChildrenStoredTest() {
         IntNode leaf = testTree.layer4Node3;
-        assertThrows(UnsupportedOperationException.class, () -> leaf.queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> leaf.queryChildren());
     }
 
     /**

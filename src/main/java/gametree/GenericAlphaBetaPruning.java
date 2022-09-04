@@ -103,6 +103,11 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
      * @return the child node that has the best (smallest) value
      */
     private Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
+        /*
+         * if (depth == 0 && parent.isInteresting()) {
+         *      depth = depth + 1; //evaluate recursively
+         * }
+         */
         //assign static evaluation to leaves
         if (isLeaf(parent, depth)) { //calls queryChildren() 
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
@@ -125,6 +130,11 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
                 //read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 // = value of the Evaluable stored by that node (retrieved with getContent())
                 childValue = child.getContent().getValue();
+
+                //FIXME this hinders the performance of pruning
+                //-> initialize parent.getContent().setValue() instead
+                //return initialized value when breaking without previously evaluating any children
+
                 //parentValue has to be updated before alpha
                 //because the value of the child causing the cut-off has to be propagated
                 //as it is guaranteed not to affect the remaining tree
@@ -180,6 +190,11 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
      * @return the child node that has the best (greatest) value
      */
     private Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
+        /*
+        * if (depth == 0 && parent.isInteresting()) {
+        *      depth = depth + 1; //evaluate recursively
+        * }
+        */
         //assign static evaluation to leaves
         if (isLeaf(parent, depth)) {
             //return PositionEvaluator.evaluatePosition(parent.getPosition());
@@ -201,7 +216,12 @@ public class GenericAlphaBetaPruning<T extends Evaluable> implements TreeEvaluat
                 alphaBetaMinimize(child, depth - 1, alpha, beta);
                 //read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 // = value of the Evaluable stored by that node (retrieved with getContent())
-                childValue = child.getContent().getValue();                
+                childValue = child.getContent().getValue();
+
+                //FIXME this hinders the performance of pruning
+                //-> initialize parent.getContent().setValue() instead
+                //return initialized value when breaking without previously evaluating any children
+
                 //parentValue has to be updated before alpha
                 //because the value of the child causing the cut-off has to be propagated
                 //as it is guaranteed not to affect the remaining tree
