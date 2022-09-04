@@ -46,4 +46,18 @@ public class Move {
         }
         return result;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Move) {
+            Move otherMove = (Move) obj;
+            return this.getStartingSpace().equals(otherMove.getStartingSpace())
+                    && this.getTargetSpace().equals(otherMove.getTargetSpace())
+                    && this.getPromotedTo().equals(otherMove.getPromotedTo());
+        }
+        return false;
+    }
 }
