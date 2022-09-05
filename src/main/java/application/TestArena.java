@@ -1,20 +1,40 @@
 package application;
 
+import java.util.List;
 import java.util.Scanner;
 
+import model.Position;
+import uciservice.Command;
 import uciservice.Tokenizer;
-import uciservice.UCIParser;
+import uciservice.UCIParserRandom;
 import uciservice.UCITokenizer;
 
 public class TestArena {
-    public static void main(String[] args) {
+    private boolean contd = true;
+    // TODO: track past moves so that we don't need to recalculate the board from scratch each time
+    private List<Command> pastMoves;
+
+    private void start(){
+        Position currentPosition = null;
         Scanner inputScanner = new Scanner(System.in);
-        boolean contd = true;
         Tokenizer tokenizer = new UCITokenizer();
         while (contd){
             String input = inputScanner.nextLine();
-            UCIParser.executeCommand(tokenizer.tokenize(input));
+            try {
+                currentPosition = UCIParserRandom.executeCommand(tokenizer.tokenize(input), currentPosition, this);                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         inputScanner.close();
+        return;
+    }
+    public static void main(String[] args) {
+        new TestArena().start();
+        return;
+    }
+
+    public void stop(){
+        contd = false;
     }
 }
