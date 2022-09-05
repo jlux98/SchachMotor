@@ -1,10 +1,5 @@
 package uciservice;
 
-import java.util.List;
-
-import model.Coordinate;
-import model.Move;
-
 public abstract class UCIParser{
     public static boolean executeCommand(Command command){
         List<Command> children = command.getChildren();

@@ -392,9 +392,9 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
         return pointValue;
     };
 
-    public Piece[][] getSpaces() {
-        return board.getSpaces();
-    }
+    // public Piece[][] getSpaces() {
+    //     return board.getSpaces();
+    // }
 
     public boolean getWhitesTurn() {
         return whiteNextMove;
