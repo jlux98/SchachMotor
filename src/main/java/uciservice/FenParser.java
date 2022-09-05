@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import model.Position;
 import model.ArrayBoard;
 import model.Board;
+import model.ByteBoard;
 import model.Piece;
 
 /**
@@ -44,7 +45,7 @@ public class FenParser {
             throw new NullPointerException("fen string may not be null");
         }
         this.fen = fen;
-        this.piecePositions = new ArrayBoard(new Piece[8][8]);
+        this.piecePositions = new ByteBoard(new Piece[8][8]);
     }
 
     /**
