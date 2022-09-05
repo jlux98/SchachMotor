@@ -53,7 +53,7 @@ public abstract class UCIParserRandom{
                 // return randomPosition;
                 GameNode b = new ImpGameTree(currentPosition, new GameNodeAlphaBetaPruning()).calculateBestMove(5);
                 UCIOperator.sendBestmove(b.getContent().getMove());
-                return b.getContent();
+                return b.getContent().clone();
             case INFINITE:
                 break;
             case ISREADY:
@@ -117,7 +117,8 @@ public abstract class UCIParserRandom{
                 }
                 break;
             case QUIT:
-                break;
+                testArena.stop();
+                return currentPosition;
             case REGISTER:
                 break;
             case SEARCHMOVES:
