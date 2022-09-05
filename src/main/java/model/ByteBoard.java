@@ -177,4 +177,12 @@ public class ByteBoard implements Board{
     public Board copyBoard() {
         return new ByteBoard(copySpaces());
     }
+    @Override
+    public Piece getPieceAt(Coordinate space) {
+        return getPieceAt(space.getRank(), space.getFile());
+    }
+    @Override
+    public void setPieceAt(Coordinate space, Piece piece) {
+        setPieceAt(space.getRank(), space.getFile(), piece);
+    }
 }
