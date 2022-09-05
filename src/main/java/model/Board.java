@@ -30,7 +30,7 @@ public interface Board {
      */
     public abstract Coordinate getKingPosition(boolean isWhite);
 
-    public abstract Piece[][] getSpaces();
+    // public abstract Piece[][] getSpaces();
 
     /**
     * Copies the spaces array to facilitate generation of follow-up positions wtihout affecting this position.
@@ -38,7 +38,7 @@ public interface Board {
     * <b>Note:</b> Because pieces are immutable the pieces themselves are not copied (the same piece instances are returned within the copied array).
     * @return a copy of the two dimensional array representing the chess pieces' positions.
     */
-    public abstract Piece[][] copySpaces();
+    // public abstract Piece[][] copySpaces();
     
     public abstract Board copyBoard();
     

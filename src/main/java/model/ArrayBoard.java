@@ -38,12 +38,11 @@ public class ArrayBoard implements Board {
         return null;
     }
 
-    @Override
     public Piece[][] getSpaces() {
         return spaces;
     }
 
-    @Override
+
     public Piece[][] copySpaces() {
         Piece[][] copy = new Piece[8][8];
         for (int index = 0; index < spaces.length; index++) {
