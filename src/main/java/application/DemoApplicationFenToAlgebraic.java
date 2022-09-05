@@ -12,7 +12,6 @@ import uciservice.FenParser;
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
     private boolean debugMode = false;
-    private static final int calculationDepth = 5;
 
     public DemoApplicationFenToAlgebraic(boolean debug) {
         this.scanner = new Scanner(System.in);
@@ -27,7 +26,7 @@ public class DemoApplicationFenToAlgebraic {
                 """);
 
         boolean debug = false;
-        //use debug mode if started with argument "debug"
+        // use debug mode if started with argument "debug"
         if (args.length == 1) {
             if (args[0].equals("debug")) {
                 debug = true;
@@ -50,9 +49,22 @@ public class DemoApplicationFenToAlgebraic {
         }
     }
 
-    private Position calculateFollowUpPosition(Position position) {
+    private int readDepth() {
+        while (true) {
+            try {
+                System.out.println("\nenter depth:");
+                Integer readDepth = Integer.parseInt(scanner.nextLine());
+                return readDepth;
+            } catch (NumberFormatException exception) {
+                System.out.println("NumberFormatException");
+            }
+
+        }
+    }
+
+    private Position calculateFollowUpPosition(Position position, int depth) {
         GameTree tree = new ImpGameTree(GameNode.createRoot(position), new GameNodeAlphaBetaPruning());
-        return tree.calculateBestMove(calculationDepth).getContent();
+        return tree.calculateBestMove(depth).getContent();
     }
 
     private void output(Position position, String colorMoved) {
@@ -68,11 +80,11 @@ public class DemoApplicationFenToAlgebraic {
                 Position readPosition = readPosition();
                 if (readPosition == null) {
                     System.out.println("...exiting");
-                    return; //exit
+                    return; // exit
                 }
-
+                int depth = readDepth();
                 String movedColor = readPosition.getWhiteNextMove() ? "white" : "black";
-                Position calculatedMove = calculateFollowUpPosition(readPosition);
+                Position calculatedMove = calculateFollowUpPosition(readPosition, depth);
                 output(calculatedMove, movedColor);
                 System.gc();
             } catch (Exception exception) {
