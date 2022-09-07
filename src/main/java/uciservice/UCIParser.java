@@ -1,7 +1,5 @@
 package uciservice;
 
-import java.util.List;
-
 public abstract class UCIParser{
     public static void executeCommand(Command command){
         switch(command.getType()){
