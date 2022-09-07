@@ -38,9 +38,7 @@ public class GameTreePackageTest {
         GameNodeAlphaBetaPruning pruning2 = new GameNodeAlphaBetaPruning();
         Move result2 = pruning2.evaluateTree(new ImpGameTree(pos2, pruning2), depth, whitesTurn).getContent().getMove();
 
-        // assertEquals(result1.getContent().getMove(), result2.getContent().getMove());
         assertEquals(result1, result2);
-        System.out.println(result1 + " " + result2);
     }
 
     /**
@@ -63,7 +61,6 @@ public class GameTreePackageTest {
         Move result2 = new ImpGameTree(pos2, pruning2).calculateBestMove(depth).getContent().getMove();
 
         assertEquals(result1, result2);
-        System.out.println(result1 + " " + result2);
     }
 
     /**
@@ -87,7 +84,6 @@ public class GameTreePackageTest {
         Move result2 = new ImpGameTree(pos2, pruning2).calculateBestMove(depth).getContent().getMove();
 
         assertEquals(result1, result2);
-        System.out.println(result1 + " " + result2);
     }
 
     @Test
@@ -166,12 +162,6 @@ public class GameTreePackageTest {
         GameNodeAlphaBetaPruning pruningC = new GameNodeAlphaBetaPruning();
         GameNode sensible3 = new ImpGameTree(pos, pruningC).calculateBestMove(depth);
 
-        // calls pruningB.evaluateTree(Tree, depth,
-        // this.getRoot().getContent().getWhitesTurn());
-        // calls pruningB.evaluateTree(Tree, depth, true);
-        System.out.println(faulty.getContent().getMove());
-        System.out.println(sensible.getContent().getMove());
-        System.out.println(); // for breakpoint purposes
         assertEquals(sensible.getContent().getMove(), sensible3.getContent().getMove());
         assertEquals(sensible.getContent().getMove(), sensible2.getContent().getMove());
         assertEquals(sensible.getContent().getMove(), faulty.getContent().getMove());
