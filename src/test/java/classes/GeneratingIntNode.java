@@ -37,7 +37,6 @@ public class GeneratingIntNode extends IntNode {
     //increase visibility to public in this class
     @Override
     public List<? extends Node<EvaluableInteger>> getChildren() {
-        // TODO Auto-generated method stub
         return super.getChildren();
     }
 }
