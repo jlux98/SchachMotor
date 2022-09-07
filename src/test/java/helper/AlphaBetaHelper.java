@@ -31,7 +31,7 @@ public class AlphaBetaHelper {
      */
     public static void testNaryTree(int expectedResult, int depth, int degree, boolean whitesTurn, int ... values) {
         Tree<IntNode> binaryTree = IntNodeHelper.createIntNodeTree(degree, values);
-        Node<EvaluableInteger> bestMove = new GenericAlphaBetaPruning<EvaluableInteger>().evaluateTree(binaryTree, depth, true);
+        Node<EvaluableInteger> bestMove = new GenericAlphaBetaPruning<EvaluableInteger>().evaluateTree(binaryTree, depth, whitesTurn);
         assertEquals(expectedResult, bestMove.getContent().getValue());
     }
 }
