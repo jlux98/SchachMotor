@@ -115,15 +115,15 @@ public class IntNodeTestTree implements Tree<IntNode> {
         NodeHelper.verifyChildren(this.layer3Node4, this.layer4Node6);
         NodeHelper.verifyChildren(this.layer3Node5, this.layer4Node7, this.layer4Node8);
         //layer 4: leaf values
-        assertEquals(10, this.layer4Node0.getContent().getValue());
-        assertEquals(Integer.MAX_VALUE, this.layer4Node1.getContent().getValue());
-        assertEquals(5, this.layer4Node2.getContent().getValue());
-        assertEquals(-10, this.layer4Node3.getContent().getValue());
-        assertEquals(7, this.layer4Node4.getContent().getValue());
-        assertEquals(5, this.layer4Node5.getContent().getValue());
-        assertEquals(Integer.MIN_VALUE, this.layer4Node6.getContent().getValue());
-        assertEquals(-7, this.layer4Node7.getContent().getValue());
-        assertEquals(-5, this.layer4Node8.getContent().getValue());
+        assertEquals(10, this.layer4Node0.getContent());
+        assertEquals(Integer.MAX_VALUE, this.layer4Node1.getContent());
+        assertEquals(5, this.layer4Node2.getContent());
+        assertEquals(-10, this.layer4Node3.getContent());
+        assertEquals(7, this.layer4Node4.getContent());
+        assertEquals(5, this.layer4Node5.getContent());
+        assertEquals(Integer.MIN_VALUE, this.layer4Node6.getContent());
+        assertEquals(-7, this.layer4Node7.getContent());
+        assertEquals(-5, this.layer4Node8.getContent());
 
     }
 

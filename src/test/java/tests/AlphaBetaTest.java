@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import classes.EvaluableInteger;
 import classes.GeneratingIntNode;
 import data.IntNodeTestTree;
 import gametree.ImpTree;
@@ -29,7 +28,7 @@ public class AlphaBetaTest {
     @Test
     public void incompleteBinaryTreeDepth4Test() {
         IntNodeTestTree testTree = new IntNodeTestTree();
-        TreeEvaluator<EvaluableInteger> alphaBeta = new GenericAlphaBetaPruning<EvaluableInteger>();
+        TreeEvaluator<Integer> alphaBeta = new GenericAlphaBetaPruning<Integer>();
         alphaBeta.evaluateTree(testTree, 4, true);
         // root
         IntNodeHelper.compareIntNodeValue(-7, testTree.root);
@@ -78,9 +77,9 @@ public class AlphaBetaTest {
     @Test
     public void alphaBetaRespectsDepthWhiteTest() {
         GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        new GenericAlphaBetaPruning<EvaluableInteger>().evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, true);
+        new GenericAlphaBetaPruning<Integer>().evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, true);
         assertTrue(parent.hasChildren());
-        List<? extends Node<EvaluableInteger>> children = parent.getChildren();
+        List<? extends Node<Integer>> children = parent.getChildren();
         GeneratingIntNode layer1Node0 = (GeneratingIntNode) children.get(0);
         GeneratingIntNode layer1Node1 = (GeneratingIntNode) children.get(1);
         GeneratingIntNode layer1Node2 = (GeneratingIntNode) children.get(2);
@@ -88,8 +87,8 @@ public class AlphaBetaTest {
         assertFalse(layer1Node0.hasChildren());
         assertTrue(layer1Node1.hasChildren());
         assertTrue(layer1Node2.hasChildren());
-        List<? extends Node<EvaluableInteger>> layer1Node1Children = layer1Node1.getChildren();
-        List<? extends Node<EvaluableInteger>> layer1Node2Children = layer1Node2.getChildren();
+        List<? extends Node<Integer>> layer1Node1Children = layer1Node1.getChildren();
+        List<? extends Node<Integer>> layer1Node2Children = layer1Node2.getChildren();
         assertEquals(1, layer1Node1Children.size());
         assertEquals(2, layer1Node2Children.size());
 
@@ -110,9 +109,9 @@ public class AlphaBetaTest {
     @Test
     public void alphaBetaRespectsDepthBlackTest() {
         GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        new GenericAlphaBetaPruning<EvaluableInteger>().evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, false);
+        new GenericAlphaBetaPruning<Integer>().evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, false);
         assertTrue(parent.hasChildren());
-        List<? extends Node<EvaluableInteger>> children = parent.getChildren();
+        List<? extends Node<Integer>> children = parent.getChildren();
         GeneratingIntNode layer1Node0 = (GeneratingIntNode) children.get(0);
         GeneratingIntNode layer1Node1 = (GeneratingIntNode) children.get(1);
         GeneratingIntNode layer1Node2 = (GeneratingIntNode) children.get(2);
@@ -120,8 +119,8 @@ public class AlphaBetaTest {
         assertFalse(layer1Node0.hasChildren());
         assertTrue(layer1Node1.hasChildren());
         assertTrue(layer1Node2.hasChildren());
-        List<? extends Node<EvaluableInteger>> layer1Node1Children = layer1Node1.getChildren();
-        List<? extends Node<EvaluableInteger>> layer1Node2Children = layer1Node2.getChildren();
+        List<? extends Node<Integer>> layer1Node1Children = layer1Node1.getChildren();
+        List<? extends Node<Integer>> layer1Node2Children = layer1Node2.getChildren();
         assertEquals(1, layer1Node1Children.size());
         assertEquals(2, layer1Node2Children.size());
 

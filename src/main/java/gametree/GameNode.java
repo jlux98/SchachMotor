@@ -5,9 +5,12 @@ import movegenerator.MoveGenerator;
 
 /**
  * Class implementing Nodes containing Positions.
- * Extends BaseNode < Position > for node operations and implements the Evaluable interface on top.
- * Additionally, this class narrows the return types of node methods from Node < Position > to GameNode.
- * <br><br>
+ * Extends BaseNode < Position > for node operations and implements the
+ * Evaluable interface on top.
+ * Additionally, this class narrows the return types of node methods from Node <
+ * Position > to GameNode.
+ * <br>
+ * <br>
  * <b>Important Notes:</b>
  * <ul>
  *      <li>
@@ -15,8 +18,10 @@ import movegenerator.MoveGenerator;
  *          only GameNodes and subtypes of GameNode should be passed to these methods.
  *      </li>
  *      <li>
- *          This class performs casts from Node < Position > to GameNode which should be safe
- *          so long as the containing tree consists only of gamenodes and subtypes of gamenode.
+ *          This class performs casts from Node < Position > to GameNode which should be
+ *          safe
+ *          so long as the containing tree consists only of gamenodes and subtypes of
+ *          gamenode.
  *      </li>
  * </ul>
  */
@@ -24,6 +29,7 @@ public class GameNode extends BaseNode<Position> {
 
     /**
      * Creates a root node.
+     * 
      * @param position position stored by the node
      */
     private GameNode(Position position) {
@@ -32,8 +38,9 @@ public class GameNode extends BaseNode<Position> {
 
     /**
      * Creates a child node.
+     * 
      * @param position position stored by the node
-     * @param parent parent of the created node
+     * @param parent   parent of the created node
      */
     private GameNode(Position position, GameNode parent) {
         super(position, parent);
@@ -51,8 +58,8 @@ public class GameNode extends BaseNode<Position> {
     }
 
     /**
-     * @param position  the position to be stored in the node
-     * @param parent this node's parent
+     * @param position the position to be stored in the node
+     * @param parent   this node's parent
      * @return a node with parent
      */
     public static GameNode createNode(Position position, GameNode parent) {
@@ -60,7 +67,7 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    //narrows return type from Node<T> to GameNode
+    // narrows return type from Node<T> to GameNode
     public GameNode getParent() {
         return (GameNode) super.getParent();
     }
@@ -74,13 +81,25 @@ public class GameNode extends BaseNode<Position> {
         Position[] followUpPositions = MoveGenerator.generatePossibleMoves(this.getContent());
 
         if (followUpPositions.length == 0) {
-            //no moves were generated
-            throw new ComputeChildrenException("no children could be generated for this position: " + this.getContent().toString());
+            // no moves were generated
+            throw new ComputeChildrenException(
+                    "no children could be generated for this position: " + this.getContent().toString());
         }
 
-        //add follow-up moves as child nodes to this node
+        // add follow-up moves as child nodes to this node
         for (Position position : followUpPositions) {
             createNode(position, this);
         }
     }
+
+    @Override
+    public int evaluateStatically() {
+        if (getContent() == null) {
+            throw new NullPointerException("cannot evaluate because position was already detached");
+        }
+        int value = getContent().evaluateBoard();
+        setValue(value);
+        return value;
+    }
+
 }

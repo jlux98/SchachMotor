@@ -6,14 +6,17 @@ import java.util.NoSuchElementException;
 
 /**
  * Abstract class providing a basic node implementation.
- * The only abstract method subtypes have to implement is {@link computeChildren()}
- * which is used to generate children of a node to grow a tree as needed.
+ * The only abstract methods subtypes have to implement are {@link computeChildren()}
+ * which is used to generate children of a node to grow a tree as needed,
+ * and {@link Evaluable#evaluateStatically()} used to evaluate nodes statically.
  */
 public abstract class BaseNode<T> implements Node<T> {
 
     private Node<T> parent;
     private T content;
     private List<Node<T>> children;
+    private int value;
+    private boolean isInteresting;
 
     /**
      * Creates a root node.
@@ -159,6 +162,31 @@ public abstract class BaseNode<T> implements Node<T> {
      */
     protected List<? extends Node<T>> getChildren() {
         return this.children;
+    }
+
+    @Override
+    public int getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean isInteresting() {
+        return isInteresting;
+    }
+
+    @Override
+    public void markAsInteresting() {
+        this.isInteresting = true;
+    }
+
+    @Override
+    public void unmarkAsInteresting() {
+        this.isInteresting = false;
     }
 
 }

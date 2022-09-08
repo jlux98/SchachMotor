@@ -2,10 +2,9 @@ package helper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import classes.EvaluableInteger;
 import classes.IntNode;
-import gametree.GenericAlphaBetaPruning;
 import gametree.Node;
+import gametree.GenericAlphaBetaPruning;
 import gametree.Tree;
 
 public class AlphaBetaHelper {
@@ -31,7 +30,7 @@ public class AlphaBetaHelper {
      */
     public static void testNaryTree(int expectedResult, int depth, int degree, boolean whitesTurn, int ... values) {
         Tree<IntNode> binaryTree = IntNodeHelper.createIntNodeTree(degree, values);
-        Node<EvaluableInteger> bestMove = new GenericAlphaBetaPruning<EvaluableInteger>().evaluateTree(binaryTree, depth, whitesTurn);
-        assertEquals(expectedResult, bestMove.getContent().getValue());
+        Node<Integer> bestMove = new GenericAlphaBetaPruning<Integer>().evaluateTree(binaryTree, depth, whitesTurn);
+        assertEquals(expectedResult, bestMove.getValue());
     }
 }

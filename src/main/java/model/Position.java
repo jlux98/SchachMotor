@@ -1,7 +1,6 @@
 package model;
 
 import movegenerator.AttackMapGenerator;
-import positionevaluator.Evaluable;
 import positionevaluator.PositionEvaluator;
 
 /**
@@ -14,7 +13,7 @@ import positionevaluator.PositionEvaluator;
  * <b>Note:</b>
  * The array element at [0][0] represents the space a8, while [7][7] represents h1.
  */
-public class Position implements Comparable<Position>, Cloneable, Evaluable {
+public class Position implements Comparable<Position>, Cloneable {
 
     /**
      * The array element at [0][0] represents the space a8, [7][7] represents h1.
@@ -35,12 +34,6 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
     private boolean[][] attackedByWhite;
     private boolean[][] attackedByBlack;
     private Move generatedByMove;
-
-    /**
-     * Stores whether this Position is marked as interesting as required by {@link Evaluable}.
-     * This field does not affect equals(), compareTo(), toString() and is not copied by clone().
-     */
-    private boolean isInteresting;
 
     /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
@@ -68,7 +61,6 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
             throw new IllegalArgumentException("full move count must be greater than 0");
         }
         this.board = spaces;
-        this.isInteresting = false;
         this.whiteNextMove = whiteNextMove;
         this.whiteCastlingKingside = whiteCastlingKingside;
         this.whiteCastlingQueenside = whiteCastlingQueenside;
@@ -321,32 +313,21 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
         return this.toString().compareTo(otherPosition.toString());
     }
 
-    @Override
-    public int evaluate() {
-        this.isInteresting = false;
+    //TODO clean this up
+    public int evaluateBoard() {
         this.pointValue = PositionEvaluator.evaluatePosition(this);
         return this.pointValue;
     }
 
-    @Override
+    //TODO remove point attribute from position?
+
     public void setValue(int pointValue) {
-        //pointvalue may be negative
+        // pointvalue may be negative
         this.pointValue = pointValue;
     }
 
-    @Override
     public int getValue() {
         return this.pointValue;
-    }
-
-    @Override
-    public boolean isInteresting() {
-        return isInteresting;
-    }
-
-    @Override
-    public void markAsInteresting() {
-        this.isInteresting = true;
     }
 
     /*

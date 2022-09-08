@@ -18,7 +18,7 @@ public class GeneratingIntNode extends IntNode {
         this.childCount = childCount;
     }
 
-    public GeneratingIntNode(Integer value, Node<EvaluableInteger> parent, int childCount) {
+    public GeneratingIntNode(Integer value, Node<Integer> parent, int childCount) {
         super(value, parent);
         this.childCount = childCount;
     }
@@ -36,7 +36,7 @@ public class GeneratingIntNode extends IntNode {
 
     //increase visibility to public in this class
     @Override
-    public List<? extends Node<EvaluableInteger>> getChildren() {
+    public List<? extends Node<Integer>> getChildren() {
         return super.getChildren();
     }
 }
