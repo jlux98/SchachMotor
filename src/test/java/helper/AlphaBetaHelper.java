@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import classes.IntNode;
 import gametree.Node;
-import gametree.GenericAlphaBetaPruning;
 import gametree.Tree;
+import minimax.GenericAlphaBetaPruning;
 
 public class AlphaBetaHelper {
 

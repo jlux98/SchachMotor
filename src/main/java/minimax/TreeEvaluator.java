@@ -1,5 +1,7 @@
-package gametree;
+package minimax;
 
+import gametree.Node;
+import gametree.Tree;
 
 public interface TreeEvaluator<T> {
 

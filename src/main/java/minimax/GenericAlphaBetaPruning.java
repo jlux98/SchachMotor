@@ -1,6 +1,10 @@
-package gametree;
+package minimax;
 
 import java.util.List;
+
+import gametree.ComputeChildrenException;
+import gametree.Node;
+import gametree.Tree;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes

@@ -1,5 +1,6 @@
 package gametree;
 
+import minimax.GameTreeEvaluator;
 import model.Position;
 
 public class ImpGameTree extends ImpTree<GameNode> implements GameTree {

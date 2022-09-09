@@ -1,4 +1,7 @@
-package gametree;
+package minimax;
+
+import gametree.Node;
+import gametree.Tree;
 
 /**
  * Class implementing Minimax for trees consisting of Nodes that store any kind of Evaluable.

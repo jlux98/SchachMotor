@@ -3,9 +3,9 @@ package application;
 import java.util.Scanner;
 
 import gametree.GameNode;
-import gametree.GameNodeAlphaBetaPruning;
 import gametree.GameTree;
 import gametree.ImpGameTree;
+import minimax.GameNodeAlphaBetaPruning;
 import model.Position;
 import uciservice.FenParser;
 

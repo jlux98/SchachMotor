@@ -11,11 +11,12 @@ import org.junit.jupiter.api.Test;
 import classes.GeneratingIntNode;
 import data.IntNodeTestTree;
 import gametree.ImpTree;
-import gametree.GenericAlphaBetaPruning;
 import gametree.Node;
-import gametree.TreeEvaluator;
 import helper.AlphaBetaHelper;
 import helper.IntNodeHelper;
+import minimax.GenericAlphaBetaPruning;
+import minimax.TreeEvaluator;
+
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
 
