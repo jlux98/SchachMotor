@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Abstract class providing a basic node implementation.
- * The only abstract methods subtypes have to implement are {@link computeChildren()}
+ * The only abstract methods subtypes have to implement are {@link #computeChildren()}
  * which is used to generate children of a node to grow a tree as needed,
  * and {@link Evaluable#evaluateStatically()} used to evaluate nodes statically.
  */

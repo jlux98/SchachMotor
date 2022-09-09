@@ -16,8 +16,7 @@ public interface GameTreeEvaluator extends TreeEvaluator<Position> {
 
     /**
      * Evaluates the game tree and returns the GameNode that should be played.
-     * <br>
-     * <br>
+     * <br><br>
      * <b>Note:</b> Trees passed to this method should consist of GameNodes (and
      * subtypes of GameNode) only.
      * 

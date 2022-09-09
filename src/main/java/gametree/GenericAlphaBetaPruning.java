@@ -61,7 +61,7 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
     }
 
     /**
-     * Returns whether the passed node is a leaf node when inspected by
+     * Determines whether the passed node is a leaf node when inspected by
      * alpha-beta-pruning.
      * <br><br>
      * A node is a leaf if <b>at least one</b> of these conditions is true:
@@ -77,8 +77,8 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
      * If this method returns false, it is guaranteed that calling
      * parent.queryChildren() will not throw an ComputeChildrenException.
      * 
-     * @param parent
-     * @param depth  the
+     * @param parent the inspected node
+     * @param depth  the current depth of alpha-beta pruning
      * @return whether the passed node is a leaf node
      */
     private boolean isLeaf(Node<T> parent, int depth) {
@@ -98,8 +98,7 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
 
     /**
      * Minimizes the passed node (value = min(child values)) and returns the child
-     * node with
-     * the best (smallest) value.
+     * node with the best (smallest) value.
      * 
      * @param parent the node whose value should be determined
      * @param depth  the additional depth to which the tree should be evaluated
@@ -115,7 +114,7 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
     private Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
-         * depth = depth + 1; //evaluate recursively
+         *      depth = depth + 1; //evaluate recursively
          * }
          */
         // assign static evaluation to leaves
@@ -132,19 +131,17 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
             Node<T> bestChild = null; // the child that determines the value of this parent node
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren(); // get or calculate children
+            List<? extends Node<T>> children = parent.queryChildren();
             for (Node<T> child : children) {
                 // evaluate all children
-                // if this node is minimizing child nodes are maximizing
+                // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
                 alphaBetaMaximize(child, depth - 1, alpha, beta);
-                // read value of child node = value of the node returned by
-                // alphaBetaMinimize(child ...)
-                // = value of the Evaluable stored by that node (retrieved with getContent())
+                // read value of child node = value of the node returned by alphaBetaMaximize(child ...)
                 childValue = child.getValue();
 
                 // FIXME this hinders the performance of pruning
-                // -> initialize parent.getContent().setValue() instead
+                // -> initialize parent.setValue() instead
                 // return initialized value when breaking without previously evaluating any
                 // children
 
@@ -181,7 +178,7 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
 
             }
             // return the best child node
-            // that value stored by that node also is the value of this parent node
+            // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
             return bestChild;
@@ -196,8 +193,7 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
 
     /**
      * Maximizes the passed node (value = min(child values)) and returns the child
-     * node with
-     * the best (greatest) value.
+     * node with the best (greatest) value.
      * 
      * @param parent the node whose value should be determined
      * @param depth  the additional depth to which the tree should be evaluated
@@ -213,7 +209,7 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
     private Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
-         * depth = depth + 1; //evaluate recursively
+         *      depth = depth + 1; //evaluate recursively
          * }
          */
         // assign static evaluation to leaves
@@ -230,19 +226,17 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
             Node<T> bestChild = null; // the child that determines the value of this parent node
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren(); // get or calculate children
+            List<? extends Node<T>> children = parent.queryChildren();
             for (Node<T> child : children) {
                 // evaluate all children
-                // if this node is maximizing child nodes are minimizing
+                // if this node is maximizing, child nodes are minimizing
                 // child nodes are passed the determined alpha and beta values
                 alphaBetaMinimize(child, depth - 1, alpha, beta);
-                // read value of child node = value of the node returned by
-                // alphaBetaMinimize(child ...)
-                // = value of the Evaluable stored by that node (retrieved with getContent())
+                // read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 childValue = child.getValue();
 
                 // FIXME this hinders the performance of pruning
-                // -> initialize parent.getContent().setValue() instead
+                // -> initialize parent.setValue() instead
                 // return initialized value when breaking without previously evaluating any
                 // children
 
@@ -279,7 +273,7 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
 
             }
             // return the best child node
-            // that value stored by that node also is the value of this parent node
+            // the value stored by that node also is the value of this parent node
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
             return bestChild;

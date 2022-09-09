@@ -5,12 +5,11 @@ import movegenerator.MoveGenerator;
 
 /**
  * Class implementing Nodes containing Positions.
- * Extends BaseNode < Position > for node operations and implements the
- * Evaluable interface on top.
- * Additionally, this class narrows the return types of node methods from Node <
- * Position > to GameNode.
- * <br>
- * <br>
+ * Extends BaseNode < Position > for node operations,
+ * implements {@link #computeChildren()} to generate follow-up moves
+ * and implements {@link #evaluateStatically()} to calculate the position's point value.
+ * Additionally, this class narrows the return types of node methods from Node < Position > to GameNode.
+ * <br><br>
  * <b>Important Notes:</b>
  * <ul>
  *      <li>
@@ -19,8 +18,7 @@ import movegenerator.MoveGenerator;
  *      </li>
  *      <li>
  *          This class performs casts from Node < Position > to GameNode which should be
- *          safe
- *          so long as the containing tree consists only of gamenodes and subtypes of
+ *          safe so long as the containing tree consists only of gamenodes and subtypes of
  *          gamenode.
  *      </li>
  * </ul>

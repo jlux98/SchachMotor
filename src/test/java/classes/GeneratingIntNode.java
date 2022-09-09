@@ -9,10 +9,13 @@ import gametree.Node;
  * A subtype of IntNode able to generate child nodes.
  */
 public class GeneratingIntNode extends IntNode {
+
     /**
-     * the amount of children that this node will generate upon calling  computeChildren()
+     * the amount of children that this node will generate upon calling
+     * computeChildren()
      */
     private int childCount;
+
     public GeneratingIntNode(Integer value, int childCount) {
         super(value);
         this.childCount = childCount;
@@ -26,7 +29,7 @@ public class GeneratingIntNode extends IntNode {
     @Override
     protected void computeChildren() throws ComputeChildrenException {
         if (childCount == 0) {
-            throw new ComputeChildrenException("node value = 0");
+            throw new ComputeChildrenException("child count = 0");
         }
         //add children  that can generate between 0 and n-1 children to this node
         for (int i = 0; i < childCount; i++) {

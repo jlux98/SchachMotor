@@ -313,7 +313,11 @@ public class Position implements Comparable<Position>, Cloneable {
         return this.toString().compareTo(otherPosition.toString());
     }
 
-    //TODO clean this up
+    /**
+     * Statically evaluates this position by calculating the pointvalue
+     * of both sides and returning the difference.
+     * @return the board's static evaluation
+     */
     public int evaluateBoard() {
         this.pointValue = PositionEvaluator.evaluatePosition(this);
         return this.pointValue;

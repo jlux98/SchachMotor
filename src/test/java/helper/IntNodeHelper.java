@@ -41,7 +41,7 @@ public class IntNodeHelper {
 
     /**
      * Asserts that the IntNode's value is equal to the expected value.
-     * This does <i>not</i> compare the Integer stored as content by the IntNode.
+     * This does <b>not</b> compare the Integer stored as content by the IntNode.
      * @param expected the expected value
      * @param node the IntNode that should be storing this value
      */

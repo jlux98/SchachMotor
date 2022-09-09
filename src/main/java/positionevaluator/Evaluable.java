@@ -3,13 +3,17 @@ package positionevaluator;
 /**
  * Interface for classes that can be evaluated to a numeric value.
  * <br><br>
- * Classes must be able to evaluate themselves but must store the determined value after a call to {@link #evaluateStatically()}
+ * Classes must be able to evaluate themselves but must store the determined
+ * value after a call to {@link #evaluateStatically()}
  * so it can be overwritten by {@link #setValue(int)}.
- * The method {@link #getValue()} is used to retrieve the current value, whether it has been set by evaluateStatically()
- * or by explicitly assigning a value by calling setValue(int).
+ * The method {@link #getValue()} is used to retrieve the current value, whether
+ * it has been set by {@link #evaluateStatically()}
+ * or by explicitly assigning a value by calling {@link #setValue(int)}.
  * <br><br>
- * Nodes can be marked as especially interesting by {@link #markAsInteresting()} and are unmarked by {@link #unmarkAsInteresting()}.
- * Use {@link #isInteresting()} to determine whether a node is currently marked as interesting.
+ * Nodes can be marked as especially interesting by {@link #markAsInteresting()}
+ * and are unmarked by {@link #unmarkAsInteresting()}.
+ * Use {@link #isInteresting()} to determine whether a node is currently marked
+ * as interesting.
  */
 public interface Evaluable {
 
@@ -17,7 +21,7 @@ public interface Evaluable {
      * Evaluates this Evaluable and sets its value accordingly.
      * <br><br>
      * This overwrites this Evaluable's current value with the determined value such that
-     * calling getValue() after calling evaluateStatically() will return the same value.
+     * calling {@link #getValue()} after calling {@link #evaluateStatically()} will return the same value.
      * @return the calculated value of this evaluable
      */
     public abstract int evaluateStatically();
@@ -44,7 +48,8 @@ public interface Evaluable {
     public abstract void unmarkAsInteresting();
 
     /**
-     * This method does not evaluate this Evaluable, it simply returns the value that is currently stored by it.
+     * This method does not evaluate this Evaluable, it simply returns the
+     * value that is currently stored by it.
      * Values can be stored by calls to evaluateStatically() or setValue().
      * @return the value stored by this evaluable
      */
@@ -58,8 +63,8 @@ public interface Evaluable {
      *          Calling getValue() afterwards will return that value.
      *      </li>
      *      <li>
-     *          Calling evaluateStatically() afterwards will <b>not</b> return that value but will evaluate this Evaluable
-     *          and overwrite the value set by this method.
+     *          Calling evaluateStatically() afterwards will <b>not</b> return that value
+     *          but will evaluate this Evaluable and overwrite the value set by this method.
      *      </li>
      * </ul>
      * @param value the value that should be stored
