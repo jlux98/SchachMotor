@@ -3,6 +3,9 @@ package minimax;
 import gametree.Node;
 import gametree.Tree;
 
+/**
+ * Interface for classes evaluating trees.
+ */
 public interface TreeEvaluator<T> {
 
     /**
@@ -23,5 +26,15 @@ public interface TreeEvaluator<T> {
      * @deprecated will probably be removed from interfaces and changed to a private method, use {@link #evaluateTree(Tree, int, boolean)} instead
      */
     public abstract Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn);
+
+    /**
+     * @return the number of nodes that were evaluted by this TreeEvaluator
+     */
+    public abstract int getEvaluatedNodeCount();
+
+    /**
+     * Resets the counter for evaluated nodes to 0.
+     */
+    public abstract void resetEvaluatedNodeCount();
     
 }
