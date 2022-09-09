@@ -41,6 +41,7 @@ public class MoveGeneratorTest {
                 00000000,
                 PPPPPPPP,
                 RNBQKBNR]
+                Generating Move: null
                 White Next Move
                 White Castling: Kingside and Queenside
                 Black Castling: Kingside and Queenside

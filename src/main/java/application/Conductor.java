@@ -4,30 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import gametree.GameNode;
 import model.ArrayBoard;
 import model.ByteBoard;
 import model.Move;
 import model.Position;
 import uciservice.Tokenizer;
-import uciservice.UCIParserRandom;
+import uciservice.UCIOperator;
+import uciservice.UCIParserAlphaBetaPruning;
 import uciservice.UCITokenizer;
 
-public class TestArena {
-    private boolean contd = true;
-    private List<Move> pastMoves;
+import gametree.*;
 
-    public TestArena(){
+public class Conductor {
+    private boolean contd = true;
+    // TODO: track past moves so that we don't need to recalculate the board from scratch each time
+    private List<Move> pastMoves;
+    private String startingPosition;
+    private GameTree currentGameTree;
+
+    public Conductor(){
         pastMoves = new ArrayList<Move>();
     }
 
     private void start(){
+        System.out.println("New Conductor entering the stage.");
         Position currentPosition = null;
         Scanner inputScanner = new Scanner(System.in);
         Tokenizer tokenizer = new UCITokenizer();
         while (contd){
             String input = inputScanner.nextLine();
             try {
-                currentPosition = UCIParserRandom.executeCommand(tokenizer.tokenize(input), currentPosition, this);                
+                currentPosition = UCIParserAlphaBetaPruning.executeCommand(tokenizer.tokenize(input), currentPosition, this);                
                 if (currentPosition != null){
                     if (currentPosition.getBoard() instanceof ArrayBoard){
                         System.out.println("Using ArrayBoards");
@@ -43,12 +51,24 @@ public class TestArena {
         return;
     }
     public static void main(String[] args) {
-        new TestArena().start();
+        new Conductor().start();
         return;
     }
 
     public void stop(){
+        currentGameTree.stop();
+    }
+
+    public void quit(){
         contd = false;
+    }
+
+    public String getStartingPosition(){
+        return startingPosition;
+    }
+
+    public void setStartingPosition(String startingPosition){
+        this.startingPosition = startingPosition;
     }
 
     public void appendMove(Move move){
@@ -61,5 +81,12 @@ public class TestArena {
 
     public void emptyList(){
         pastMoves = new ArrayList<Move>();
+    }
+
+    public Position calculateBestMove(Position currentPosition) {
+        GameNode currentGameTree = new ImpGameTree(currentPosition, new GameNodeAlphaBetaPruning()).calculateBestMove(5);
+        UCIOperator.sendBestmove(currentGameTree.getContent().getMove());
+        appendMove(new Move(currentGameTree.getContent().getMove().toStringAlgebraic()));
+        return currentGameTree.getContent().clone();
     }
 }

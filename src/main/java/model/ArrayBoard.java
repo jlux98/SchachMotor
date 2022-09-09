@@ -19,6 +19,7 @@ public class ArrayBoard implements Board {
         return spaces[rank][file];
     }
 
+    
 
     @Override
     public Coordinate getKingPosition(boolean isWhite){
@@ -114,6 +115,90 @@ public class ArrayBoard implements Board {
     @Override
     public void setPieceAt(Coordinate space, Piece piece) {
         this.setPieceAt(space.getRank(), space.getFile(), piece);        
+    }
+
+	@Override
+	public byte getByteAt(Coordinate space) {
+        return getByteAt(space.getRank(),space.getFile());
+	}
+
+	@Override
+	public void setByteAt(Coordinate space, byte b) {
+        setByteAt(space.getRank(), space.getFile(), b);		
+	}
+
+	@Override
+	public byte getByteAt(int rank, int file) {
+        return pieceToByte(spaces[rank][file]);
+	}
+
+	private byte pieceToByte(Piece piece) {
+        byte result = -1;
+        if (piece == null){
+            return 0;
+        }
+        switch (piece.getPieceType()){
+            case BISHOP:
+                result = 1;
+                break;
+            case KING:
+                result = 2;
+                break;
+            case KNIGHT:
+                result = 3;
+                break;
+            case PAWN:
+                result = 4;
+                break;
+            case QUEEN:
+                result = 5;
+                break;
+            case ROOK:
+                result = 6;
+                break;
+            default:
+                break;
+        }
+        if (!piece.getIsWhite()){
+            result += 6;
+        }
+        return result;
+    }
+
+    @Override
+	public void setByteAt(int rank, int file, byte b) {
+		spaces[rank][file] = byteToPiece(b);
+	}
+
+    private Piece byteToPiece(byte b) {
+        if (b == 0){
+            return null;
+        }
+        char result = ' ';
+        switch (b%6){
+            case 1:
+                result = 'B';
+                break;
+            case 2:
+                result = 'K';
+                break;
+            case 3:
+                result = 'N';
+                break;
+            case 4:
+                result = 'P';
+                break;
+            case 5:
+                result = 'Q';
+                break;
+            case 0:
+                result = 'R';
+                break;
+        }
+        if (b > 6){
+            result = Character.toLowerCase(result);
+        }
+        return new Piece(result);
     }
 
 }

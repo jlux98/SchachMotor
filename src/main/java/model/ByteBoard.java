@@ -12,12 +12,12 @@ public class ByteBoard implements Board{
     private static final byte WHITE_PAWN = 4;
     private static final byte WHITE_QUEEN = 5;
     private static final byte WHITE_ROOK = 6;
-    private static final byte BLACK_BISHOP = 7;
+    // private static final byte BLACK_BISHOP = 7;
     private static final byte BLACK_KING = 8;
-    private static final byte BLACK_KNIGHT = 9;
-    private static final byte BLACK_PAWN = 10;
-    private static final byte BLACK_QUEEN = 11;
-    private static final byte BLACK_ROOK = 12;
+    // private static final byte BLACK_KNIGHT = 9;
+    // private static final byte BLACK_PAWN = 10;
+    // private static final byte BLACK_QUEEN = 11;
+    // private static final byte BLACK_ROOK = 12;
 
     public ByteBoard(Piece[][] spaces) {
         byte[][] result = new byte[8][8];
@@ -106,14 +106,13 @@ public class ByteBoard implements Board{
     public Coordinate getKingPosition(boolean isWhite){
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
-                // TODO: Make this less convoluted
-                Piece currentPiece = byteToPiece(spaces[rank][file]);
-                if (isWhite && currentPiece != null &&
-                    currentPiece.toString().equals("K")){
+                byte currentByte = spaces[rank][file];
+                if (isWhite && currentByte != 0 &&
+                    currentByte == WHITE_KING){
                     return new Coordinate(rank, file);
                 }
-                if (!isWhite && currentPiece != null &&
-                    currentPiece.toString().equals("k")){
+                if (!isWhite && currentByte != 0 &&
+                    currentByte == BLACK_KING){
                     return new Coordinate(rank, file);
                 }
             }
@@ -185,4 +184,20 @@ public class ByteBoard implements Board{
     public void setPieceAt(Coordinate space, Piece piece) {
         setPieceAt(space.getRank(), space.getFile(), piece);
     }
+	@Override
+	public byte getByteAt(Coordinate space) {
+        return getByteAt(space.getRank(), space.getFile());
+	}
+	@Override
+	public byte getByteAt(int rank, int file) {
+		return spaces[rank][file];
+	}
+	@Override
+	public void setByteAt(Coordinate space, byte b) {
+		setByteAt(space.getRank(), space.getFile(), b);
+	}
+	@Override
+	public void setByteAt(int rank, int file, byte b) {
+        spaces[rank][file] = b;		
+	}
 }

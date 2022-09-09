@@ -365,9 +365,8 @@ public class Position implements Comparable<Position>, Cloneable, Evaluable {
     }
 
     public Position getFollowUpByMove(Move toApply){
-        Position[] followUps = MoveGenerator.generatePossibleMovesPerPiece(
-            this, toApply.getStartingSpace().getRank(),
-            toApply.getStartingSpace().getFile()).toArray(new Position[1]);
+        Position[] followUps = MoveGenerator.generatePossibleMoves(
+            this);
         for (int i = 0; i < followUps.length; i++){
             if (followUps[i].generatedByMove.equals(toApply)){
                 return followUps[i];
