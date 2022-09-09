@@ -11,4 +11,6 @@ public interface GameTree extends Tree<GameNode> {
     //TODO specification
     public abstract GameNode calculateBestMove(int depth);
 
+    public abstract void stop();
+
 }

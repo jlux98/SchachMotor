@@ -1,6 +1,8 @@
 package model;
 
 import movegenerator.AttackMapGenerator;
+import movegenerator.MoveGenerator;
+import positionevaluator.Evaluable;
 import positionevaluator.PositionEvaluator;
 
 /**
@@ -249,6 +251,7 @@ public class Position implements Comparable<Position>, Cloneable {
     public String toString() {
         String result;
         result = board.toString() + "\n";
+        result += "Generating Move: " + generatedByMove + "\n";
         if (whiteNextMove) {
             result += "White Next Move\n";
         } else {
@@ -334,7 +337,41 @@ public class Position implements Comparable<Position>, Cloneable {
         return this.pointValue;
     }
 
-    /*
+    @Override
+    public boolean isInteresting() {
+        return isInteresting;
+    }
+
+    @Override
+    public void markAsInteresting() {
+        this.isInteresting = true;
+    }
+
+    public void applyMove(Move toApply){
+        Coordinate targetSpace = toApply.getTargetSpace();
+        Coordinate startingSpace = toApply.getStartingSpace();
+        board.setPieceAt(targetSpace, getPieceAt(startingSpace));
+        board.setPieceAt(startingSpace, null);
+        whiteNextMove = !whiteNextMove;
+        // TODO: implement en passant 
+    }
+
+    public void toggleWhiteNextMove(){
+        whiteNextMove = !whiteNextMove;
+    }
+
+    public Position getFollowUpByMove(Move toApply){
+        Position[] followUps = MoveGenerator.generatePossibleMoves(
+            this);
+        for (int i = 0; i < followUps.length; i++){
+            if (followUps[i].generatedByMove.equals(toApply)){
+                return followUps[i];
+            }
+        }
+        return null;
+    }
+
+     /*
      **********************************
      * Getters and Setters
      **********************************
@@ -352,9 +389,9 @@ public class Position implements Comparable<Position>, Cloneable {
         return pointValue;
     };
 
-    public Piece[][] getSpaces() {
-        return board.getSpaces();
-    }
+    // public Piece[][] getSpaces() {
+    //     return board.getSpaces();
+    // }
 
     public boolean getWhitesTurn() {
         return whiteNextMove;
@@ -408,6 +445,9 @@ public class Position implements Comparable<Position>, Cloneable {
         return board.getPieceAt(rank, file);
     }
 
+    public Piece getPieceAt(Coordinate space) {
+        return board.getPieceAt(space);
+    }
     public boolean[][] getAttackedByWhite() {
         return attackedByWhite;
     }

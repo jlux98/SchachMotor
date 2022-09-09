@@ -13,7 +13,8 @@ public abstract class UCIOperator {
     }
 
     public static void sendId(String name, String author){
-        sendOff("id name " + name + " author " + author);
+        sendOff("id name " + name);
+        sendOff("id author " + author);
     }
 
     public static void sendUciOk() {

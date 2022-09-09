@@ -15,6 +15,24 @@ public class Coordinate {
         this.file = file;
     }
 
+    public Coordinate(String algebraicCoordinate){
+        if (algebraicCoordinate.matches("[a-h][1-8]")){
+            this.file = parseFile(algebraicCoordinate.charAt(0));
+            this.rank = parseRank(algebraicCoordinate.charAt(1));
+        } else {
+            throw new IllegalArgumentException("Error: Coordinate not correctly formatted");
+        }
+    }
+
+    private int parseFile(char fileChar) {
+        return Character.getNumericValue(fileChar) - 10;
+    }
+
+    private int parseRank(char rankChar) {
+        
+        return 8-Character.getNumericValue(rankChar);
+    }
+
     public int getRank() {
         return rank;
     }
@@ -70,6 +88,21 @@ public class Coordinate {
     }
 
     
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Coordinate other = (Coordinate) obj;
+        if (file != other.file)
+            return false;
+        if (rank != other.rank)
+            return false;
+        return true;
+    }
 
     @Override
     public String toString() {
