@@ -1,9 +1,0 @@
-x Branches aufräumen
-x Board umbenennen
-- Refactor
-; int rank, int file ersetzen durch Coordinate in MoveGeneration etc.
-x GameTree und Node Interfaces diskutieren
-- abstrakte Klassen Wrapper diskutieren
-x wohin Minmax etc Code
-- fixme index should be xy -> in doc aufnehmen und fixme entfernen
-- Targetrank/file in Position (former Board) durch Coordinate ersetzen
