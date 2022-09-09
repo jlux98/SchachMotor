@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import classes.EvaluableInteger;
 import classes.GeneratingIntNode;
 import classes.IntNode;
 import data.IntNodeTestTree;
@@ -32,7 +31,7 @@ public class NodeTest {
     @Test
     public void createRootTest() {
         IntNode root = new IntNode(5);
-        assertEquals(5, root.getContent().getValue());
+        assertEquals(5, root.getContent());
         assertFalse(root.hasChildren());
     }
 
@@ -40,13 +39,13 @@ public class NodeTest {
     public void createChildNodeTest() throws ComputeChildrenException {
         IntNode root = new IntNode(3);
         IntNode child = new IntNode(18, root);
-        List<? extends Node<EvaluableInteger>> children = root.queryChildren();
-        Node<EvaluableInteger> retrievedChild = children.get(0);
+        List<? extends Node<Integer>> children = root.queryChildren();
+        Node<Integer> retrievedChild = children.get(0);
         assertTrue(root.hasChildren());
         assertEquals(1, children.size());
         assertTrue(retrievedChild == child);
         assertTrue(child.getParent() == root);
-        assertEquals(18, retrievedChild.getContent().getValue());
+        assertEquals(18, retrievedChild.getContent());
     }
 
     @Test
@@ -55,13 +54,13 @@ public class NodeTest {
         //create a second root node called child and add it to the root node
         IntNode child = new IntNode(7);
         root.insertChild(child);
-        List<? extends Node<EvaluableInteger>> children = root.queryChildren();
-        Node<EvaluableInteger> retrievedChild = children.get(0);
+        List<? extends Node<Integer>> children = root.queryChildren();
+        Node<Integer> retrievedChild = children.get(0);
         assertTrue(root.hasChildren());
         assertEquals(1, children.size());
         assertTrue(retrievedChild == child);
         assertTrue(child.getParent() == root);
-        assertEquals(7, retrievedChild.getContent().getValue());
+        assertEquals(7, retrievedChild.getContent());
     }
 
     @Test
@@ -149,12 +148,12 @@ public class NodeTest {
     /**
      * Calls queryChildren() on a node without children,
      * which calls computeChildren() to generate children.
-     * IntNode does not implemented computeChildren() and throws an UnsupportedOperationException instead.
+     * IntNode does not implemented computeChildren() and throws an ComputeChildrenException instead.
      */
     @Test
     public void queryChildrenCallsComputeChildrenIfNoChildrenStoredTest() {
         IntNode leaf = testTree.layer4Node3;
-        assertThrows(UnsupportedOperationException.class, () -> leaf.queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> leaf.queryChildren());
     }
 
     /**
@@ -170,7 +169,7 @@ public class NodeTest {
     @Test
     public void queryChildrenGeneratesChildrenTest() throws ComputeChildrenException {
         GeneratingIntNode parent = new GeneratingIntNode(0,3);
-        List<? extends Node<EvaluableInteger>> children = parent.queryChildren();
+        List<? extends Node<Integer>> children = parent.queryChildren();
         //test that parent generated exactly 3 children
         assertTrue(parent.hasChildren());
         assertEquals(3, children.size());

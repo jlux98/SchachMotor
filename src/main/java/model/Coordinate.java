@@ -113,4 +113,16 @@ public class Coordinate {
         return getFileString() + getRankString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Coordinate) {
+            Coordinate otherCoordinate = (Coordinate) obj;
+            return this.getRank() == otherCoordinate.getRank()
+                    && this.getFile() == otherCoordinate.getFile();
+        }
+        return false;
+    }
 }

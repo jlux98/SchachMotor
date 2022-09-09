@@ -2,11 +2,14 @@ package gametree;
 
 import java.util.List;
 
+import positionevaluator.Evaluable;
+
 /**
- * Interface for nodes that store values of a specific type.
+ * Interface for nodes that store objects of a specific type.
  * Nodes can be linked to create tree structures.
+ * Nodes have a value associated with them as specified by {@link Evaluable}.
  */
-public interface Node<T> {
+public interface Node<T> extends Evaluable {
 
     /**
      * @return the content stored by this node
