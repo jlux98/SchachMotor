@@ -4,12 +4,14 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import gametree.GameNode;
+import gametree.GameTree;
 import gametree.ImpGameTree;
 import minimax.GameNodeAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import model.Position;
 import uciservice.FenParseException;
 import uciservice.FenParser;
+import utility.TimeUtility;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
@@ -48,6 +50,8 @@ public class DemoApplicationFenToAlgebraic {
     private boolean setDefaultPosition = false;
     private String FEN; //TODO make lowercase again
     private Position position;
+
+    private long calculationTime = -1;
 
     public DemoApplicationFenToAlgebraic() {
         this.scanner = new Scanner(System.in);
@@ -253,6 +257,7 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void prepareNextRun() {
         evaluator.resetEvaluatedNodeCount();
+        calculationTime = -1; //not required, but better safe than sorry
         System.gc();
     }
 
@@ -409,8 +414,14 @@ public class DemoApplicationFenToAlgebraic {
      * @return the follow-up position
      */
     private Position calculateFollowUpPosition(Position position) {
-        return evaluator.evaluateTree(new ImpGameTree(GameNode.createRoot(position), evaluator), depth,
-                position.getWhiteNextMove()).getContent();
+        TimeUtility<GameNode> timer = new TimeUtility<GameNode>();
+
+        GameTree tree = new ImpGameTree(GameNode.createRoot(position), evaluator);
+        GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
+        Position bestMove = bestChild.getContent();
+        //save rough time spent calculating
+        calculationTime = timer.getElapsedTime();
+        return bestMove;
     }
 
     /**
@@ -475,11 +486,13 @@ public class DemoApplicationFenToAlgebraic {
      */
     private StringBuilder addPerformanceInfo(StringBuilder builder) {
         return addCoreInfo(builder)
-                .append("\n\tevaluated positions: " + evaluator.getEvaluatedNodeCount());
+                .append("\n\tevaluated positions: " + evaluator.getEvaluatedNodeCount())
+                .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime));
     }
 
     /**
     * Prints information about the application's configuration.
+    * Used to display the application's initial configuration.
     */
     private void printConfiguration() {
         StringBuilder builder = new StringBuilder();
@@ -494,7 +507,7 @@ public class DemoApplicationFenToAlgebraic {
 
     /**
     * Prints additional information used in debugging.
-    * Only called if debug mode is activated.
+    * Called after every calculation if debug mode is activated.
     */
     private void printDebugInfo() {
         StringBuilder builder = new StringBuilder();
