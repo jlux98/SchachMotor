@@ -11,14 +11,14 @@ public class PositionEvaluatorTest {
     public void positionEvaluatorTest(){
         assertEquals(0, PositionEvaluator.evaluatePosition(
             FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
-            "w KQkq - 0 1")));
+            "w KQkq - 0 1"),false));
         assertEquals(-4300,PositionEvaluator.evaluatePosition(
-            FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/8/7K b kq - 1 1")));
+            FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/8/7K b kq - 1 1"),false));
         assertEquals(4300,PositionEvaluator.evaluatePosition(
-            FenParser.parseFen("k7/8/8/8/8/8/PPPPPPPP/RNBQKBNR b kq - 1 1")));
+            FenParser.parseFen("k7/8/8/8/8/8/PPPPPPPP/RNBQKBNR b kq - 1 1"),false));
         assertEquals(-3775,PositionEvaluator.evaluatePosition(
-            FenParser.parseFen("rnbqk1nr/pppppppp/8/8/8/8/8/7K b kq - 1 1")));
+            FenParser.parseFen("rnbqk1nr/pppppppp/8/8/8/8/8/7K b kq - 1 1"),false));
         assertEquals(3775,PositionEvaluator.evaluatePosition(
-            FenParser.parseFen("k7/8/8/8/8/8/PPPPPPPP/RN1QKBNR b kq - 1 1")));
+            FenParser.parseFen("k7/8/8/8/8/8/PPPPPPPP/RN1QKBNR b kq - 1 1"),false));
     }
 }

@@ -79,21 +79,26 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
      * 
      * @param parent the inspected node
      * @param depth  the current depth of alpha-beta pruning
-     * @return whether the passed node is a leaf node
+     * @return 0 if the passed node is not a leaf node, 1 if is a leaf because
+     * depth == 0 and 2 if it is a leaf because no children could be generated
      */
-    private boolean isLeaf(Node<T> parent, int depth) {
+    private int isLeaf(Node<T> parent, int depth) {
         if (depth == 0) {
-            return true;
+            return 1;
         }
         try {
             // attempt to retrieve or if none are stored calculate children
             parent.queryChildren();
         } catch (ComputeChildrenException exception) {
             // node could not generate children -> is a leaf
-            return true;
+            return 2;
         }
         // node is a leaf if it has no children
-        return !parent.hasChildren();
+        if (parent.hasChildren()){
+            return 0;
+        } else {
+            return 2;
+        }
     }
 
     /**
@@ -118,9 +123,14 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
          * }
          */
         // assign static evaluation to leaves
-        if (isLeaf(parent, depth)) { // calls queryChildren()
+        if (isLeaf(parent, depth) == 1) { // calls queryChildren()
             // return PositionEvaluator.evaluatePosition(parent.getPosition());
-            parent.evaluateStatically();
+            parent.evaluateStatically(false);
+            return parent;
+        }
+        if (isLeaf(parent, depth) == 2) { // calls queryChildren()
+            // return PositionEvaluator.evaluatePosition(parent.getPosition());
+            parent.evaluateStatically(true);
             return parent;
         }
 
@@ -213,9 +223,14 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
          * }
          */
         // assign static evaluation to leaves
-        if (isLeaf(parent, depth)) {
+        if (isLeaf(parent, depth) == 1) { // calls queryChildren()
             // return PositionEvaluator.evaluatePosition(parent.getPosition());
-            parent.evaluateStatically();
+            parent.evaluateStatically(false);
+            return parent;
+        }
+        if (isLeaf(parent, depth) == 2) { // calls queryChildren()
+            // return PositionEvaluator.evaluatePosition(parent.getPosition());
+            parent.evaluateStatically(true);
             return parent;
         }
 
