@@ -53,8 +53,8 @@ public class FenParserTest {
         Position position = FenParser.parseFen("k6N/8/8/8/8/8/8/K6n w - - 0 1");
         Board board = position.getBoard();
         Piece a8Piece = board.getPieceAt(0, 0);
-        Piece h8Piece = board.getPieceAt(7, 0);
-        Piece a1Piece = board.getPieceAt(0, 7);
+        Piece h8Piece = board.getPieceAt(0, 7);
+        Piece a1Piece = board.getPieceAt(7, 0);
         Piece h1Piece = board.getPieceAt(7, 7);
 
         assertFalse(a8Piece.getIsWhite());

@@ -74,7 +74,7 @@ public class MoveGeneratorData {
         expectedFollowUpPositions.add("8/6K1/2Rp4/3np2q/2r2p2/6p1/1kb4p/8 w - - 1 2"); //move to h5 - two squares to upper right
         //queen can't move right (blocked by own black pawn)
         expectedFollowUpPositions.add("8/6K1/2Rp4/3np3/2r2p2/6p1/1kb3qp/8 w - - 1 2"); //move to g2 - one square to bottom right
-        expectedFollowUpPositions.add("/6K1/2Rp4/3np3/2r2p2/6p1/1kb4p/7q w - - 1 2"); //move to  h1 - two squares to bottom right
+        expectedFollowUpPositions.add("8/6K1/2Rp4/3np3/2r2p2/6p1/1kb4p/7q w - - 1 2"); //move to  h1 - two squares to bottom right
         expectedFollowUpPositions.add("8/6K1/2Rp4/3np3/2r2p2/6p1/1kb2q1p/8 w - - 1 2"); //move to f2 - one square down
         expectedFollowUpPositions.add("8/6K1/2Rp4/3np3/2r2p2/6p1/1kb4p/5q2 w - - 1 2"); //move to f1 - two squares down
         expectedFollowUpPositions.add("8/6K1/2Rp4/3np3/2r2p2/6p1/1kb1q2p/8 w - - 1 2"); //move to e2 - one square to bottom left
