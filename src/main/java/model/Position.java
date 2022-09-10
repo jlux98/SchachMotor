@@ -337,28 +337,28 @@ public class Position implements Comparable<Position>, Cloneable {
         return this.pointValue;
     }
 
-    @Override
-    public boolean isInteresting() {
-        return isInteresting;
-    }
+    // @Override
+    // public boolean isInteresting() {
+    //     return isInteresting;
+    // }
 
-    @Override
-    public void markAsInteresting() {
-        this.isInteresting = true;
-    }
+    // @Override
+    // public void markAsInteresting() {
+    //     this.isInteresting = true;
+    // }
 
-    public void applyMove(Move toApply){
-        Coordinate targetSpace = toApply.getTargetSpace();
-        Coordinate startingSpace = toApply.getStartingSpace();
-        board.setPieceAt(targetSpace, getPieceAt(startingSpace));
-        board.setPieceAt(startingSpace, null);
-        whiteNextMove = !whiteNextMove;
-        // TODO: implement en passant 
-    }
+    // public void applyMove(Move toApply){
+    //     Coordinate targetSpace = toApply.getTargetSpace();
+    //     Coordinate startingSpace = toApply.getStartingSpace();
+    //     board.setPieceAt(targetSpace, getPieceAt(startingSpace));
+    //     board.setPieceAt(startingSpace, null);
+    //     whiteNextMove = !whiteNextMove;
+    //     implement en passant 
+    // }
 
-    public void toggleWhiteNextMove(){
-        whiteNextMove = !whiteNextMove;
-    }
+    // public void toggleWhiteNextMove(){
+    //     whiteNextMove = !whiteNextMove;
+    // }
 
     public Position getFollowUpByMove(Move toApply){
         Position[] followUps = MoveGenerator.generatePossibleMoves(
