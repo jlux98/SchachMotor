@@ -13,21 +13,34 @@ import uciservice.FenParser;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
+    /**
+     * enables output of additional information 
+     */
     private boolean debugMode = false;
+
+    /**
+     * causes internal board to be printed to console
+     */
     private boolean printBoards = false;
 
     /**
-     * depth will not be configurable per fen-string if this is set
+     * depth will not be configurable if this is set
      */
     private boolean setDefaultDepth = false;
     private int depth = -1;
 
     /**
-    * algorithm will not be configurable per fen-string if this is set
+    * algorithm will not be configurable if this is set
     */
     private boolean setDefaultAlgorithm = false;
     private String algorithmName;
     private GameTreeEvaluator evaluator;
+
+    /**
+     * fen will not be configurable if this is set
+     */
+    private boolean setDefaultFen = false;
+    private String fen;
 
     public DemoApplicationFenToAlgebraic() {
         this.scanner = new Scanner(System.in);
@@ -41,6 +54,7 @@ public class DemoApplicationFenToAlgebraic {
                     -debug - use debug mode (prints additional information)
                     -depth <n> - always use a depth of n
                     -algorithm <algorithm> - always use the specified algorithm
+                    -fen <fen> - always use the specified fen
                     -printboards - print the board representing the calculated move
                 """);
         DemoApplicationFenToAlgebraic demo = new DemoApplicationFenToAlgebraic();
@@ -53,11 +67,11 @@ public class DemoApplicationFenToAlgebraic {
      * @param args the command line arguments passed to the program
      */
     private void readArguments(String[] args) {
-        String arg;
+        String argument;
         for (int i = 0; i < args.length; i++) {
-            arg = args[i].toLowerCase(); //ignore case
+            argument = args[i].toLowerCase(); //ignore case
 
-            switch (arg) {
+            switch (argument) {
                 case "-debug" -> debugMode = true;
                 case "-depth", "-defaultDepth" -> {
                     parseDefaultDepthArgument(args, i);
@@ -67,11 +81,15 @@ public class DemoApplicationFenToAlgebraic {
                     parseDefaultAlgorithmArgument(args, i);
                     i++;
                 }
+                case "-fen" -> {
+                    parseDefaultFenArgument(args, i);
+                    i++;
+                }
                 case "-printboards" -> {
                     printBoards = true;
                 }
                 default -> {
-                    System.out.println("not recognized: " + arg);
+                    System.out.println("not recognized: " + argument);
                     shutdown();
                 }
             }
@@ -101,7 +119,7 @@ public class DemoApplicationFenToAlgebraic {
             failure = true;
         }
         if (failure) {
-            System.out.println("argument after -depth or -defaultDepth must be a number");
+            System.out.println("argument after -depth must be a number");
             shutdown();
         }
 
@@ -135,6 +153,26 @@ public class DemoApplicationFenToAlgebraic {
         }
     }
 
+    private void parseDefaultFenArgument(String[] args, int index) {
+        boolean failure = false;
+        if (args.length > index + 1) {
+            String fenArg = args[index + 1]; //do not use lower case for fen strings
+            setDefaultFen = true;
+            try {
+                useFen(fenArg);
+            } catch (FenParseException exception) {
+                failure = true;
+            }
+        } else {
+            failure = true;
+        }
+
+        if (failure) {
+            System.out.println("argument after -fen must be a valid fen string");
+            shutdown();
+        }
+    }
+
     /**
      * Checks if the String represents a known algorithm.
      * If it is, a new instance will be set as Evaluator.
@@ -152,6 +190,17 @@ public class DemoApplicationFenToAlgebraic {
                 throw new NoSuchElementException("algorithm could not be found");
             }
         }
+    }
+
+    /**
+     * @throws FenParseException if the fen is invalid
+     * @param fen
+     */
+    private void useFen(String fen) {
+        //see if parsing throws an exception
+        //if not, fen is valid
+        FenParser.parseFen(fen);
+        this.fen = fen;
     }
 
     private void useDefaultAlgorithm() {
@@ -178,17 +227,21 @@ public class DemoApplicationFenToAlgebraic {
      * Make sure to call {@link #readArguments(String[])} first.
      */
     private void run() {
+        //store the position as a local variable only
+        //to reduce the risk of accidentally reusing the same position object
+        //FIXME this should not be necessary (anymore)
+        Position position;
         while (true) {
             try {
-                Position readPosition = readPosition();
                 if (!setDefaultDepth) {
                     readDepth();
                 }
                 if (!setDefaultAlgorithm) {
                     readAlgorithm();
                 }
-                Position calculatedMove = calculateFollowUpPosition(readPosition);
-                output(calculatedMove, readPosition.getWhiteNextMove());
+                position = getPosition();
+                Position calculatedMove = calculateFollowUpPosition(position);
+                output(calculatedMove, position.getWhiteNextMove());
                 evaluator.resetEvaluatedNodeCount();
                 System.gc();
             } catch (Exception exception) {
@@ -275,14 +328,47 @@ public class DemoApplicationFenToAlgebraic {
     }
 
     /**
-     * Prompts the user to enter a fen string and
-     * returns the corresponding Position object.
-     * @return the Position entered by the user
+     * If no default fen is set,
+     * prompts the user to enter a fen string and
+     * returns it.
+     * Otherwise, returns the default fen string.
+     * @return 
+     * <ul>
+     *       <li>the default fen, if set</li>
+     *       <li>a fen entered by the user, if no default fen is set</li>       
+     * </ul>
      */
-    private Position readPosition() {
+    private void updateFen() {
+        //TODO update doc
+        if (setDefaultFen) {
+             //use the stored default fen string
+        } else {
+            fen = readInput("enter fen:");
+        }
+    }
+
+    /**
+     * If no default fen is set,
+     * prompts the user to enter a fen string and
+     * returns the corresponding Position object.
+     * Otherwise, returns the position represented by the
+     * default fen string.
+     * This method prompts for a fen repeatedly, 
+     * until a valid one is entered.
+     * @return
+     * <ul>
+     *       <li>the position represented by the default fen, if set</li>
+     *       <li>
+     *          the position represented by a fen entered by the user, 
+     *          if no default fen is set
+     *      </li>       
+     * </ul>
+     */
+    private Position getPosition() {
         while (true) {
             try {
-                return FenParser.parseFen(readInput("enter fen:"));
+                updateFen();
+                return FenParser.parseFen(fen);
             } catch (FenParseException exception) {
                 System.out.println("fen could not be parsed");
             }
@@ -362,6 +448,7 @@ public class DemoApplicationFenToAlgebraic {
     */
     private void printDebugInfo(Position position) {
         System.out.println("\ndebug info:");
+        System.out.println("\tused fen:" + fen);
         System.out.println("\tused depth: " + depth);
         System.out.println("\tused algorithm: " + algorithmName);
         System.out.println("\tevaluated positions: " + evaluator.getEvaluatedNodeCount());
@@ -383,7 +470,7 @@ public class DemoApplicationFenToAlgebraic {
         if (printBoards) {
             printBoard(position);
         }
-  
+
         printMove(position, whitesMove);
     }
 }
