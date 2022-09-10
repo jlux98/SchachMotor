@@ -30,7 +30,7 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
-  </dependency>
+    </dependency>
   </dependencies>
 
   <build>
@@ -58,6 +58,13 @@
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.2.2</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <mainClass>application.DemoApplicationFenToAlgebraic</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
