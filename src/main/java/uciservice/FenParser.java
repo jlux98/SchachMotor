@@ -164,10 +164,17 @@ public class FenParser {
             if (Character.isDigit(character)) {
                 xPosition += Character.getNumericValue(character);
             } else {
-                Piece piece = new Piece(character);
-                piecePositions.setPieceAt(yPosition, xPosition, piece);
-                xPosition++;
+                try {
+                    Piece piece = new Piece(character);
+                    piecePositions.setPieceAt(yPosition, xPosition, piece);
+                    xPosition++;
+                } catch (IllegalArgumentException exception) {
+                    throw new FenParseException(exception);
+                }
             }
+        }
+        if (xPosition != 8) {
+            throw new FenParseException("rank is not filled");
         }
     }
 
@@ -242,7 +249,8 @@ public class FenParser {
                 //lowercase characters are black
                 case 'k' -> blackCastlingKingside = true;
                 case 'q' -> blackCastlingQueenside = true;
-
+                default -> throw new FenParseException(
+                        "castling abilities must be denoted by characters from KkQq, not " + castlingAbility);
             }
 
         }
@@ -327,9 +335,7 @@ public class FenParser {
      */
     private static int parseInt(String intString) {
         try {
-
             return Integer.parseInt(intString);
-
         } catch (NumberFormatException exception) {
             throw new FenParseException(exception);
         }
@@ -342,6 +348,9 @@ public class FenParser {
      */
     private void parseHalfMoveCount(String halfMoveCountToken) {
         halfMoves = FenParser.parseInt(halfMoveCountToken);
+        if (halfMoves < 0) {
+            throw new FenParseException("full move count must be >= 0");
+        }
     }
 
     /**
@@ -351,6 +360,9 @@ public class FenParser {
     */
     private void parseFullMoveCount(String fullMoveCountToken) {
         fullMoves = FenParser.parseInt(fullMoveCountToken);
+        if (fullMoves < 1) {
+            throw new FenParseException("full move count must be >= 1");
+        }
     }
 
 }
