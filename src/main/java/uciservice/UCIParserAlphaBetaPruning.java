@@ -199,11 +199,11 @@ public abstract class UCIParserAlphaBetaPruning{
                 }
             }
         }
-        if (oldTurn.size() != children.size() - 3){
+        if (oldTurn.size() != children.size() - 4){
             // System.out.println("not the same because wrong length");
             return false;
         }
-        for (int i = 0; i + 3 < children.size(); i++){
+        for (int i = 0; i + 4 < children.size(); i++){
             if (!oldTurn.get(i).toStringAlgebraic().toLowerCase().equals(children.get(i+2).getData())){
                 // System.out.println("Not the same because turn " + i + "differs");
                 return false;
