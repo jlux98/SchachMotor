@@ -14,13 +14,18 @@ import uciservice.FenParser;
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
     private boolean debugMode = false;
+    private boolean printBoards = false;
+
     /**
-     * depth will not be configurable per fen-string if a default depth
-     * is set when starting the application
+     * depth will not be configurable per fen-string if this is set
      */
     private boolean setDefaultDepth = false;
-    private boolean setDefaultAlgorithm = false;
     private int depth = -1;
+
+    /**
+    * algorithm will not be configurable per fen-string if this is set
+    */
+    private boolean setDefaultAlgorithm = false;
     private String algorithmName;
     private GameTreeEvaluator evaluator;
 
@@ -34,8 +39,9 @@ public class DemoApplicationFenToAlgebraic {
                 Enter exit or hit enter without entering anything to exit.
                 Possible options are:
                     -debug - use debug mode (prints additional information)
-                    -defaultDepth <n> - always use a depth of n
-                    -algorithm <algorithm> - use the specified algorithm
+                    -depth <n> - always use a depth of n
+                    -algorithm <algorithm> - always use the specified algorithm
+                    -printboards - print the board representing the calculated move
                 """);
         DemoApplicationFenToAlgebraic demo = new DemoApplicationFenToAlgebraic();
         demo.readArguments(args);
@@ -58,8 +64,11 @@ public class DemoApplicationFenToAlgebraic {
                     i++;
                 }
                 case "-algorithm" -> {
-                    parseAlgorithmArgument(args, i);
+                    parseDefaultAlgorithmArgument(args, i);
                     i++;
+                }
+                case "-printboards" -> {
+                    printBoards = true;
                 }
                 default -> {
                     System.out.println("not recognized: " + arg);
@@ -75,15 +84,16 @@ public class DemoApplicationFenToAlgebraic {
      * Sets setDefaultDepth to true.
      * Attempts parsing the passed String to a number and using it
      * as default depth.
-     * @param depthArg the argument that should be parsed as depth
+     * @param args the command line arguments
+     * @param index the index of the "-depth" switch in the argument array
      */
     private void parseDefaultDepthArgument(String[] args, int index) {
         //remember that changing index here will not affect the calling method
         boolean failure = false;
         try {
             if (args.length > index + 1) {
-                setDefaultDepth = true;
                 depth = Integer.parseInt(args[index + 1]);
+                setDefaultDepth = true;
             } else {
                 failure = true;
             }
@@ -98,11 +108,13 @@ public class DemoApplicationFenToAlgebraic {
     }
 
     /**
+     * Sets setDefaultAlgorithm to true.
      * Attempts to parse the String argument to one of the supported evaluation strategies.
      * Will use the specified algorithm if supported and shutdown otherwise.
-     * @param algorithmArg
+     * @param args the command line arguments
+     * @param index the index of the "-algorithm" switch in the argument array
      */
-    private void parseAlgorithmArgument(String[] args, int index) {
+    private void parseDefaultAlgorithmArgument(String[] args, int index) {
 
         boolean failure = false;
         if (args.length > index + 1) {
@@ -123,6 +135,13 @@ public class DemoApplicationFenToAlgebraic {
         }
     }
 
+    /**
+     * Checks if the String represents a known algorithm.
+     * If it is, a new instance will be set as Evaluator.
+     * @throws NoSuchElementException if the String does not match
+     * an algorithm
+     * @param algorithm the name of the algorithm to use
+     */
     private void useAlgorithm(String algorithm) {
         switch (algorithm) {
             case "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
@@ -149,14 +168,19 @@ public class DemoApplicationFenToAlgebraic {
                         + "\n\tdebug mode: " + debugMode
                         + "\n\talgorithm: " + algorithmName
                         + "\n\tuse default depth: " + setDefaultDepth
-                        + "\n\tdepth: " + depth);
+                        + "\n\tdepth: " + depth
+                        + "\n\tprint boards: " + printBoards);
 
     }
 
+    /**
+     * Runs the demo application.
+     * Make sure to call {@link #readArguments(String[])} first.
+     */
     private void run() {
         while (true) {
             try {
-                Position readPosition = readPosition("enter fen:");
+                Position readPosition = readPosition();
                 if (!setDefaultDepth) {
                     readDepth();
                 }
@@ -189,6 +213,13 @@ public class DemoApplicationFenToAlgebraic {
         System.exit(0); // normal termination
     }
 
+    /**
+     * Prints information about an exception.
+     * Displays the passed message to the user.
+     * Prints the exception's stacktrace if debug mode is activated.
+     * @param exception the exception that was thrown
+     * @param message will be displayed to the user
+     */
     private void printExceptionInfo(Exception exception, String message) {
         System.out.println(message);
         if (debugMode) {
@@ -224,6 +255,13 @@ public class DemoApplicationFenToAlgebraic {
         return readInput();
     }
 
+    /**
+     * Prompts the user to enter an integer.
+     * Prompts the user repeatedly until an integer is
+     * successfully entered. 
+     * @param prompt displayed to the user
+     * @return the read integer
+     */
     private int readInt(String prompt) {
         int result;
         while (true) {
@@ -236,16 +274,24 @@ public class DemoApplicationFenToAlgebraic {
         }
     }
 
-    private Position readPosition(String prompt) {
+    /**
+     * Prompts the user to enter a fen string and
+     * returns the corresponding Position object.
+     * @return the Position entered by the user
+     */
+    private Position readPosition() {
         while (true) {
             try {
-                return FenParser.parseFen(readInput(prompt));
+                return FenParser.parseFen(readInput("enter fen:"));
             } catch (FenParseException exception) {
                 System.out.println("fen could not be parsed");
             }
         }
     }
 
+    /**
+     * Prompts the user to enter the calculation depth.
+     */
     private void readDepth() {
         if (setDefaultDepth) {
             //do not read depth if default depth is set
@@ -254,6 +300,9 @@ public class DemoApplicationFenToAlgebraic {
         depth = readInt("enter depth: ");
     }
 
+    /**
+     * Prompts the user to enter an algorithm and stores it.
+     */
     private void readAlgorithm() {
         while (true) {
             try {
@@ -265,6 +314,12 @@ public class DemoApplicationFenToAlgebraic {
         }
     }
 
+    /**
+     * Uses the stored GameTreeEvaluator to calculate a
+     * follow-up move to the passed position.
+     * @param position
+     * @return the follow-up position
+     */
     private Position calculateFollowUpPosition(Position position) {
         return evaluator.evaluateTree(new ImpGameTree(GameNode.createRoot(position), evaluator), depth,
                 position.getWhiteNextMove()).getContent();
@@ -288,31 +343,47 @@ public class DemoApplicationFenToAlgebraic {
             promoted = " promoted to " + algebraic.substring(4);
         }
 
-        System.out.println(movedColor + " : " + startingSpace + " -> " + targetSpace + promoted);
+        System.out.println("\n" + movedColor + " : " + startingSpace + " -> " + targetSpace + promoted);
 
     }
 
     /**
-     * Prints additional information used in debugging.
-     * Only called if debug mode is activated.
+     * Prints the board stored by the passed position.
      * @param position
      */
-    private void printDebugInfo(Position position) {
-        System.out.println("\ndebug info:");
-        System.out.println("internal board:\n" + position.toString());
+    private void printBoard(Position position) {
+        System.out.println("\ninternal board:\n" + position.toString());
     }
 
+    /**
+    * Prints additional information used in debugging.
+    * Only called if debug mode is activated.
+    * @param position
+    */
+    private void printDebugInfo(Position position) {
+        System.out.println("\ndebug info:");
+        System.out.println("\tused depth: " + depth);
+        System.out.println("\tused algorithm: " + algorithmName);
+        System.out.println("\tevaluated positions: " + evaluator.getEvaluatedNodeCount());
+    }
+
+    /**
+     * Prints the move associated with the passed position.
+     * Prints additional information if debug mode
+     * or printBoards is activated.
+     * @param position the position storing the move to be played
+     * @param whitesMove whether the move is played by white
+     */
     private void output(Position position, boolean whitesMove) {
-        //TODO dont print depth if a default depth is set
-        System.out.println("used depth: " + depth);
-        //TODO dont print algorithm if a default algorithm is set
-        System.out.println("used algorithm: " + algorithmName);
-        System.out.println("evaluated positions: " + evaluator.getEvaluatedNodeCount());
-        System.out.println(); //newline
-        printMove(position, whitesMove);
 
         if (debugMode) {
             printDebugInfo(position);
         }
+
+        if (printBoards) {
+            printBoard(position);
+        }
+  
+        printMove(position, whitesMove);
     }
 }
