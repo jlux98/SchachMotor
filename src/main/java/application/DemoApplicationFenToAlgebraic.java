@@ -13,6 +13,12 @@ import uciservice.FenParser;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
+
+    /**
+     * enables output of performance information 
+     */
+    private boolean benchMarkMode = false;
+
     /**
      * enables output of additional information 
      */
@@ -39,8 +45,9 @@ public class DemoApplicationFenToAlgebraic {
     /**
      * fen will not be configurable if this is set
      */
-    private boolean setDefaultFen = false;
-    private String fen;
+    private boolean setDefaultPosition = false;
+    private String FEN; //TODO make lowercase again
+    private Position position;
 
     public DemoApplicationFenToAlgebraic() {
         this.scanner = new Scanner(System.in);
@@ -48,10 +55,12 @@ public class DemoApplicationFenToAlgebraic {
 
     public static void main(String[] args) {
         System.out.println("""
+
                 This application reads FEN-strings from stdin and answers with a move in algebraic form.
                 Enter exit or hit enter without entering anything to exit.
                 Possible options are:
-                    -debug - use debug mode (prints additional information)
+                    -debug - use debug mode (prints all available information and enables stack traces)
+                    -benchmark - use benchmark mode (prints performance related info)
                     -depth <n> - always use a depth of n
                     -algorithm <algorithm> - always use the specified algorithm
                     -fen <fen> - always use the specified fen
@@ -73,6 +82,7 @@ public class DemoApplicationFenToAlgebraic {
 
             switch (argument) {
                 case "-debug" -> debugMode = true;
+                case "-benchmark" -> benchMarkMode = true;
                 case "-depth", "-defaultDepth" -> {
                     parseDefaultDepthArgument(args, i);
                     i++;
@@ -82,7 +92,7 @@ public class DemoApplicationFenToAlgebraic {
                     i++;
                 }
                 case "-fen" -> {
-                    parseDefaultFenArgument(args, i);
+                    parseDefaultPositionArgument(args, i);
                     i++;
                 }
                 case "-printboards" -> {
@@ -152,14 +162,16 @@ public class DemoApplicationFenToAlgebraic {
             shutdown();
         }
     }
+    //TODO reduce ccode redundancy
 
-    private void parseDefaultFenArgument(String[] args, int index) {
+    private void parseDefaultPositionArgument(String[] args, int index) {
         boolean failure = false;
         if (args.length > index + 1) {
             String fenArg = args[index + 1]; //do not use lower case for fen strings
-            setDefaultFen = true;
+            FEN = fenArg; //store the fen representing the board
+            setDefaultPosition = true;
             try {
-                useFen(fenArg);
+                usePosition(fenArg);
             } catch (FenParseException exception) {
                 failure = true;
             }
@@ -196,11 +208,9 @@ public class DemoApplicationFenToAlgebraic {
      * @throws FenParseException if the fen is invalid
      * @param fen
      */
-    private void useFen(String fen) {
-        //see if parsing throws an exception
-        //if not, fen is valid
-        FenParser.parseFen(fen);
-        this.fen = fen;
+    private void usePosition(String fen) {
+        //TODO update doc
+        position = FenParser.parseFen(fen);
     }
 
     private void useDefaultAlgorithm() {
@@ -209,28 +219,10 @@ public class DemoApplicationFenToAlgebraic {
     }
 
     /**
-     * Prints information about the application's configuration.
-     */
-    private void printConfiguration() {
-        System.out.println(
-                "configuration:"
-                        + "\n\tdebug mode: " + debugMode
-                        + "\n\talgorithm: " + algorithmName
-                        + "\n\tuse default depth: " + setDefaultDepth
-                        + "\n\tdepth: " + depth
-                        + "\n\tprint boards: " + printBoards);
-
-    }
-
-    /**
      * Runs the demo application.
      * Make sure to call {@link #readArguments(String[])} first.
      */
     private void run() {
-        //store the position as a local variable only
-        //to reduce the risk of accidentally reusing the same position object
-        //FIXME this should not be necessary (anymore)
-        Position position;
         while (true) {
             try {
                 if (!setDefaultDepth) {
@@ -239,16 +231,29 @@ public class DemoApplicationFenToAlgebraic {
                 if (!setDefaultAlgorithm) {
                     readAlgorithm();
                 }
-                position = getPosition();
+                if (!setDefaultPosition) {
+                    readPosition();
+                }
+
                 Position calculatedMove = calculateFollowUpPosition(position);
                 output(calculatedMove, position.getWhiteNextMove());
-                evaluator.resetEvaluatedNodeCount();
-                System.gc();
+                prepareNextRun();
+
             } catch (Exception exception) {
                 System.out.println("\tfailure: ");
                 exception.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Executed after every "run" (= calulation of a move) of the application.
+     * Resets the evaluated node counter of the used evaluator.
+     * Encourages the garbage collection to free up memory.
+     */
+    private void prepareNextRun() {
+        evaluator.resetEvaluatedNodeCount();
+        System.gc();
     }
 
     /**
@@ -338,13 +343,9 @@ public class DemoApplicationFenToAlgebraic {
      *       <li>a fen entered by the user, if no default fen is set</li>       
      * </ul>
      */
-    private void updateFen() {
+    private String readFen() {
         //TODO update doc
-        if (setDefaultFen) {
-             //use the stored default fen string
-        } else {
-            fen = readInput("enter fen:");
-        }
+        return readInput("enter fen:");
     }
 
     /**
@@ -364,11 +365,12 @@ public class DemoApplicationFenToAlgebraic {
      *      </li>       
      * </ul>
      */
-    private Position getPosition() {
+    private void readPosition() {
+        //TODO update doc 
         while (true) {
             try {
-                updateFen();
-                return FenParser.parseFen(fen);
+                position = FenParser.parseFen(readFen());
+                return;
             } catch (FenParseException exception) {
                 System.out.println("fen could not be parsed");
             }
@@ -442,16 +444,76 @@ public class DemoApplicationFenToAlgebraic {
     }
 
     /**
+     * Adds the configuration of the setDefault switches. 
+     * @param builder
+     * @return
+     */
+    private StringBuilder addDefaultSettings(StringBuilder builder) {
+        return builder
+                .append("\n\tuse default algorithm:" + setDefaultAlgorithm)
+                .append("\n\tuse default depth: " + setDefaultDepth)
+                .append("\n\tuse default position: " + setDefaultPosition);
+    }
+
+    /**
+     * Adds algorithm name, depth and fen string.
+     * @param builder
+     * @return
+     */
+    private StringBuilder addCoreInfo(StringBuilder builder) {
+        return builder
+                .append("\n\talgorithm: " + algorithmName)
+                .append("\n\tdepth: " + depth)
+                .append("\n\tposition: " + FEN);
+    }
+
+    /**
+     * Adds algorithm name, depth, fen string, and number of evaluated nodes.
+     * Includes all information provided by {@link #addCoreInfo(StringBuilder)}.
+     * @param builder
+     * @return
+     */
+    private StringBuilder addPerformanceInfo(StringBuilder builder) {
+        return addCoreInfo(builder)
+                .append("\n\tevaluated positions: " + evaluator.getEvaluatedNodeCount());
+    }
+
+    /**
+    * Prints information about the application's configuration.
+    */
+    private void printConfiguration() {
+        StringBuilder builder = new StringBuilder();
+        builder
+                .append("\nconfiguration:")
+                .append("\n\tdebug mode: " + debugMode) //add configuration of debug and benchmark mode
+                .append("\n\tbenchmark mode: " + benchMarkMode);
+        addCoreInfo(addDefaultSettings(builder));
+
+        System.out.println(builder.toString());
+    }
+
+    /**
     * Prints additional information used in debugging.
     * Only called if debug mode is activated.
-    * @param position
     */
-    private void printDebugInfo(Position position) {
-        System.out.println("\ndebug info:");
-        System.out.println("\tused fen:" + fen);
-        System.out.println("\tused depth: " + depth);
-        System.out.println("\tused algorithm: " + algorithmName);
-        System.out.println("\tevaluated positions: " + evaluator.getEvaluatedNodeCount());
+    private void printDebugInfo() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\ndebug info:");
+        addPerformanceInfo(addDefaultSettings(builder));
+
+        System.out.println(builder.toString());
+    }
+
+    /**
+     * Prints performance related info.
+     * Only called in benchmark mode.
+     */
+    private void printPerformanceInfo() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\nperformance info:");
+        addPerformanceInfo(builder);
+
+        System.out.println(builder.toString());
     }
 
     /**
@@ -464,7 +526,13 @@ public class DemoApplicationFenToAlgebraic {
     private void output(Position position, boolean whitesMove) {
 
         if (debugMode) {
-            printDebugInfo(position);
+            printDebugInfo();
+        } else {
+            if (benchMarkMode) {
+                //debug info contains performance info
+                //so only print performance info if debug is not already being printed
+                printPerformanceInfo();
+            }
         }
 
         if (printBoards) {
