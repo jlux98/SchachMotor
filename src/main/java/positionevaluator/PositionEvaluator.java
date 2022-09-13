@@ -1,9 +1,6 @@
 package positionevaluator;
 
 import model.Position;
-import movegenerator.MoveGenerator;
-
-import javax.swing.text.html.HTMLDocument.RunElement;
 
 import model.Piece;
 import model.PieceType;
@@ -11,22 +8,27 @@ import model.PieceType;
 public class PositionEvaluator implements Evaluator<Position> {
 
     @Override
-    public int evaluate(Position position, boolean isNaturalLeaf) {
+    public int evaluate(Position position, boolean isNaturalLeaf, int depth) {
         //TODO merge with evaluatePosition when refactoring is defintive
-        return PositionEvaluator.evaluatePosition(position, isNaturalLeaf);
+        return PositionEvaluator.evaluatePosition(position, isNaturalLeaf, depth);
     }
 
-    public static int evaluatePosition(Position position, boolean isNaturalLeaf){
+    public static int evaluatePosition(Position position, boolean isNaturalLeaf, int depth){
         int result = 0;
+        // TODO: 50/75 turn draw
+        // TODO: draw if the same position has occurred 3 times in a match
+        // TODO: clarify if same-position-draw should be checked here or in the conductor
+        
         if (isNaturalLeaf){
             if (position.getWhiteInCheck()){
-                result -= PieceType.KING.getPointValue();
+                result -= (depth * PieceType.KING.getPointValue());
             } else if (position.getBlackInCheck()){
-                result += PieceType.KING.getPointValue();
+                result += (depth * PieceType.KING.getPointValue());
             } else {
                 result = 0;
             }
         } else {
+
             int blackBishops = 0;
             int whiteBishops = 0;
             for (int rank = 0; rank < 8; rank++){
