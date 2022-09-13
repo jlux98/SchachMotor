@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -14,10 +15,15 @@ import gametree.ImpTree;
 import gametree.Node;
 import helper.TreeEvaluationHelper;
 import helper.IntNodeHelper;
+import minimax.GameNodeAlphaBetaPruning;
 import minimax.TreeEvaluator;
+import model.Move;
+import model.Position;
+import uciservice.FenParser;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
+import gametree.*;
 
 /**
  * This abstract class implements test for TreeEvaluators such as minimax
@@ -301,4 +307,43 @@ public abstract class TreeEvaluationTest {
     // TODO add test with more extensive pruning (black)
     // TODO add test with more extensive pruning (white)
 
+    @Test
+    public void findCheckMateBlack() {
+        List<Move> expected = new ArrayList<Move>();
+        expected.add(new Move("d2d1"));
+        expected.add(new Move("e2e1"));
+        expected.add(new Move("f2f1"));
+        Position position = FenParser.parseFen("2k5/8/8/8/8/3rrr2/N2rrr2/2K5 b - - 1 1");
+        // Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(1).getContent().getMove();
+        // assertTrue(expected.contains(actual));
+        Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(3).getContent().getMove();
+        assertTrue(expected.contains(actual));
+        actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(5).getContent().getMove();
+        assertTrue(expected.contains(actual));
+    }
+
+    @Test
+    public void findCheckMateWhite() {
+        List<Move> expected = new ArrayList<Move>();
+        expected.add(new Move("d2d1"));
+        expected.add(new Move("e2e1"));
+        expected.add(new Move("f2f1"));
+        Position position = FenParser.parseFen("2K5/8/8/8/8/3RRR2/n2RRR2/2k5 w - - 1 1");
+        // Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(1).getContent().getMove();
+        // assertTrue(expected.contains(actual));
+        Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(3).getContent().getMove();
+        assertTrue(expected.contains(actual));
+        actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(5).getContent().getMove();
+        assertTrue(expected.contains(actual));
+    }
+
+    @Test
+    public void findStaleMate(){
+        Move expected = new Move("d1c1");
+        Position position = FenParser.parseFen("5K2/8/8/8/5B2/3RPR2/1R6/3k4 b - - 0 1");
+        Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(3).getContent().getMove();
+        assertEquals(expected, actual);
+        actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(5).getContent().getMove();
+        assertEquals(expected, actual);
+    }
 }

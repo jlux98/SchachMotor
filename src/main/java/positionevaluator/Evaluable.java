@@ -22,9 +22,11 @@ public interface Evaluable {
      * <br><br>
      * This overwrites this Evaluable's current value with the determined value such that
      * calling {@link #getValue()} after calling {@link #evaluateStatically()} will return the same value.
+     * @param depth
+     * @param b
      * @return the calculated value of this evaluable
      */
-    public abstract int evaluateStatically();
+    public abstract int evaluateStatically(boolean isNaturaLeaf, int depth);
 
     /**
      * Used to determine if this node is marked as especially interesting.

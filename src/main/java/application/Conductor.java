@@ -19,7 +19,10 @@ import gametree.*;
 
 public class Conductor {
     private boolean contd = true;
-    // TODO: track past moves so that we don't need to recalculate the board from scratch each time
+    /**
+     * clarify if this list should just contain Moves or the whole
+     * position (would cost more memory but make finding draws easier when 
+     * checking if the same Position occurs thrice in the list)*/
     private List<Move> pastMoves;
     private String startingPosition;
     private GameTree currentGameTree;
