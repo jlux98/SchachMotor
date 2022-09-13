@@ -3,7 +3,7 @@ package classes;
 import gametree.BaseNode;
 import gametree.ComputeChildrenException;
 import gametree.Node;
-import gametree.TreeEvaluator;
+import minimax.TreeEvaluator;
 
 /**
  * Class used to mock instances of Node.
