@@ -56,6 +56,7 @@ public class ParserTest {
         List<Move> oldTurn = new ArrayList<Move>();
         oldTurn.add(new Move("a2a4"));
         oldTurn.add(new Move("a7a5"));
+        oldTurn.add(new Move("d2d4"));
         assertTrue(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition, oldTurn, parent.getChildren()));
         String startingPosition2 = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         assertTrue(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition2, oldTurn, parent.getChildren()));
