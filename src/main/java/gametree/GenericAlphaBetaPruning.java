@@ -2,6 +2,9 @@ package gametree;
 
 import java.util.List;
 
+import model.Move;
+import model.Position;
+
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
  * that store any kind of Object.
@@ -83,6 +86,12 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
      * depth == 0 and 2 if it is a leaf because no children could be generated
      */
     private int isLeaf(Node<T> parent, int depth) {
+        if (parent.getContent().getClass() == Position.class){
+            Position position = (Position) parent.getContent();
+            if (depth != 0 && position.getMove() != null && position.getMove().equals(new Move("d3b3"))){
+                boolean test = true;
+            }
+        }
         if (depth == 0) {
             return 1;
         }
@@ -123,15 +132,13 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
          * }
          */
         // assign static evaluation to leaves
-        if (isLeaf(parent, depth) == 1) { // calls queryChildren()
-            // return PositionEvaluator.evaluatePosition(parent.getPosition());
-            parent.evaluateStatically(false);
-            return parent;
-        }
-        if (isLeaf(parent, depth) == 2) { // calls queryChildren()
-            // return PositionEvaluator.evaluatePosition(parent.getPosition());
-            parent.evaluateStatically(true);
-            return parent;
+        switch(isLeaf(parent, depth)){
+            case 1:
+                parent.evaluateStatically(false, depth);
+                return parent;
+            case 2:
+                parent.evaluateStatically(true, depth);
+                return parent;
         }
 
         try {
@@ -223,15 +230,13 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
          * }
          */
         // assign static evaluation to leaves
-        if (isLeaf(parent, depth) == 1) { // calls queryChildren()
-            // return PositionEvaluator.evaluatePosition(parent.getPosition());
-            parent.evaluateStatically(false);
-            return parent;
-        }
-        if (isLeaf(parent, depth) == 2) { // calls queryChildren()
-            // return PositionEvaluator.evaluatePosition(parent.getPosition());
-            parent.evaluateStatically(true);
-            return parent;
+        switch(isLeaf(parent, depth)){
+            case 1:
+                parent.evaluateStatically(false, depth);
+                return parent;
+            case 2:
+                parent.evaluateStatically(true, depth);
+                return parent;
         }
 
         try {

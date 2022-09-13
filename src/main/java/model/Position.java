@@ -321,8 +321,8 @@ public class Position implements Comparable<Position>, Cloneable {
      * of both sides and returning the difference.
      * @return the board's static evaluation
      */
-    public int evaluateBoard(boolean isNaturalLeaf) {
-        this.pointValue = PositionEvaluator.evaluatePosition(this, isNaturalLeaf);
+    public int evaluateBoard(boolean isNaturalLeaf, int depth) {
+        this.pointValue = PositionEvaluator.evaluatePosition(this, isNaturalLeaf, depth);
         return this.pointValue;
     }
 
