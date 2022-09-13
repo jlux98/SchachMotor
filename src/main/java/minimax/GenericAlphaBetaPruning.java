@@ -219,7 +219,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
          *      depth = depth + 1; //evaluate recursively
          * }
          */
+
         this.increaseEvaluatedNodeCount();
+        
         // assign static evaluation to leaves
         if (isLeaf(parent, depth)) {
             // return PositionEvaluator.evaluatePosition(parent.getPosition());

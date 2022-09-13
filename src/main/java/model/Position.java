@@ -2,7 +2,6 @@ package model;
 
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
-import positionevaluator.Evaluable;
 import positionevaluator.PositionEvaluator;
 
 /**
@@ -337,16 +336,6 @@ public class Position implements Comparable<Position>, Cloneable {
     public int getValue() {
         return this.pointValue;
     }
-
-    // @Override
-    // public boolean isInteresting() {
-    //     return isInteresting;
-    // }
-
-    // @Override
-    // public void markAsInteresting() {
-    //     this.isInteresting = true;
-    // }
 
     // public void applyMove(Move toApply){
     //     Coordinate targetSpace = toApply.getTargetSpace();
