@@ -1,5 +1,6 @@
 package gametree;
 
+import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
 
@@ -9,7 +10,11 @@ import movegenerator.MoveGenerator;
  * implements {@link #computeChildren()} to generate follow-up moves
  * and implements {@link #evaluateStatically()} to calculate the position's point value.
  * Additionally, this class narrows the return types of node methods from Node < Position > to GameNode.
- * <br><br>
+ * <p>
+ * {@link #computeChildren()} instantiates GameNodes by invoking {@link #createChild(Position)}.
+ * This method can be overriden by subtypes to instantiate their class instead.
+ * </p>
+ * <p>
  * <b>Important Notes:</b>
  * <ul>
  *      <li>
@@ -22,46 +27,32 @@ import movegenerator.MoveGenerator;
  *          gamenode.
  *      </li>
  * </ul>
+ * </p>
  */
 public class GameNode extends BaseNode<Position> {
 
     /**
      * Creates a root node.
-     * 
      * @param position position stored by the node
      */
-    private GameNode(Position position) {
+    public GameNode(Position position) {
         super(position);
     }
 
     /**
      * Creates a child node.
-     * 
+     * The nodes are properly linked to each other by this constructor. 
      * @param position position stored by the node
      * @param parent   parent of the created node
      */
-    private GameNode(Position position, GameNode parent) {
+    public GameNode(Position position, GameNode parent) {
         super(position, parent);
         // other attributes e.g. children are null here
     }
 
-    /**
-     * Creates a node without parent.
-     * 
-     * @param position the position to be stored in the node
-     * @return a node serving as root for a gametree
-     */
-    public static GameNode createRoot(Position position) {
-        return new GameNode(position);
-    }
-
-    /**
-     * @param position the position to be stored in the node
-     * @param parent   this node's parent
-     * @return a node with parent
-     */
-    public static GameNode createNode(Position position, GameNode parent) {
-        return new GameNode(position, parent);
+    @Override
+    public GameNode createChild(Position position) {
+        return new GameNode(position, this);
     }
 
     @Override
@@ -70,6 +61,24 @@ public class GameNode extends BaseNode<Position> {
         return (GameNode) super.getParent();
     }
 
+    /**
+     * Returns the move represented by this node.
+     * May return null if the stored position was not created by move generation.
+     * @return the move represented by this node
+     */
+    public Move getRepresentedMove() {
+        return getContent().getMove();
+    }
+
+    /**
+    * Computes this node's children and overwrites its current child list accordingly.
+    * Uses {@link #createChild(Position)} to instantiate children.
+    * <br><br>
+    * <b>Note:</b> Do not use this method directly to generate children of this node.
+    * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
+    * Use queryChildren() to generate children of this node.
+    * @throws ComputeChildrenException if no children can be computed
+    */
     @Override
     protected void computeChildren() throws ComputeChildrenException {
         if (hasChildren()) {
@@ -86,7 +95,8 @@ public class GameNode extends BaseNode<Position> {
 
         // add follow-up moves as child nodes to this node
         for (Position position : followUpPositions) {
-            createNode(position, this);
+            createChild(position);
+            //instantiates GameNodes in GameNode but DetachingGameNodes in DetachingGameNode
         }
     }
 

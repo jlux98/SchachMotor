@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import gametree.DetachingGameTree;
 import gametree.GameNode;
-import gametree.ImpGameTree;
 import minimax.GameNodeAlphaBetaPruning;
 import minimax.TreeEvaluator;
 import model.Move;
@@ -32,11 +32,13 @@ public class GameTreePackageTest {
     private void testEvaluatorEvaluateTreeConsistency(String fen, int depth, boolean whitesTurn) {
         Position pos1 = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruning1 = new GameNodeAlphaBetaPruning();
-        Move result1 = pruning1.evaluateTree(new ImpGameTree(pos1, pruning1), depth, whitesTurn).getContent().getMove();
+        Move result1 = pruning1.evaluateTree(new DetachingGameTree(pos1, pruning1), depth, whitesTurn)
+                .getRepresentedMove();
 
         Position pos2 = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruning2 = new GameNodeAlphaBetaPruning();
-        Move result2 = pruning2.evaluateTree(new ImpGameTree(pos2, pruning2), depth, whitesTurn).getContent().getMove();
+        Move result2 = pruning2.evaluateTree(new DetachingGameTree(pos2, pruning2), depth, whitesTurn)
+                .getRepresentedMove();
 
         assertEquals(result1, result2);
     }
@@ -53,10 +55,10 @@ public class GameTreePackageTest {
     private void testTreeCalculateBestMoveConsistency(String fen, int depth, boolean whitesTurn) {
         Position pos1 = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruning1 = new GameNodeAlphaBetaPruning();
-        Move result1 = new ImpGameTree(pos1, pruning1).calculateBestMove(depth).getContent().getMove();
+        Move result1 = new DetachingGameTree(pos1, pruning1).calculateBestMove(depth).getRepresentedMove();
         Position pos2 = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruning2 = new GameNodeAlphaBetaPruning();
-        Move result2 = new ImpGameTree(pos2, pruning2).calculateBestMove(depth).getContent().getMove();
+        Move result2 = new DetachingGameTree(pos2, pruning2).calculateBestMove(depth).getRepresentedMove();
 
         assertEquals(result1, result2);
     }
@@ -75,11 +77,12 @@ public class GameTreePackageTest {
 
         Position pos1 = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruning1 = new GameNodeAlphaBetaPruning();
-        Move result1 = pruning1.evaluateTree(new ImpGameTree(pos1, pruning1), depth, whitesTurn).getContent().getMove();
+        Move result1 = pruning1.evaluateTree(new DetachingGameTree(pos1, pruning1), depth, whitesTurn)
+                .getRepresentedMove();
 
         Position pos2 = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruning2 = new GameNodeAlphaBetaPruning();
-        Move result2 = new ImpGameTree(pos2, pruning2).calculateBestMove(depth).getContent().getMove();
+        Move result2 = new DetachingGameTree(pos2, pruning2).calculateBestMove(depth).getRepresentedMove();
 
         assertEquals(result1, result2);
     }
@@ -147,21 +150,21 @@ public class GameTreePackageTest {
         int depth = 3;
         Position pos = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruningA = new GameNodeAlphaBetaPruning();
-        GameNode faulty = pruningA.evaluateTree(new ImpGameTree(pos, pruningA), depth, true);
+        GameNode faulty = pruningA.evaluateTree(new DetachingGameTree(pos, pruningA), depth, true);
 
         pos = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruningB = new GameNodeAlphaBetaPruning();
-        GameNode sensible = new ImpGameTree(pos, pruningB).calculateBestMove(depth);
+        GameNode sensible = new DetachingGameTree(pos, pruningB).calculateBestMove(depth);
 
         pos = FenParser.parseFen(fen);
-        GameNode sensible2 = new ImpGameTree(pos, pruningB).calculateBestMove(depth);
+        GameNode sensible2 = new DetachingGameTree(pos, pruningB).calculateBestMove(depth);
 
         pos = FenParser.parseFen(fen);
         GameNodeAlphaBetaPruning pruningC = new GameNodeAlphaBetaPruning();
-        GameNode sensible3 = new ImpGameTree(pos, pruningC).calculateBestMove(depth);
+        GameNode sensible3 = new DetachingGameTree(pos, pruningC).calculateBestMove(depth);
 
-        assertEquals(sensible.getContent().getMove(), sensible3.getContent().getMove());
-        assertEquals(sensible.getContent().getMove(), sensible2.getContent().getMove());
-        assertEquals(sensible.getContent().getMove(), faulty.getContent().getMove());
+        assertEquals(sensible.getRepresentedMove(), sensible3.getRepresentedMove());
+        assertEquals(sensible.getRepresentedMove(), sensible2.getRepresentedMove());
+        assertEquals(sensible.getRepresentedMove(), faulty.getRepresentedMove());
     }
 }

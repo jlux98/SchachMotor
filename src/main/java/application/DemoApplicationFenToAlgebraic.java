@@ -416,7 +416,7 @@ public class DemoApplicationFenToAlgebraic {
     private Position calculateFollowUpPosition(Position position) {
         TimeUtility<GameNode> timer = new TimeUtility<GameNode>();
 
-        GameTree tree = new ImpGameTree(GameNode.createRoot(position), evaluator);
+        GameTree tree = new ImpGameTree(new GameNode(position), evaluator);
         GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
         Position bestMove = bestChild.getContent();
         //save rough time spent calculating
