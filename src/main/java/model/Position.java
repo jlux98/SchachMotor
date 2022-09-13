@@ -2,7 +2,6 @@ package model;
 
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
-import positionevaluator.Evaluable;
 import positionevaluator.PositionEvaluator;
 
 /**
@@ -18,7 +17,8 @@ import positionevaluator.PositionEvaluator;
 public class Position implements Comparable<Position>, Cloneable {
 
     /**
-     * The array element at [0][0] represents the space a8, [7][7] represents h1.
+     * The element at the Board-space (0,0) represents the space a8, (0,7) represents h8,
+     * (7,0) represents a1 and (7,7) represents h1.
      */
     private Board board;
     private int pointValue;
@@ -337,16 +337,6 @@ public class Position implements Comparable<Position>, Cloneable {
         return this.pointValue;
     }
 
-    // @Override
-    // public boolean isInteresting() {
-    //     return isInteresting;
-    // }
-
-    // @Override
-    // public void markAsInteresting() {
-    //     this.isInteresting = true;
-    // }
-
     // public void applyMove(Move toApply){
     //     Coordinate targetSpace = toApply.getTargetSpace();
     //     Coordinate startingSpace = toApply.getStartingSpace();
@@ -441,6 +431,10 @@ public class Position implements Comparable<Position>, Cloneable {
         return fullMoveCount;
     }
 
+    /**
+     * The Piece at (0,0) represents the space a8, (0,7) represents h8,
+     * (7,0) represents a1 and (7,7) represents h1.
+     */
     public Piece getPieceAt(int rank, int file) {
         return board.getPieceAt(rank, file);
     }

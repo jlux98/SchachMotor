@@ -52,17 +52,19 @@ public class FenParser {
      * Parses the fen string and translates it into a instance of position.
      * <br><br>
      * This method is static and shorthand for
-     *  {@snippet: 
-     *  FenParser parser = new FenParser(fen);
-     *  return parser.parseFen();
-     *  }
+     * <pre>
+     *FenParser parser = new FenParser(fen);
+     *return parser.parseFen();
+     * </pre>
      * @param fen the fen string that should be translated
      * @return an instance of Position representing the information that was stored in the fen string
+     * @throws FenParseExcepton if the string could not be parsed
      */
     public static Position parseFen(String fen) {
         FenParser parser = new FenParser(fen);
         return parser.parseFen();
     }
+
     /**
      * Parses the fen string that was supplied to the constructor.
      * @return an instance of Position representing the information that was stored in the fen string
@@ -78,12 +80,16 @@ public class FenParser {
      */
     private void parseTokens() {
         String[] tokens = fen.split(Pattern.quote(FEN_DELIMITER));
-        parsePosition(tokens[0]);
-        parseActivePlayer(tokens[1]);
-        parseCastlingAbilities(tokens[2]);
-        parseEnPassantTargetSquare(tokens[3]);
-        parseHalfMoveCount(tokens[4]);
-        parseFullMoveCount(tokens[5]);
+        try {
+            parsePosition(tokens[0]);
+            parseActivePlayer(tokens[1]);
+            parseCastlingAbilities(tokens[2]);
+            parseEnPassantTargetSquare(tokens[3]);
+            parseHalfMoveCount(tokens[4]);
+            parseFullMoveCount(tokens[5]);
+        } catch (ArrayIndexOutOfBoundsException exception) {
+            throw new FenParseException("fen could not be split");
+        }
     }
 
     /**
@@ -91,8 +97,9 @@ public class FenParser {
      * @return an instance of Position representing the information that was stored in the fen string
      */
     private Position createPosition() {
-        return new Position(piecePositions, isWhiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside,
-                blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
+        return new Position(piecePositions, isWhiteNextMove, whiteCastlingKingside, whiteCastlingQueenside,
+                blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves,
+                fullMoves);
 
     }
 
@@ -158,21 +165,28 @@ public class FenParser {
             if (Character.isDigit(character)) {
                 xPosition += Character.getNumericValue(character);
             } else {
-                Piece piece = new Piece(character);
-                piecePositions.setPieceAt(yPosition, xPosition, piece);
-                xPosition++;
+                try {
+                    Piece piece = new Piece(character);
+                    piecePositions.setPieceAt(yPosition, xPosition, piece);
+                    xPosition++;
+                } catch (IllegalArgumentException exception) {
+                    throw new FenParseException(exception);
+                }
             }
+        }
+        if (xPosition != 8) {
+            throw new FenParseException("rank is not filled");
         }
     }
 
     /**
      * Parses the active player portion of a fen string.
      * @param activePlayerToken the fen token denoting the active player
-     * @throws IllegalStateException if the token is not "w" (white's turn) or "b" (black's turn)
+     * @throws FenParseException if the token is not "w" (white's turn) or "b" (black's turn)
      */
     private void parseActivePlayer(String activePlayerToken) {
         if (activePlayerToken.length() != 1) {
-            throw new IllegalStateException(
+            throw new FenParseException(
                     "side to move / active player must be one character, not " + activePlayerToken.length());
         }
         char activePlayerChar = activePlayerToken.charAt(0);
@@ -184,7 +198,7 @@ public class FenParser {
             isWhiteNextMove = false;
             return;
         }
-        throw new IllegalStateException(
+        throw new FenParseException(
                 "side to move / active player must be denoted by \"w\" or \"b\", not by " + activePlayerChar);
     }
 
@@ -201,13 +215,13 @@ public class FenParser {
      *      <li> if no player has the ability to castle, '-' is written instead (only one character)
      * </ul>
      * @param castlingAbilitiesToken the fen token denoting the castling abilities
-     * @throws IllegalStateException if the token length is not within 1 to 4 characters
+     * @throws FenParseException if the token length is not within 1 to 4 characters
      */
     private void parseCastlingAbilities(String castlingAbilitiesToken) {
         int tokenLength = castlingAbilitiesToken.length();
 
         if (tokenLength < 1 || tokenLength > 4) {
-            throw new IllegalStateException(
+            throw new FenParseException(
                     "castling abilities must be denoted by 1 to 4 characters, not " + castlingAbilitiesToken.length());
         }
 
@@ -230,13 +244,14 @@ public class FenParser {
         //iterate over characters and set corresponding flags
         for (char castlingAbility : castlingAbilities) {
             switch (castlingAbility) {
-            //uppercase characters are white 
-            case 'K' -> whiteCastlingKingside = true;
-            case 'Q' -> whiteCastlingQueenside = true;
-            //lowercase characters are black
-            case 'k' -> blackCastlingKingside = true;
-            case 'q' -> blackCastlingQueenside = true;
-
+                //uppercase characters are white 
+                case 'K' -> whiteCastlingKingside = true;
+                case 'Q' -> whiteCastlingQueenside = true;
+                //lowercase characters are black
+                case 'k' -> blackCastlingKingside = true;
+                case 'q' -> blackCastlingQueenside = true;
+                default -> throw new FenParseException(
+                        "castling abilities must be denoted by characters from KkQq, not " + castlingAbility);
             }
 
         }
@@ -245,7 +260,8 @@ public class FenParser {
     /**
      * Parses the en passant target square portion of a fen string.
      * @param enPassantTargetSquareToken the fen token containing the en passant target square
-     * @throws IllegalStateException if the token extracted from fen does not consist of two characters and is not "-"
+     * @throws FenParseException if the token extracted from fen does not consist of two characters
+     * and is not "-"
      */
     private void parseEnPassantTargetSquare(String enPassantTargetSquareToken) {
 
@@ -257,13 +273,9 @@ public class FenParser {
                 return;
             }
             //skipped by above return if token is "-"
-            throw new IllegalStateException(
-                    "en passant target square must consist of two characters or \"-\", not " + enPassantTargetSquareToken.length());
-        }
-
-        if (enPassantTargetSquareToken.length() != 2) {
-            throw new IllegalStateException(
-                    "en passant target square must consist of two characters or \"-\", not " + enPassantTargetSquareToken.length());
+            throw new FenParseException(
+                    "en passant target square must consist of two characters or \"-\", not "
+                            + enPassantTargetSquareToken.length());
         }
 
         //parse first character as file (column)
@@ -275,20 +287,21 @@ public class FenParser {
         enPassantTargetRank = translateRankCharacter(enPassantTargetSquareToken.charAt(1));
     }
 
-/**
+    /**
     * Translates the character denoting a square's rank (row) to the corresponding number.
     * The character has to be a number from 1 to 8 (e.g. '2') and is mapped to 8 - its value.
     * This is neccessary because our array starts at index 0, ends at index 7 and counts upside down.
     * e.g.: 1 -> 7, 2 -> 6 ... 8 -> 0
     * @param c the character denoting a file
     * @return the corresponding number
-    * @throws IllegalArgumentException if the character is not within '1' to '8'
+    * @throws FenParseException if the character is not within '1' to '8'
     */
     private int translateRankCharacter(char c) {
         int rank = 8 - Character.getNumericValue(c);
         if (rank < 0 || rank > 7) {
-            throw new IllegalArgumentException(
-                    "en passant target rank must be a number (represented as character) in the range of '1' to '8', not " + c);
+            throw new FenParseException(
+                    "en passant target rank must be a number (represented as character) in the range of '1' to '8', not "
+                            + c);
         }
         return rank;
     }
@@ -302,34 +315,55 @@ public class FenParser {
      * E.g.: a -> 0, b -> 1, ... g -> 6, h -> 7
      * @param c the character denoting a file
      * @return the corresponding number
-     * @throws IllegalArgumentException if the character is not within 'a' to 'h'
+     * @throws FenParseException if the character is not within 'a' to 'h'
      */
     private int translateFileCharacter(char c) {
         int file = Character.getNumericValue(c) - 10;
         if (file < 0 || file > 7) {
-            throw new IllegalArgumentException("en passant target file must be a character in the range of a to h, not " + c);
+            throw new FenParseException(
+                    "en passant target file must be a character in the range of a to h, not " + c);
         }
         return file;
     }
 
-
+    /**
+     * Attempts to parse the passed String as int using
+     * <pre>Integer.parseInt(string)</pre>
+     * Wraps any occuring NumberFormatExceptions in a FenParseException.
+     * @param intString a string representing an int value
+     * @throws FenParseException if parsing the string fails
+     * @return the int represented by the string
+     */
+    private static int parseInt(String intString) {
+        try {
+            return Integer.parseInt(intString);
+        } catch (NumberFormatException exception) {
+            throw new FenParseException(exception);
+        }
+    }
 
     /**
      * Parses the half move count provided by a fen string.
      * @param halfMoveCountToken the fen token denoting the half move count
-     * @throws NumberFormatException if the token is not a number
+     * @throws FenParseException if the token is not a number
      */
     private void parseHalfMoveCount(String halfMoveCountToken) {
-        halfMoves = Integer.parseInt(halfMoveCountToken);
+        halfMoves = FenParser.parseInt(halfMoveCountToken);
+        if (halfMoves < 0) {
+            throw new FenParseException("full move count must be >= 0");
+        }
     }
 
     /**
      * Parses the half move count provided by a fen string.
      * @param fullMoveCountToken the fen token denoting the full move count
-    * @throws NumberFormatException if the token is not a number
+    * @throws FenParseException if the token is not a number
     */
     private void parseFullMoveCount(String fullMoveCountToken) {
-        fullMoves = Integer.parseInt(fullMoveCountToken);
+        fullMoves = FenParser.parseInt(fullMoveCountToken);
+        if (fullMoves < 1) {
+            throw new FenParseException("full move count must be >= 1");
+        }
     }
 
 }

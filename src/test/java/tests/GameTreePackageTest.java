@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import gametree.GameNode;
-import gametree.GameNodeAlphaBetaPruning;
 import gametree.ImpGameTree;
-import gametree.TreeEvaluator;
+import minimax.GameNodeAlphaBetaPruning;
+import minimax.TreeEvaluator;
 import model.Move;
 import model.Position;
 import uciservice.FenParser;

@@ -1,15 +1,18 @@
-package gametree;
+package minimax;
 
 import java.util.List;
 
 import model.Move;
 import model.Position;
+import gametree.ComputeChildrenException;
+import gametree.Node;
+import gametree.Tree;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
  * that store any kind of Object.
  */
-public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
+public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
     // Note on storing values in nodes:
     // values stored by nodes do not have to be marked as invalid
@@ -131,6 +134,9 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
          *      depth = depth + 1; //evaluate recursively
          * }
          */
+
+         this.increaseEvaluatedNodeCount();
+
         // assign static evaluation to leaves
         switch(isLeaf(parent, depth)){
             case 1:
@@ -229,6 +235,9 @@ public class GenericAlphaBetaPruning<T> implements TreeEvaluator<T> {
          *      depth = depth + 1; //evaluate recursively
          * }
          */
+
+        this.increaseEvaluatedNodeCount();
+        
         // assign static evaluation to leaves
         switch(isLeaf(parent, depth)){
             case 1:

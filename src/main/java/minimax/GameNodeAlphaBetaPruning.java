@@ -1,5 +1,8 @@
-package gametree;
+package minimax;
 
+import gametree.GameNode;
+import gametree.Node;
+import gametree.Tree;
 import model.Position;
 
 /**
