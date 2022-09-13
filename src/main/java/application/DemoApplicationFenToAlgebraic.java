@@ -3,11 +3,13 @@ package application;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
 import gametree.ImpGameTree;
 import minimax.GameNodeAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
+import model.Move;
 import model.Position;
 import uciservice.FenParseException;
 import uciservice.FenParser;
@@ -239,7 +241,7 @@ public class DemoApplicationFenToAlgebraic {
                     readPosition();
                 }
 
-                Position calculatedMove = calculateFollowUpPosition(position);
+                Move calculatedMove = calculateFollowUpMove(position);
                 output(calculatedMove, position.getWhiteNextMove());
                 prepareNextRun();
 
@@ -410,15 +412,16 @@ public class DemoApplicationFenToAlgebraic {
     /**
      * Uses the stored GameTreeEvaluator to calculate a
      * follow-up move to the passed position.
-     * @param position
-     * @return the follow-up position
+     * @param position the position to calculate a follow-up move for
+     * @return the follow-up move
      */
-    private Position calculateFollowUpPosition(Position position) {
+    private Move calculateFollowUpMove(Position position) {
         TimeUtility<GameNode> timer = new TimeUtility<GameNode>();
 
-        GameTree tree = new ImpGameTree(new GameNode(position), evaluator);
+        GameTree tree = new DetachingGameTree(position, evaluator);
         GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
-        Position bestMove = bestChild.getContent();
+        Move bestMove = bestChild.getRepresentedMove();
+
         //save rough time spent calculating
         calculationTime = timer.getElapsedTime();
         return bestMove;
@@ -429,11 +432,11 @@ public class DemoApplicationFenToAlgebraic {
      * @param position
      * @param colorMoved true if the move is white's move, false if the move is black's move
      */
-    private void printMove(Position position, boolean whitesMove) {
+    private void printMove(Move move, boolean whitesMove) {
 
         String movedColor = whitesMove ? "white" : "black";
 
-        String algebraic = position.getMove().toStringAlgebraic();
+        String algebraic = move.toStringAlgebraic();
 
         String startingSpace = algebraic.substring(0, 2);
         String targetSpace = algebraic.substring(2, 4);
@@ -533,10 +536,10 @@ public class DemoApplicationFenToAlgebraic {
      * Prints the move associated with the passed position.
      * Prints additional information if debug mode
      * or printBoards is activated.
-     * @param position the position storing the move to be played
+     * @param move the position storing the move to be played
      * @param whitesMove whether the move is played by white
      */
-    private void output(Position position, boolean whitesMove) {
+    private void output(Move move, boolean whitesMove) {
 
         if (debugMode) {
             printDebugInfo();
@@ -548,10 +551,10 @@ public class DemoApplicationFenToAlgebraic {
             }
         }
 
-        if (printBoards) {
-            printBoard(position);
-        }
+        /* if (printBoards) {
+            printBoard(move);
+        } */
 
-        printMove(position, whitesMove);
+        printMove(move, whitesMove);
     }
 }
