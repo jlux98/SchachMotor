@@ -21,38 +21,31 @@ import static java.lang.Integer.MIN_VALUE;
 
 /**
  * This abstract class implements test for TreeEvaluators such as minimax
- * or alpha-beta-pruning. This class is abstract and its tests cannot
- * be run directly.
- * <br><br>
- * To apply the tests to an implementation of a TreeEvaluator
+ * or alpha-beta-pruning. 
+ * As this class is abstract its tests cannot be run directly.
+ * <p>
+ * To apply the tests to an implementation of a TreeEvaluator,
+ * extend this class and pass a suitable TreeEvaluationHelper to its constructor.
+ * </p>
+ * <p>
+ * A suitable instance of {@link TreeEvaluationHelper} can be created by providing a
+ * <pre> Supplier&lt;TreeEvaluator&lt;Integer&gt;&gt;</pre>
+ *  to its constructor. 
+ * This can be done by using a lambda expression.
  * 
- * <ul>
- *      <li>
- *          extend {@link TreeEvaluationHelper} and implement
- *          {@link TreeEvaluationHelper#instantiateTreeEvaluator()}
- *      </li>
- *      <li>
- *          extend this class and pass its constructor an instance of the
- *          extended {@link TreeEvaluationHelper}
- *      </li>
- * </ul>
  * 
+ * <p>
  * Code example for testing GenericAlphaBetaPruning:
  * 
  * <pre>
- * 
- * public class AlphaBetaHelper extends TreeEvaluationHelper {
- * 
- *     &#64;Override
- *     protected TreeEvaluator&lt;Integer&gt; instantiateTreeEvaluator() {
- *         return new GenericAlphaBetaPruning&lt;Integer&gt;();
- *     }
- * }
+ *
  * 
  * public class AlphaBetaTest extends TreeEvaluationTest {
  * 
  *     public AlphaBetaTest() {
- *         super(new AlphaBetaHelper());
+ *         super(new TreeEvaluationHelper(
+ *                  () -> new GenericAlphaBetaPruning&lt;Integer&gt;())
+ *                  );
  *     }
  * }
  * 
