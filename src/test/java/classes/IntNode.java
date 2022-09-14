@@ -23,7 +23,7 @@ import minimax.TreeEvaluator;
  * {@link #setValue(int)} (f.ex. by alpha-beta-pruning) and
  * does not necessarily stay the same as the stored content.
  */
-public class IntNode extends BaseNode<Integer>  {
+public class IntNode extends BaseNode<Integer> {
 
     /**
      * Creates an IntNode storing the specified Integer as content.
@@ -48,6 +48,7 @@ public class IntNode extends BaseNode<Integer>  {
     public IntNode getParent() {
         return (IntNode) super.getParent();
     }
+
     /**
      * Not supported by IntNode.
      * <br><br>
@@ -68,6 +69,11 @@ public class IntNode extends BaseNode<Integer>  {
     public int evaluateStatically(boolean isNaturalLeaf, int depth) {
         this.setValue(getContent());
         return this.getContent();
+    }
+
+    @Override
+    public Node<Integer> createChild(Integer content) {
+        return new IntNode(content, this);
     }
 
 }

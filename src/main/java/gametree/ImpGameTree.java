@@ -12,7 +12,7 @@ public class ImpGameTree extends ImpTree<GameNode> implements GameTree {
      * @param gameState the game state that the root node should represent
      */
     public ImpGameTree(Position position, GameTreeEvaluator evaluator) {
-        super(GameNode.createRoot(position));
+        super(new GameNode(position));
         this.evaluator = evaluator;
     }
 

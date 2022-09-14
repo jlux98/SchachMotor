@@ -17,6 +17,12 @@ public interface Node<T> extends Evaluable {
     public abstract T getContent();
 
     /**
+     * Deletes the content stored by this node
+     * (deletes the reference to it).
+     */
+    public abstract void deleteContent();
+
+    /**
      * Adds a child node to this node.
      */
     public abstract void insertChild(Node<T> node);

@@ -136,6 +136,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
          */
 
          this.increaseEvaluatedNodeCount();
+         //System.out.println("evaluating node");
 
         // assign static evaluation to leaves
         switch(isLeaf(parent, depth)){
@@ -155,7 +156,12 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
+            //boolean pruning = false;
             for (Node<T> child : children) {
+                /* if (pruning) {
+                    child.deleteContent();
+                    continue;
+                } */
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
@@ -185,6 +191,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     bestChild = child;
                 }
                 if (childValue <= alpha) {
+                    //System.out.println("pruning some nodes");
                     // minimizing player can achieve a lower score than maximizing player is already
                     // assured of if this parent node is reached
                     // prune this subtree = stop evaluating children of this node
@@ -192,7 +199,11 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     // of root
                     // one could also return a node with value of Integer.MIN_VALUE instead
                     // as any node with value < alpha will never be played by the maximizing player
+
                     break;
+
+                    /* pruning = true;
+                    continue; */
                 }
                 if (childValue < beta) {
                     // maximizing player has new best guaranteed score if parent node is reached
@@ -237,6 +248,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
          */
 
         this.increaseEvaluatedNodeCount();
+        //System.out.println("evaluating node");
         
         // assign static evaluation to leaves
         switch(isLeaf(parent, depth)){
@@ -256,7 +268,12 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
+            //boolean pruning = false;
             for (Node<T> child : children) {
+                /* if (pruning) {
+                    child.deleteContent();
+                    continue;
+                } */
                 // evaluate all children
                 // if this node is maximizing, child nodes are minimizing
                 // child nodes are passed the determined alpha and beta values
@@ -286,6 +303,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     bestChild = child;
                 }
                 if (childValue >= beta) {
+                    //System.out.println("pruning some nodes");
                     // maximizing player can achieve a higher score than minimizing player is
                     // already assured of if this parent node is reached
                     // prune this subtree = stop evaluating children of this node
@@ -293,7 +311,11 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     // of root
                     // one could also return a node with value of Integer.MAX_VALUE instead
                     // as any node with value > beta will never be played by the minimizing player
+                    
                     break;
+
+                    /* pruning = true;
+                    continue; */
                 }
                 if (childValue > alpha) {
                     // maximizing player has new best guaranteed score if parent node is reached

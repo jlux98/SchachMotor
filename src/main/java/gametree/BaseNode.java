@@ -93,6 +93,11 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
+    public void deleteContent() {
+        this.content = null;
+    }
+
+    @Override
     public Node<T> getParent() {
         return this.parent; //possibly null
     }
@@ -125,7 +130,8 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void setParent(Node<T> parent) {
         if (this.parent != null) {
-            throw new IllegalStateException("a node can only be child to a single node, this node already has a parent");
+            throw new IllegalStateException(
+                    "a node can only be child to a single node, this node already has a parent");
         }
         this.parent = parent;
     }
@@ -134,6 +140,18 @@ public abstract class BaseNode<T> implements Node<T> {
     public void unsetParent() {
         this.parent = null;
     }
+
+    /**
+    * Creates a child of this node.
+    * The nodes are properly linked to each other.
+    * <p>
+    * Override this to control which type of GameNode is instantiated
+    * by {@link #computeChildren()}.
+    * </p>
+    * @param position the position to be stored in the child node
+    * @return a child of this node
+    */
+    public abstract Node<T> createChild(T content);
 
     /**
     * Computes this node's children and overwrites its current child list accordingly.
@@ -149,8 +167,19 @@ public abstract class BaseNode<T> implements Node<T> {
     public List<? extends Node<T>> queryChildren() throws ComputeChildrenException {
         if (!hasChildren()) {
             computeChildren();
+            detachChildGenerationData();
         }
         return children;
+    }
+
+    /**
+     * Hook for subclasses.
+     * Called after {@link #computeChildren()} in {@link #queryChildren()}.
+     * Intended to allow for deletion of data from the node that is
+     * only required to generate children.
+     */
+    protected void detachChildGenerationData() {
+        //do nothing
     }
 
     /**
