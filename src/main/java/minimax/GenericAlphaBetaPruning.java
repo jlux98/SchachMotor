@@ -89,6 +89,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      * depth == 0 and 2 if it is a leaf because no children could be generated
      */
     private int isLeaf(Node<T> parent, int depth) {
+        //FIXME cleanup and move position specific code to GameNodeAlphaBetaPruning
         if (parent.getContent().getClass() == Position.class){
             Position position = (Position) parent.getContent();
             if (depth != 0 && position.getMove() != null && position.getMove().equals(new Move("d3b3"))){
@@ -136,7 +137,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
          */
 
          this.increaseEvaluatedNodeCount();
-         //System.out.println("evaluating node");
 
         // assign static evaluation to leaves
         switch(isLeaf(parent, depth)){
@@ -191,7 +191,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     bestChild = child;
                 }
                 if (childValue <= alpha) {
-                    //System.out.println("pruning some nodes");
                     // minimizing player can achieve a lower score than maximizing player is already
                     // assured of if this parent node is reached
                     // prune this subtree = stop evaluating children of this node
@@ -248,7 +247,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
          */
 
         this.increaseEvaluatedNodeCount();
-        //System.out.println("evaluating node");
         
         // assign static evaluation to leaves
         switch(isLeaf(parent, depth)){
@@ -303,7 +301,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     bestChild = child;
                 }
                 if (childValue >= beta) {
-                    //System.out.println("pruning some nodes");
                     // maximizing player can achieve a higher score than minimizing player is
                     // already assured of if this parent node is reached
                     // prune this subtree = stop evaluating children of this node
