@@ -10,9 +10,10 @@ import gametree.Tree;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
- * that store any kind of Object.
+ * that store any kind of Object. This implementation deletes child nodes
+ * after evaluating their parent to save memory.
  */
-public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
+public class SelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
     // Note on storing values in nodes:
     // values stored by nodes do not have to be marked as invalid
@@ -206,6 +207,8 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
 
+            //delete children from tree after evaluation of parent
+            parent.deleteChildren();
             return bestChild;
 
         } catch (ComputeChildrenException exception) {
@@ -308,6 +311,8 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
 
+            //delete children from tree after evaluation of parent
+            parent.deleteChildren();
             return bestChild;
 
         } catch (ComputeChildrenException exception) {
