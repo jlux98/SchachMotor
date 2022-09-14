@@ -129,7 +129,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (smallest) value
      */
-    private Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
+    protected Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -231,7 +231,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (greatest) value
      */
-    private Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
+    protected Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
