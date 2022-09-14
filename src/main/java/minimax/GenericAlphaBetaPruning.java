@@ -153,7 +153,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             parent.setValue(Integer.MAX_VALUE);
 
             int childValue;
-            boolean pruning = false;
             Node<T> bestChild = null; // the child that determines the value of this parent node
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
@@ -161,18 +160,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             List<? extends Node<T>> children = parent.queryChildren();
 
             for (Node<T> child : children) {
-                if (pruning) {
-                    //skip evaluation of pruned nodes, but still delete them
-                    //child.deleteSelf();
-                    continue;
-                }
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
                 alphaBetaMaximize(child, depth - 1, alpha, beta);
-
-                //remove child from tree
-                //child.deleteSelf();
 
                 // read value of child node = value of the node returned by alphaBetaMaximize(child ...)
                 childValue = child.getValue();
@@ -202,11 +193,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     // of root
                     // one could also return a node with value of Integer.MIN_VALUE instead
                     // as any node with value < alpha will never be played by the maximizing player
-
-                    //break;
-
-                    pruning = true;
-                    continue; //skip beta comparison
+                    break;
                 }
                 if (childValue < beta) {
                     // maximizing player has new best guaranteed score if parent node is reached
@@ -219,7 +206,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
 
-            //FIXME is this safe?
             //delete children from tree after evaluation of parent
             parent.deleteChildren();
             return bestChild;
@@ -267,12 +253,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
         }
 
         try {
-            // maximize
-
+            //maximize
             parent.setValue(Integer.MIN_VALUE);
 
             int childValue;
-            boolean pruning = false;
             Node<T> bestChild = null; // the child that determines the value of this parent node
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
@@ -280,18 +264,11 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             List<? extends Node<T>> children = parent.queryChildren();
 
             for (Node<T> child : children) {
-                if (pruning) {
-                    //skip evaluation of pruned nodes, but still delete them
-                    //child.deleteSelf();
-                    continue;
-                }
 
                 // evaluate all children
                 // if this node is maximizing, child nodes are minimizing
                 // child nodes are passed the determined alpha and beta values
                 alphaBetaMinimize(child, depth - 1, alpha, beta);
-
-                //child.deleteSelf(); //remove child from tree
 
                 // read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 childValue = child.getValue();
@@ -320,11 +297,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     // of root
                     // one could also return a node with value of Integer.MAX_VALUE instead
                     // as any node with value > beta will never be played by the minimizing player
-
-                    //break;
-
-                    pruning = true;
-                    continue; //skip alpha comparison
+                    break;
                 }
                 if (childValue > alpha) {
                     // maximizing player has new best guaranteed score if parent node is reached
