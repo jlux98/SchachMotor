@@ -67,7 +67,11 @@ public class Position implements Comparable<Position>, Cloneable {
         this.whiteCastlingQueenside = whiteCastlingQueenside;
         this.blackCastlingKingside = blackCastlingKingside;
         this.blackCastlingQueenside = blackCastlingQueenside;
-        this.enPassantTargetSpace = new Coordinate(enPassantTargetRank, enPassantTargetFile);
+        if (enPassantTargetRank == -1 && enPassantTargetFile == -1){
+            this.enPassantTargetSpace = null;
+        } else {
+            this.enPassantTargetSpace = new Coordinate(enPassantTargetRank, enPassantTargetFile);
+        }
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
         this.fullMoveCount = fullMoves;
         this.attackedByWhite = AttackMapGenerator.computeChecks(spaces, true);
@@ -230,8 +234,8 @@ public class Position implements Comparable<Position>, Cloneable {
             return  (blackCastlingKingside == position.getBlackCastlingKingside()) &&
                     (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
                     (blackInCheck == position.getBlackInCheck()) &&
-                    (enPassantTargetSpace.getFile() == position.getEnPassantTargetFile()) &&
-                    (enPassantTargetSpace.getRank() == position.getEnPassantTargetRank()) &&
+                    (getEnPassantTargetFile() == position.getEnPassantTargetFile()) &&
+                    (getEnPassantTargetRank() == position.getEnPassantTargetRank()) &&
                     (fullMoveCount == position.getFullMoves()) &&
                     (halfMovesSincePawnMoveOrCapture == position.getHalfMoves()) &&
                     (pointValue == position.getPointValue()) &&
@@ -279,11 +283,11 @@ public class Position implements Comparable<Position>, Cloneable {
                 result += "none\n";
             }
         }
-        if (enPassantTargetSpace.getRank() == -1 || enPassantTargetSpace.getFile() == -1) {
+        if (getEnPassantTargetRank() == -1 || getEnPassantTargetFile() == -1) {
             result += "No En Passant possible\n";
         } else {
             result += "En Passant possible with target square [" +
-            enPassantTargetSpace.getRank() + "][" + enPassantTargetSpace.getFile() + "]\n";
+            getEnPassantTargetRank() + "][" + getEnPassantTargetFile() + "]\n";
         }
         result += "Halfmove Clock: " + halfMovesSincePawnMoveOrCapture + "\n";
         result += "Fullmove Number: " + fullMoveCount + "\n";
@@ -306,7 +310,7 @@ public class Position implements Comparable<Position>, Cloneable {
         Board copiedSpaces = this.copyBoard();
         return new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
                 this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
-                this.enPassantTargetSpace.getRank(), this.enPassantTargetSpace.getFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
+                this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
     }
 
     @Override
@@ -414,10 +418,16 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     public int getEnPassantTargetRank() {
+        if (enPassantTargetSpace == null){
+            return -1;
+        }
         return enPassantTargetSpace.getRank();
     }
 
     public int getEnPassantTargetFile() {
+        if (enPassantTargetSpace == null){
+            return -1;
+        }
         return enPassantTargetSpace.getFile();
     }
 
