@@ -90,9 +90,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      */
     private int isLeaf(Node<T> parent, int depth) {
         //FIXME cleanup and move position specific code to GameNodeAlphaBetaPruning
-        if (parent.getContent().getClass() == Position.class){
+        if (parent.getContent().getClass() == Position.class) {
             Position position = (Position) parent.getContent();
-            if (depth != 0 && position.getMove() != null && position.getMove().equals(new Move("d3b3"))){
+            if (depth != 0 && position.getMove() != null && position.getMove().equals(new Move("d3b3"))) {
                 boolean test = true;
             }
         }
@@ -107,7 +107,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             return 2;
         }
         // node is a leaf if it has no children
-        if (parent.hasChildren()){
+        if (parent.hasChildren()) {
             return 0;
         } else {
             return 2;
@@ -136,10 +136,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
          * }
          */
 
-         this.increaseEvaluatedNodeCount();
+        this.increaseEvaluatedNodeCount();
 
         // assign static evaluation to leaves
-        switch(isLeaf(parent, depth)){
+        switch (isLeaf(parent, depth)) {
             case 1:
                 parent.evaluateStatically(false, depth);
                 return parent;
@@ -150,29 +150,32 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         try {
             // minimize
-            int parentValue = Integer.MAX_VALUE;
+            parent.setValue(Integer.MAX_VALUE);
+
             int childValue;
+            boolean pruning = false;
             Node<T> bestChild = null; // the child that determines the value of this parent node
+
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
-            //boolean pruning = false;
+
             for (Node<T> child : children) {
-                /* if (pruning) {
-                    child.deleteContent();
+                if (pruning) {
+                    //skip evaluation of pruned nodes, but still delete them
+                    //child.deleteSelf();
                     continue;
-                } */
+                }
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
                 alphaBetaMaximize(child, depth - 1, alpha, beta);
+
+                //remove child from tree
+                //child.deleteSelf();
+
                 // read value of child node = value of the node returned by alphaBetaMaximize(child ...)
                 childValue = child.getValue();
-
-                // FIXME this hinders the performance of pruning
-                // -> initialize parent.setValue() instead
-                // return initialized value when breaking without previously evaluating any
-                // children
 
                 // parentValue has to be updated before alpha
                 // because the value of the child causing the cut-off has to be propagated
@@ -180,13 +183,14 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is greater than all sibling's values
-                if (childValue < parentValue) {
+                if (childValue < parent.getValue()) {
                     // since parentValue is initialized to Integer.MAX_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
                     // minimizing player's turn -> value of this parent node = min of child values
-                    parentValue = childValue;
-                    parent.setValue(childValue); // save value in node
+
+                    // save value in node
+                    parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
                 }
@@ -199,10 +203,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     // one could also return a node with value of Integer.MIN_VALUE instead
                     // as any node with value < alpha will never be played by the maximizing player
 
-                    break;
+                    //break;
 
-                    /* pruning = true;
-                    continue; */
+                    pruning = true;
+                    continue; //skip beta comparison
                 }
                 if (childValue < beta) {
                     // maximizing player has new best guaranteed score if parent node is reached
@@ -214,6 +218,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
+
+            //FIXME is this safe?
+            //delete children from tree after evaluation of parent
+            parent.deleteChildren();
             return bestChild;
 
         } catch (ComputeChildrenException exception) {
@@ -247,9 +255,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
          */
 
         this.increaseEvaluatedNodeCount();
-        
+
         // assign static evaluation to leaves
-        switch(isLeaf(parent, depth)){
+        switch (isLeaf(parent, depth)) {
             case 1:
                 parent.evaluateStatically(false, depth);
                 return parent;
@@ -260,29 +268,33 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         try {
             // maximize
-            int parentValue = Integer.MIN_VALUE;
+
+            parent.setValue(Integer.MIN_VALUE);
+
             int childValue;
+            boolean pruning = false;
             Node<T> bestChild = null; // the child that determines the value of this parent node
+
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
-            //boolean pruning = false;
+
             for (Node<T> child : children) {
-                /* if (pruning) {
-                    child.deleteContent();
+                if (pruning) {
+                    //skip evaluation of pruned nodes, but still delete them
+                    //child.deleteSelf();
                     continue;
-                } */
+                }
+
                 // evaluate all children
                 // if this node is maximizing, child nodes are minimizing
                 // child nodes are passed the determined alpha and beta values
                 alphaBetaMinimize(child, depth - 1, alpha, beta);
+
+                //child.deleteSelf(); //remove child from tree
+
                 // read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 childValue = child.getValue();
-
-                // FIXME this hinders the performance of pruning
-                // -> initialize parent.setValue() instead
-                // return initialized value when breaking without previously evaluating any
-                // children
 
                 // parentValue has to be updated before alpha
                 // because the value of the child causing the cut-off has to be propagated
@@ -290,13 +302,13 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is less than all sibling's values
-                if (childValue > parentValue) {
+                if (childValue > parent.getValue()) {
                     // since parentValue is initialized to Integer.MIN_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
                     // maximizing player's turn -> value of this parent node = max of child values
-                    parentValue = childValue;
-                    parent.setValue(childValue); // save value in node
+                    //save value in node
+                    parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
                 }
@@ -308,11 +320,11 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     // of root
                     // one could also return a node with value of Integer.MAX_VALUE instead
                     // as any node with value > beta will never be played by the minimizing player
-                    
-                    break;
 
-                    /* pruning = true;
-                    continue; */
+                    //break;
+
+                    pruning = true;
+                    continue; //skip alpha comparison
                 }
                 if (childValue > alpha) {
                     // maximizing player has new best guaranteed score if parent node is reached
@@ -324,6 +336,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // the value stored by that node also is the value of this parent node
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
+
+            //delete children from tree after evaluation of parent
+            parent.deleteChildren();
             return bestChild;
 
         } catch (ComputeChildrenException exception) {
