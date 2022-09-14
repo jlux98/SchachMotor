@@ -1,10 +1,23 @@
 package model;
 
 public class Coordinate {
-    private int rank;
-    private int file;
+    private byte rank;
+    private byte file;
+
 
     public Coordinate(int rank, int file){
+        // if (rank < 0 || rank > 7) {
+        //     throw new IllegalArgumentException("Error: Rank out of bounds!");
+        // }
+        // if (file < 0 || file > 7) {
+        //     throw new IllegalArgumentException("Error: File out of bounds!");
+        // }
+        // byte rankByte = (byte) rank;
+        // byte fileByte = (byte) file;
+        this((byte) rank, (byte) file);
+    }
+
+    public Coordinate(byte rank, byte file){
         if (rank < 0 || rank > 7) {
             throw new IllegalArgumentException("Error: Rank out of bounds!");
         }
@@ -24,13 +37,21 @@ public class Coordinate {
         }
     }
 
-    private int parseFile(char fileChar) {
-        return Character.getNumericValue(fileChar) - 10;
+    private byte parseFile(char fileChar) {
+        int result = Character.getNumericValue(fileChar) - 10;
+        if (result < 0 || result > 7){
+            throw new IllegalArgumentException();
+        }
+        return (byte) result;
     }
 
-    private int parseRank(char rankChar) {
+    private byte parseRank(char rankChar) {
         
-        return 8-Character.getNumericValue(rankChar);
+        int result = 8-Character.getNumericValue(rankChar);
+        if (result < 0 || result > 7){
+            throw new IllegalArgumentException();
+        }
+        return (byte) result;
     }
 
     public int getRank() {
