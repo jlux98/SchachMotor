@@ -89,13 +89,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      * depth == 0 and 2 if it is a leaf because no children could be generated
      */
     private int isLeaf(Node<T> parent, int depth) {
-        //FIXME cleanup and move position specific code to GameNodeAlphaBetaPruning
-        if (parent.getContent().getClass() == Position.class) {
-            Position position = (Position) parent.getContent();
-            if (depth != 0 && position.getMove() != null && position.getMove().equals(new Move("d3b3"))) {
-                boolean test = true;
-            }
-        }
         if (depth == 0) {
             return 1;
         }
