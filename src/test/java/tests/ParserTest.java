@@ -1,33 +1,29 @@
 package tests;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import model.Move;
 import uciservice.Command;
-import uciservice.CommandType;
 import uciservice.Tokenizer;
 import uciservice.UCIParserAlphaBetaPruning;
 import uciservice.UCITokenizer;
 
-import static java.lang.Math.max;
 
 public class ParserTest {
     
-    private static Tokenizer tokenizer;
+    //private static Tokenizer tokenizer;
 
-    @BeforeAll
+    /* @BeforeAll
     public static void initialize(){
         tokenizer = new UCITokenizer();
     }
-
+ */
     // @Test
     // public void tokenizerTestValidStrings(){
     //     Command expected1 = new Command(CommandType.GO, null);

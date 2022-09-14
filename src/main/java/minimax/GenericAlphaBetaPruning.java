@@ -2,8 +2,6 @@ package minimax;
 
 import java.util.List;
 
-import model.Move;
-import model.Position;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.Tree;

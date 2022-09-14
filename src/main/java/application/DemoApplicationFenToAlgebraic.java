@@ -6,8 +6,8 @@ import java.util.Scanner;
 import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
-import gametree.ImpGameTree;
 import minimax.GameNodeAlphaBetaPruning;
+import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import model.Move;
 import model.Position;
@@ -27,11 +27,6 @@ public class DemoApplicationFenToAlgebraic {
      * enables output of additional information 
      */
     private boolean debugMode = false;
-
-    /**
-     * causes internal board to be printed to console
-     */
-    private boolean printBoards = false;
 
     /**
      * depth will not be configurable if this is set
@@ -70,8 +65,7 @@ public class DemoApplicationFenToAlgebraic {
                     -depth <n> - always use a depth of n
                     -algorithm <algorithm> - always use the specified algorithm
                     -fen <fen> - always use the specified fen
-                    -printboards - print the board representing the calculated move
-                """);
+                    """);
         DemoApplicationFenToAlgebraic demo = new DemoApplicationFenToAlgebraic();
         demo.readArguments(args);
         demo.run();
@@ -100,9 +94,6 @@ public class DemoApplicationFenToAlgebraic {
                 case "-fen" -> {
                     parseDefaultPositionArgument(args, i);
                     i++;
-                }
-                case "-printboards" -> {
-                    printBoards = true;
                 }
                 default -> {
                     System.out.println("not recognized: " + argument);
@@ -203,6 +194,10 @@ public class DemoApplicationFenToAlgebraic {
             case "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
                 algorithmName = "Alpha-Beta-Pruning";
                 evaluator = new GameNodeAlphaBetaPruning();
+            }
+            case "selfdestructing", "self-destructing", "self-destructing alpha-beta-pruning" -> {
+                algorithmName = "Self-Destructing Alpha-Beta-Pruning";
+                evaluator = new GameNodeSelfDestructingAlphaBetaPruning();
             }
             default -> {
                 throw new NoSuchElementException("algorithm could not be found");

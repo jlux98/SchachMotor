@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import gametree.GameNode;
-import minimax.GameNodeAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import model.ArrayBoard;
 import model.ByteBoard;
