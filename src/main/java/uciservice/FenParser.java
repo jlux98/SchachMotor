@@ -62,7 +62,8 @@ public class FenParser {
      */
     public static Position parseFen(String fen) {
         FenParser parser = new FenParser(fen);
-        return parser.parseFen();
+        Position result = parser.parseFen();
+        return result;
     }
 
     /**
