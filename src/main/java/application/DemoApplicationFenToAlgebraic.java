@@ -374,7 +374,7 @@ public class DemoApplicationFenToAlgebraic {
                 position = FenParser.parseFen(readFen());
                 return;
             } catch (FenParseException exception) {
-                System.out.println("fen could not be parsed\nmake sure to quote the fen");
+                System.out.println("fen could not be parsed");
             }
         }
     }
