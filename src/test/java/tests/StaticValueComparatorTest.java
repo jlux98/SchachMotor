@@ -11,12 +11,12 @@ import org.junit.jupiter.api.Test;
 
 import classes.IntNode;
 import gametree.Node;
-import minimax.BlackNodeComparator;
-import minimax.WhiteNodeComparator;
+import minimax.AscendingStaticValueComparator;
+import minimax.DescendingStaticValueComparator;
 
-public class NodeComparatorTest {
-    private WhiteNodeComparator<Integer> whiteComparator = new WhiteNodeComparator<Integer>();
-    private BlackNodeComparator<Integer> blackComparator = new BlackNodeComparator<Integer>();
+public class StaticValueComparatorTest {
+    private DescendingStaticValueComparator whiteComparator = new DescendingStaticValueComparator();
+    private AscendingStaticValueComparator blackComparator = new AscendingStaticValueComparator();
 
     @Test
     public void positiveLessThanTest() {
@@ -103,8 +103,9 @@ public class NodeComparatorTest {
         List<Node<Integer>> sortedNodes = Arrays.asList(new IntNode(-21), new IntNode(-17), new IntNode(-6),
                 new IntNode(-5), new IntNode(0), new IntNode(70), new IntNode(71), new IntNode(81), new IntNode(95));
 
+        //white looks at highest value first
         Collections.reverse(sortedNodes);
-        assortedNodes.sort(new WhiteNodeComparator<Integer>());
+        assortedNodes.sort(whiteComparator);
         assertEquals(sortedNodes, assortedNodes);
     }
 
@@ -115,7 +116,7 @@ public class NodeComparatorTest {
         List<Node<Integer>> sortedNodes = Arrays.asList(new IntNode(-21), new IntNode(-17), new IntNode(-6),
                 new IntNode(-5), new IntNode(0), new IntNode(70), new IntNode(71), new IntNode(81), new IntNode(95));
 
-        assortedNodes.sort(new BlackNodeComparator<Integer>());
+        assortedNodes.sort(blackComparator);
         assertEquals(sortedNodes, assortedNodes);
     }
 }

@@ -12,8 +12,8 @@ import gametree.Tree;
  */
 public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
-    private WhiteNodeComparator<T> whiteComparator = new WhiteNodeComparator<T>();
-    private WhiteNodeComparator<T> blackcomparator = new WhiteNodeComparator<T>();
+    private DescendingStaticValueComparator whiteComparator = new DescendingStaticValueComparator();
+    private AscendingStaticValueComparator blackcomparator = new AscendingStaticValueComparator();
 
     // Note on storing values in nodes:
     // values stored by nodes do not have to be marked as invalid
