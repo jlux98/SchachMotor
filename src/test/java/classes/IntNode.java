@@ -76,4 +76,21 @@ public class IntNode extends BaseNode<Integer> {
         return new IntNode(content, this);
     }
 
+    /**
+     * Compares the value stored in this intnode with the one
+     * stored in the other intnode.
+     * @param obj the IntNode that this IntNode should be compared to
+     * @return true if the value of both IntNodes is equal
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof IntNode) {
+            return this.getContent() == ((IntNode) obj).getContent();
+        }
+        return false;
+    }
+
 }

@@ -51,7 +51,7 @@ public class DetachingGameNode extends GameNode {
         }
         int value = getContent().evaluateBoard(isNaturalLeaf, depth);
         setValue(value);
-        this.deleteContent();
+        //this.deleteContent(); //FIXME re-enable
         return value;
     }
 }
