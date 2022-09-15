@@ -1,5 +1,7 @@
 package model;
 
+import movegenerator.MoveGenerator;
+
 /**
  * Wrapper class for the PieceType enum.
  * This class contains all data that differs between pieces of the same type
@@ -111,5 +113,35 @@ public class Piece {
         }
         Piece otherPiece = (Piece) otherObject;
         return this.getIsWhite() == otherPiece.getIsWhite() && this.getPieceType() == otherPiece.getPieceType();
+    }
+
+    public byte toByte() {
+        byte result = 0;
+        switch(pieceType){
+            case BISHOP:
+                result = MoveGenerator.WHITE_BISHOP;
+                break;
+            case KING:
+                result = MoveGenerator.WHITE_KING;
+                break;
+            case KNIGHT:
+                result = MoveGenerator.WHITE_KNIGHT;
+                break;
+            case PAWN:
+                result = MoveGenerator.WHITE_PAWN;
+                break;
+            case QUEEN:
+                result = MoveGenerator.WHITE_QUEEN;
+                break;
+            case ROOK:
+                result = MoveGenerator.WHITE_ROOK;
+                break;
+            default:
+                break;
+        }
+        if (!isWhite){
+            result += MoveGenerator.WHITE_ROOK;
+        }
+        return result;
     }
 }

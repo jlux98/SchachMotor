@@ -5,8 +5,6 @@ import java.util.List;
 
 import model.Position;
 import model.Board;
-import model.Piece;
-import model.PieceType;
 
 /**
  * In the end the only public method will be generatePossibleMoves, but for
@@ -18,6 +16,20 @@ import model.PieceType;
  *      - Moritz
  */
 public abstract class MoveGenerator {
+
+
+    public static final byte WHITE_BISHOP = 1;
+    public static final byte WHITE_KING = 2;
+    public static final byte WHITE_KNIGHT = 3;
+    public static final byte WHITE_PAWN = 4;
+    public static final byte WHITE_QUEEN = 5;
+    public static final byte WHITE_ROOK = 6;
+    public static final byte BLACK_BISHOP = 7;
+    public static final byte BLACK_KING = 8;
+    public static final byte BLACK_KNIGHT = 9;
+    public static final byte BLACK_PAWN = 10;
+    public static final byte BLACK_QUEEN = 11;
+    public static final byte BLACK_ROOK = 12;
 
     /**
      * A method that generates all possible follow-up-positions for a given game
@@ -49,29 +61,34 @@ public abstract class MoveGenerator {
      * and the given piece
      */
     public static List<Position> generatePossibleMovesPerPiece(Position position, int rank, int file) {
-        Piece currentPiece = position.getPieceAt(rank, file);
-        if (currentPiece == null) {
+        byte currentPiece = position.getByteAt(rank, file);
+        if (currentPiece == 0) {
             return null;
         }
-        if (currentPiece.getIsWhite() != position.getWhitesTurn()){
+        if (currentPiece < BLACK_BISHOP != position.getWhitesTurn()){
             return null;
         }
-        PieceType currentType = currentPiece.getPieceType();
-        switch (currentType) {
-        case BISHOP:
-            return computeBishopMoves(position, rank, file);
-        case KING:
-            return computeKingMoves(position, rank, file);
-        case KNIGHT:
-            return computeKnightMoves(position, rank, file);
-        case PAWN:
-            return computePawnMoves(position, rank, file);
-        case QUEEN:
-            return computeQueenMoves(position, rank, file);
-        case ROOK:
-            return computeRookMoves(position, rank, file);
-        default:
-            return null;
+        switch (currentPiece) {
+            case BLACK_BISHOP:
+            case WHITE_BISHOP:
+                return BishopMoveGenerator.computeBishopMoves(position, rank, file);
+            case BLACK_KING:
+            case WHITE_KING:
+                return computeKingMoves(position, rank, file);
+            case BLACK_KNIGHT:
+            case WHITE_KNIGHT:
+                return computeKnightMoves(position, rank, file);
+            case BLACK_PAWN:
+            case WHITE_PAWN:
+                return computePawnMoves(position, rank, file);
+            case BLACK_QUEEN:
+            case WHITE_QUEEN:
+                return computeQueenMoves(position, rank, file);
+            case BLACK_ROOK:
+            case WHITE_ROOK:
+                return computeRookMoves(position, rank, file);
+            default:
+                return null;
         }
     }
 
@@ -85,10 +102,10 @@ public abstract class MoveGenerator {
      * and the given pawn
      */
     public static List<Position> computePawnMoves(Position position, int rank, int file) {
-        Piece currentPiece = position.getPieceAt(rank, file);
+        byte currentPiece = position.getByteAt(rank, file);
         List<Position> results = new ArrayList<Position>();
         int sign = 0;
-        if (currentPiece.getIsWhite()){
+        if (currentPiece < BLACK_BISHOP){
             sign = -1;
         } else {
             sign = 1;
@@ -115,16 +132,20 @@ public abstract class MoveGenerator {
      */
     private static boolean checkForPawnPromotions(Position position, List<Position> results, 
     int startingRank, int startingFile, int targetRank, int targetFile, int sign) {
+        byte offset = 0;
+        if (sign == 1){
+            offset = WHITE_BISHOP;
+        }
         if ((sign == -1) && targetRank == 0 ||
             (sign == 1) && targetRank == 7){
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, PieceType.BISHOP);
+                targetRank, targetFile, sign, (byte) (WHITE_BISHOP + offset));
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, PieceType.KNIGHT);
+                targetRank, targetFile, sign, (byte) (WHITE_KNIGHT + offset));
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, PieceType.QUEEN);
+                targetRank, targetFile, sign, (byte) (WHITE_QUEEN + offset));
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, PieceType.ROOK);
+                targetRank, targetFile, sign, (byte) (WHITE_ROOK + offset));
             return true;
         } else {
             return false;
@@ -132,21 +153,20 @@ public abstract class MoveGenerator {
     }
 
     private static void computePawnPromotion(Position bs, List<Position> results,
-    int startingRank, int startingFile, int targetRank, int targetFile, int sign, PieceType promoteTo){
+    int startingRank, int startingFile, int targetRank, int targetFile, int sign, byte promoteTo){
         Board promotion = bs.copyBoard();
-        Piece promotedPiece = new Piece(promoteTo, (sign == -1));
-            promotion.setPieceAt(targetRank, targetFile, promotedPiece);
+            promotion.setByteAt(targetRank, targetFile, promoteTo);
             Position resultingPosition = new Position(promotion, bs.getWhiteNextMove(),
                 bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
                 bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
                 -1,-1, bs.getHalfMoves(), bs.getFullMoves());
-            resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile, promotedPiece);
+            resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile, promoteTo);
             results.add(resultingPosition);
     }
 
     private static void computePawnSingleStep(Position bs, List<Position> results, int rank,
         int file, int sign){
-        if (bs.getPieceAt(rank+(sign*1), file) == null){
+        if (bs.getByteAt(rank+(sign*1), file) == 0){
             Board resultingSpaces = getBoardAfterMove(bs.copyBoard(), rank,
                 file, rank+(sign*1), file);
             addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, false, false);
@@ -171,16 +191,16 @@ public abstract class MoveGenerator {
             relevantRank = 6;
         }
         return rank == relevantRank &&
-                bs.getPieceAt(rank+(sign*1), file) == null &&
-                bs.getPieceAt(rank+(sign*2), file) == null;
+                bs.getByteAt(rank+(sign*1), file) == 0 &&
+                bs.getByteAt(rank+(sign*2), file) == 0;
     }
 
     public static void computePawnCaptureLeft(Position bs, List<Position> results, int rank,
         int file, int sign){
         if (file != 0){
-            Piece targetPiece = bs.getPieceAt(rank+(sign*1), file-1);
-            if (targetPiece != null &&
-                targetPiece.getIsWhite() != (sign == -1)){
+            byte targetPiece = bs.getByteAt(rank+(sign*1), file-1);
+            if (targetPiece != 0 &&
+                targetPiece < BLACK_BISHOP != (sign == -1)){
                 Board resultingSpaces = getBoardAfterMove(bs.copyBoard(),
                     rank, file, rank+(sign*1), file-1);
                 addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, true, false);
@@ -191,9 +211,9 @@ public abstract class MoveGenerator {
     public static void computePawnCaptureRight(Position bs, List<Position> results, int rank,
         int file, int sign){
         if (file != 7){
-            Piece targetPiece = bs.getPieceAt(rank+(sign*1), file+1);
-            if (targetPiece != null &&
-                targetPiece.getIsWhite() != (sign == -1)){
+            byte targetPiece = bs.getByteAt(rank+(sign*1), file+1);
+            if (targetPiece != 0 &&
+                targetPiece < BLACK_BISHOP != (sign == -1)){
                 Board resultingSpaces = getBoardAfterMove(bs.copyBoard(),
                     rank, file, rank+(sign*1), file+1);
                 addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, false, true);
@@ -223,7 +243,7 @@ public abstract class MoveGenerator {
                 (targetFile == file+1 || targetFile == file-1)){
                 Board resultingSpaces = getBoardAfterMove(position.copyBoard(),
                     rank, file, targetRank, targetFile);
-                resultingSpaces.setPieceAt(targetRank-(sign*1),targetFile,null);
+                resultingSpaces.setByteAt(targetRank-(sign*1),targetFile,(byte)0);
                 addPawnMove(position, results, rank, file, sign, resultingSpaces, false, false, false);
             }
         }
@@ -301,9 +321,9 @@ public abstract class MoveGenerator {
             return;
         }
         boolean hasCaptured = false;
-        Piece targetPiece = position.getPieceAt(targetRank, targetFile);
-        if (targetPiece != null){
-            if (targetPiece.getIsWhite() == position.getWhitesTurn()){
+        byte targetPiece = position.getByteAt(targetRank, targetFile);
+        if (targetPiece != 0){
+            if (targetPiece < BLACK_BISHOP == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;
@@ -388,7 +408,7 @@ public abstract class MoveGenerator {
                 if (relevantAttackMap[relevantRank][i]){
                     return;
                 }
-                if (bs.getPieceAt(relevantRank, i) != null){
+                if (bs.getByteAt(relevantRank, i) != 0){
                     return;
                 }
             }
@@ -428,13 +448,13 @@ public abstract class MoveGenerator {
                 if (relevantAttackMap[relevantRank][i]){
                     return;
                 }
-                if (bs.getPieceAt(relevantRank, i) != null){
+                if (bs.getByteAt(relevantRank, i) != 0){
                     return;
                 }
             }
             /*  even though the rook can move through attacks the space still 
                 needs to be empty */
-            if (bs.getPieceAt(relevantRank, 1)!=null){
+            if (bs.getByteAt(relevantRank, 1)!= 0){
                 return;
             }
             // move king first
@@ -456,9 +476,9 @@ public abstract class MoveGenerator {
             return;
         }
         boolean hasCaptured = false;
-        Piece targetPiece = position.getPieceAt(targetRank, targetFile);
-        if (targetPiece != null){
-            if (targetPiece.getIsWhite() == position.getWhitesTurn()){
+        byte targetPiece = position.getByteAt(targetRank, targetFile);
+        if (targetPiece != 0){
+            if (targetPiece < BLACK_BISHOP == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;
@@ -505,16 +525,7 @@ public abstract class MoveGenerator {
         }
     }
 
-    /**
-     * Generates all legal moves for a specific bishop.
-     * @param position the position for which a follow-up position should be generated
-     * @param rank the rank of the bishop
-     * @param file the file of the bishop
-     * @return the positions that the generated moves result in
-     */
-    public static List<Position> computeBishopMoves(Position position, int rank, int file) {
-        return computeDiagonalMoves(position, rank, file);
-    }
+    
 
     /**
     * Generates all legal moves for a specific rook.
@@ -557,12 +568,12 @@ public abstract class MoveGenerator {
         boolean whiteCastlingQueenside = position.getWhiteCastlingQueenside();
 
         if (isRook) {
-            Piece rook = position.getPieceAt(rank, file);
+            byte rook = position.getByteAt(rank, file);
             //nullpointer possible here
-            if (rook.getPieceType() != PieceType.ROOK) {
-                throw new IllegalStateException("tried to move a rook, but the piece on rank " + rank + " file " + file + " is a " + rook.getPieceType());
+            if (rook != BLACK_ROOK && rook != WHITE_ROOK) {
+                throw new IllegalStateException("tried to move a rook, but the piece on rank " + rank + " file " + file + " is a " + rook);
             }
-            if (rook.getIsWhite()) {
+            if (rook < BLACK_BISHOP) {
                 //white rook
                 if (file == 0) {
                     whiteCastlingQueenside = false;
@@ -597,7 +608,7 @@ public abstract class MoveGenerator {
      * @return the positions that the generated moves result in
      */
 
-    private static List<Position> computeDiagonalMoves(Position position, int rank, int file) {
+    public static List<Position> computeDiagonalMoves(Position position, int rank, int file) {
         List<Position> diagonalMoves = new ArrayList<Position>();
         //upper left
         diagonalMoves.addAll(computeRay(position, rank, file, -1, -1));
@@ -615,10 +626,10 @@ public abstract class MoveGenerator {
             (targetFile < 0) || (targetFile > 7)) {
                 return false;
             }
-        Piece targetPiece = position.getPieceAt(targetRank, targetFile);
+        byte targetPiece = position.getByteAt(targetRank, targetFile);
         boolean targetPieceIsWhite;
-        if (targetPiece != null){
-            targetPieceIsWhite = targetPiece.getIsWhite();
+        if (targetPiece != 0){
+            targetPieceIsWhite = targetPiece < BLACK_BISHOP;
         } else {
             targetPieceIsWhite = !isWhite;
         }
@@ -659,8 +670,8 @@ public abstract class MoveGenerator {
             throw new IllegalArgumentException("must specify an offset (other than 0,0) for ray generation");
         }
 
-        Piece piece = currentPosition.getPieceAt(startingRank, startingFile);
-        if (piece == null) {
+        byte piece = currentPosition.getByteAt(startingRank, startingFile);
+        if (piece == 0) {
             throw new IllegalArgumentException("the specified square does not contain a piece");
         }
         List<Position> moves = new ArrayList<Position>();
@@ -672,21 +683,21 @@ public abstract class MoveGenerator {
         int file = startingFile;
 
         //while next step legal and last step did not capture
-        while (targetLegal(rank + yOffset, file + xOffset, piece.getIsWhite(), currentPosition) && !didCapture) {
+        while (targetLegal(rank + yOffset, file + xOffset, piece < BLACK_BISHOP, currentPosition) && !didCapture) {
             //get a new copy every time
             newSpaces = currentPosition.copyBoard();
 
             //leave starting space
-            newSpaces.setPieceAt(startingRank, startingFile, null);
+            newSpaces.setByteAt(startingRank, startingFile, (byte)0);
 
             int targetFile = file + xOffset;
             int targetRank = rank + yOffset;
 
             //move to next space, capture by overwriting existing pieces if needed
-            if (newSpaces.getPieceAt(targetRank,targetFile) != null) {
+            if (newSpaces.getByteAt(targetRank,targetFile) != 0) {
                 didCapture = true;
             }
-            newSpaces.setPieceAt(targetRank,targetFile,piece);
+            newSpaces.setByteAt(targetRank,targetFile,piece);
 
             generatedPosition = currentPosition.generateFollowUpPosition(newSpaces, -1, -1, newWhiteCastlingKingside,
                     newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, didCapture);
@@ -728,9 +739,9 @@ public abstract class MoveGenerator {
      * @return the position after the move has been executed
      */
     public static Board getBoardAfterMove(Board spaces, int startingRank, int startingFile, int targetRank, int targetFile){
-        Piece movingPiece = spaces.getPieceAt(startingRank,startingFile);
-        spaces.setPieceAt(startingRank,startingFile,null);
-        spaces.setPieceAt(targetRank,targetFile,movingPiece);
+        byte movingPiece = spaces.getByteAt(startingRank,startingFile);
+        spaces.setByteAt(startingRank,startingFile,(byte)0);
+        spaces.setByteAt(targetRank,targetFile,movingPiece);
         return spaces;
     }
 }
