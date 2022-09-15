@@ -485,7 +485,8 @@ public class DemoApplicationFenToAlgebraic {
     private StringBuilder addPerformanceInfo(StringBuilder builder) {
         return addCoreInfo(builder)
                 .append("\n\tevaluated positions: " + evaluator.getEvaluatedNodeCount())
-                .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime));
+                .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
+                .append("\n\tmove gen zeit: " + TimeUtility.nanoToSeconds(GameNode.totalChildGenerationTime));
     }
 
     /**
