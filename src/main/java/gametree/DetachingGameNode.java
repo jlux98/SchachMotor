@@ -41,11 +41,11 @@ public class DetachingGameNode extends GameNode {
 
     @Override
     protected void detachChildGenerationData() {
-        this.deleteContent(); //position = null
+        //this.deleteContent(); //position = null
     }
 
     @Override
-    public int evaluateStatically(boolean isNaturalLeaf, int depth) {
+    public int evaluate(boolean isNaturalLeaf, int depth) {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }

@@ -12,8 +12,8 @@ import gametree.Tree;
  */
 public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
-    private DescendingStaticValueComparator whiteComparator = new DescendingStaticValueComparator();
-    private AscendingStaticValueComparator blackcomparator = new AscendingStaticValueComparator();
+    private DescendingStaticValueComparator<T> whiteComparator = new DescendingStaticValueComparator<T>();
+    private AscendingStaticValueComparator<T> blackcomparator = new AscendingStaticValueComparator<T>();
 
     // Note on storing values in nodes:
     // values stored by nodes do not have to be marked as invalid
@@ -135,10 +135,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
-                parent.evaluateStatically(false, depth);
+                parent.evaluate(false, depth);
                 return parent;
             case 2:
-                parent.evaluateStatically(true, depth);
+                parent.evaluate(true, depth);
                 return parent;
         }
 
@@ -152,6 +152,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
+            //blackcomparator.setDepth(depth);
             children.sort(blackcomparator); 
 
             for (Node<T> child : children) {
@@ -238,10 +239,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
-                parent.evaluateStatically(false, depth);
+                parent.evaluate(false, depth);
                 return parent;
             case 2:
-                parent.evaluateStatically(true, depth);
+                parent.evaluate(true, depth);
                 return parent;
         }
 
@@ -255,6 +256,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
+            //whiteComparator.setDepth(depth);
             children.sort(whiteComparator);
 
 

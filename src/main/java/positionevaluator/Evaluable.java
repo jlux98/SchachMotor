@@ -26,7 +26,18 @@ public interface Evaluable {
      * @param b
      * @return the calculated value of this evaluable
      */
-    public abstract int evaluateStatically(boolean isNaturaLeaf, int depth);
+    public abstract int evaluate(boolean isNaturaLeaf, int depth);
+
+    /**
+     * Evaluates this evaluable and returns the determined value.
+     * The resultmust be the same for any invocation
+     * of {@link #cachedEvaluateStatically()} on the same Evaluable
+     *  and should be cached.
+     * <p>
+     * Does <b>not</b> overwrite the stored value.
+     * @return the static value of this evaluable
+     */
+    public abstract int cachedEvaluateStatically();
 
     /**
      * Used to determine if this node is marked as especially interesting.
