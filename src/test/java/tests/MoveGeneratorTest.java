@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import data.MoveGeneratorData;
 import helper.PositionHelper;
 import model.Position;
+import movegenerator.BishopMoveGenerator;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;
 
@@ -274,7 +275,7 @@ public class MoveGeneratorTest {
     @Test
     public void moveBishopTest() {
         Position bishopTestPosition = FenParser.parseFen("7K/8/1n6/4P3/3b4/8/8/7k b - - 0 1"); //bishop starts at d4
-        List<Position> followUpPositions = MoveGenerator.computeBishopMoves(bishopTestPosition, 4, 3);
+        List<Position> followUpPositions = BishopMoveGenerator.computeBishopMoves(bishopTestPosition, 4, 3);
 
         List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
         expectedfollowUpPositions.add("7K/8/1n6/2b1P3/8/8/8/7k w - - 1 2"); //move one square to upper left
