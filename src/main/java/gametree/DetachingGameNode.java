@@ -41,7 +41,7 @@ public class DetachingGameNode extends GameNode {
 
     @Override
     protected void detachChildGenerationData() {
-        //this.deleteContent(); //position = null
+        this.deleteContent(); //position = null
     }
 
     @Override
@@ -51,7 +51,7 @@ public class DetachingGameNode extends GameNode {
         }
         int value = getContent().evaluateBoard(isNaturalLeaf, depth);
         setValue(value);
-        //this.deleteContent(); //FIXME re-enable
+        this.deleteContent();
         return value;
     }
 }

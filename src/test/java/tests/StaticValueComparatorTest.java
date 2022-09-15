@@ -15,8 +15,8 @@ import minimax.AscendingStaticValueComparator;
 import minimax.DescendingStaticValueComparator;
 
 public class StaticValueComparatorTest {
-    private DescendingStaticValueComparator whiteComparator = new DescendingStaticValueComparator();
-    private AscendingStaticValueComparator blackComparator = new AscendingStaticValueComparator();
+    private DescendingStaticValueComparator<Integer> whiteComparator = new DescendingStaticValueComparator<Integer>();
+    private AscendingStaticValueComparator<Integer> blackComparator = new AscendingStaticValueComparator<Integer>();
 
     @Test
     public void positiveLessThanTest() {
