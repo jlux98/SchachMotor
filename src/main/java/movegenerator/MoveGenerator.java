@@ -134,7 +134,7 @@ public abstract class MoveGenerator {
     int startingRank, int startingFile, int targetRank, int targetFile, int sign) {
         byte offset = 0;
         if (sign == 1){
-            offset = WHITE_BISHOP;
+            offset = WHITE_ROOK;
         }
         if ((sign == -1) && targetRank == 0 ||
             (sign == 1) && targetRank == 7){
