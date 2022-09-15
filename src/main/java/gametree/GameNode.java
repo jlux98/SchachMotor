@@ -3,6 +3,7 @@ package gametree;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
+import utility.TimeUtility;
 
 /**
  * Class implementing Nodes containing Positions.
@@ -30,6 +31,8 @@ import movegenerator.MoveGenerator;
  * </p>
  */
 public class GameNode extends BaseNode<Position> {
+
+    public static long totalChildGenerationTime = 0;
 
     /**
      * Creates a root node.
@@ -85,7 +88,12 @@ public class GameNode extends BaseNode<Position> {
             throw new IllegalStateException("node already has children");
         }
         createChildListIfNotExists();
-        Position[] followUpPositions = MoveGenerator.generatePossibleMoves(this.getContent());
+        Position pos = this.getContent();
+
+        TimeUtility<Position[]> timer = new TimeUtility<Position[]>();
+        Position[] followUpPositions = timer.time(() -> MoveGenerator.generatePossibleMoves(pos));
+
+        totalChildGenerationTime += timer.getElapsedTime();
 
         if (followUpPositions.length == 0) {
             // no moves were generated

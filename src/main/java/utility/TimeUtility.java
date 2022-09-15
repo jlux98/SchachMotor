@@ -51,12 +51,13 @@ public class TimeUtility<T> {
         long endingTime = System.nanoTime();
 
         //save rough time spent calculating
-        elapsedTime = endingTime - startingTime;
+        elapsedTime = Math.abs(endingTime - startingTime);
         return result;
         //works for negative and positive numbers
         //(System.nanoTime can be negative = relative to a future time)
         //start = 2, end = 5:    5 - 2 = 3
         //start = -5, end = -2: -2 --5 = 3
+        //start = -3, end = 2: -3 -2 = -5 -> abs()
     }
 
     /**
