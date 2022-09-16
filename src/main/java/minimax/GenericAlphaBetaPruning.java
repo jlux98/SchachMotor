@@ -5,6 +5,7 @@ import java.util.List;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.Tree;
+import utility.PerformanceData;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
@@ -22,6 +23,8 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
     @Override
     public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
+        PerformanceData.resetMoveGenTime();
+        resetEvaluatedNodeCount();
         return evaluateNode(tree.getRoot(), depth, whitesTurn);
     }
 

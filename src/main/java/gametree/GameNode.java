@@ -3,6 +3,7 @@ package gametree;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
+import utility.PerformanceData;
 import utility.TimeUtility;
 
 /**
@@ -31,8 +32,6 @@ import utility.TimeUtility;
  * </p>
  */
 public class GameNode extends BaseNode<Position> {
-
-    public static long totalChildGenerationTime = 0;
 
     /**
      * Creates a root node.
@@ -93,7 +92,7 @@ public class GameNode extends BaseNode<Position> {
         TimeUtility<Position[]> timer = new TimeUtility<Position[]>();
         Position[] followUpPositions = timer.time(() -> MoveGenerator.generatePossibleMoves(pos));
 
-        totalChildGenerationTime += timer.getElapsedTime();
+        PerformanceData.moveGenerationTime += timer.getElapsedTime();
 
         if (followUpPositions.length == 0) {
             // no moves were generated

@@ -8,7 +8,7 @@ import model.Position;
 public class GameNodeSelfDestructingAlphaBetaPruning extends SelfDestructingAlphaBetaPruning<Position> implements GameTreeEvaluator {
     @Override
     public GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn) {
-        return evaluateNode(tree.getRoot(), depth, whitesTurn);
+        return (GameNode) super.evaluateTree(tree, depth, whitesTurn);
     }
 
     /**
