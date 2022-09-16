@@ -1,14 +1,16 @@
 package model;
 
+import movegenerator.MoveGenerator;
+
 public class Move {
     private Coordinate startingSpace;
     private Coordinate targetSpace;
-    private Piece promotedTo;
+    private byte promotedTo;
 
     public Move(Coordinate startingSpace, Coordinate targetSpace) {
         this.startingSpace = startingSpace;
         this.targetSpace = targetSpace;
-        this.promotedTo = null;
+        this.promotedTo = 0;
     }
 
     public Move(String moveString){
@@ -16,7 +18,7 @@ public class Move {
         if (moveString.matches("[a-h][1-8][a-h][1-8](B|N|Q|R|b|n|q|r)")){
             this.startingSpace = new Coordinate(moveString.substring(0,2));
             this.targetSpace = new Coordinate(moveString.substring(2,4));
-            this.promotedTo = new Piece(moveString.charAt(4));
+            this.promotedTo = new Piece(moveString.charAt(4)).toByte();
             return;
         }
 
@@ -28,10 +30,20 @@ public class Move {
         }
     }    
     
-    public Move(Coordinate startingSpace, Coordinate targetSpace, Piece promotedTo) {
+    public Move(Coordinate startingSpace, Coordinate targetSpace, byte promotedTo) {
         this.startingSpace = startingSpace;
         this.targetSpace = targetSpace;
         this.promotedTo = promotedTo;
+    }
+
+    /**
+     * This constructor exists purely for compatibility with old tests
+     * @param startingSpace
+     * @param targetSpace
+     * @param piece
+     */
+    public Move(Coordinate startingSpace, Coordinate targetSpace, Piece piece) {
+        this(startingSpace, targetSpace, piece.toByte());
     }
 
     public Coordinate getStartingSpace() {
@@ -42,23 +54,48 @@ public class Move {
         return targetSpace;
     }
 
-    public Piece getPromotedTo() {
+    public byte getPromotedTo() {
         return promotedTo;
     }
 
     @Override
     public String toString() {
         String result = startingSpace.toString() + targetSpace.toString();
-        if (promotedTo != null) {
-            result += promotedTo.toString();
+        if (promotedTo != 0) {
+            result += promotedToString();
         }
         return result;
     }
 
+    private String promotedToString() {
+        switch (promotedTo) {
+            case MoveGenerator.BLACK_BISHOP:
+            case MoveGenerator.WHITE_BISHOP:
+                return "b";
+            case MoveGenerator.BLACK_KING:
+            case MoveGenerator.WHITE_KING:
+                return "k";
+            case MoveGenerator.BLACK_KNIGHT:
+            case MoveGenerator.WHITE_KNIGHT:
+                return "n";
+            case MoveGenerator.BLACK_PAWN:
+            case MoveGenerator.WHITE_PAWN:
+                return "p";
+            case MoveGenerator.BLACK_QUEEN:
+            case MoveGenerator.WHITE_QUEEN:
+                return "q";
+            case MoveGenerator.BLACK_ROOK:
+            case MoveGenerator.WHITE_ROOK:
+                return "r";
+            default:
+                return null;
+        }
+    }
+
     public String toStringAlgebraic() {
         String result = startingSpace.toStringAlgebraic() + targetSpace.toStringAlgebraic();
-        if (promotedTo != null) {
-            result += promotedTo.toString();
+        if (promotedTo != 0) {
+            result += promotedToString();
         }
         return result;
     }
@@ -70,10 +107,7 @@ public class Move {
      * @return true if this.getPromotedTo() equals otherMove.getPromotedTo()
      */
     private boolean promotedToEquals(Move otherMove) {
-        if (this.getPromotedTo() == null) {
-            return otherMove.getPromotedTo() == null;
-        }
-        return this.getPromotedTo().equals(otherMove.getPromotedTo());
+        return this.getPromotedTo() == otherMove.getPromotedTo();
     }
 
     @Override
