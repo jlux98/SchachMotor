@@ -2,11 +2,22 @@ package movegenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import model.Board;
 import model.Position;
 
-public class PawnMoveGenerator {
+public class PawnMoveGenerator extends PieceMoveGenerator{
+
+    public PawnMoveGenerator(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
+        super(position, rank, file, resultList, sem);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computePawnMoves(position, rank, file);
+    }
+
         /**
      * Computes all possible follow-up positions for a specific pawn on a 
      * given position

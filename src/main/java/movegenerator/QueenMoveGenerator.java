@@ -2,11 +2,21 @@ package movegenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import model.Position;
 
 
-public class QueenMoveGenerator {
+public class QueenMoveGenerator extends PieceMoveGenerator{
+    public QueenMoveGenerator(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
+        super(position, rank, file, resultList, sem);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeQueenMoves(position, rank, file);
+    }
+
     /**
     * Generates all legal moves for a specific queen.
     * @param position the position for which a follow-up position should be generated

@@ -2,12 +2,23 @@ package movegenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import model.Board;
 import model.Position;
 
 
-public class KingMoveGenerator {
+public class KingMoveGenerator extends PieceMoveGenerator {
+    
+    public KingMoveGenerator(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
+        super(position, rank, file, resultList, sem);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeKingMoves(position, rank, file);
+    }
+
     public static List<Position> computeKingMoves(Position position, int rank, int file) {
         List<Position> results = new ArrayList<>();
         // Attack north
@@ -173,4 +184,10 @@ public class KingMoveGenerator {
             results.add(resultingPosition);
         }
     }
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 }

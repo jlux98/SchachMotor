@@ -1,7 +1,9 @@
 package movegenerator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import model.Position;
 import model.Board;
@@ -38,12 +40,20 @@ public abstract class MoveGenerator {
      * @return an array with all possible follow-up-positions (empty if no moves can be made)
      */
     public static Position[] generatePossibleMoves(Position position) {
-        List<Position> followUpPositions = new ArrayList<>(); //is hashset preferable over array for us? set initial size of hashset in constructor
+        List<Position> followUpPositions = Collections.synchronizedList(new ArrayList<>()); //is hashset preferable over array for us? set initial size of hashset in constructor
+        List<Thread> threadList = new ArrayList<>();
+        Semaphore sem = new Semaphore(1);
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                List<Position> results = generatePossibleMovesPerPiece(position, rank, file);
-                if (results != null){
-                    followUpPositions.addAll(results);
+                threadList.add(generatePossibleMovesPerPiece(position, rank, file, followUpPositions, sem));
+            }
+        }
+        for (int i = 0; i < threadList.size(); i++){
+            if (threadList.get(i) != null){
+                try {
+                    threadList.get(i).join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -60,7 +70,7 @@ public abstract class MoveGenerator {
      * @return a set with all possible follow-up-positions for the given position
      * and the given piece
      */
-    public static List<Position> generatePossibleMovesPerPiece(Position position, int rank, int file) {
+    public static Thread generatePossibleMovesPerPiece(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
         byte currentPiece = position.getByteAt(rank, file);
         if (currentPiece == 0) {
             return null;
@@ -68,25 +78,45 @@ public abstract class MoveGenerator {
         if (currentPiece < BLACK_BISHOP != position.getWhitesTurn()){
             return null;
         }
+        Runnable runner = null;
+        Thread t =null;
         switch (currentPiece) {
             case BLACK_BISHOP:
             case WHITE_BISHOP:
-                return BishopMoveGenerator.computeBishopMoves(position, rank, file);
+                runner = new BishopMoveGenerator(position, rank, file, resultList, sem);
+                t = new Thread(runner);
+                t.start();
+                return t;
             case BLACK_KING:
             case WHITE_KING:
-                return KingMoveGenerator.computeKingMoves(position, rank, file);
+                runner = new KingMoveGenerator(position, rank, file, resultList, sem);
+                t = new Thread(runner);
+                t.start();
+                return t;
             case BLACK_KNIGHT:
             case WHITE_KNIGHT:
-                return KnightMoveGenerator.computeKnightMoves(position, rank, file);
+                runner = new KnightMoveGenerator(position, rank, file, resultList, sem);
+                t = new Thread(runner);
+                t.start();
+                return t;
             case BLACK_PAWN:
             case WHITE_PAWN:
-                return PawnMoveGenerator.computePawnMoves(position, rank, file);
+                runner = new PawnMoveGenerator(position, rank, file, resultList, sem);
+                t = new Thread(runner);
+                t.start();
+                return t;
             case BLACK_QUEEN:
             case WHITE_QUEEN:
-                return QueenMoveGenerator.computeQueenMoves(position, rank, file);
+                runner = new QueenMoveGenerator(position, rank, file, resultList, sem);
+                t = new Thread(runner);
+                t.start();
+                return t;
             case BLACK_ROOK:
             case WHITE_ROOK:
-                return RookMoveGenerator.computeRookMoves(position, rank, file);
+                runner = new RookMoveGenerator(position, rank, file, resultList, sem);
+                t = new Thread(runner);
+                t.start();
+                return t;
             default:
                 return null;
         }

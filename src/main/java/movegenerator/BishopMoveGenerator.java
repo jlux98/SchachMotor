@@ -1,10 +1,21 @@
 package movegenerator;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import model.Position;
 
-public class BishopMoveGenerator {
+public class BishopMoveGenerator extends PieceMoveGenerator{
+
+    public BishopMoveGenerator(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
+        super(position, rank, file, resultList, sem);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeBishopMoves(position, rank, file);
+    }
+
     /**
      * Generates all legal moves for a specific bishop.
      * @param position the position for which a follow-up position should be generated
