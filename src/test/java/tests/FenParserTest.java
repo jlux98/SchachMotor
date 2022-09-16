@@ -49,7 +49,6 @@ public class FenParserTest {
 
     @Test
     public void piecesInCornerTest() {
-        //FIXME check board orientation
         Position position = FenParser.parseFen("k6N/8/8/8/8/8/8/K6n w - - 0 1");
         Board board = position.getBoard();
         Piece a8Piece = board.getPieceAt(0, 0);

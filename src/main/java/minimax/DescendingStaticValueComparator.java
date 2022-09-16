@@ -2,7 +2,6 @@ package minimax;
 
 import java.util.Comparator;
 
-import gametree.ComputeChildrenException;
 import gametree.Node;
 
 //FIXME make comparator for evaluables instead
