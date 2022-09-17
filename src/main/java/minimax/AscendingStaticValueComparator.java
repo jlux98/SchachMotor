@@ -10,6 +10,7 @@ import gametree.Node;
  *  in ascending order.
  */
 public class AscendingStaticValueComparator<T> implements Comparator<Node<T>> {
+    public static int comparisons = 0;
     /**
      * Orders the data structure from smallest to greatest.
      * @return 
@@ -21,6 +22,7 @@ public class AscendingStaticValueComparator<T> implements Comparator<Node<T>> {
      */
     @Override
     public int compare(Node<T> evaluable1, Node<T> evaluable2) {
+        comparisons += 1;
         //FIXME is it a problem that this does not provide depth to evaluation function (provides depth=0)
         //evaluation may not require child generation here
         return evaluable1.cachedEvaluateStatically() - evaluable2.cachedEvaluateStatically();

@@ -68,47 +68,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
     }
 
     /**
-     * Determines whether the passed node is a leaf node when inspected by
-     * alpha-beta-pruning.
-     * <br><br>
-     * A node is a leaf if <b>at least one</b> of these conditions is true:
-     * <ul>
-     *      <li>
-     *          depth = 0 or
-     *      </li>
-     *      <li>
-     *          no children can be calculated for it
-     *      </li>
-     * </ul>
-     * <br><br>
-     * If this method returns false, it is guaranteed that calling
-     * parent.queryChildren() will not throw an ComputeChildrenException.
-     * 
-     * @param parent the inspected node
-     * @param depth  the current depth of alpha-beta pruning
-     * @return 0 if the passed node is not a leaf node, 1 if is a leaf because
-     * depth == 0 and 2 if it is a leaf because no children could be generated
-     */
-    private int isLeaf(Node<T> parent, int depth) {
-        if (depth == 0) {
-            return 1;
-        }
-        try {
-            // attempt to retrieve or if none are stored calculate children
-            parent.queryChildren();
-        } catch (ComputeChildrenException exception) {
-            // node could not generate children -> is a leaf
-            return 2;
-        }
-        // node is a leaf if it has no children
-        if (parent.hasChildren()) {
-            return 0;
-        } else {
-            return 2;
-        }
-    }
-
-    /**
      * Minimizes the passed node (value = min(child values)) and returns the child
      * node with the best (smallest) value.
      * 

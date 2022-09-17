@@ -3,9 +3,12 @@ package application;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import gametree.BaseNode;
 import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
+import minimax.AscendingStaticValueComparator;
+import minimax.DescendingStaticValueComparator;
 import minimax.GameNodeAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
@@ -14,6 +17,8 @@ import model.Position;
 import uciservice.FenParseException;
 import uciservice.FenParser;
 import utility.TimeUtility;
+
+import static utility.NumberFormatter.format;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
@@ -254,6 +259,10 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void prepareNextRun() {
         evaluator.resetEvaluatedNodeCount();
+        BaseNode.evaluateStaticallyCalls = 0;
+        AscendingStaticValueComparator.comparisons = 0;
+        DescendingStaticValueComparator.comparisons = 0;
+        GameNode.computeStaticValueCalls = 0;
         calculationTime = -1; //not required, but better safe than sorry
         System.gc();
     }
@@ -445,14 +454,6 @@ public class DemoApplicationFenToAlgebraic {
     }
 
     /**
-     * Prints the board stored by the passed position.
-     * @param position
-     */
-    private void printBoard(Position position) {
-        System.out.println("\ninternal board:\n" + position.toString());
-    }
-
-    /**
      * Adds the configuration of the setDefault switches. 
      * @param builder
      * @return
@@ -484,8 +485,12 @@ public class DemoApplicationFenToAlgebraic {
      */
     private StringBuilder addPerformanceInfo(StringBuilder builder) {
         return addCoreInfo(builder)
-                .append("\n\tevaluated positions: " + evaluator.getEvaluatedNodeCount())
-                .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime));
+                .append("\n\tevaluated positions: " + format(evaluator.getEvaluatedNodeCount()))
+                .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
+                .append("\n\tstatic evaluation calls: " + format(BaseNode.evaluateStaticallyCalls))
+                .append("\n\tascending comparisons:  " + format(AscendingStaticValueComparator.comparisons))
+                .append("\n\tdescending comparisons: " + format(DescendingStaticValueComparator.comparisons))
+                .append("\n\tactual static value computations:     " + format(GameNode.computeStaticValueCalls));
     }
 
     /**

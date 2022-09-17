@@ -31,6 +31,8 @@ import movegenerator.MoveGenerator;
  */
 public class GameNode extends BaseNode<Position> {
 
+    public static int computeStaticValueCalls = 0;
+
     /**
      * Creates a root node.
      * @param position position stored by the node
@@ -105,6 +107,7 @@ public class GameNode extends BaseNode<Position> {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
+        computeStaticValueCalls += 1;
         return getContent().evaluateBoard(isNaturalLeaf, depth);        
     }
 

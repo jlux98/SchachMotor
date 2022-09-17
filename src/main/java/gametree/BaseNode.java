@@ -20,6 +20,8 @@ public abstract class BaseNode<T> implements Node<T> {
     private boolean staticEvaluationCached = false;
     private int staticValue;
 
+    public static int evaluateStaticallyCalls = 0;
+
     /**
      * Creates a root node.
      * @param content content stored by the node
@@ -201,6 +203,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public int cachedEvaluateStatically() {
+        evaluateStaticallyCalls += 1;
         if (!staticEvaluationCached) {
             //only compute static value once
             //compute static value with depth = 0 and non-leaf
