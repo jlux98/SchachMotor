@@ -66,7 +66,7 @@ public class IntNode extends BaseNode<Integer> {
      * returning the integer that is stored as content as this node's value.
      */
     @Override
-    public int evaluate(boolean isNaturalLeaf, int depth) {
+    public int evaluateStatically(boolean isNaturalLeaf, int depth) {
         this.setValue(getContent());
         return this.getContent();
     }

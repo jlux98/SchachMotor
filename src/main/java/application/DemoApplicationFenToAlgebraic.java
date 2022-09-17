@@ -257,6 +257,7 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void prepareNextRun() {
         evaluator.resetEvaluatedNodeCount();
+        PerformanceData.roughlyEvaluateStaticallyCalls = 0;
         PerformanceData.evaluateStaticallyCalls = 0;
         PerformanceData.ascendingComparisons = 0;
         PerformanceData.descendingComparisons = 0;
@@ -485,7 +486,8 @@ public class DemoApplicationFenToAlgebraic {
         return addCoreInfo(builder)
                 .append("\n\tevaluated positions: " + format(evaluator.getEvaluatedNodeCount()))
                 .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
-                .append("\n\tstatic evaluation calls: " + format(PerformanceData.evaluateStaticallyCalls))
+                .append("\n\troughlyEvaluateStatically calls: " + format(PerformanceData.roughlyEvaluateStaticallyCalls))
+                .append("\n\tevaluateStatically calls: " + format(PerformanceData.evaluateStaticallyCalls))
                 .append("\n\tascending comparisons:   " + format(PerformanceData.ascendingComparisons))
                 .append("\n\tdescending comparisons:  " + format(PerformanceData.descendingComparisons))
                 .append("\n\tactual static value computations: " + format(PerformanceData.computeStaticValueCalls));

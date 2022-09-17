@@ -7,7 +7,7 @@ import utility.PerformanceData;
 
 //FIXME make comparator for evaluables instead
 /**
- * A comparator ordering nodes by their static evaluation {@link Node#evaluate(boolean, int)}
+ * A comparator ordering nodes by their static evaluation {@link Node#evaluateStatically(boolean, int)}
  *  in ascending order.
  */
 public class AscendingStaticValueComparator<T> implements Comparator<Node<T>> {
@@ -25,7 +25,7 @@ public class AscendingStaticValueComparator<T> implements Comparator<Node<T>> {
         PerformanceData.ascendingComparisons += 1;
         //FIXME is it a problem that this does not provide depth to evaluation function (provides depth=0)
         //evaluation may not require child generation here
-        return evaluable1.cachedEvaluateStatically() - evaluable2.cachedEvaluateStatically();
+        return evaluable1.roughlyEvaluateStatically() - evaluable2.roughlyEvaluateStatically();
     }
 
 }

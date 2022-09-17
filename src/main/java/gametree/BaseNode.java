@@ -192,8 +192,8 @@ public abstract class BaseNode<T> implements Node<T> {
      * <p>
      * <b>Note:</b> Do not use this method directly to evaluate this node statically.
      * This is a helper method that is implemented individually by subtypes and called by 
-     * {@link #evaluate(boolean, int)} and {@link #cachedEvaluateStatically()}.
-     * Use {@link #evaluate(boolean, int)} or {@link #cachedEvaluateStatically()} to evaluate this node statically.
+     * {@link #evaluateStatically(boolean, int)} and {@link #roughlyEvaluateStatically()}.
+     * Use {@link #evaluateStatically(boolean, int)} or {@link #roughlyEvaluateStatically()} to evaluate this node statically.
      * </p>
      * @param isNaturaLeaf
      * @param depth
@@ -202,8 +202,8 @@ public abstract class BaseNode<T> implements Node<T> {
     protected abstract int computeStaticValue(boolean isNaturaLeaf, int depth);
 
     @Override
-    public int cachedEvaluateStatically() {
-        PerformanceData.evaluateStaticallyCalls += 1;
+    public int roughlyEvaluateStatically() {
+        PerformanceData.roughlyEvaluateStaticallyCalls += 1;
         if (!staticEvaluationCached) {
             //only compute static value once
             //compute static value with depth = 0 and non-leaf
@@ -215,7 +215,8 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
-    public int evaluate(boolean isNaturaLeaf, int depth) {
+    public int evaluateStatically(boolean isNaturaLeaf, int depth) {
+        PerformanceData.evaluateStaticallyCalls += 1;
         //overwrite value
         value = computeStaticValue(isNaturaLeaf, depth);
         return value;

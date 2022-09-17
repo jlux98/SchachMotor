@@ -100,10 +100,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
-                parent.evaluate(false, depth);
+                parent.evaluateStatically(false, depth);
                 return parent;
             case 2:
-                parent.evaluate(true, depth);
+                parent.evaluateStatically(true, depth);
                 return parent;
         }
 
@@ -204,10 +204,10 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
-                parent.evaluate(false, depth);
+                parent.evaluateStatically(false, depth);
                 return parent;
             case 2:
-                parent.evaluate(true, depth);
+                parent.evaluateStatically(true, depth);
                 return parent;
         }
 

@@ -19,25 +19,27 @@ public interface Evaluable {
 
     /**
      * Evaluates this Evaluable and sets its value accordingly.
-     * <br><br>
+     * <p>
      * This overwrites this Evaluable's current value with the determined value such that
      * calling {@link #getValue()} after calling {@link #evaluateStatically()} will return the same value.
+     * </p>
+     * @param isNaturalLeaf
      * @param depth
-     * @param b
      * @return the calculated value of this evaluable
      */
-    public abstract int evaluate(boolean isNaturaLeaf, int depth);
+    public abstract int evaluateStatically(boolean isNaturalLeaf, int depth);
 
     /**
-     * Evaluates this evaluable and returns the determined value.
-     * The resultmust be the same for any invocation
-     * of {@link #cachedEvaluateStatically()} on the same Evaluable
-     *  and should be cached.
+     * Roughly evaluates this evaluable and returns the determined value.
+     * This method should serves as a more lightweight approximation of {@link #evaluateStatically(boolean, int)}.
+     * <p>
+     * The result of this method may not change in the lifetime of this Evaluable
+     * and should be cached.
      * <p>
      * Does <b>not</b> overwrite the stored value.
      * @return the static value of this evaluable
      */
-    public abstract int cachedEvaluateStatically();
+    public abstract int roughlyEvaluateStatically();
 
     /**
      * Used to determine if this node is marked as especially interesting.
