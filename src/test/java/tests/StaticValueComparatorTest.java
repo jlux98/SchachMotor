@@ -98,7 +98,6 @@ public class StaticValueComparatorTest {
 
     @Test
     public void whiteSortingTest() {
-        whiteComparator.comparisons = 0;
         List<Node<Integer>> assortedNodes = Arrays.asList(new IntNode(-21), new IntNode(-5), new IntNode(-17),
                 new IntNode(95), new IntNode(70), new IntNode(81), new IntNode(-6), new IntNode(71), new IntNode(0));
         List<Node<Integer>> sortedNodes = Arrays.asList(new IntNode(-21), new IntNode(-17), new IntNode(-6),
@@ -108,13 +107,10 @@ public class StaticValueComparatorTest {
         Collections.reverse(sortedNodes);
         assortedNodes.sort(whiteComparator);
         assertEquals(sortedNodes, assortedNodes);
-        System.out.println(sortedNodes.size());
-        System.out.println(whiteComparator.comparisons);
     }
 
     @Test
     public void blackSortingTest() {
-        blackComparator.comparisons = 0;
         List<Node<Integer>> assortedNodes = Arrays.asList(new IntNode(-21), new IntNode(-5), new IntNode(-17),
                 new IntNode(95), new IntNode(70), new IntNode(81), new IntNode(-6), new IntNode(71), new IntNode(0));
         List<Node<Integer>> sortedNodes = Arrays.asList(new IntNode(-21), new IntNode(-17), new IntNode(-6),
@@ -122,7 +118,5 @@ public class StaticValueComparatorTest {
 
         assortedNodes.sort(blackComparator);
         assertEquals(sortedNodes, assortedNodes);
-        System.out.println(sortedNodes.size());
-        System.out.println(blackComparator.comparisons);
     }
 }

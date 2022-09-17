@@ -3,6 +3,7 @@ package minimax;
 import java.util.Comparator;
 
 import gametree.Node;
+import utility.PerformanceData;
 
 //FIXME make comparator for evaluables instead
 /**
@@ -10,7 +11,6 @@ import gametree.Node;
  *  in descending order.
  */
 public class DescendingStaticValueComparator<T> implements Comparator<Node<T>> {
-    public static int comparisons = 0;
     /**
      * Orders the data structure from greatest to smallest.
      * @return 
@@ -22,7 +22,7 @@ public class DescendingStaticValueComparator<T> implements Comparator<Node<T>> {
      */
     @Override
     public int compare(Node<T> evaluable1, Node<T> evaluable2) {
-        comparisons += 1;
+        PerformanceData.descendingComparisons += 1;
         //FIXME is it a problem that this does not provide depth to evaluation function (provides depth=0)
         //evaluation may not require child generation here
         return -(evaluable1.cachedEvaluateStatically() - evaluable2.cachedEvaluateStatically());

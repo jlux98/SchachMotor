@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import utility.PerformanceData;
+
 /**
  * Abstract class providing a basic node implementation.
  * The only abstract methods subtypes have to implement are {@link #computeChildren()}
@@ -19,8 +21,6 @@ public abstract class BaseNode<T> implements Node<T> {
     private boolean isInteresting;
     private boolean staticEvaluationCached = false;
     private int staticValue;
-
-    public static int evaluateStaticallyCalls = 0;
 
     /**
      * Creates a root node.
@@ -203,7 +203,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public int cachedEvaluateStatically() {
-        evaluateStaticallyCalls += 1;
+        PerformanceData.evaluateStaticallyCalls += 1;
         if (!staticEvaluationCached) {
             //only compute static value once
             //compute static value with depth = 0 and non-leaf

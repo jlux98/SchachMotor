@@ -6,7 +6,7 @@ import positionevaluator.PositionEvaluator;
 import uciservice.FenParser;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         String blackEndingFen = "r1bqkbnr/ppppppBp/2n5/8/8/1P6/P1PPPPPP/RN1QKBNR b KQk - 0 4";
         String whiteEndingFen = "2bqkbnr/rppppppp/p1n5/P7/8/8/1PPPPPPP/RNBQKBNR w KQk - 1 4";
 
@@ -21,6 +21,5 @@ public class Main {
 
         System.out.println("black > 0 (losing): " + (blackValue > 0));
         System.out.println("white = 0 (neutral): " + (whiteValue == 0));
-
     }
 }

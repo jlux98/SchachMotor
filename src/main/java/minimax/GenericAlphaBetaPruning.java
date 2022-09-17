@@ -12,8 +12,14 @@ import gametree.Tree;
  */
 public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
-    private DescendingStaticValueComparator<T> whiteComparator = new DescendingStaticValueComparator<T>();
-    private AscendingStaticValueComparator<T> blackcomparator = new AscendingStaticValueComparator<T>();
+    private DescendingStaticValueComparator<T> whiteComparator;
+    private AscendingStaticValueComparator<T> blackcomparator;
+
+    public GenericAlphaBetaPruning() {
+        //TODO use singletons instead?
+        whiteComparator = new DescendingStaticValueComparator<T>();
+        blackcomparator = new AscendingStaticValueComparator<T>();
+    }
 
     // Note on storing values in nodes:
     // values stored by nodes do not have to be marked as invalid
@@ -112,7 +118,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
             //blackcomparator.setDepth(depth);
-            children.sort(blackcomparator); 
+            children.sort(blackcomparator);
 
             for (Node<T> child : children) {
                 // evaluate all children
@@ -217,7 +223,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             List<? extends Node<T>> children = parent.queryChildren();
             //whiteComparator.setDepth(depth);
             children.sort(whiteComparator);
-
 
             for (Node<T> child : children) {
 

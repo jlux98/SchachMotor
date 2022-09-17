@@ -3,6 +3,7 @@ package gametree;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
+import utility.PerformanceData;
 
 /**
  * Class implementing Nodes containing Positions.
@@ -30,8 +31,6 @@ import movegenerator.MoveGenerator;
  * </p>
  */
 public class GameNode extends BaseNode<Position> {
-
-    public static int computeStaticValueCalls = 0;
 
     /**
      * Creates a root node.
@@ -107,8 +106,8 @@ public class GameNode extends BaseNode<Position> {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
-        computeStaticValueCalls += 1;
-        return getContent().evaluateBoard(isNaturalLeaf, depth);        
+        PerformanceData.computeStaticValueCalls += 1;
+        return getContent().evaluateBoard(isNaturalLeaf, depth);
     }
 
 }

@@ -3,12 +3,9 @@ package application;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import gametree.BaseNode;
 import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
-import minimax.AscendingStaticValueComparator;
-import minimax.DescendingStaticValueComparator;
 import minimax.GameNodeAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
@@ -16,6 +13,7 @@ import model.Move;
 import model.Position;
 import uciservice.FenParseException;
 import uciservice.FenParser;
+import utility.PerformanceData;
 import utility.TimeUtility;
 
 import static utility.NumberFormatter.format;
@@ -259,10 +257,10 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void prepareNextRun() {
         evaluator.resetEvaluatedNodeCount();
-        BaseNode.evaluateStaticallyCalls = 0;
-        AscendingStaticValueComparator.comparisons = 0;
-        DescendingStaticValueComparator.comparisons = 0;
-        GameNode.computeStaticValueCalls = 0;
+        PerformanceData.evaluateStaticallyCalls = 0;
+        PerformanceData.ascendingComparisons = 0;
+        PerformanceData.descendingComparisons = 0;
+        PerformanceData.computeStaticValueCalls = 0;
         calculationTime = -1; //not required, but better safe than sorry
         System.gc();
     }
@@ -487,10 +485,10 @@ public class DemoApplicationFenToAlgebraic {
         return addCoreInfo(builder)
                 .append("\n\tevaluated positions: " + format(evaluator.getEvaluatedNodeCount()))
                 .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
-                .append("\n\tstatic evaluation calls: " + format(BaseNode.evaluateStaticallyCalls))
-                .append("\n\tascending comparisons:  " + format(AscendingStaticValueComparator.comparisons))
-                .append("\n\tdescending comparisons: " + format(DescendingStaticValueComparator.comparisons))
-                .append("\n\tactual static value computations:     " + format(GameNode.computeStaticValueCalls));
+                .append("\n\tstatic evaluation calls: " + format(PerformanceData.evaluateStaticallyCalls))
+                .append("\n\tascending comparisons:   " + format(PerformanceData.ascendingComparisons))
+                .append("\n\tdescending comparisons:  " + format(PerformanceData.descendingComparisons))
+                .append("\n\tactual static value computations: " + format(PerformanceData.computeStaticValueCalls));
     }
 
     /**
