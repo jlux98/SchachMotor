@@ -4,6 +4,7 @@ import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
 import utility.PerformanceData;
+import utility.TimeUtility;
 
 /**
  * Class implementing Nodes containing Positions.
@@ -86,7 +87,12 @@ public class GameNode extends BaseNode<Position> {
             throw new IllegalStateException("node already has children");
         }
         createChildListIfNotExists();
-        Position[] followUpPositions = MoveGenerator.generatePossibleMoves(this.getContent());
+        Position pos = this.getContent();
+
+        TimeUtility<Position[]> timer = new TimeUtility<Position[]>();
+        Position[] followUpPositions = timer.time(() -> MoveGenerator.generatePossibleMoves(pos));
+
+        PerformanceData.moveGenerationTime += timer.getElapsedTime();
 
         if (followUpPositions.length == 0) {
             // no moves were generated

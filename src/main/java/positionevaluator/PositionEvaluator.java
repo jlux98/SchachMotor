@@ -20,9 +20,13 @@ public class PositionEvaluator implements Evaluator<Position> {
         // TODO: clarify if same-position-draw should be checked here or in the conductor
         
         if (isNaturalLeaf){
-            if (position.getWhiteInCheck()){
+            if (position.getWhiteNextMove() && position.getWhiteInCheck()){
+                // white is mated, loses the value of a king
+                // multiplying with depth to favor early mates
                 result -= (depth * PieceType.KING.getPointValue());
-            } else if (position.getBlackInCheck()){
+            } else if (!position.getWhiteNextMove() && position.getBlackInCheck()){
+                // black is mated, loses the value of a king
+                // multiplying with depth to favor early mates
                 result += (depth * PieceType.KING.getPointValue());
             } else {
                 result = 0;

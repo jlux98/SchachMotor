@@ -66,7 +66,7 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
 
     @Override
     public int getEvaluatedNodeCount() {
-        return evaluatedNodeCount;
+        return this.evaluatedNodeCount;
     }
 
     @Override

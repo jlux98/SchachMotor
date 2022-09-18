@@ -479,13 +479,17 @@ public class Position implements Comparable<Position>, Cloneable {
             new Coordinate(targetRank, targetFile));
     }
 
-    public void setMove(int startingRank, int startingFile, int targetRank, int targetFile, Piece promotedTo) {
+    public void setMove(int startingRank, int startingFile, int targetRank, int targetFile, Byte promotedTo) {
         this.generatedByMove = new Move(new Coordinate(startingRank, startingFile),
             new Coordinate(targetRank, targetFile), promotedTo);
     }
 
     public Board getBoard() {
         return this.board;
+    }
+
+    public byte getByteAt(int rank, int file) {
+        return board.getByteAt(rank, file);
     }
 
 }

@@ -22,6 +22,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
     @Override
     public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
+        resetEvaluatedNodeCount();
         return evaluateNode(tree.getRoot(), depth, whitesTurn);
     }
 
