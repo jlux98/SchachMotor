@@ -65,13 +65,13 @@ public abstract class PieceMoveGenerator implements Runnable{
     @Override
     public void run() {
         List<Position> results = computePieceMoves(position, rank, file);
-        try {
-            sem.acquire();
+        // try {
+            // sem.acquire();
             resultList.addAll(results);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        sem.release();
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // }
+        // sem.release();
     }
 
     public List<Position> computePieceMoves(Position position, int rank, int file) {

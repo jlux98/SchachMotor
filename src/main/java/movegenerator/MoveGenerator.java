@@ -45,7 +45,8 @@ public abstract class MoveGenerator {
         Semaphore sem = new Semaphore(1);
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                threadList.add(generatePossibleMovesPerPiece(position, rank, file, followUpPositions, sem));
+                Thread t = generatePossibleMovesPerPiece(position, rank, file, followUpPositions, sem);
+                threadList.add(t);
             }
         }
         for (int i = 0; i < threadList.size(); i++){
@@ -72,54 +73,60 @@ public abstract class MoveGenerator {
      */
     public static Thread generatePossibleMovesPerPiece(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
         byte currentPiece = position.getByteAt(rank, file);
-        if (currentPiece == 0) {
-            return null;
-        }
-        if (currentPiece < BLACK_BISHOP != position.getWhitesTurn()){
-            return null;
-        }
+        Thread result = null;
         Runnable runner = null;
         Thread t =null;
+        if (currentPiece == 0) {
+            return result;
+        }
+        if (currentPiece < BLACK_BISHOP != position.getWhitesTurn()){
+            return result;
+        }
         switch (currentPiece) {
             case BLACK_BISHOP:
             case WHITE_BISHOP:
                 runner = new BishopMoveGenerator(position, rank, file, resultList, sem);
                 t = new Thread(runner);
-                t.start();
-                return t;
+                result = t;
+                break;
             case BLACK_KING:
             case WHITE_KING:
                 runner = new KingMoveGenerator(position, rank, file, resultList, sem);
                 t = new Thread(runner);
-                t.start();
-                return t;
+                result = t;
+                break;
             case BLACK_KNIGHT:
             case WHITE_KNIGHT:
                 runner = new KnightMoveGenerator(position, rank, file, resultList, sem);
                 t = new Thread(runner);
-                t.start();
-                return t;
+                result = t;
+                break;
             case BLACK_PAWN:
             case WHITE_PAWN:
                 runner = new PawnMoveGenerator(position, rank, file, resultList, sem);
                 t = new Thread(runner);
-                t.start();
-                return t;
+                result = t;
+                break;
             case BLACK_QUEEN:
             case WHITE_QUEEN:
                 runner = new QueenMoveGenerator(position, rank, file, resultList, sem);
                 t = new Thread(runner);
-                t.start();
-                return t;
+                result = t;
+                break;
             case BLACK_ROOK:
             case WHITE_ROOK:
                 runner = new RookMoveGenerator(position, rank, file, resultList, sem);
                 t = new Thread(runner);
-                t.start();
-                return t;
+                result = t;
+                break;
             default:
-                return null;
+                break;
         }
+        if (result != null){
+            result.start();
+            result.run();
+        }
+        return result;
     }
 
     /**
@@ -313,5 +320,12 @@ public abstract class MoveGenerator {
         spaces.setByteAt(startingRank,startingFile,(byte)0);
         spaces.setByteAt(targetRank,targetFile,movingPiece);
         return spaces;
+    }
+
+
+    public static List<Position> generatePossibleMovesPerPiece(Position position, int rank, int file) {
+        List<Position> resultList = new ArrayList();
+        generatePossibleMovesPerPiece(position, rank, file, resultList, new Semaphore(1));
+        return resultList;
     }
 }

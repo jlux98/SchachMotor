@@ -184,10 +184,4 @@ public class KingMoveGenerator extends PieceMoveGenerator {
             results.add(resultingPosition);
         }
     }
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
 }
