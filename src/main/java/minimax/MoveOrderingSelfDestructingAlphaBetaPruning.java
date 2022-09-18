@@ -8,9 +8,20 @@ import gametree.Tree;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
- * that store any kind of Object.
+ * that store any kind of Object. This implementation deletes child nodes
+ * after evaluating their parent to save memory and applies basic move ordering
+ * using the static evaluation of each child node.
  */
-public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
+public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
+
+    private DescendingStaticValueComparator<T> whiteComparator;
+    private AscendingStaticValueComparator<T> blackcomparator;
+
+    public MoveOrderingSelfDestructingAlphaBetaPruning() {
+        //TODO use singletons instead?
+        whiteComparator = new DescendingStaticValueComparator<T>();
+        blackcomparator = new AscendingStaticValueComparator<T>();
+    }
 
     // Note on storing values in nodes:
     // values stored by nodes do not have to be marked as invalid
@@ -22,7 +33,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
     @Override
     public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
-        resetEvaluatedNodeCount();
         return evaluateNode(tree.getRoot(), depth, whitesTurn);
     }
 
@@ -110,6 +120,8 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
 
+            children.sort(blackcomparator);
+
             for (Node<T> child : children) {
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
@@ -152,11 +164,14 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 }
 
             }
+
+            // delete children from tree after parent was evaluated
+            parent.deleteChildren();
+
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
-
             return bestChild;
 
         } catch (ComputeChildrenException exception) {
@@ -212,6 +227,8 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
 
+            children.sort(whiteComparator);
+
             for (Node<T> child : children) {
 
                 // evaluate all children
@@ -254,11 +271,14 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 }
 
             }
+
+            // delete children from tree after parent was evaluated
+            parent.deleteChildren();
+
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
-
             return bestChild;
 
         } catch (ComputeChildrenException exception) {

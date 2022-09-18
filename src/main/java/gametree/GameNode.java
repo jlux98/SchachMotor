@@ -108,13 +108,12 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    public int evaluateStatically(boolean isNaturalLeaf, int depth) {
+    protected int computeStaticValue(boolean isNaturalLeaf, int depth) {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
-        int value = getContent().evaluateBoard(isNaturalLeaf, depth);
-        setValue(value);
-        return value;
+        PerformanceData.computeStaticValueCalls += 1;
+        return getContent().evaluateBoard(isNaturalLeaf, depth);
     }
 
 }

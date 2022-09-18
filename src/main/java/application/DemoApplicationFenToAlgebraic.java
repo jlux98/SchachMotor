@@ -7,6 +7,7 @@ import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
 import minimax.GameNodeAlphaBetaPruning;
+import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import model.Move;
@@ -15,6 +16,8 @@ import uciservice.FenParseException;
 import uciservice.FenParser;
 import utility.PerformanceData;
 import utility.TimeUtility;
+
+import static utility.NumberFormatter.format;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
@@ -192,13 +195,18 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void useAlgorithm(String algorithm) {
         switch (algorithm) {
-            case "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
+            case "ab", "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
                 algorithmName = "Alpha-Beta-Pruning";
                 evaluator = new GameNodeAlphaBetaPruning();
             }
-            case "selfdestructing", "self-destructing", "self-destructing alpha-beta-pruning" -> {
+            case "sd", "selfdestructing", "self-destructing", "self-destructing alpha-beta-pruning" -> {
                 algorithmName = "Self-Destructing Alpha-Beta-Pruning";
                 evaluator = new GameNodeSelfDestructingAlphaBetaPruning();
+            }
+            case "mo", "move-ordering", "moveordering", "self-destructing move-ordering",
+                    "self-destructing move-ordering alpha-beta-pruning" -> {
+                algorithmName = "Move-Ordering Self-Destructing Alpha-Beta-Pruning";
+                evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
             }
             default -> {
                 throw new NoSuchElementException("algorithm could not be found");
@@ -249,6 +257,14 @@ public class DemoApplicationFenToAlgebraic {
      * Encourages the garbage collection to free up memory.
      */
     private void prepareNextRun() {
+        evaluator.resetEvaluatedNodeCount();
+        PerformanceData.moveGenerationTime = 0;
+        PerformanceData.roughlyEvaluateStaticallyCalls = 0;
+        PerformanceData.evaluateStaticallyCalls = 0;
+        PerformanceData.ascendingComparisons = 0;
+        PerformanceData.descendingComparisons = 0;
+        PerformanceData.computeStaticValueCalls = 0;
+        calculationTime = -1; //not required, but better safe than sorry
         System.gc();
     }
 
@@ -452,9 +468,15 @@ public class DemoApplicationFenToAlgebraic {
      */
     private StringBuilder addPerformanceInfo(StringBuilder builder) {
         return addCoreInfo(builder)
-                .append("\n\tevaluated positions: " + evaluator.getEvaluatedNodeCount())
+                .append("\n\tevaluated positions: " + format(evaluator.getEvaluatedNodeCount()))
                 .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
-                .append("\n\ttime spent by movegen: " + TimeUtility.nanoToSeconds(PerformanceData.moveGenerationTime));
+                .append("\n\ttime spent by movegen: " + TimeUtility.nanoToSeconds(PerformanceData.moveGenerationTime))
+                .append("\n\troughlyEvaluateStatically calls: "
+                        + format(PerformanceData.roughlyEvaluateStaticallyCalls))
+                .append("\n\tevaluateStatically calls: " + format(PerformanceData.evaluateStaticallyCalls))
+                .append("\n\tascending comparisons:   " + format(PerformanceData.ascendingComparisons))
+                .append("\n\tdescending comparisons:  " + format(PerformanceData.descendingComparisons))
+                .append("\n\tactual static value computations: " + format(PerformanceData.computeStaticValueCalls));
     }
 
     /**
