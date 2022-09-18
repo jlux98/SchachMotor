@@ -7,6 +7,7 @@ import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
 import minimax.GameNodeAlphaBetaPruning;
+import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import model.Move;
@@ -194,13 +195,18 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void useAlgorithm(String algorithm) {
         switch (algorithm) {
-            case "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
+            case "ab", "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
                 algorithmName = "Alpha-Beta-Pruning";
                 evaluator = new GameNodeAlphaBetaPruning();
             }
-            case "selfdestructing", "self-destructing", "self-destructing alpha-beta-pruning" -> {
+            case "sd", "selfdestructing", "self-destructing", "self-destructing alpha-beta-pruning" -> {
                 algorithmName = "Self-Destructing Alpha-Beta-Pruning";
                 evaluator = new GameNodeSelfDestructingAlphaBetaPruning();
+            }
+            case "mo", "move-ordering", "moveordering", "self-destructing move-ordering",
+                    "self-destructing move-ordering alpha-beta-pruning" -> {
+                algorithmName = "Self-Destructing Move-Ordering Alpha-Beta-Pruning";
+                evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
             }
             default -> {
                 throw new NoSuchElementException("algorithm could not be found");
@@ -486,7 +492,8 @@ public class DemoApplicationFenToAlgebraic {
         return addCoreInfo(builder)
                 .append("\n\tevaluated positions: " + format(evaluator.getEvaluatedNodeCount()))
                 .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
-                .append("\n\troughlyEvaluateStatically calls: " + format(PerformanceData.roughlyEvaluateStaticallyCalls))
+                .append("\n\troughlyEvaluateStatically calls: "
+                        + format(PerformanceData.roughlyEvaluateStaticallyCalls))
                 .append("\n\tevaluateStatically calls: " + format(PerformanceData.evaluateStaticallyCalls))
                 .append("\n\tascending comparisons:   " + format(PerformanceData.ascendingComparisons))
                 .append("\n\tdescending comparisons:  " + format(PerformanceData.descendingComparisons))

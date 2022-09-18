@@ -8,8 +8,6 @@ import gametree.Tree;
  */
 public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
 
-
-
     @Override
     public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
         return evaluateNode(tree.getRoot(), depth, whitesTurn);
@@ -20,5 +18,5 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
         // TODO implement using trimmed down alpha-beta code (useful for testing)
         return null;
     }
- 
+
 }
