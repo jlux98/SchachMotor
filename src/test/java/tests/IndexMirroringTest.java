@@ -19,7 +19,7 @@ import static movegenerator.MoveGenerator.BLACK_ROOK;
 
 import org.junit.jupiter.api.Test;
 
-import helper.PositionHelper;
+import helper.Mirror;
 import model.Board;
 import model.ByteBoard;
 import model.Coordinate;
@@ -40,7 +40,7 @@ public class IndexMirroringTest {
         //write to a8
         board.setByteAt(0, 0, BLACK_KNIGHT);
         //access a1 mirrored
-        assertEquals(BLACK_KNIGHT, PositionHelper.mirroredGetByteAt(7, 0, board));
+        assertEquals(BLACK_KNIGHT, Mirror.mirroredGetByteAt(7, 0, board));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class IndexMirroringTest {
         //write to h8
         board.setByteAt(0, 7, WHITE_BISHOP);
         //access h1 mirrored
-        assertEquals(WHITE_BISHOP, PositionHelper.mirroredGetByteAt(7, 7, board));
+        assertEquals(WHITE_BISHOP, Mirror.mirroredGetByteAt(7, 7, board));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class IndexMirroringTest {
         //write to a1
         board.setByteAt(7, 0, BLACK_QUEEN);
         //access a8 mirrored
-        assertEquals(BLACK_QUEEN, PositionHelper.mirroredGetByteAt(0, 0, board));
+        assertEquals(BLACK_QUEEN, Mirror.mirroredGetByteAt(0, 0, board));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class IndexMirroringTest {
         //write to h1
         board.setByteAt(7, 7, WHITE_PAWN);
         //access h8 mirrored
-        assertEquals(WHITE_PAWN, PositionHelper.mirroredGetByteAt(0, 7, board));
+        assertEquals(WHITE_PAWN, Mirror.mirroredGetByteAt(0, 7, board));
     }
 
     @Test
@@ -76,13 +76,13 @@ public class IndexMirroringTest {
         //write to h1
         board.setByteAt(6, 4, BLACK_PAWN);
         //access h8 mirrored
-        assertEquals(BLACK_PAWN, PositionHelper.mirroredGetByteAt(1, 4, board));
+        assertEquals(BLACK_PAWN, Mirror.mirroredGetByteAt(1, 4, board));
     }
 
     @Test
     public void mirrorStartingPositionTest() {
         Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Position mirroredStartingPosition = PositionHelper.mirrorPosition(startingPosition);
+        Position mirroredStartingPosition = Mirror.mirrorPosition(startingPosition);
         Position startingPositionButBlacksTurn = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
         assertEquals(startingPositionButBlacksTurn, mirroredStartingPosition);
     }
@@ -90,15 +90,15 @@ public class IndexMirroringTest {
     @Test
     public void mirrorStartingPositionTwiceTest() {
         Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Position mirroredStartingPosition = PositionHelper.mirrorPosition(startingPosition);
-        Position twiceMirroredStartingPosition = PositionHelper.mirrorPosition(mirroredStartingPosition);
+        Position mirroredStartingPosition = Mirror.mirrorPosition(startingPosition);
+        Position twiceMirroredStartingPosition = Mirror.mirrorPosition(mirroredStartingPosition);
         assertEquals(startingPosition, twiceMirroredStartingPosition);
     }
 
     @Test
     public void mirrorWhitePiecesTest() {
         Position whitePieces = FenParser.parseFen("7B/1R6/5K2/2N5/8/4QP2/8/k7 w - - 0 1");
-        Position mirroredPosition = PositionHelper.mirrorPosition(whitePieces);
+        Position mirroredPosition = Mirror.mirrorPosition(whitePieces);
         Position expectedPosition = FenParser.parseFen("K7/8/4qp2/8/2n5/5k2/1r6/7b b - - 0 1");
         assertEquals(expectedPosition, mirroredPosition);
     }
@@ -106,49 +106,49 @@ public class IndexMirroringTest {
     @Test
     public void mirrorBlackPiecesTest() {
         Position blackPieces = FenParser.parseFen("K7/8/4qp2/8/2n5/5k2/1r6/7b b - - 0 1");
-        Position mirroredPosition = PositionHelper.mirrorPosition(blackPieces);        
+        Position mirroredPosition = Mirror.mirrorPosition(blackPieces);        
         Position expectedPosition = FenParser.parseFen("7B/1R6/5K2/2N5/8/4QP2/8/k7 w - - 0 1");
         assertEquals(expectedPosition, mirroredPosition);
     }
 
     @Test
     public void mirrorH8CoordinateTest() {
-        Coordinate mirrored = PositionHelper.mirrorCoordinate(new Coordinate(0, 7));
+        Coordinate mirrored = Mirror.mirrorCoordinate(new Coordinate(0, 7));
         assertEquals(7, mirrored.getRank());
         assertEquals(7, mirrored.getFile());
     }
 
     @Test
     public void mirrorA1CoordinateTest() {
-        Coordinate mirrored = PositionHelper.mirrorCoordinate(new Coordinate(07, 0));
+        Coordinate mirrored = Mirror.mirrorCoordinate(new Coordinate(07, 0));
         assertEquals(0, mirrored.getRank());
         assertEquals(0, mirrored.getFile());
     }
 
     @Test
     public void mirrorH1CoordinateTest() {
-        Coordinate mirrored = PositionHelper.mirrorCoordinate(new Coordinate(7, 7));
+        Coordinate mirrored = Mirror.mirrorCoordinate(new Coordinate(7, 7));
         assertEquals(0, mirrored.getRank());
         assertEquals(7, mirrored.getFile());
     }
 
     @Test
     public void mirrorA8CoordinateTest() {
-        Coordinate mirrored = PositionHelper.mirrorCoordinate(new Coordinate(0, 0));
+        Coordinate mirrored = Mirror.mirrorCoordinate(new Coordinate(0, 0));
         assertEquals(7, mirrored.getRank());
         assertEquals(0, mirrored.getFile());
     }
 
     @Test
     public void mirrorC6CoordinateTest() {
-        Coordinate mirrored = PositionHelper.mirrorCoordinate(new Coordinate(2, 2));
+        Coordinate mirrored = Mirror.mirrorCoordinate(new Coordinate(2, 2));
         assertEquals(5, mirrored.getRank());
         assertEquals(2, mirrored.getFile());
     }
 
     @Test
     public void mirrorH2CoordinateTest() {
-        Coordinate mirrored = PositionHelper.mirrorCoordinate(new Coordinate(6, 7));
+        Coordinate mirrored = Mirror.mirrorCoordinate(new Coordinate(6, 7));
         assertEquals(1, mirrored.getRank());
         assertEquals(7, mirrored.getFile());
     }
@@ -156,7 +156,7 @@ public class IndexMirroringTest {
     @Test
     public void mirrorB1C3MoveTest() {
         Move move = new Move(new Coordinate(7, 1), new Coordinate(5, 2));
-        Move mirroredMove = PositionHelper.mirrorMove(move);
+        Move mirroredMove = Mirror.mirrorMove(move);
         assertEquals(new Coordinate(0, 1), mirroredMove.getStartingSpace());
         assertEquals(new Coordinate(2, 2), mirroredMove.getTargetSpace());
     }
@@ -164,7 +164,7 @@ public class IndexMirroringTest {
     @Test
     public void mirrorE8H8MoveTest() {
         Move move = new Move(new Coordinate(0, 4), new Coordinate(0, 7));
-        Move mirroredMove = PositionHelper.mirrorMove(move);
+        Move mirroredMove = Mirror.mirrorMove(move);
         assertEquals(new Coordinate(7, 4), mirroredMove.getStartingSpace());
         assertEquals(new Coordinate(7, 7), mirroredMove.getTargetSpace());
     }
@@ -172,20 +172,20 @@ public class IndexMirroringTest {
     @Test
     public void changeColorTest() {
 
-        assertEquals(EMPTY_SQUARE, PositionHelper.changeColor(EMPTY_SQUARE));
+        assertEquals(EMPTY_SQUARE, Mirror.changeColor(EMPTY_SQUARE));
 
-        assertEquals(BLACK_BISHOP, PositionHelper.changeColor(WHITE_BISHOP));
-        assertEquals(BLACK_KING, PositionHelper.changeColor(WHITE_KING));
-        assertEquals(BLACK_KNIGHT, PositionHelper.changeColor(WHITE_KNIGHT));
-        assertEquals(BLACK_PAWN, PositionHelper.changeColor(WHITE_PAWN));
-        assertEquals(BLACK_QUEEN, PositionHelper.changeColor(WHITE_QUEEN));
-        assertEquals(BLACK_ROOK, PositionHelper.changeColor(WHITE_ROOK));
+        assertEquals(BLACK_BISHOP, Mirror.changeColor(WHITE_BISHOP));
+        assertEquals(BLACK_KING, Mirror.changeColor(WHITE_KING));
+        assertEquals(BLACK_KNIGHT, Mirror.changeColor(WHITE_KNIGHT));
+        assertEquals(BLACK_PAWN, Mirror.changeColor(WHITE_PAWN));
+        assertEquals(BLACK_QUEEN, Mirror.changeColor(WHITE_QUEEN));
+        assertEquals(BLACK_ROOK, Mirror.changeColor(WHITE_ROOK));
 
-        assertEquals(WHITE_BISHOP, PositionHelper.changeColor(BLACK_BISHOP));
-        assertEquals(WHITE_KING, PositionHelper.changeColor(BLACK_KING));
-        assertEquals(WHITE_KNIGHT, PositionHelper.changeColor(BLACK_KNIGHT));
-        assertEquals(WHITE_PAWN, PositionHelper.changeColor(BLACK_PAWN));
-        assertEquals(WHITE_QUEEN, PositionHelper.changeColor(BLACK_QUEEN));
-        assertEquals(WHITE_ROOK, PositionHelper.changeColor(BLACK_ROOK));
+        assertEquals(WHITE_BISHOP, Mirror.changeColor(BLACK_BISHOP));
+        assertEquals(WHITE_KING, Mirror.changeColor(BLACK_KING));
+        assertEquals(WHITE_KNIGHT, Mirror.changeColor(BLACK_KNIGHT));
+        assertEquals(WHITE_PAWN, Mirror.changeColor(BLACK_PAWN));
+        assertEquals(WHITE_QUEEN, Mirror.changeColor(BLACK_QUEEN));
+        assertEquals(WHITE_ROOK, Mirror.changeColor(BLACK_ROOK));
     }
 }
