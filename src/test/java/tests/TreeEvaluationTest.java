@@ -9,9 +9,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import data.IntNodeTestTree;
-import helper.TreeEvaluationHelper;
+import helper.IntTreeEvaluationHelper;
+import helper.GameTreeEvaluationHelper;
 import helper.IntNodeHelper;
-import minimax.GameNodeAlphaBetaPruning;
 import minimax.TreeEvaluator;
 import model.Move;
 import model.Position;
@@ -30,10 +30,11 @@ import gametree.*;
  * extend this class and pass a suitable TreeEvaluationHelper to its constructor.
  * </p>
  * <p>
- * A suitable instance of {@link TreeEvaluationHelper} can be created by providing a
+ * A suitable instance of {@link IntTreeEvaluationHelper} can be created by providing a
  * <pre> Supplier&lt;TreeEvaluator&lt;Integer&gt;&gt;</pre>
+ * and a <pre> Supplier&lt;GameTreeEvaluator&gt;</pre>
  *  to its constructor. 
- * This can be done by using a lambda expression.
+ * This can be done by using a lambda expressions.
  * 
  * 
  * <p>
@@ -45,9 +46,11 @@ import gametree.*;
  * public class AlphaBetaTest extends TreeEvaluationTest {
  * 
  *     public AlphaBetaTest() {
- *         super(new TreeEvaluationHelper(
- *                  () -> new GenericAlphaBetaPruning&lt;Integer&gt;())
- *                  );
+ *         super(new IntTreeEvaluationHelper(
+ *                  () -> new GenericAlphaBetaPruning&lt;Integer&gt;()),
+ *               new GameTreeEvaluationHelper(
+ *                  () -> new GameNodeAlphaBetaPruning())
+ *               );
  *     }
  * }
  * 
@@ -55,15 +58,17 @@ import gametree.*;
  */
 public abstract class TreeEvaluationTest {
 
-    protected TreeEvaluationHelper helper;
+    protected IntTreeEvaluationHelper intTreeEvaluator;
+    protected GameTreeEvaluationHelper gameTreeEvaluator;
 
     /**
      * Constructs a new Test instance using the passed TreeEvaluationHelper
      * to instantiate the {@link TreeEvaluator} to be tested.
      * @param evaluator the evaluator used to execute these tests
      */
-    public TreeEvaluationTest(TreeEvaluationHelper helper) {
-        this.helper = helper;
+    public TreeEvaluationTest(IntTreeEvaluationHelper intTreeEvaluator, GameTreeEvaluationHelper gameTreeEvaluator) {
+        this.intTreeEvaluator = intTreeEvaluator;
+        this.gameTreeEvaluator = gameTreeEvaluator;
     }
 
     /**
@@ -73,7 +78,7 @@ public abstract class TreeEvaluationTest {
     @Test
     public void incompleteBinaryTreeDepth4Test() {
         IntNodeTestTree testTree = new IntNodeTestTree();
-        helper.evaluateTree(testTree, 4, true);
+        intTreeEvaluator.evaluateTree(testTree, 4, true);
         // root
         IntNodeHelper.compareIntNodeValue(-7, testTree.root);
         // layer1
@@ -103,13 +108,12 @@ public abstract class TreeEvaluationTest {
         IntNodeHelper.compareIntNodeValue(-5, testTree.layer4Node8);
     }
 
-    
     /**
      * tree data taken from https://youtu.be/l-hh51ncgDI?t=145
      */
     @Test
     public void lagueDepth3BinaryTreeWhiteTest() {
-        helper.testBinaryTree(3, 3, true, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.testBinaryTree(3, 3, true, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -117,7 +121,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void lagueDepth3BinaryTreeBlackTest() {
-        helper.testBinaryTree(0, 3, false, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.testBinaryTree(0, 3, false, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -129,7 +133,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void lagueDepth3binaryTreeExaggeratedDepthWhiteTest() {
-        helper.testBinaryTree(3, 4, true, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.testBinaryTree(3, 4, true, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -138,7 +142,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void lagueDepth3binaryTreeExaggeratedDepthBlackTest() {
-        helper.testBinaryTree(0, 4, false, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.testBinaryTree(0, 4, false, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -149,8 +153,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        helper.testBinaryTree(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE,
-                MAX_VALUE, MAX_VALUE);
+        intTreeEvaluator.testBinaryTree(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
+                MAX_VALUE);
     }
 
     /**
@@ -162,8 +166,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        helper.testBinaryTree(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE,
-                MAX_VALUE, MAX_VALUE);
+        intTreeEvaluator.testBinaryTree(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
+                MAX_VALUE);
     }
 
     /**
@@ -174,8 +178,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        helper.testBinaryTree(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE,
-                MAX_VALUE, MAX_VALUE);
+        intTreeEvaluator.testBinaryTree(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
+                MAX_VALUE);
     }
 
     /**
@@ -187,8 +191,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        helper.testBinaryTree(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE,
-                MAX_VALUE, MAX_VALUE);
+        intTreeEvaluator.testBinaryTree(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
+                MAX_VALUE);
     }
 
     /**
@@ -197,7 +201,7 @@ public abstract class TreeEvaluationTest {
 
     @Test
     public void javatpointBinaryTreeDepth3WhiteTest() {
-        helper.testBinaryTree(4, 3, true, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.testBinaryTree(4, 3, true, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -206,7 +210,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3BlackTest() {
-        helper.testBinaryTree(0, 3, false, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.testBinaryTree(0, 3, false, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -214,7 +218,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3ExaggeratedDepthWhiteTest() {
-        helper.testBinaryTree(4, 4, true, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.testBinaryTree(4, 4, true, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -223,7 +227,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3ExaggeratedDepthBlackTest() {
-        helper.testBinaryTree(0, 4, false, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.testBinaryTree(0, 4, false, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     // TODO add test with more extensive pruning (black)
@@ -238,9 +242,11 @@ public abstract class TreeEvaluationTest {
         Position position = FenParser.parseFen("2k5/8/8/8/8/3rrr2/N2rrr2/2K5 b - - 1 1");
         // Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(1).getContent().getMove();
         // assertTrue(expected.contains(actual));
-        Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(3).getContent().getMove();
+        Move actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(3).getContent()
+                .getMove();
         assertTrue(expected.contains(actual));
-        actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(5).getContent().getMove();
+        actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(5).getContent()
+                .getMove();
         assertTrue(expected.contains(actual));
     }
 
@@ -253,19 +259,23 @@ public abstract class TreeEvaluationTest {
         Position position = FenParser.parseFen("2K5/8/8/8/8/3RRR2/n2RRR2/2k5 w - - 1 1");
         // Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(1).getContent().getMove();
         // assertTrue(expected.contains(actual));
-        Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(3).getContent().getMove();
+        Move actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(3).getContent()
+                .getMove();
         assertTrue(expected.contains(actual));
-        actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(5).getContent().getMove();
+        actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(5).getContent()
+                .getMove();
         assertTrue(expected.contains(actual));
     }
 
     @Test
-    public void findStaleMate(){
+    public void findStaleMate() {
         Move expected = new Move("d1c1");
         Position position = FenParser.parseFen("5K2/8/8/8/5B2/3RPR2/1R6/3k4 b - - 0 1");
-        Move actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(3).getContent().getMove();
+        Move actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(3).getContent()
+                .getMove();
         assertEquals(expected, actual);
-        actual = new ImpGameTree(position, new GameNodeAlphaBetaPruning()).calculateBestMove(5).getContent().getMove();
+        actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(5).getContent()
+                .getMove();
         assertEquals(expected, actual);
     }
 }

@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import classes.GeneratingIntNode;
 import gametree.ImpTree;
 import gametree.Node;
-import helper.TreeEvaluationHelper;
+import helper.GameTreeEvaluationHelper;
+import helper.IntTreeEvaluationHelper;
+import minimax.GameNodeAlphaBetaPruning;
 import minimax.GenericAlphaBetaPruning;
 
 /**
@@ -20,7 +22,8 @@ import minimax.GenericAlphaBetaPruning;
 public class AlphaBetaTest extends TreeEvaluationTest {
 
     public AlphaBetaTest() {
-        super(new TreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>()));
+        super(new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>()),
+                new GameTreeEvaluationHelper(() -> new GameNodeAlphaBetaPruning()));
     }
 
     // the first line's whitespace within the <pre> block is trimmed ("Tree:" has to
@@ -41,7 +44,7 @@ public class AlphaBetaTest extends TreeEvaluationTest {
     @Test
     public void alphaBetaRespectsDepthWhiteTest() {
         GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        helper.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, true);
+        intTreeEvaluator.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, true);
         assertTrue(parent.hasChildren());
         List<? extends Node<Integer>> children = parent.getChildren();
         GeneratingIntNode layer1Node0 = (GeneratingIntNode) children.get(0);
@@ -73,7 +76,7 @@ public class AlphaBetaTest extends TreeEvaluationTest {
     @Test
     public void alphaBetaRespectsDepthBlackTest() {
         GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        helper.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, false);
+        intTreeEvaluator.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, false);
         assertTrue(parent.hasChildren());
         List<? extends Node<Integer>> children = parent.getChildren();
         GeneratingIntNode layer1Node0 = (GeneratingIntNode) children.get(0);
