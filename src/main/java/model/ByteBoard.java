@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ByteBoard implements Board{
+public class ByteBoard implements Board {
     private byte[][] spaces;
     private static final byte WHITE_BISHOP = 1;
     private static final byte WHITE_KING = 2;
@@ -21,80 +21,88 @@ public class ByteBoard implements Board{
 
     public ByteBoard(Piece[][] spaces) {
         byte[][] result = new byte[8][8];
-        for (int i = 0; i < 8; i++){
-            for (int j = 0; j < 8; j++){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
                 result[i][j] = pieceToByte(spaces[i][j]);
             }
         }
         this.spaces = result;
     }
+
     public ByteBoard(byte[][] spaces) {
         this.spaces = spaces;
     }
 
+    /**
+     * Instantiates an empty board.
+     * @return a new instance
+     */
+    public static Board createEmpty() {
+        return new ByteBoard(new byte[8][8]);
+    }
+
     private byte pieceToByte(Piece piece) {
-        if (piece == null){
+        if (piece == null) {
             return 0;
         }
         byte result = -1;
-        switch (piece.getPieceType()){
-            case BISHOP:
-                result = WHITE_BISHOP;
-                break;
-            case KING:
-                result = WHITE_KING;
-                break;
-            case KNIGHT:
-                result = WHITE_KNIGHT;
-                break;
-            case PAWN:
-                result = WHITE_PAWN;
-                break;
-            case QUEEN:
-                result = WHITE_QUEEN;
-                break;
-            case ROOK:
-                result = WHITE_ROOK;
-                break;
-            default:
-                break;
+        switch (piece.getPieceType()) {
+        case BISHOP:
+            result = WHITE_BISHOP;
+            break;
+        case KING:
+            result = WHITE_KING;
+            break;
+        case KNIGHT:
+            result = WHITE_KNIGHT;
+            break;
+        case PAWN:
+            result = WHITE_PAWN;
+            break;
+        case QUEEN:
+            result = WHITE_QUEEN;
+            break;
+        case ROOK:
+            result = WHITE_ROOK;
+            break;
+        default:
+            break;
         }
-        if (!piece.getIsWhite() && result != -1){
+        if (!piece.getIsWhite() && result != -1) {
             result += 6;
         }
         return result;
     }
 
     @Override
-    public Piece getPieceAt(int rank, int file){
+    public Piece getPieceAt(int rank, int file) {
         return byteToPiece(spaces[rank][file]);
     }
 
-
     private Piece byteToPiece(byte b) {
-        if (b == 0){
+        if (b == 0) {
             return null;
         }
         char result = ' ';
-        switch (b%6){
-            case WHITE_BISHOP:
-                result = 'B';
-                break;
-            case WHITE_KING:
-                result = 'K';
-                break;
-            case WHITE_KNIGHT:
-                result = 'N';
-                break;
-            case WHITE_PAWN:
-                result = 'P';
-                break;
-            case WHITE_QUEEN:
-                result = 'Q';
-                break;
-            case 0:
-                result = 'R';
-                break;
+        switch (b % 6) {
+        case WHITE_BISHOP:
+            result = 'B';
+            break;
+        case WHITE_KING:
+            result = 'K';
+            break;
+        case WHITE_KNIGHT:
+            result = 'N';
+            break;
+        case WHITE_PAWN:
+            result = 'P';
+            break;
+        case WHITE_QUEEN:
+            result = 'Q';
+            break;
+        case 0:
+            result = 'R';
+            break;
         }
         if (b > 6) {
             result = Character.toLowerCase(result);
@@ -103,9 +111,9 @@ public class ByteBoard implements Board{
     }
 
     @Override
-    public Coordinate getKingPosition(boolean isWhite){
-        for (int rank = 0; rank < 8; rank++){
-            for (int file = 0; file < 8; file++){
+    public Coordinate getKingPosition(boolean isWhite) {
+        for (int rank = 0; rank < 8; rank++) {
+            for (int file = 0; file < 8; file++) {
                 byte currentByte = spaces[rank][file];
                 if (isWhite && currentByte != 0 &&
                     currentByte == WHITE_KING){
@@ -176,28 +184,34 @@ public class ByteBoard implements Board{
     public Board copyBoard() {
         return new ByteBoard(copySpaces());
     }
+
     @Override
     public Piece getPieceAt(Coordinate space) {
         return getPieceAt(space.getRank(), space.getFile());
     }
+
     @Override
     public void setPieceAt(Coordinate space, Piece piece) {
         setPieceAt(space.getRank(), space.getFile(), piece);
     }
-	@Override
-	public byte getByteAt(Coordinate space) {
+
+    @Override
+    public byte getByteAt(Coordinate space) {
         return getByteAt(space.getRank(), space.getFile());
-	}
-	@Override
-	public byte getByteAt(int rank, int file) {
-		return spaces[rank][file];
-	}
-	@Override
-	public void setByteAt(Coordinate space, byte b) {
-		setByteAt(space.getRank(), space.getFile(), b);
-	}
-	@Override
-	public void setByteAt(int rank, int file, byte b) {
-        spaces[rank][file] = b;		
-	}
+    }
+
+    @Override
+    public byte getByteAt(int rank, int file) {
+        return spaces[rank][file];
+    }
+
+    @Override
+    public void setByteAt(Coordinate space, byte b) {
+        setByteAt(space.getRank(), space.getFile(), b);
+    }
+
+    @Override
+    public void setByteAt(int rank, int file, byte b) {
+        spaces[rank][file] = b;
+    }
 }
