@@ -2,7 +2,6 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 import static movegenerator.MoveGenerator.EMPTY_SQUARE;
 import static movegenerator.MoveGenerator.WHITE_BISHOP;
 import static movegenerator.MoveGenerator.WHITE_KING;
@@ -27,7 +26,7 @@ import model.Move;
 import model.Position;
 import uciservice.FenParser;
 
-public class IndexMirroringTest {
+public class MirrorTest {
 
     //a8 = (0, 0);
     //h8 = (0, 7);
@@ -80,22 +79,6 @@ public class IndexMirroringTest {
     }
 
     @Test
-    public void mirrorStartingPositionTest() {
-        Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Position mirroredStartingPosition = Mirror.mirrorPosition(startingPosition);
-        Position startingPositionButBlacksTurn = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
-        assertEquals(startingPositionButBlacksTurn, mirroredStartingPosition);
-    }
-
-    @Test
-    public void mirrorStartingPositionTwiceTest() {
-        Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Position mirroredStartingPosition = Mirror.mirrorPosition(startingPosition);
-        Position twiceMirroredStartingPosition = Mirror.mirrorPosition(mirroredStartingPosition);
-        assertEquals(startingPosition, twiceMirroredStartingPosition);
-    }
-
-    @Test
     public void mirrorWhitePiecesTest() {
         Position whitePieces = FenParser.parseFen("7B/1R6/5K2/2N5/8/4QP2/8/k7 w - - 0 1");
         Position mirroredPosition = Mirror.mirrorPosition(whitePieces);
@@ -106,7 +89,7 @@ public class IndexMirroringTest {
     @Test
     public void mirrorBlackPiecesTest() {
         Position blackPieces = FenParser.parseFen("K7/8/4qp2/8/2n5/5k2/1r6/7b b - - 0 1");
-        Position mirroredPosition = Mirror.mirrorPosition(blackPieces);        
+        Position mirroredPosition = Mirror.mirrorPosition(blackPieces);
         Position expectedPosition = FenParser.parseFen("7B/1R6/5K2/2N5/8/4QP2/8/k7 w - - 0 1");
         assertEquals(expectedPosition, mirroredPosition);
     }
@@ -171,7 +154,6 @@ public class IndexMirroringTest {
 
     @Test
     public void changeColorTest() {
-
         assertEquals(EMPTY_SQUARE, Mirror.changeColor(EMPTY_SQUARE));
 
         assertEquals(BLACK_BISHOP, Mirror.changeColor(WHITE_BISHOP));
@@ -187,5 +169,103 @@ public class IndexMirroringTest {
         assertEquals(WHITE_PAWN, Mirror.changeColor(BLACK_PAWN));
         assertEquals(WHITE_QUEEN, Mirror.changeColor(BLACK_QUEEN));
         assertEquals(WHITE_ROOK, Mirror.changeColor(BLACK_ROOK));
+    }
+
+    @Test
+    public void mirrorStartingPositionTest() {
+        Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        Position mirroredStartingPosition = Mirror.mirrorPosition(startingPosition);
+        Position startingPositionButBlacksTurn = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        assertEquals(startingPositionButBlacksTurn, mirroredStartingPosition);
+    }
+
+    @Test
+    public void mirrorStartingPositionTwiceTest() {
+        Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        Position mirroredStartingPosition = Mirror.mirrorPosition(startingPosition);
+        Position twiceMirroredStartingPosition = Mirror.mirrorPosition(mirroredStartingPosition);
+        assertEquals(startingPosition, twiceMirroredStartingPosition);
+    }
+
+    @Test
+    public void mirrorPositionOccupiedSquaresTest() {
+        Position position = FenParser.parseFen("K6Q/3B1P2/8/8/8/8/p2npb2/r6k b - - 0 1");
+        Position expected = FenParser.parseFen("R6K/P2NPB2/8/8/8/8/3b1p2/k6q w - - 0 1");
+        Position mirrored = Mirror.mirrorPosition(position);
+        assertEquals(expected, mirrored);
+        assertEquals(position, Mirror.mirrorPosition(mirrored));
+    }
+
+    @Test
+    public void mirrorPositionWhiteCastlingKingsideTest() {
+        Position whiteCastlingKingside = FenParser.parseFen("4k3/8/8/8/8/8/8/4K2R w K - 0 1");
+        Position expected = FenParser.parseFen("4k2r/8/8/8/8/8/8/4K3 b k - 0 1");
+        assertEquals(expected, Mirror.mirrorPosition(whiteCastlingKingside));
+    }
+
+    @Test
+    public void mirrorPositionWhiteCastlingQueensideTest() {
+        Position whiteCastlingQueenSide = FenParser.parseFen("4k3/8/8/8/8/8/8/R3K3 w Q - 0 1");
+        Position expected = FenParser.parseFen("r3k3/8/8/8/8/8/8/4K3 b q - 0 1");
+        assertEquals(expected, Mirror.mirrorPosition(whiteCastlingQueenSide));
+    }
+
+    @Test
+    public void mirrorPositionBlackCastlingKingsideTest() {
+        Position blackCastlingKingside = FenParser.parseFen("4k2r/8/8/8/8/8/8/4K3 w k - 0 1");
+        Position expected = FenParser.parseFen("4k3/8/8/8/8/8/8/4K2R b K - 0 1");
+        assertEquals(expected, Mirror.mirrorPosition(blackCastlingKingside));
+    }
+
+    @Test
+    public void mirrorPositionBlackCastlingQueensideTest() {
+        Position blackCastlingQueenside = FenParser.parseFen("r3k3/8/8/8/8/8/8/4K3 w q - 0 1");
+        Position expected = FenParser.parseFen("4k3/8/8/8/8/8/8/R3K3 b Q - 0 1");
+        assertEquals(expected, Mirror.mirrorPosition(blackCastlingQueenside));
+    }
+
+    @Test
+    public void mirrorMixedCastlingRightsTest() {
+        Position mixed = FenParser.parseFen("4k2r/8/8/8/8/8/8/R3K3 b Qk - 0 1");
+        Position expected = FenParser.parseFen("r3k3/8/8/8/8/8/8/4K2R w Kq - 0 1");
+        Position mirrored = Mirror.mirrorPosition(mixed);
+        assertEquals(expected, mirrored);
+        assertEquals(mixed, Mirror.mirrorPosition(mirrored));
+    }
+
+    @Test
+    public void mirrorOneSideHasBothCastlingRightsTest() {
+        Position onesided = FenParser.parseFen("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1");
+        Position expected = FenParser.parseFen("r3k2r/8/8/8/8/8/8/4K3 b kq - 0 1");
+        Position mirrored = Mirror.mirrorPosition(onesided);
+        assertEquals(expected, mirrored);
+        assertEquals(onesided, Mirror.mirrorPosition(mirrored));
+    }
+
+    @Test
+    public void mirrorNoastlingRightsTest() {
+        Position noCastling = FenParser.parseFen("r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1");
+        Position expected = FenParser.parseFen("r3k2r/8/8/8/8/8/8/R3K2R b - - 0 1");
+        Position mirrored = Mirror.mirrorPosition(noCastling);
+        assertEquals(expected, mirrored);
+        assertEquals(noCastling, Mirror.mirrorPosition(mirrored));
+    }
+
+    @Test
+    public void mirrorCenteredPiecesTest() {
+        Position centered = FenParser.parseFen("4k3/8/8/n2Q3P/P2r3b/8/8/4K3 b - - 0 1");
+        Position expected = FenParser.parseFen("4k3/8/8/p2R3B/N2q3p/8/8/4K3 w - - 0 1");
+        Position mirrored = Mirror.mirrorPosition(centered);
+        assertEquals(expected, mirrored);
+        assertEquals(centered, Mirror.mirrorPosition(mirrored));
+    }
+
+    @Test
+    public void mirroredQueenCoveredByPawnTest() {
+        Position position = FenParser.parseFen("4k3/2p5/3q4/8/8/8/3P4/2K5 b - - 0 1");
+        Position expected = FenParser.parseFen("2k5/3p4/8/8/8/3Q4/2P5/4K3 w - - 0 1");
+        Position mirrored = Mirror.mirrorPosition(position);
+        assertEquals(expected, mirrored);
+        assertEquals(position, Mirror.mirrorPosition(mirrored));
     }
 }

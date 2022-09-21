@@ -147,7 +147,7 @@ public class Mirror {
         boolean mirroredWhiteCastlingQueenside = position.getBlackCastlingQueenside();
 
         boolean mirroredBlackCastlingKingside = position.getWhiteCastlingKingside();
-        boolean mirroredBlackCastlingQueenside = position.getBlackCastlingQueenside();
+        boolean mirroredBlackCastlingQueenside = position.getWhiteCastlingQueenside();
 
         Coordinate mirroredEnPAssantTargetSpace = mirrorCoordinate(position.getEnPassantTargetSpace());
         int mirroredEnPassantTargetRank;
