@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import data.MoveGeneratorData;
+import helper.Mirror;
 import helper.PositionHelper;
 import model.Position;
 import movegenerator.BishopMoveGenerator;
@@ -337,6 +338,9 @@ public class MoveGeneratorTest {
         Position queenTestPosition = FenParser.parseFen("7K/8/2n5/8/3P4/2q5/8/7k b - - 0 1"); //queen starts at c3
         List<Position> followUpPositions = QueenMoveGenerator.computeQueenMoves(queenTestPosition, 5, 2);
 
+        Position mirroredQueenTestPosition = Mirror.mirrorPosition(queenTestPosition);
+        List<Position> mirroredPositionFollowUpPositions = QueenMoveGenerator.computeQueenMoves(mirroredQueenTestPosition, 2, 2);
+
         List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/1q6/8/7k w - - 1 2"); //move to b3 - one square left
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/q7/8/7k w - - 1 2"); //move to a3 - two squares left
@@ -358,6 +362,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/8/q6k w - - 1 2"); //move to a1 - two squares to bottom left
 
         PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        PositionHelper.compareMirroredFenStringsToPosition(expectedfollowUpPositions, mirroredPositionFollowUpPositions);
     }
 
     /**

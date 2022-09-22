@@ -288,6 +288,9 @@ public class MirrorTest {
 
         Position mirroredPosition = Mirror.mirrorPosition(blackPromoted);
         assertEquals(expectedMirroredPosition, mirroredPosition);
-        assertEquals(blackPromoted, Mirror.mirrorPosition(mirroredPosition));
+        assertEquals(blackPromoted, Mirror.mirrorPosition(mirroredPosition));    
+        //compare moves (not part of Position.equals())
+        assertEquals(expectedMirroredPosition.getMove(), mirroredPosition.getMove());    
+        assertEquals(blackPromoted.getMove(), Mirror.mirrorPosition(mirroredPosition).getMove());
     }
 }

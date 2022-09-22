@@ -108,6 +108,46 @@ public class Mirror {
         return mirroredBoard;
     }
 
+   /**
+    * Corrects the full-move count of a mirrored follow-up position.
+    * @param followUp a follow-up position that was mirrored using {@link #mirrorPosition(Position)}
+    */
+    private static void correctMirroredFollowUpPositionMoveCount(Position followUp) {
+        //Position mirroredPosition = mirrorPosition(followUp);
+        if (followUp.getWhiteNextMove()) {
+            //mirrored follow-up position represents a black move
+            //(because next move after the position is white's)
+            //thus the mirrored starting position (the position that followUp is a follow-up to) represents a white move
+            //thus the un-mirrored starting position represents a black move
+
+            //full-move count is incremented after black moves
+            //follow-ups to the un-mirrored starting position are white moves and do not increase full-move count
+
+            //increase full-move count of this mirrored white move to make it a correct black move
+            followUp.setFullMoveCount(followUp.getFullMoves() + 1);
+        } else {
+            //mirrored follow-up position represents a white move
+            //(because next move after the position is black's)
+            //thus the mirrored starting position (the position that followUp is a follow-up to) represents a black move
+            //thus the un-mirrored starting position represents a white move
+
+            //full move count is incremented after black moves
+            //follow-ups to the unmirrored starting position are black moves and increase full-move count
+
+            //decrease full-move count of this mirrored black move to make it a correct white move
+            followUp.setFullMoveCount(followUp.getFullMoves() - 1);
+        }
+    }
+
+    /**
+     * Mirrors a follow-up positions and corrects its full-move count.
+     */
+    public static Position mirrorFollowUpPosition(Position followUp) {
+        Position mirrored = mirrorPosition(followUp);
+        correctMirroredFollowUpPositionMoveCount(mirrored);
+        return mirrored;
+    }
+
     public static Position mirrorPosition(Position position) {
 
         //replace every piece with the opposite color and place it at the mirrored position

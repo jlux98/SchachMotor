@@ -57,10 +57,7 @@ public class Position implements Comparable<Position>, Cloneable {
         if (halfMoves < 0) {
             throw new IllegalArgumentException("half move count must be greater than 0");
         }
-        if (fullMoves < 1) {
-            //full move counter starts at 1
-            throw new IllegalArgumentException("full move count must be greater than 0");
-        }
+        setFullMoveCount(fullMoves);
         this.board = spaces;
         this.whiteNextMove = whiteNextMove;
         this.whiteCastlingKingside = whiteCastlingKingside;
@@ -73,7 +70,6 @@ public class Position implements Comparable<Position>, Cloneable {
             this.enPassantTargetSpace = new Coordinate(enPassantTargetRank, enPassantTargetFile);
         }
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
-        this.fullMoveCount = fullMoves;
         this.attackedByWhite = AttackMapGenerator.computeChecks(spaces, true);
         this.attackedByBlack = AttackMapGenerator.computeChecks(spaces, false);
         Coordinate whiteKing = getKingPosition(true);
@@ -377,10 +373,17 @@ public class Position implements Comparable<Position>, Cloneable {
         this.blackInCheck = blackInCheck;
     }
 
+    public void setFullMoveCount(int fullMoveCount) {
+        if (fullMoveCount < 1) {
+            //full move counter starts at 1
+            throw new IllegalArgumentException("full move count must be greater than 0");
+        }
+        this.fullMoveCount = fullMoveCount;
+    }
+
     public int getPointValue() {
         return pointValue;
     };
-
     // public Piece[][] getSpaces() {
     //     return board.getSpaces();
     // }
