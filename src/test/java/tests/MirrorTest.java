@@ -153,6 +153,15 @@ public class MirrorTest {
     }
 
     @Test
+    public void mirrorPromotionTest() {
+        Move blackPromotion = new Move(new Coordinate(1, 6), new Coordinate(0, 6), BLACK_KNIGHT);
+        Move expectedMirroredMove = new Move(new Coordinate(6, 6), new Coordinate(7, 6), WHITE_KNIGHT);
+        Move mirroredMove = Mirror.mirrorMove(blackPromotion);
+        assertEquals(expectedMirroredMove, mirroredMove);
+        assertEquals(blackPromotion, Mirror.mirrorMove(mirroredMove));
+    }
+
+    @Test
     public void changeColorTest() {
         assertEquals(EMPTY_SQUARE, Mirror.changeColor(EMPTY_SQUARE));
 
@@ -261,11 +270,24 @@ public class MirrorTest {
     }
 
     @Test
-    public void mirroredQueenCoveredByPawnTest() {
+    public void mirrorQueenCoveredByPawnTest() {
         Position position = FenParser.parseFen("4k3/2p5/3q4/8/8/8/3P4/2K5 b - - 0 1");
         Position expected = FenParser.parseFen("2k5/3p4/8/8/8/3Q4/2P5/4K3 w - - 0 1");
         Position mirrored = Mirror.mirrorPosition(position);
         assertEquals(expected, mirrored);
         assertEquals(position, Mirror.mirrorPosition(mirrored));
+    }
+
+    @Test
+    public void mirrorPromotedPositionTest() {
+        Position blackPromoted = FenParser.parseFen("q7/2K5/5B2/8/8/2p2r2/k7/8 w - - 0 1");
+        blackPromoted.setMove(new Move(new Coordinate(1, 0), new Coordinate(0, 0), BLACK_QUEEN));
+
+        Position expectedMirroredPosition = FenParser.parseFen("8/K7/2P2R2/8/8/5b2/2k5/Q7 b - - 0 1");
+        expectedMirroredPosition.setMove(new Move(new Coordinate(6, 0), new Coordinate(7, 0), WHITE_QUEEN));
+
+        Position mirroredPosition = Mirror.mirrorPosition(blackPromoted);
+        assertEquals(expectedMirroredPosition, mirroredPosition);
+        assertEquals(blackPromoted, Mirror.mirrorPosition(mirroredPosition));
     }
 }
