@@ -9,10 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import model.Board;
-import model.ByteBoard;
-import model.Coordinate;
-import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;

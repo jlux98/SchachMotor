@@ -20,7 +20,6 @@ import uciservice.FenParser;
 
 public class MoveGeneratorTest {
 
-    private static Position startingPosition;
     private static Position blackCastlingPosition;
     private static Position whiteCastlingPosition;
     
@@ -29,43 +28,14 @@ public class MoveGeneratorTest {
     public static void setup() {
         blackCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R b KQkq - 0 1");
         whiteCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
-       startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
-            "w KQkq - 0 1");
-    }
+   }
 
-    @Test
-    public void parserTest() {
-        String startingStringActual = startingPosition.toString();
-        String startingStringExpected = """
-                [rnbqkbnr,
-                pppppppp,
-                00000000,
-                00000000,
-                00000000,
-                00000000,
-                PPPPPPPP,
-                RNBQKBNR]
-                Generating Move: null
-                White Next Move
-                White Castling: Kingside and Queenside
-                Black Castling: Kingside and Queenside
-                No En Passant possible
-                Halfmove Clock: 0
-                Fullmove Number: 1
-                White in Check: false
-                Black in Check: false
-                    """;
-        assertEquals(startingStringExpected, startingStringActual);
-    }
-
-    @Test
-    public void pawnCheckDetectionTest() {
-        Position checkPosition = FenParser.parseFen("8/8/R2p2k1/8/8/8/8/K7 " +
-            "w KQkq - 0 1");
-        Position[] expectedPositions = null;
-        assertEquals(expectedPositions,
-            MoveGenerator.generatePossibleMovesPerPiece(checkPosition, 2, 2));   
-    }
+   @Test
+   public void pawnCheckDetectionTest() {
+       Position checkPosition = FenParser.parseFen("8/8/R2p2k1/8/8/8/8/K7 " + "w KQkq - 0 1");
+       Position[] expectedPositions = null;
+       assertEquals(expectedPositions, MoveGenerator.generatePossibleMovesPerPiece(checkPosition, 2, 2));
+   }
 
     @Test
     public void pawnStepGenerationTestDoubleStepAllowed(){
