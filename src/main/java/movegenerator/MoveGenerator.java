@@ -46,7 +46,9 @@ public abstract class MoveGenerator {
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 Thread t = generatePossibleMovesPerPiece(position, rank, file, followUpPositions, sem);
-                threadList.add(t);
+                if (t != null) {
+                    threadList.add(t);
+                }
             }
         }
         for (int i = 0; i < threadList.size(); i++){
@@ -56,6 +58,8 @@ public abstract class MoveGenerator {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            } else {
+                throw new IllegalArgumentException();
             }
         }
         Position[] output = new Position[followUpPositions.size()];
@@ -124,7 +128,7 @@ public abstract class MoveGenerator {
         }
         if (result != null){
             result.start();
-            result.run();
+            // result.run();
         }
         return result;
     }
