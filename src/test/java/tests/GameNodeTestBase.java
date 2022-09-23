@@ -39,7 +39,7 @@ public abstract class GameNodeTestBase {
         //extract positions from child nodes
         List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root);
 
-        MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), followUpPositions);
     }
 
     /**
@@ -55,7 +55,7 @@ public abstract class GameNodeTestBase {
         root.queryChildren(); //initial call; computes children
         List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root); //2nd call, retrieves stored children
 
-        MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), followUpPositions);
     }
 
     /**

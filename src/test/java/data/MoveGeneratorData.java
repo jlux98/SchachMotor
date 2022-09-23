@@ -10,15 +10,11 @@ public class MoveGeneratorData {
      */
     public static String allBlackPiecesFen = "8/6K1/2Rp4/3np3/2r2p2/5qp1/1kb4p/8 b - - 0 1";
 
-    /**
-     * follow-up moves to {@link #allBlackPiecesFen}
-     */
-    public static List<String> allBlacKPiecesFenFollowUpMoves = getAllBlackPiecesFenFollowUpMoves();
-
+ 
     /**
      * @return the follow-up moves to {@link #allBlackPiecesFen}
      */
-    private static List<String> getAllBlackPiecesFenFollowUpMoves() {
+    public static List<String> getExpectedAllBlackPiecesFenFollowUpMoves() {
 
         List<String> expectedFollowUpPositions = new ArrayList<String>(50);
 
