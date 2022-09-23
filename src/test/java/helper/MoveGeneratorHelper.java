@@ -37,6 +37,7 @@ public class MoveGeneratorHelper {
         if (piece < 1 || piece > MoveGenerator.BLACK_ROOK) {
             throw new IllegalArgumentException("piece must be value between 1 and 12");
         }
+
         Position mirroredPosition = Mirror.mirrorPosition(position);
         Coordinate coordinate = new Coordinate(rank, file);
         Coordinate mirroredCoordinate = Mirror.mirrorCoordinate(coordinate);
@@ -56,8 +57,8 @@ public class MoveGeneratorHelper {
         MoveGeneratorHelper.comparePositions(expectedPositions, actualFollowUps);
         //compare mirrored expected positions and actual follow-ups for mirrored position
         MoveGeneratorHelper.mirrorExpectedAndComparePositions(expectedPositions, actualMirroredPositionFollowUps);
-   
     }
+    
     /**
      * Wrapper for {@link #verifyPieceMoveGeneration(Position, byte, int, int, List)} 
      * that accepts the expected positions as a list of FEN-strings.
