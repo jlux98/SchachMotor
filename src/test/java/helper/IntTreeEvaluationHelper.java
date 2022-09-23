@@ -12,7 +12,7 @@ import minimax.TreeEvaluator;
 import tests.TreeEvaluationTest;
 
 /**
- * Class used to help with testing {@link TreeEvaluator TreeEvaluators}.
+ * Class used to help with testing instances of {@link TreeEvaluator TreeEvaluator < Integer >}.
  * This class offers a factory method {@link #instantiateTreeEvaluator()}
  * which allows for testing various implementations of TreeEvaluators
  * while only writing tests once.
@@ -25,7 +25,7 @@ import tests.TreeEvaluationTest;
  * <p>
  * This class can be instantiated by providing its constructor with a suitable lambda expression,
  * for example: 
- * <pre>new TreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>())</pre>
+ * <pre>new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning < Integer > ())</pre>
  * </p>
  * 
  * <p>
@@ -36,11 +36,11 @@ import tests.TreeEvaluationTest;
  * See the documentation of {@link TreeEvaluationTest} for a code example.
  * </p>
  */
-public class TreeEvaluationHelper {
+public class IntTreeEvaluationHelper {
 
     private Supplier<TreeEvaluator<Integer>> treeEvaluatorSupplier;
 
-    public TreeEvaluationHelper(Supplier<TreeEvaluator<Integer>> treeEvaluatorSupplier) {
+    public IntTreeEvaluationHelper(Supplier<TreeEvaluator<Integer>> treeEvaluatorSupplier) {
         this.treeEvaluatorSupplier = treeEvaluatorSupplier;
     }
 
@@ -87,7 +87,7 @@ public class TreeEvaluationHelper {
     }
 
     /**
-     * Evaluates the tree using the TreeEvaluator provided by {@link TreeEvaluationHelper}.
+     * Evaluates the tree using the TreeEvaluator provided by {@link IntTreeEvaluationHelper}.
      * @param tree the tree to be evaluated
      * @param depth the depth to which the tree should be evaluated
      * @param whitesTurn whether the node searched for is played by white
@@ -98,7 +98,7 @@ public class TreeEvaluationHelper {
     }
 
     /**
-     * Evaluates the tree using the TreeEvaluator provided by {@link TreeEvaluationHelper}
+     * Evaluates the tree using the TreeEvaluator provided by {@link IntTreeEvaluationHelper}
      * and asserts that evaluateTree(tree) returns a node containing the expected result.
      * Returns the number of nodes that were evaluated.
      * @param expectedResult the content of the node expected to be returned by evaluateTree()
@@ -116,7 +116,7 @@ public class TreeEvaluationHelper {
     }
 
     /**
-     * Evaluates the tree using the TreeEvaluator provided by {@link TreeEvaluationHelper}.
+     * Evaluates the tree using the TreeEvaluator provided by {@link IntTreeEvaluationHelper}.
      * Asserts that evaluateTree(tree) returns a node containing the expected result.
      * Asserts that the number of evaluated nods is equal to or less than maxEvaluatedNodeCount.
      * @param expectedResult the content of the node expected to be returned by evaluateTree()

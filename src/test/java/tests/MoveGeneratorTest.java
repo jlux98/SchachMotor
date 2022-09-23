@@ -9,63 +9,50 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import data.MoveGeneratorData;
+import helper.Mirror;
+import helper.MoveGeneratorHelper;
 import helper.PositionHelper;
 import model.Position;
-import movegenerator.BishopMoveGenerator;
 import movegenerator.MoveGenerator;
-import movegenerator.PawnMoveGenerator;
-import movegenerator.QueenMoveGenerator;
-import movegenerator.RookMoveGenerator;
 import uciservice.FenParser;
+
+import static movegenerator.MoveGenerator.EMPTY_SQUARE;
+import static movegenerator.MoveGenerator.WHITE_BISHOP;
+import static movegenerator.MoveGenerator.WHITE_KING;
+import static movegenerator.MoveGenerator.WHITE_KNIGHT;
+import static movegenerator.MoveGenerator.WHITE_PAWN;
+import static movegenerator.MoveGenerator.WHITE_QUEEN;
+import static movegenerator.MoveGenerator.WHITE_ROOK;
+import static movegenerator.MoveGenerator.BLACK_BISHOP;
+import static movegenerator.MoveGenerator.BLACK_KING;
+import static movegenerator.MoveGenerator.BLACK_KNIGHT;
+import static movegenerator.MoveGenerator.BLACK_PAWN;
+import static movegenerator.MoveGenerator.BLACK_QUEEN;
+import static movegenerator.MoveGenerator.BLACK_ROOK;
 
 public class MoveGeneratorTest {
 
-    private static Position startingPosition;
     private static Position blackCastlingPosition;
     private static Position whiteCastlingPosition;
+    
+    /**
+     * Shared empty list instance. Never add anything to this list!
+     */
+    private static final List<Position> EMPTY_LIST = new ArrayList<Position>(0);
     
 
     @BeforeAll
     public static void setup() {
         blackCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R b KQkq - 0 1");
         whiteCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
-       startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR " +
-            "w KQkq - 0 1");
-    }
+   }
 
-    @Test
-    public void parserTest() {
-        String startingStringActual = startingPosition.toString();
-        String startingStringExpected = """
-                [rnbqkbnr,
-                pppppppp,
-                00000000,
-                00000000,
-                00000000,
-                00000000,
-                PPPPPPPP,
-                RNBQKBNR]
-                Generating Move: null
-                White Next Move
-                White Castling: Kingside and Queenside
-                Black Castling: Kingside and Queenside
-                No En Passant possible
-                Halfmove Clock: 0
-                Fullmove Number: 1
-                White in Check: false
-                Black in Check: false
-                    """;
-        assertEquals(startingStringExpected, startingStringActual);
-    }
-
-    @Test
-    public void pawnCheckDetectionTest() {
-        Position checkPosition = FenParser.parseFen("8/8/R2p2k1/8/8/8/8/K7 " +
-            "w KQkq - 0 1");
-        Position[] expectedPositions = null;
-        assertEquals(expectedPositions,
-            MoveGenerator.generatePossibleMovesPerPiece(checkPosition, 2, 2));   
-    }
+   @Test
+   public void pawnCheckDetectionTest() {
+       Position checkPosition = FenParser.parseFen("8/8/R2p2k1/8/8/8/8/K7 " + "w KQkq - 0 1");
+       Position[] expectedPositions = null;
+       assertEquals(expectedPositions, MoveGenerator.generatePossibleMovesPerPiece(checkPosition, 2, 2));
+   }
 
     @Test
     public void pawnStepGenerationTestDoubleStepAllowed(){
@@ -186,91 +173,68 @@ public class MoveGeneratorTest {
     @Test
     public void knightGenerationTest() {
         Position knightPosition = FenParser.parseFen("7k/1n6/8/P7/8/8/8/7K b KQkq - 0 1");
-        List<Position> expectedPositions = new ArrayList<Position>();
-        expectedPositions.add(FenParser.parseFen("3n3k/8/8/P7/8/8/8/7K w KQkq - 1 2"));
-        expectedPositions.add(FenParser.parseFen("7k/8/3n4/P7/8/8/8/7K w KQkq - 1 2"));
-        expectedPositions.add(FenParser.parseFen("7k/8/8/n7/8/8/8/7K w KQkq - 0 2"));
-        expectedPositions.add(FenParser.parseFen("7k/8/8/P1n5/8/8/8/7K w KQkq - 1 2"));
-        List<Position> actualPositions = new ArrayList<Position>(
-            MoveGenerator.generatePossibleMovesPerPiece(knightPosition,1,1));
-        Collections.sort(expectedPositions);
-        Collections.sort(actualPositions);
-        assertEquals(expectedPositions, actualPositions);
+        List<String> expectedPositions = new ArrayList<String>(4);
+        expectedPositions.add("3n3k/8/8/P7/8/8/8/7K w KQkq - 1 2");
+        expectedPositions.add("7k/8/3n4/P7/8/8/8/7K w KQkq - 1 2");
+        expectedPositions.add("7k/8/8/n7/8/8/8/7K w KQkq - 0 2");
+        expectedPositions.add("7k/8/8/P1n5/8/8/8/7K w KQkq - 1 2");
+
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(knightPosition, BLACK_KNIGHT, 1, 1, 
+        expectedPositions);
     }
 
     @Test
     public void knightCheckDetectionTest() {
-        Position checkPosition1 = FenParser.parseFen("8/8/R2k2k1/8/8/8/8/K7 " +
-            "b KQkq - 0 1");
-        List<Position> expectedPositions1 = null;
-        assertEquals(expectedPositions1,
-            MoveGenerator.generatePossibleMovesPerPiece(checkPosition1, 2, 2));
-        Position checkPosition2 = FenParser.parseFen("3n4/8/R5k1/8/8/8/8/K7 " +
-            "b KQkq - 0 1");
-        List<Position> expectedPositions2 = new ArrayList<Position>();
-        expectedPositions2.add(FenParser.parseFen("8/8/R1n3k1/8/8/8/8/K7 w KQkq - 1 2"));
-        expectedPositions2.add(FenParser.parseFen("8/8/R3n1k1/8/8/8/8/K7 w KQkq - 1 2"));
-        List<Position> actualPositions2 = new ArrayList<Position>(
-                MoveGenerator.generatePossibleMovesPerPiece(checkPosition2, 0, 3));
-        Collections.sort(expectedPositions2);
-        Collections.sort(actualPositions2);
-        assertEquals(expectedPositions2, actualPositions2);
+        Position knightCannotMovePosition = FenParser.parseFen("8/8/R2n2k1/8/8/8/8/K7 b - - 0 1");
+        MoveGeneratorHelper.verifyPieceMoveGeneration(knightCannotMovePosition, BLACK_KNIGHT, 2, 3, EMPTY_LIST);
+
+        Position knightMustMovePosition = FenParser.parseFen("3n4/8/R5k1/8/8/8/8/K7 " + "b KQkq - 0 1");
+        List<String> expectedMustMovePositions = new ArrayList<String>(2);
+        expectedMustMovePositions.add("8/8/R1n3k1/8/8/8/8/K7 w KQkq - 1 2");
+        expectedMustMovePositions.add("8/8/R3n1k1/8/8/8/8/K7 w KQkq - 1 2");
+
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(knightMustMovePosition, BLACK_KNIGHT, 0, 3,
+                expectedMustMovePositions);
     }
 
     @Test
     public void kingStepGenerationTest() {
         Position kingPosition = FenParser.parseFen("7K/8/8/8/8/8/3P4/3k4 b - - 0 1");
-        List<Position> expectedPositions = new ArrayList<>();
-        expectedPositions.add(FenParser.parseFen("7K/8/8/8/8/8/3Pk3/8 w - - 1 2"));
-        expectedPositions.add(FenParser.parseFen("7K/8/8/8/8/8/2kP4/8 w - - 1 2"));
-        expectedPositions.add(FenParser.parseFen("7K/8/8/8/8/8/3k4/8 w - - 0 2"));
-        expectedPositions.add(FenParser.parseFen("7K/8/8/8/8/8/3P4/2k5 w - - 1 2"));
-        expectedPositions.add(FenParser.parseFen("7K/8/8/8/8/8/3P4/4k3 w - - 1 2"));
-        List<Position> actualPositions = new ArrayList<>(
-            MoveGenerator.generatePossibleMovesPerPiece(kingPosition, 7, 3));
-        Collections.sort(expectedPositions);
-        Collections.sort(actualPositions);
-        assertEquals(expectedPositions, actualPositions);
+        List<String> expectedPositions = new ArrayList<>(5);
+        expectedPositions.add("7K/8/8/8/8/8/3Pk3/8 w - - 1 2");
+        expectedPositions.add("7K/8/8/8/8/8/2kP4/8 w - - 1 2");
+        expectedPositions.add("7K/8/8/8/8/8/3k4/8 w - - 0 2");
+        expectedPositions.add("7K/8/8/8/8/8/3P4/2k5 w - - 1 2");
+        expectedPositions.add("7K/8/8/8/8/8/3P4/4k3 w - - 1 2");
+        
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(kingPosition, BLACK_KING, 7, 3, expectedPositions);
     }
 
     @Test
     public void blackCastlingGenerationTest() {
         Position castlingPosition = FenParser.parseFen(
             "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
-        List<Position> expectedPosition = new ArrayList<>();
-        expectedPosition.add(FenParser.parseFen(
-            "r4k1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
-        expectedPosition.add(FenParser.parseFen(
-            "r2k3r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
-        expectedPosition.add(FenParser.parseFen(
-            "2kr3r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
-        expectedPosition.add(FenParser.parseFen(
-            "r4rk1/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2"));
-        List<Position> actualPositions = new ArrayList<>(
-            MoveGenerator.generatePossibleMovesPerPiece(castlingPosition,0,4));
-        Collections.sort(expectedPosition);
-        Collections.sort(actualPositions);
-        assertEquals(expectedPosition, actualPositions);
+        List<String> expectedPosition = new ArrayList<>(4);
+        expectedPosition.add("r4k1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2");
+        expectedPosition.add("r2k3r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2");
+        expectedPosition.add("2kr3r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2");
+        expectedPosition.add("r4rk1/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 1 2");
+
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(castlingPosition, BLACK_KING, 0, 4, expectedPosition);
     }
 
     @Test
     public void whiteCastlingGenerationTest() {
         Position castlingPosition = FenParser.parseFen(
             "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1");
-        List<Position> expectedPosition = new ArrayList<>();
-        expectedPosition.add(FenParser.parseFen(
-            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R4RK1 b kq - 1 1"));
-        expectedPosition.add(FenParser.parseFen(
-            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R4K1R b kq - 1 1"));
-        expectedPosition.add(FenParser.parseFen(
-            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R2K3R b kq - 1 1"));
-        expectedPosition.add(FenParser.parseFen(
-           "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/2KR3R b kq - 1 1"));
-        List<Position> actualPositions = new ArrayList<>(
-            MoveGenerator.generatePossibleMovesPerPiece(castlingPosition,7,4));
-        Collections.sort(expectedPosition);
-        Collections.sort(actualPositions);
-        assertEquals(expectedPosition, actualPositions);
+        List<String> expectedPosition = new ArrayList<>(4);
+
+        expectedPosition.add("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R4RK1 b kq - 1 1");
+        expectedPosition.add("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R4K1R b kq - 1 1");
+        expectedPosition.add("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R2K3R b kq - 1 1");
+        expectedPosition.add("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/2KR3R b kq - 1 1");
+
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(castlingPosition, WHITE_KING, 7, 4, expectedPosition);
     }
 
 
@@ -278,9 +242,8 @@ public class MoveGeneratorTest {
     @Test
     public void moveBishopTest() {
         Position bishopTestPosition = FenParser.parseFen("7K/8/1n6/4P3/3b4/8/8/7k b - - 0 1"); //bishop starts at d4
-        List<Position> followUpPositions = BishopMoveGenerator.computeBishopMoves(bishopTestPosition, 4, 3);
 
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        List<String> expectedfollowUpPositions = new ArrayList<String>(8);
         expectedfollowUpPositions.add("7K/8/1n6/2b1P3/8/8/8/7k w - - 1 2"); //move one square to upper left
         expectedfollowUpPositions.add("7K/8/1n6/4b3/8/8/8/7k w - - 0 2"); //capture pawn on e5 - one square to upper right
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/2b5/8/7k w - - 1 2"); //move to c3 - one square to bottom left
@@ -290,15 +253,14 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/5b2/7k w - - 1 2"); //move to f2 - two squares to bottom right
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/8/6bk w - - 1 2"); //move to g1 - three squares to bottom right
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(bishopTestPosition, BLACK_BISHOP, 4, 3, expectedfollowUpPositions);
     }
 
     @Test
     public void moveRookTest() {
         Position rookTestPosition = FenParser.parseFen("2n4K/8/8/8/2r1P3/8/8/7k b - - 0 1"); //rook starts at c4
-        List<Position> followUpPositions = RookMoveGenerator.computeRookMoves(rookTestPosition, 4, 2);
 
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        List<String> expectedfollowUpPositions = new ArrayList<String>(10);
         expectedfollowUpPositions.add("2n4K/8/8/8/1r2P3/8/8/7k w - - 1 2"); //move to b4 - one square to the left
         expectedfollowUpPositions.add("2n4K/8/8/8/r3P3/8/8/7k w - - 1 2"); //move to a4 - two squares to the left
         expectedfollowUpPositions.add("2n4K/8/8/2r5/4P3/8/8/7k w - - 1 2"); //move to c5 - one square up
@@ -310,64 +272,55 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/2r5/7k w - - 1 2"); //move to c2 - two squares down
         expectedfollowUpPositions.add("2n4K/8/8/8/4P3/8/8/2r4k w - - 1 2"); //move to c1 - three squares down
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(rookTestPosition, BLACK_ROOK, 4, 2, expectedfollowUpPositions);
 
     }
 
     @Test
     public void moveBlackKingsideRookTest() {
-        List<Position> followUpPositions = RookMoveGenerator.computeRookMoves(blackCastlingPosition, 0, 7);
-
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
-
+        List<String> expectedfollowUpPositions = new ArrayList<String>(2);
         expectedfollowUpPositions.add("r3k1r1/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to g8 - one square to the left
         expectedfollowUpPositions.add("r3kr2/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to f8 - two squares to the left
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(blackCastlingPosition, BLACK_ROOK, 0, 7, expectedfollowUpPositions);
     }
 
     @Test
     public void moveBlackQueensideRookTest() {
-        List<Position> followUpPositions = RookMoveGenerator.computeRookMoves(blackCastlingPosition, 0, 0);
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
-
+        List<String> expectedfollowUpPositions = new ArrayList<String>(3);
         expectedfollowUpPositions.add("1r2k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to b8 - one square to the right
         expectedfollowUpPositions.add("2r1k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to c8 - two squares to the right
         expectedfollowUpPositions.add("3rk2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to d8 - three squares to the right
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(blackCastlingPosition, BLACK_ROOK, 0, 0, expectedfollowUpPositions);
 
     }
 
     @Test
     public void moveWhiteKingSideRookTest() {
-        List<Position> followUpPositions = RookMoveGenerator.computeRookMoves(whiteCastlingPosition, 7, 7);
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
-
+        List<String> expectedfollowUpPositions = new ArrayList<String>(2);
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 1 1"); //move to g1 - one square to the left
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 1 1"); //move to f1 - two squares to the left
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(whiteCastlingPosition, WHITE_ROOK, 7, 7, expectedfollowUpPositions);
     }
 
     @Test
     public void moveWhiteQueensideRookTest() {
-        List<Position> followUpPositions = RookMoveGenerator.computeRookMoves(whiteCastlingPosition, 7, 0);
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        List<String> expectedfollowUpPositions = new ArrayList<String>(3);
 
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/1R2K2R b Kkq - 1 1"); //move to b1 - one square to the right
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/2R1K2R b Kkq - 1 1"); //move to c1 - two squares to the right
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/3RK2R b Kkq - 1 1"); //move to d1 - three squares to the right
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(whiteCastlingPosition, WHITE_ROOK, 7, 0, expectedfollowUpPositions);
     }
 
     @Test
     public void moveQueenTest() {
         Position queenTestPosition = FenParser.parseFen("7K/8/2n5/8/3P4/2q5/8/7k b - - 0 1"); //queen starts at c3
-        List<Position> followUpPositions = QueenMoveGenerator.computeQueenMoves(queenTestPosition, 5, 2);
 
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        List<String> expectedfollowUpPositions = new ArrayList<String>(18);
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/1q6/8/7k w - - 1 2"); //move to b3 - one square left
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/q7/8/7k w - - 1 2"); //move to a3 - two squares left
         expectedfollowUpPositions.add("7K/8/2n5/8/1q1P4/8/8/7k w - - 1 2"); //move to b4 - one square to upper left
@@ -387,7 +340,8 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/1q6/7k w - - 1 2"); //move to b2 - one square to bottom left
         expectedfollowUpPositions.add("7K/8/2n5/8/3P4/8/8/q6k w - - 1 2"); //move to a1 - two squares to bottom left
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(queenTestPosition, BLACK_QUEEN, 5, 2,
+                expectedfollowUpPositions);
     }
 
     /**
@@ -395,13 +349,25 @@ public class MoveGeneratorTest {
      */
     @Test
     public void generatePossibleMovesTest() {
+        //test
         Position allBlackPiecesPosition = FenParser.parseFen(MoveGeneratorData.allBlackPiecesFen);
-        Position[] followUpPositions = MoveGenerator.generatePossibleMoves(allBlackPiecesPosition);
 
-        List<Position> followUpPositionsList = new ArrayList<Position>();
-        Collections.addAll(followUpPositionsList, followUpPositions);
+        Position[] actualFollowUpPositionsArray = MoveGenerator.generatePossibleMoves(allBlackPiecesPosition);
+        //copy array data into list
+        List<Position> actualFollowUpPositions = new ArrayList<Position>();
+        Collections.addAll(actualFollowUpPositions, actualFollowUpPositionsArray);
+        
+        MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), actualFollowUpPositions);
 
-        PositionHelper.compareFenStringsToPosition(MoveGeneratorData.allBlacKPiecesFenFollowUpMoves, followUpPositionsList);
+        //mirrored test
+        Position mirroredAllBlackPiecesPosition = Mirror.mirrorPosition(allBlackPiecesPosition);
+
+        Position[] mirroredActualFollowUpPositionsArray = MoveGenerator.generatePossibleMoves(mirroredAllBlackPiecesPosition);
+        //copy array data into list
+        List<Position> mirroredActualFollowUpPositions = new ArrayList<Position>();
+        Collections.addAll(mirroredActualFollowUpPositions, mirroredActualFollowUpPositionsArray);
+
+         MoveGeneratorHelper.mirrorFenStringsAndCompareToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), mirroredActualFollowUpPositions);
     }
 
     @Test
@@ -411,10 +377,7 @@ public class MoveGeneratorTest {
      */
     public void pieceInA8CornerTest() {
         Position queenTestPosition = FenParser.parseFen("qr6/rr6/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at a8
-        List<Position> followUpPositions = QueenMoveGenerator.computeQueenMoves(queenTestPosition, 0, 0);
-        List<String> emptyList = new ArrayList<String>();
-        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
-
+        MoveGeneratorHelper.verifyPieceMoveGeneration(queenTestPosition, BLACK_QUEEN, 0, 0, EMPTY_LIST);
     }
 
     @Test
@@ -424,10 +387,7 @@ public class MoveGeneratorTest {
      */
     public void pieceInH8CornerTest() {
         Position queenTestPosition = FenParser.parseFen("6rq/6rr/8/8/3Kk3/8/8/8 w - - 0 1"); //queen starts at h8
-        List<Position> followUpPositions = QueenMoveGenerator.computeQueenMoves(queenTestPosition, 0, 7);
-        List<String> emptyList = new ArrayList<String>();
-        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
-
+        MoveGeneratorHelper.verifyPieceMoveGeneration(queenTestPosition, BLACK_QUEEN, 0, 7, EMPTY_LIST);
     }
 
     @Test
@@ -437,10 +397,7 @@ public class MoveGeneratorTest {
      */
     public void pieceInA1CornerTest() {
         Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/rr6/qr6 w - - 0 1"); //queen starts at a1
-        List<Position> followUpPositions = QueenMoveGenerator.computeQueenMoves(queenTestPosition, 7, 0);
-        List<String> emptyList = new ArrayList<String>();
-        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
-
+        MoveGeneratorHelper.verifyPieceMoveGeneration(queenTestPosition, BLACK_QUEEN, 7, 0, EMPTY_LIST);
     }
 
     @Test
@@ -450,9 +407,7 @@ public class MoveGeneratorTest {
      */
     public void pieceInH1CornerTest() {
         Position queenTestPosition = FenParser.parseFen("8/8/8/8/3Kk3/8/6rr/6rq w - - 0 1"); //queen starts at h1
-        List<Position> followUpPositions = QueenMoveGenerator.computeQueenMoves(queenTestPosition, 7, 7);
-        List<String> emptyList = new ArrayList<String>();
-        PositionHelper.compareFenStringsToPosition(emptyList, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGeneration(queenTestPosition, BLACK_QUEEN, 7, 7, EMPTY_LIST);
 
     }
 
@@ -465,9 +420,18 @@ public class MoveGeneratorTest {
         //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/6n1/8/8/8/8/2k5 w - - 0 1"));
 
         //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/8/8/8/8/8/2k5 w - - 0 1"));
-        MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/4P3/8/8/8/8/8/2k5 w - - 0 1"));
-        MoveGenerator.generatePossibleMoves(FenParser.parseFen("k7/8/8/8/8/8/5p2/K3N3 b - - 1 25"));
-        MoveGenerator.generatePossibleMoves(FenParser.parseFen("k7/8/8/8/8/8/5p2/K4N2 b - - 1 25"));
+        Position promotion = FenParser.parseFen("2K5/4P3/8/8/8/8/8/2k5 w - - 0 1");
+        Position captureAndPromotion = FenParser.parseFen("k7/8/8/8/8/8/5p2/K3N3 b - - 1 25");
+        Position blockedByPieceOnLastRank = FenParser.parseFen("k7/8/8/8/8/8/5p2/K4N2 b - - 1 25");
+
+        MoveGenerator.generatePossibleMoves(promotion);
+        MoveGenerator.generatePossibleMoves(captureAndPromotion);
+        MoveGenerator.generatePossibleMoves(blockedByPieceOnLastRank);
+
+        
+        MoveGenerator.generatePossibleMoves(Mirror.mirrorPosition(promotion));
+        MoveGenerator.generatePossibleMoves(Mirror.mirrorPosition(captureAndPromotion));
+        MoveGenerator.generatePossibleMoves(Mirror.mirrorPosition(blockedByPieceOnLastRank));
     }
 
     @Test
@@ -512,8 +476,7 @@ public class MoveGeneratorTest {
 
     // @Test
     // public void whiteStaleMateByBishopTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("8/8/3K4/b7/6b1/2b2b2/8/k7 w - - 0 1");
+    //     PositionHelper.verifyStaleMate("8/8/3K4/b7/6bb/2b2b2/5b2/k7 w - - 0 1");
     // }
 
     // @Test
@@ -607,9 +570,8 @@ public class MoveGeneratorTest {
     @Test
     public void pawnCaptureIndexOutOfBoundsBugBlackTest() {
         Position pawnPosition = FenParser.parseFen("k7/8/8/8/8/8/5p2/K5N1 b - - 1 25");
-        List<Position> followUpPositions = PawnMoveGenerator.computePawnMoves(pawnPosition, 6, 5);
 
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        List<String> expectedfollowUpPositions = new ArrayList<String>(8);
 
         //move to f1
         expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K4qN1 w - - 0 26"); //move to f1, promote to queen
@@ -623,15 +585,13 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K5b1 w - - 0 26"); //capture on g1, promote to bishop
         expectedfollowUpPositions.add("k7/8/8/8/8/8/8/K5n1 w - - 0 26"); //capture on g1, promote to knight
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(pawnPosition, BLACK_PAWN, 6, 5, expectedfollowUpPositions);
     }
 
     @Test
     public void pawnCaptureIndexOutOfBoundsBugWhiteTest() {
         Position pawnPosition = FenParser.parseFen("k5n1/5P2/8/8/8/8/8/K7 w - - 1 25");
-        List<Position> followUpPositions = PawnMoveGenerator.computePawnMoves(pawnPosition, 1, 5);
-
-        List<String> expectedfollowUpPositions = new ArrayList<String>(followUpPositions.size());
+        List<String> expectedfollowUpPositions = new ArrayList<String>(8);
 
         //move to f8
         expectedfollowUpPositions.add("k4Qn1/8/8/8/8/8/8/K7 b - - 0 25"); //move to f8, promote to queen
@@ -645,6 +605,7 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("k5B1/8/8/8/8/8/8/K7 b - - 0 25"); //capture on g8, promote to bishop
         expectedfollowUpPositions.add("k5N1/8/8/8/8/8/8/K7 b - - 0 25"); //capture on g8, promote to knight
 
-        PositionHelper.compareFenStringsToPosition(expectedfollowUpPositions, followUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(pawnPosition, WHITE_PAWN, 1, 5, expectedfollowUpPositions);
     }
+
 }

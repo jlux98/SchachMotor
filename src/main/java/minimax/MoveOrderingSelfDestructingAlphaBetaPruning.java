@@ -15,12 +15,12 @@ import gametree.Tree;
 public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
     private DescendingStaticValueComparator<T> whiteComparator;
-    private AscendingStaticValueComparator<T> blackcomparator;
+    private AscendingStaticValueComparator<T> blackComparator;
 
     public MoveOrderingSelfDestructingAlphaBetaPruning() {
         //TODO use singletons instead?
         whiteComparator = new DescendingStaticValueComparator<T>();
-        blackcomparator = new AscendingStaticValueComparator<T>();
+        blackComparator = new AscendingStaticValueComparator<T>();
     }
 
     // Note on storing values in nodes:
@@ -120,7 +120,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
 
-            children.sort(blackcomparator);
+            children.sort(blackComparator);
 
             for (Node<T> child : children) {
                 // evaluate all children
