@@ -107,8 +107,7 @@ public class IntTreeEvaluationHelper {
      * @param whitesTurn whether the node searched for is played by white
      * @return the number of nodes that were evaluated
      */
-    public int verifyEvaluateTreeResult(int expectedResult, Tree<? extends Node<Integer>> tree, int depth,
-            boolean whitesTurn) {
+    public int verifyEvaluateTreeResult(int expectedResult, Tree<? extends Node<Integer>> tree, int depth, boolean whitesTurn) {
         TreeEvaluator<Integer> evaluator = instantiateTreeEvaluator();
         int result = evaluator.evaluateTree(tree, depth, whitesTurn).getContent();
         assertEquals(expectedResult, result);
@@ -118,17 +117,37 @@ public class IntTreeEvaluationHelper {
     /**
      * Evaluates the tree using the TreeEvaluator provided by {@link IntTreeEvaluationHelper}.
      * Asserts that evaluateTree(tree) returns a node containing the expected result.
-     * Asserts that the number of evaluated nods is equal to or less than maxEvaluatedNodeCount.
+     * Asserts that the number of evaluated nodes is equal to or less than maxEvaluatedNodeCount.
      * @param expectedResult the content of the node expected to be returned by evaluateTree()
      * @param maxEvaluatedNodeCount the maximum number of nodes that may be evaluated
      * @param tree the tree to be evaluated
      * @param depth the depth to which the tree should be evaluated
      * @param whitesTurn whether the node searched for is played by white
      */
-    public void verifyEvaluateTree(int expectedResult, int maxEvaluatedNodeCount, Tree<? extends Node<Integer>> tree,
-            int depth, boolean whitesTurn) {
+    public void verifyEvaluateTree(int expectedResult, int maxEvaluatedNodeCount, Tree<? extends Node<Integer>> tree, int depth,
+            boolean whitesTurn) {
         int evaluatedNodeCount = verifyEvaluateTreeResult(expectedResult, tree, depth, whitesTurn);
         assertTrue(evaluatedNodeCount <= maxEvaluatedNodeCount);
     }
-    
+
+    /**
+     * Evaluates the tree using the TreeEvaluator provided by {@link IntTreeEvaluationHelper}
+     * and asserts that evaluateTree(tree) returns a node containing the expected result.
+     * Additionally, inverts the the tree's static leaf values (multiplies them by -1) and asserts 
+     * that evaluation of the inverted tree for the opposing player returns -expectedResult.
+     * @param expectedResult
+     * @param tree
+     * @param depth
+     * @param whitesTurn
+     */
+    public void verifyInvertedTree(int expectedResult, Supplier<Tree<? extends Node<Integer>>> treeSupplier, int depth,
+            boolean whitesTurn) {
+        //verify evaluation of tree
+        verifyEvaluateTreeResult(expectedResult, treeSupplier.get(), depth, whitesTurn);
+        //verify evaluation of tree for opposing player
+        Tree<? extends Node<Integer>> invertedTree = treeSupplier.get();
+        IntNodeHelper.invertLeaves(invertedTree);
+        verifyEvaluateTreeResult(-1 * expectedResult, invertedTree, depth, !whitesTurn);
+    }
+
 }

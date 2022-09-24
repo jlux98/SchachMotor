@@ -59,6 +59,7 @@ public class IntNodeHelper {
         //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
         assertEquals(expectedStaticValue, node.roughlyEvaluateStatically());
     }
+
     /**
      * Creates a parent layer for the passed nodes.
      * Parent nodes are created for every n children, where n is the specified degree.
@@ -176,7 +177,7 @@ public class IntNodeHelper {
      * Inverts the content stored in the tree's leaf nodes (content = -1 * content).
      * @param tree tree whose leaves should be inverted
      */
-    public static void invertLeaves(Tree<? extends IntNode> tree) {
+    public static void invertLeaves(Tree<? extends Node<Integer>> tree) {
         invertLeaves(tree.getRoot());
     }
 
@@ -185,7 +186,7 @@ public class IntNodeHelper {
      * Otherwise, inverts the content stored by its children.
      * @param node node whose value or whose childrens' value should be inverted
      */
-    public static void invertLeaves(IntNode node) {
+    public static void invertLeaves(Node<Integer> node) {
         //invert node if it has no children
         if (!node.hasChildren()) {
             invertLeaf(node);
@@ -201,7 +202,7 @@ public class IntNodeHelper {
      * Inverts a leaf by multiplying its content with -1.
      * @param node leaf node whose value should be inverted
      */
-    public static void invertLeaf(IntNode node) {
+    public static void invertLeaf(Node<Integer> node) {
         node.setContent(node.getContent() * -1);
     }
 
