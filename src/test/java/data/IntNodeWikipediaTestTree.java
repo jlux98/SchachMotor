@@ -16,12 +16,12 @@ import helper.NodeHelper;
    * Inner nodes have a value of 0.
    * Tree structure is the same as in the image.
    */
-public class IntNodeTestTree implements Tree<IntNode> {
+public class IntNodeWikipediaTestTree implements Tree<IntNode> {
 
     /**
      * Constructs a tree matching https://en.wikipedia.org/wiki/File:Minimax.svg.
      */
-    public IntNodeTestTree() {
+    public IntNodeWikipediaTestTree() {
         setUpTree();
     }
 
@@ -34,7 +34,7 @@ public class IntNodeTestTree implements Tree<IntNode> {
     //root would be layer0Node0
     //children of root are layer1Node0 and layer1Node1
     //layer 4 = leaves
-    public IntNode root;
+
     //layer 4
     public IntNode layer4Node0;
     public IntNode layer4Node1;
@@ -60,6 +60,8 @@ public class IntNodeTestTree implements Tree<IntNode> {
     //layer1
     public IntNode layer1Node0;
     public IntNode layer1Node1;
+    //layer0    
+    public IntNode root;
 
     //tree data source: https://en.wikipedia.org/wiki/File:Minimax.svg
     public void setUpTree() {
@@ -124,7 +126,6 @@ public class IntNodeTestTree implements Tree<IntNode> {
         assertEquals(Integer.MIN_VALUE, this.layer4Node6.getContent());
         assertEquals(-7, this.layer4Node7.getContent());
         assertEquals(-5, this.layer4Node8.getContent());
-
     }
 
 }

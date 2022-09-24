@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import data.IntNodeTestTree;
+import data.IntNodeWikipediaTestTree;
 import helper.IntTreeEvaluationHelper;
 import helper.GameTreeEvaluationHelper;
 import helper.IntNodeHelper;
@@ -77,7 +77,7 @@ public abstract class TreeEvaluationTest {
     // FIXME this test assumes that no pruning is happening whatsoever
     @Test
     public void incompleteBinaryTreeDepth4Test() {
-        IntNodeTestTree testTree = new IntNodeTestTree();
+        IntNodeWikipediaTestTree testTree = new IntNodeWikipediaTestTree();
         intTreeEvaluator.evaluateTree(testTree, 4, true);
         // root
         IntNodeHelper.compareIntNodeValue(-7, testTree.root);

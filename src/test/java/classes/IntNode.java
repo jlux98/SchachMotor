@@ -1,5 +1,7 @@
 package classes;
 
+import java.util.List;
+
 import gametree.BaseNode;
 import gametree.ComputeChildrenException;
 import gametree.Node;
@@ -78,6 +80,12 @@ public class IntNode extends BaseNode<Integer> {
     }
 
     @Override
+    public int roughlyEvaluateStatically() {
+        //overwrite any caching mechanisms so changes to stored content are reflected by value
+       return this.evaluateStatically(false, -1);
+    }
+
+    @Override
     public Node<Integer> createChild(Integer content) {
         return new IntNode(content, this);
     }
@@ -97,6 +105,12 @@ public class IntNode extends BaseNode<Integer> {
             return this.getContent() == ((IntNode) obj).getContent();
         }
         return false;
+    }
+
+    //increase visibility to public in this class
+    @Override
+    public List<? extends Node<Integer>> getChildren() {
+        return super.getChildren();
     }
 
 }

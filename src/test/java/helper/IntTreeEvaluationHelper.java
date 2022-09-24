@@ -126,9 +126,9 @@ public class IntTreeEvaluationHelper {
      * @param whitesTurn whether the node searched for is played by white
      */
     public void verifyEvaluateTree(int expectedResult, int maxEvaluatedNodeCount, Tree<? extends Node<Integer>> tree,
-            int depth,
-            boolean whitesTurn) {
+            int depth, boolean whitesTurn) {
         int evaluatedNodeCount = verifyEvaluateTreeResult(expectedResult, tree, depth, whitesTurn);
         assertTrue(evaluatedNodeCount <= maxEvaluatedNodeCount);
     }
+    
 }
