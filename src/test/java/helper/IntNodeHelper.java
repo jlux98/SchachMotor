@@ -51,6 +51,15 @@ public class IntNodeHelper {
     }
 
     /**
+     * Compares the IntNode's static value (= stored integer) to the expected value.
+     * @param expectedStaticValue the expected static value
+     * @param node the node
+     */
+    public static void compareStaticIntNodeValue(int expectedStaticValue, IntNode node) {
+        //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
+        assertEquals(expectedStaticValue, node.roughlyEvaluateStatically());
+    }
+    /**
      * Creates a parent layer for the passed nodes.
      * Parent nodes are created for every n children, where n is the specified degree.
      * If not sufficient nodes are available in a layer, the last node of the parent layer will have a reduced degree.

@@ -1,7 +1,5 @@
 package data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 
 import classes.IntNode;
@@ -117,15 +115,15 @@ public class IntNodeWikipediaTestTree implements Tree<IntNode> {
         NodeHelper.verifyChildren(this.layer3Node4, this.layer4Node6);
         NodeHelper.verifyChildren(this.layer3Node5, this.layer4Node7, this.layer4Node8);
         //layer 4: leaf values
-        assertEquals(10, this.layer4Node0.getContent());
-        assertEquals(Integer.MAX_VALUE, this.layer4Node1.getContent());
-        assertEquals(5, this.layer4Node2.getContent());
-        assertEquals(-10, this.layer4Node3.getContent());
-        assertEquals(7, this.layer4Node4.getContent());
-        assertEquals(5, this.layer4Node5.getContent());
-        assertEquals(Integer.MIN_VALUE, this.layer4Node6.getContent());
-        assertEquals(-7, this.layer4Node7.getContent());
-        assertEquals(-5, this.layer4Node8.getContent());
+        IntNodeHelper.compareStaticIntNodeValue(10, layer4Node0);
+        IntNodeHelper.compareStaticIntNodeValue(Integer.MAX_VALUE, layer4Node1);
+        IntNodeHelper.compareStaticIntNodeValue(5, layer4Node2);
+        IntNodeHelper.compareStaticIntNodeValue(-10, layer4Node3);
+        IntNodeHelper.compareStaticIntNodeValue(7, layer4Node4);
+        IntNodeHelper.compareStaticIntNodeValue(5, layer4Node5);
+        IntNodeHelper.compareStaticIntNodeValue(Integer.MIN_VALUE, layer4Node6);
+        IntNodeHelper.compareStaticIntNodeValue(-7, layer4Node7);
+        IntNodeHelper.compareStaticIntNodeValue(-5, layer4Node8);
     }
 
 }
