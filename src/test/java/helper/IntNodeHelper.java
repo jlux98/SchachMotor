@@ -203,7 +203,18 @@ public class IntNodeHelper {
      * @param node leaf node whose value should be inverted
      */
     public static void invertLeaf(Node<Integer> node) {
-        node.setContent(node.getContent() * -1);
+        int content = node.getContent();
+        if (content == Integer.MIN_VALUE) {
+            //required as MIN_VALUE * -1 == MIN_VALUE
+            node.setContent(Integer.MAX_VALUE);
+            return;
+        }
+        if (content == Integer.MAX_VALUE) {
+            //required as MAX_VALUE * -1 == MIN_VALUE + 1
+            node.setContent(Integer.MIN_VALUE);
+            return;
+        }
+        node.setContent(content * -1);
     }
 
     @Test
@@ -252,13 +263,14 @@ public class IntNodeHelper {
         NodeHelper.verifyChildren(testTree.layer3Node5, testTree.layer4Node7, testTree.layer4Node8);
         //layer 4: leaf values
         assertEquals(-10, testTree.layer4Node0.getContent());
-        assertEquals(-Integer.MAX_VALUE, testTree.layer4Node1.getContent());
+        assertEquals(Integer.MIN_VALUE, testTree.layer4Node1.getContent());
         assertEquals(-5, testTree.layer4Node2.getContent());
         assertEquals(10, testTree.layer4Node3.getContent());
         assertEquals(-7, testTree.layer4Node4.getContent());
         assertEquals(-5, testTree.layer4Node5.getContent());
-        assertEquals(Integer.MIN_VALUE, testTree.layer4Node6.getContent());
+        assertEquals(Integer.MAX_VALUE, testTree.layer4Node6.getContent());
         assertEquals(7, testTree.layer4Node7.getContent());
         assertEquals(5, testTree.layer4Node8.getContent());
     }
+
 }
