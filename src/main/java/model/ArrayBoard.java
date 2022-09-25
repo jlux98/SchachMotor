@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import static model.PieceEncoding.*;
 
 /**
  * An implementation of Board based on a two-dimensional array of Pieces representing the board.
@@ -139,28 +140,28 @@ public class ArrayBoard implements Board {
         }
         switch (piece.getPieceType()){
             case BISHOP:
-                result = 1;
+                result = WHITE_BISHOP;
                 break;
             case KING:
-                result = 2;
+                result = WHITE_KING;
                 break;
             case KNIGHT:
-                result = 3;
+                result = WHITE_KNIGHT;
                 break;
             case PAWN:
-                result = 4;
+                result = WHITE_PAWN;
                 break;
             case QUEEN:
-                result = 5;
+                result = WHITE_QUEEN;
                 break;
             case ROOK:
-                result = 6;
+                result = WHITE_ROOK;
                 break;
             default:
                 break;
         }
         if (!piece.getIsWhite()){
-            result += 6;
+            result += PIECE_OFFSET;
         }
         return result;
     }

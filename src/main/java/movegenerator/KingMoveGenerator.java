@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Board;
+import model.PieceEncoding;
 import model.Position;
-
+import static model.PieceEncoding.*;
 
 public class KingMoveGenerator extends PieceMoveGenerator {
     
@@ -137,7 +138,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean hasCaptured = false;
         byte targetPiece = position.getByteAt(targetRank, targetFile);
         if (targetPiece != 0){
-            if (targetPiece < MoveGenerator.BLACK_BISHOP == position.getWhitesTurn()){
+            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;

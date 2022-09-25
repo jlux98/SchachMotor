@@ -1,6 +1,6 @@
 package model;
 
-import movegenerator.MoveGenerator;
+import static model.PieceEncoding.*;
 
 public class Move {
     private Coordinate startingSpace;
@@ -69,23 +69,23 @@ public class Move {
 
     private String promotedToString() {
         switch (promotedTo) {
-            case MoveGenerator.BLACK_BISHOP:
-            case MoveGenerator.WHITE_BISHOP:
+            case BLACK_BISHOP:
+            case WHITE_BISHOP:
                 return "b";
-            case MoveGenerator.BLACK_KING:
-            case MoveGenerator.WHITE_KING:
+            case BLACK_KING:
+            case WHITE_KING:
                 return "k";
-            case MoveGenerator.BLACK_KNIGHT:
-            case MoveGenerator.WHITE_KNIGHT:
+            case BLACK_KNIGHT:
+            case WHITE_KNIGHT:
                 return "n";
-            case MoveGenerator.BLACK_PAWN:
-            case MoveGenerator.WHITE_PAWN:
+            case BLACK_PAWN:
+            case WHITE_PAWN:
                 return "p";
-            case MoveGenerator.BLACK_QUEEN:
-            case MoveGenerator.WHITE_QUEEN:
+            case BLACK_QUEEN:
+            case WHITE_QUEEN:
                 return "q";
-            case MoveGenerator.BLACK_ROOK:
-            case MoveGenerator.WHITE_ROOK:
+            case BLACK_ROOK:
+            case WHITE_ROOK:
                 return "r";
             default:
                 return null;
