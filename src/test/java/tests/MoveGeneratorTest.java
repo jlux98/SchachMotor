@@ -16,19 +16,7 @@ import model.Position;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;
 
-import static movegenerator.MoveGenerator.EMPTY_SQUARE;
-import static movegenerator.MoveGenerator.WHITE_BISHOP;
-import static movegenerator.MoveGenerator.WHITE_KING;
-import static movegenerator.MoveGenerator.WHITE_KNIGHT;
-import static movegenerator.MoveGenerator.WHITE_PAWN;
-import static movegenerator.MoveGenerator.WHITE_QUEEN;
-import static movegenerator.MoveGenerator.WHITE_ROOK;
-import static movegenerator.MoveGenerator.BLACK_BISHOP;
-import static movegenerator.MoveGenerator.BLACK_KING;
-import static movegenerator.MoveGenerator.BLACK_KNIGHT;
-import static movegenerator.MoveGenerator.BLACK_PAWN;
-import static movegenerator.MoveGenerator.BLACK_QUEEN;
-import static movegenerator.MoveGenerator.BLACK_ROOK;
+import static model.PieceEncoding.*;
 
 public class MoveGeneratorTest {
 

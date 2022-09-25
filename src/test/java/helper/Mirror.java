@@ -5,7 +5,7 @@ import model.ByteBoard;
 import model.Coordinate;
 import model.Move;
 import model.Position;
-import movegenerator.MoveGenerator;
+import static model.PieceEncoding.*;
 
 /**
  * Class used to mirror positions, boards, board accessing, moves and coordinates horizontally.
@@ -74,17 +74,7 @@ public class Mirror {
      * @return the piece with the changed color
      */
     public static byte changeColor(byte piece) {
-        if (piece == 0) {
-            return 0;
-        }
-        if (piece > 6) {
-            //make white piece
-            return (byte) (piece - 6);
-        }
-        if (piece <= 6) {
-            return (byte) (piece + 6);
-        }
-        throw new IllegalArgumentException("piece must be a value between 0 and 12");
+        return switchBytePieceColor(piece);
     }
 
     /**
@@ -98,7 +88,7 @@ public class Mirror {
 
         for (byte file = 0; file < 8; file++) {
             for (byte rank = 0; rank < 8; rank++) {
-                if (mirroredGetByteAt(rank, file, mirroredBoard) != MoveGenerator.EMPTY_SQUARE) {
+                if (mirroredGetByteAt(rank, file, mirroredBoard) != EMPTY_SQUARE) {
                     throw new IllegalStateException("mirrored piece to an occupied square");
                 }
                 piece = changeColor(board.getByteAt(rank, file));

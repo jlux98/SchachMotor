@@ -3,21 +3,12 @@ package model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import static model.PieceEncoding.*;
 
 public class ByteBoard implements Board {
     private byte[] spaces;
-    private static final byte WHITE_BISHOP = 1;
-    private static final byte WHITE_KING = 2;
-    private static final byte WHITE_KNIGHT = 3;
-    private static final byte WHITE_PAWN = 4;
-    private static final byte WHITE_QUEEN = 5;
-    private static final byte WHITE_ROOK = 6;
-    // private static final byte BLACK_BISHOP = 7;
-    private static final byte BLACK_KING = 8;
-    // private static final byte BLACK_KNIGHT = 9;
-    // private static final byte BLACK_PAWN = 10;
-    // private static final byte BLACK_QUEEN = 11;
-    // private static final byte BLACK_ROOK = 12;
+    private byte blackKingSpace = -1;
+    private byte whiteKingSpace = -1;
 
     public ByteBoard(Piece[][] spaces) {
         byte[] result = new byte[64];
@@ -69,7 +60,7 @@ public class ByteBoard implements Board {
             break;
         }
         if (!piece.getIsWhite() && result != -1) {
-            result += 6;
+            result += PIECE_OFFSET;
         }
         return result;
     }
@@ -84,7 +75,7 @@ public class ByteBoard implements Board {
             return null;
         }
         char result = ' ';
-        switch (b % 6) {
+        switch (b % PIECE_OFFSET) {
         case WHITE_BISHOP:
             result = 'B';
             break;
@@ -100,11 +91,12 @@ public class ByteBoard implements Board {
         case WHITE_QUEEN:
             result = 'Q';
             break;
-        case 0:
+        case WHITE_ROOK:
             result = 'R';
             break;
+        default:
         }
-        if (b > 6) {
+        if (b > EXCLUSIVE_THRESHOLD) {
             result = Character.toLowerCase(result);
         }
         return new Piece(result);
@@ -112,15 +104,26 @@ public class ByteBoard implements Board {
 
     @Override
     public Coordinate getKingPosition(boolean isWhite) {
+        if (isWhite && whiteKingSpace >= 0){
+            if (spaces[whiteKingSpace] == WHITE_KING){
+                return new Coordinate(whiteKingSpace/8, whiteKingSpace%8);
+            }
+        } else if (!isWhite && blackKingSpace >= 0){
+            if (spaces[blackKingSpace] == BLACK_KING){
+                return new Coordinate(blackKingSpace/8, blackKingSpace%8);
+            }
+        }
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 byte currentByte = spaces[rank*8+file];
                 if (isWhite && currentByte != 0 &&
                     currentByte == WHITE_KING){
+                    whiteKingSpace = (byte)(rank*8+file);
                     return new Coordinate(rank, file);
                 }
                 if (!isWhite && currentByte != 0 &&
                     currentByte == BLACK_KING){
+                    blackKingSpace = (byte)(rank*8+file);
                     return new Coordinate(rank, file);
                 }
             }
@@ -162,7 +165,7 @@ public class ByteBoard implements Board {
 
     @Override
     public void setPieceAt(int rank, int file, Piece piece) {
-        spaces[rank*8+file] = pieceToByte(piece);
+        setByteAt(rank, file, pieceToByte(piece));
         return;
     }
 
@@ -208,5 +211,10 @@ public class ByteBoard implements Board {
     @Override
     public void setByteAt(int rank, int file, byte b) {
         spaces[rank*8+file] = b;
+        if (b == WHITE_KING){
+            whiteKingSpace = (byte)(rank*8+file);
+        } else if (b == BLACK_KING){
+            whiteKingSpace = (byte)(rank*8+file);
+        }
     }
 }

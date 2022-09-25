@@ -1,6 +1,6 @@
 package model;
 
-import movegenerator.MoveGenerator;
+import static model.PieceEncoding.*;
 
 /**
  * Wrapper class for the PieceType enum.
@@ -119,28 +119,28 @@ public class Piece {
         byte result = 0;
         switch(pieceType){
             case BISHOP:
-                result = MoveGenerator.WHITE_BISHOP;
+                result = WHITE_BISHOP;
                 break;
             case KING:
-                result = MoveGenerator.WHITE_KING;
+                result = WHITE_KING;
                 break;
             case KNIGHT:
-                result = MoveGenerator.WHITE_KNIGHT;
+                result = WHITE_KNIGHT;
                 break;
             case PAWN:
-                result = MoveGenerator.WHITE_PAWN;
+                result = WHITE_PAWN;
                 break;
             case QUEEN:
-                result = MoveGenerator.WHITE_QUEEN;
+                result = WHITE_QUEEN;
                 break;
             case ROOK:
-                result = MoveGenerator.WHITE_ROOK;
+                result = WHITE_ROOK;
                 break;
             default:
                 break;
         }
         if (!isWhite){
-            result += MoveGenerator.WHITE_ROOK;
+            result += WHITE_ROOK;
         }
         return result;
     }

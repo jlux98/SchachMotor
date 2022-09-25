@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import static model.PieceEncoding.*;
 
 import model.Position;
 import model.Board;
@@ -20,19 +21,6 @@ import model.Board;
  */
 public abstract class MoveGenerator {
 
-    public static final byte EMPTY_SQUARE = 0;
-    public static final byte WHITE_BISHOP = 1;
-    public static final byte WHITE_KING = 2;
-    public static final byte WHITE_KNIGHT = 3;
-    public static final byte WHITE_PAWN = 4;
-    public static final byte WHITE_QUEEN = 5;
-    public static final byte WHITE_ROOK = 6;
-    public static final byte BLACK_BISHOP = 7;
-    public static final byte BLACK_KING = 8;
-    public static final byte BLACK_KNIGHT = 9;
-    public static final byte BLACK_PAWN = 10;
-    public static final byte BLACK_QUEEN = 11;
-    public static final byte BLACK_ROOK = 12;
     public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(9);
 
     /**
