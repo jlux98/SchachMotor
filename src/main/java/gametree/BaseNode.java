@@ -263,4 +263,9 @@ public abstract class BaseNode<T> implements Node<T> {
         this.isInteresting = false;
     }
 
+    @Override
+    public String toString() {
+        return getContent().toString();
+    }
+
 }
