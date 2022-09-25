@@ -103,23 +103,20 @@ public abstract class AttackMapGenerator {
             result[targetRank][targetFile] = true;
             return result;
         }
-        for (int i = 0; (i > -1) && (i < 8) && (!collision); i++){
-            for (int j = 0; (j > -1) && (j < 8) && (!collision); j++){
-                if (i == targetRank &&
-                    j == targetFile){
-                    result[i][j] = true;
-                    targetRank += rankSlope;
-                    targetFile += fileSlope;
-                    if (spaces.getPieceAt(i,j) != null){
-                        collision = true;
-                        break;
-                    }
-                    i = 0;
-                    j = 0;
-                }
+        while(isInbounds(targetRank) && isInbounds(targetFile) && (!collision)){
+            result[targetRank][targetFile] = true;
+            if (spaces.getPieceAt(targetRank, targetFile) != null){
+                collision = true;
+                break;
             }
-        }    
+            targetRank += rankSlope;
+            targetFile += fileSlope;
+        }
         return result;
+    }
+
+    private static boolean isInbounds (int coordinate){
+        return (coordinate >= 0 && coordinate <= 7);
     }
 
     private static boolean[][] paintBishopAttacks(Board spaces, boolean[][] result, int rank, int file) {

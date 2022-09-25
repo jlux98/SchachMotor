@@ -498,6 +498,10 @@ public class Position implements Comparable<Position>, Cloneable {
             new Coordinate(targetRank, targetFile), promotedTo);
     }
 
+    public void deleteMove(){
+        this.generatedByMove = null;
+    }
+
     public Board getBoard() {
         return this.board;
     }

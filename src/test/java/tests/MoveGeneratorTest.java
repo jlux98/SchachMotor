@@ -47,12 +47,13 @@ public class MoveGeneratorTest {
         whiteCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
    }
 
-   @Test
-   public void pawnCheckDetectionTest() {
-       Position checkPosition = FenParser.parseFen("8/8/R2p2k1/8/8/8/8/K7 " + "w KQkq - 0 1");
-       Position[] expectedPositions = null;
-       assertEquals(expectedPositions, MoveGenerator.generatePossibleMovesPerPiece(checkPosition, 2, 2));
-   }
+    @Test
+    public void pawnCheckDetectionTest() {
+        Position checkPosition = FenParser.parseFen("8/8/R2p2k1/8/8/8/8/K7 b - - 0 1");
+        List<Position> expectedPositions = new ArrayList<>();
+        assertEquals(expectedPositions,
+            MoveGenerator.generatePossibleMovesPerPiece(checkPosition, 2, 2));   
+    }
 
     @Test
     public void pawnStepGenerationTestDoubleStepAllowed(){
@@ -60,29 +61,29 @@ public class MoveGeneratorTest {
 
         Position stepPositionWhite = FenParser.parseFen ("8/7k/8/8/8/8/P7/K7 " +
             "w - - 0 1");
-        List<Position> expectedPositionsWhite = new ArrayList<Position>();
-        expectedPositionsWhite.add(FenParser.parseFen   ("8/7k/8/8/8/P7/8/K7 " +
-            "b - - 0 1"));
-        expectedPositionsWhite.add(FenParser.parseFen   ("8/7k/8/8/P7/8/8/K7 " +
-            "b - a3 0 1"));
+        List<String> expectedPositionsWhite = new ArrayList<>();
+        expectedPositionsWhite.add("8/7k/8/8/8/P7/8/K7 " +
+            "b - - 0 1");
+        expectedPositionsWhite.add("8/7k/8/8/P7/8/8/K7 " +
+            "b - a3 0 1");
         Collections.sort(expectedPositionsWhite);
         List<Position>actualPositionsWhite = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 6, 0));
         Collections.sort(actualPositionsWhite);
-        assertEquals(expectedPositionsWhite, actualPositionsWhite);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
 
         Position stepPositionBlack = FenParser.parseFen("8/p6k/8/8/8/8/8/K7 " +
             "b - - 0 1");
-        List<Position> expectedPositionsBlack = new ArrayList<Position>();
-        expectedPositionsBlack.add(FenParser.parseFen("8/7k/p7/8/8/8/8/K7 " +
-            "w - - 0 2"));
-        expectedPositionsBlack.add(FenParser.parseFen("8/7k/8/p7/8/8/8/K7 " +
-            "w - a6 0 2"));
+        List<String> expectedPositionsBlack = new ArrayList<>();
+        expectedPositionsBlack.add("8/7k/p7/8/8/8/8/K7 " +
+            "w - - 0 2");
+        expectedPositionsBlack.add("8/7k/8/p7/8/8/8/K7 " +
+            "w - a6 0 2");
         Collections.sort(expectedPositionsBlack);
         List<Position>actualPositionsBlack = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPositionBlack, 1, 0));
         Collections.sort(actualPositionsBlack);
-        assertEquals(expectedPositionsBlack, actualPositionsBlack);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsBlack, actualPositionsBlack);
     }
 
     @Test
@@ -91,25 +92,25 @@ public class MoveGeneratorTest {
 
         Position stepPositionWhite = FenParser.parseFen ("8/7k/8/8/8/P7/8/K7 " +
             "w - - 0 1");
-        List<Position> expectedPositionsWhite = new ArrayList<Position>();
-        expectedPositionsWhite.add(FenParser.parseFen   ("8/7k/8/8/P7/8/8/K7 " +
-            "b - - 0 1"));
+        List<String> expectedPositionsWhite = new ArrayList<>();
+        expectedPositionsWhite.add("8/7k/8/8/P7/8/8/K7 " +
+            "b - - 0 1");
         Collections.sort(expectedPositionsWhite);
         List<Position>actualPositionsWhite = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 5, 0));
         Collections.sort(actualPositionsWhite);
-        assertEquals(expectedPositionsWhite, actualPositionsWhite);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
 
         Position stepPosition = FenParser.parseFen("8/7k/p7/8/8/8/8/K7 " +
             "b - - 0 1");
-        List<Position> expectedPositions = new ArrayList<Position>();
-        expectedPositions.add(FenParser.parseFen("8/7k/8/p7/8/8/8/K7 " +
-            "w - - 0 2"));
+        List<String> expectedPositions = new ArrayList<>();
+        expectedPositions.add("8/7k/8/p7/8/8/8/K7 " +
+            "w - - 0 2");
         Collections.sort(expectedPositions);
         List<Position>actualPositions = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPosition, 2, 0));
         Collections.sort(actualPositions);
-        assertEquals(expectedPositions, actualPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
     }
 
     @Test
@@ -117,16 +118,16 @@ public class MoveGeneratorTest {
         // Pawn should capture left and right
         Position capturePosition = FenParser.parseFen("8/8/1p5k/PPP5/8/8/8/7K " +
             "b KQkq - 0 1");
-        List<Position> expectedPositions = new ArrayList<Position>();
-        expectedPositions.add(FenParser.parseFen("8/8/7k/pPP5/8/8/8/7K " +
-            "w KQkq - 0 2"));
-        expectedPositions.add(FenParser.parseFen("8/8/7k/PPp5/8/8/8/7K " +
-            "w KQkq - 0 2"));
+        List<String> expectedPositions = new ArrayList<>();
+        expectedPositions.add("8/8/7k/pPP5/8/8/8/7K " +
+            "w KQkq - 0 2");
+        expectedPositions.add("8/8/7k/PPp5/8/8/8/7K " +
+            "w KQkq - 0 2");
         Collections.sort(expectedPositions);
         List<Position>actualPositions = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(capturePosition,2,1));
         Collections.sort(actualPositions);
-        assertEquals(expectedPositions, actualPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
     }
 
     @Test
@@ -134,20 +135,20 @@ public class MoveGeneratorTest {
         // Pawn should promote to all 4 possible options
         Position promotionPosition = FenParser.parseFen("8/7k/8/8/8/8/p7/7K " +
         "b KQkq - 0 1");
-        List<Position> expectedPositions = new ArrayList<Position>();
-        expectedPositions.add(FenParser.parseFen("8/7k/8/8/8/8/8/b6K " +
-        "w KQkq - 0 2"));
-        expectedPositions.add(FenParser.parseFen("8/7k/8/8/8/8/8/n6K " +
-        "w KQkq - 0 2"));
-        expectedPositions.add(FenParser.parseFen("8/7k/8/8/8/8/8/q6K " +
-        "w KQkq - 0 2"));
-        expectedPositions.add(FenParser.parseFen("8/7k/8/8/8/8/8/r6K " +
-        "w KQkq - 0 2"));
+        List<String> expectedPositions = new ArrayList<>();
+        expectedPositions.add("8/7k/8/8/8/8/8/b6K " +
+        "w KQkq - 0 2");
+        expectedPositions.add("8/7k/8/8/8/8/8/n6K " +
+        "w KQkq - 0 2");
+        expectedPositions.add("8/7k/8/8/8/8/8/q6K " +
+        "w KQkq - 0 2");
+        expectedPositions.add("8/7k/8/8/8/8/8/r6K " +
+        "w KQkq - 0 2");
         Collections.sort(expectedPositions);
         List<Position> actualPositions = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(promotionPosition,6,0));
         Collections.sort(actualPositions);
-        assertEquals(expectedPositions, actualPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
     }
 
     @Test
@@ -156,18 +157,18 @@ public class MoveGeneratorTest {
             "b KQkq c6 0 1");
         Position enPassantRightPosition = FenParser.parseFen("8/Pp5k/1P6/8/8/8/8/7K " +
             "b KQkq a6 0 1");
-        List<Position> expectedPositionLeft = new ArrayList<Position>();
-        expectedPositionLeft.add(FenParser.parseFen("8/7k/1Pp5/8/8/8/8/7K " +
-            "w KQkq - 0 2"));
+        List<String> expectedPositionLeft = new ArrayList<>();
+        expectedPositionLeft.add("8/7k/1Pp5/8/8/8/8/7K " +
+            "w KQkq - 0 2");
         List<Position> actualPositionsLeft = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(enPassantLeftPosition,1,1));
-        assertEquals(expectedPositionLeft, actualPositionsLeft);
-        List<Position> expectedPositionRight = new ArrayList<Position>();
-        expectedPositionRight.add(FenParser.parseFen("8/7k/pP6/8/8/8/8/7K " +
-            "w KQkq - 0 2"));
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionLeft, actualPositionsLeft);
+        List<String> expectedPositionRight = new ArrayList<>();
+        expectedPositionRight.add("8/7k/pP6/8/8/8/8/7K " +
+            "w KQkq - 0 2");
         List<Position> actualPositionsRight = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(enPassantRightPosition,1,1));
-        assertEquals(expectedPositionRight, actualPositionsRight);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionRight, actualPositionsRight);
     }
     
     @Test
@@ -413,11 +414,11 @@ public class MoveGeneratorTest {
 
     @Test
     public void arrayIndexOutOfBoundsBugTest() {
-        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/PPPPPPPP/6n1/8/8/8/8/2k5 w - - 0 1"));
-        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/P4PPP/6n1/8/8/8/8/2k5 w - - 0 1"));
-        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/5PPP/6n1/8/8/8/8/2k5 w - - 0 1"));
-        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/5P1P/6n1/8/8/8/8/2k5 w - - 0 1"));
-        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/6n1/8/8/8/8/2k5 w - - 0 1"));
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/PPPPPPPP/6n1/8/8/8/8/2k5 w - - 0 1");
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/P4PPP/6n1/8/8/8/8/2k5 w - - 0 1");
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/5PPP/6n1/8/8/8/8/2k5 w - - 0 1");
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/5P1P/6n1/8/8/8/8/2k5 w - - 0 1");
+        //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/6n1/8/8/8/8/2k5 w - - 0 1");
 
         //MoveGenerator.generatePossibleMoves(FenParser.parseFen("2K5/7P/8/8/8/8/8/2k5 w - - 0 1"));
         Position promotion = FenParser.parseFen("2K5/4P3/8/8/8/8/8/2k5 w - - 0 1");

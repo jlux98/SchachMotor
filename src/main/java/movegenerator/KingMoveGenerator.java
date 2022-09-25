@@ -7,7 +7,17 @@ import model.Board;
 import model.Position;
 
 
-public class KingMoveGenerator {
+public class KingMoveGenerator extends PieceMoveGenerator {
+    
+    public KingMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeKingMoves(position, rank, file);
+    }
+
     public static List<Position> computeKingMoves(Position position, int rank, int file) {
         List<Position> results = new ArrayList<>();
         // Attack north

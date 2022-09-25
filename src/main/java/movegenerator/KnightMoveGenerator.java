@@ -6,7 +6,19 @@ import java.util.List;
 import model.Board;
 import model.Position;
 
-public class KnightMoveGenerator {
+public class KnightMoveGenerator extends PieceMoveGenerator{
+
+    
+
+    public KnightMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeKnightMoves(position, rank, file);
+    }
+
     public static List<Position> computeKnightMoves(Position position, int rank, int file) {
         List<Position> results = new ArrayList<Position>();
         knightMoveSupervisor(position, results, rank, file, rank-2, file-1);
