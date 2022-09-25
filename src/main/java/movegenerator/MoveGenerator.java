@@ -1,9 +1,10 @@
 package movegenerator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import model.Position;
 import model.Board;
@@ -32,6 +33,7 @@ public abstract class MoveGenerator {
     public static final byte BLACK_PAWN = 10;
     public static final byte BLACK_QUEEN = 11;
     public static final byte BLACK_ROOK = 12;
+    public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(9);
 
     /**
      * A method that generates all possible follow-up-positions for a given game
@@ -39,23 +41,57 @@ public abstract class MoveGenerator {
      * @param position the given game state
      * @return an array with all possible follow-up-positions (empty if no moves can be made)
      */
+    // public static Position[] generatePossibleMoves(Position position) {
+    //     // List<Position> followUpPositions = Collections.synchronizedList(new ArrayList<>());
+    //     List<Position> followUpPositions = new ArrayList<>();
+    //     List<Future> futureList = new ArrayList<>();
+    //     List<List<Position>> resultListList = new ArrayList<>();
+    //     Semaphore sem = new Semaphore(1);
+    //     for (int rank = 0; rank < 8; rank++) {
+    //         for (int file = 0; file < 8; file++) {
+    //             List<Position> resultList = new ArrayList<>();
+    //             Future f = generatePossibleMovesPerPieceMultithreaded(position, rank, file, resultList);
+    //             if (f != null) {
+    //                 futureList.add(f);
+    //                 resultListList.add(resultList);
+    //             }
+    //         }
+    //     }
+    //     for (int i = 0; i < futureList.size(); i++){
+    //         if (futureList.get(i) != null){
+    //             try {
+    //                 futureList.get(i).get();
+    //                 followUpPositions.addAll(resultListList.get(i));
+    //             } catch (Exception e) {
+    //                 e.printStackTrace();
+    //             }
+    //         } else {
+    //             throw new IllegalArgumentException();
+    //         }
+    //     }
+    //     Position[] output = new Position[followUpPositions.size()];
+    //     followUpPositions.toArray(output);
+    //     return output;
+    // }
+
     public static Position[] generatePossibleMoves(Position position) {
-        List<Position> followUpPositions = Collections.synchronizedList(new ArrayList<>()); //is hashset preferable over array for us? set initial size of hashset in constructor
-        List<Thread> threadList = new ArrayList<>();
-        Semaphore sem = new Semaphore(1);
+        List<Position> followUpPositions = new ArrayList<>();
+        List<Future<?>> futureList = new ArrayList<>();
+        List<List<Position>> resultListList = new ArrayList<>();
         for (int rank = 0; rank < 8; rank++) {
-            for (int file = 0; file < 8; file++) {
-                Thread t = generatePossibleMovesPerPiece(position, rank, file, followUpPositions, sem);
-                if (t != null) {
-                    threadList.add(t);
-                }
+            List<Position> resultList = new ArrayList<>();
+            Future<?> f = generatePossibleMovesPerRow(position, rank, resultList);
+            if (f != null) {
+                futureList.add(f);
+                resultListList.add(resultList);
             }
         }
-        for (int i = 0; i < threadList.size(); i++){
-            if (threadList.get(i) != null){
+        for (int i = 0; i < futureList.size(); i++){
+            if (futureList.get(i) != null){
                 try {
-                    threadList.get(i).join();
-                } catch (InterruptedException e) {
+                    futureList.get(i).get();
+                    followUpPositions.addAll(resultListList.get(i));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
@@ -75,11 +111,10 @@ public abstract class MoveGenerator {
      * @return a set with all possible follow-up-positions for the given position
      * and the given piece
      */
-    public static Thread generatePossibleMovesPerPiece(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
+    public static Future<?> generatePossibleMovesPerPieceMultithreaded(Position position, int rank, int file, List<Position> resultList) {
         byte currentPiece = position.getByteAt(rank, file);
-        Thread result = null;
+        Future<?> result = null;
         Runnable runner = null;
-        Thread t =null;
         if (currentPiece == 0) {
             return result;
         }
@@ -89,48 +124,85 @@ public abstract class MoveGenerator {
         switch (currentPiece) {
             case BLACK_BISHOP:
             case WHITE_BISHOP:
-                runner = new BishopMoveGenerator(position, rank, file, resultList, sem);
-                t = new Thread(runner);
-                result = t;
+                runner = new BishopMoveGenerator(position, rank, file, resultList);
+                result = executor.submit(runner);
                 break;
             case BLACK_KING:
             case WHITE_KING:
-                runner = new KingMoveGenerator(position, rank, file, resultList, sem);
-                t = new Thread(runner);
-                result = t;
+                runner = new KingMoveGenerator(position, rank, file, resultList);
+                result = executor.submit(runner);
                 break;
             case BLACK_KNIGHT:
             case WHITE_KNIGHT:
-                runner = new KnightMoveGenerator(position, rank, file, resultList, sem);
-                t = new Thread(runner);
-                result = t;
+                runner = new KnightMoveGenerator(position, rank, file, resultList);
+                result = executor.submit(runner);
                 break;
             case BLACK_PAWN:
             case WHITE_PAWN:
-                runner = new PawnMoveGenerator(position, rank, file, resultList, sem);
-                t = new Thread(runner);
-                result = t;
+                runner = new PawnMoveGenerator(position, rank, file, resultList);
+                result = executor.submit(runner);
                 break;
             case BLACK_QUEEN:
             case WHITE_QUEEN:
-                runner = new QueenMoveGenerator(position, rank, file, resultList, sem);
-                t = new Thread(runner);
-                result = t;
+                runner = new QueenMoveGenerator(position, rank, file, resultList);
+                result = executor.submit(runner);
                 break;
             case BLACK_ROOK:
             case WHITE_ROOK:
-                runner = new RookMoveGenerator(position, rank, file, resultList, sem);
-                t = new Thread(runner);
-                result = t;
+                runner = new RookMoveGenerator(position, rank, file, resultList);
+                result = executor.submit(runner);
                 break;
             default:
                 break;
         }
-        if (result != null){
-            result.start();
-            // result.run();
-        }
+        
         return result;
+    }
+
+    public static Future<?> generatePossibleMovesPerRow(Position position, int rank, List<Position> resultList) {
+        Future<?> f = executor.submit(new RowMoveGenerator(position, rank, resultList));
+        return f;
+    }
+
+    public static int generatePossibleMovesPerPiece(Position position, int rank, int file, List<Position> resultList){
+        byte currentPiece = position.getByteAt(rank, file);
+        Runnable runner = null;
+        if (currentPiece == 0) {
+            return -1;
+        }
+        if (currentPiece < BLACK_BISHOP != position.getWhitesTurn()){
+            return -1;
+        }
+        switch (currentPiece) {
+            case BLACK_BISHOP:
+            case WHITE_BISHOP:
+                runner = new BishopMoveGenerator(position, rank, file, resultList);
+                break;
+            case BLACK_KING:
+            case WHITE_KING:
+                runner = new KingMoveGenerator(position, rank, file, resultList);
+                break;
+            case BLACK_KNIGHT:
+            case WHITE_KNIGHT:
+                runner = new KnightMoveGenerator(position, rank, file, resultList);
+                break;
+            case BLACK_PAWN:
+            case WHITE_PAWN:
+                runner = new PawnMoveGenerator(position, rank, file, resultList);
+                break;
+            case BLACK_QUEEN:
+            case WHITE_QUEEN:
+                runner = new QueenMoveGenerator(position, rank, file, resultList);
+                break;
+            case BLACK_ROOK:
+            case WHITE_ROOK:
+                runner = new RookMoveGenerator(position, rank, file, resultList);
+                break;
+            default:
+                return -1;
+        }
+        runner.run();
+        return 0;
     }
 
     /**
@@ -328,8 +400,15 @@ public abstract class MoveGenerator {
 
 
     public static List<Position> generatePossibleMovesPerPiece(Position position, int rank, int file) {
-        List<Position> resultList = new ArrayList();
-        generatePossibleMovesPerPiece(position, rank, file, resultList, new Semaphore(1));
+        List<Position> resultList = new ArrayList<>();
+        Future<?> f = generatePossibleMovesPerPieceMultithreaded(position, rank, file, resultList);
+        if (f != null){
+            try {
+                f.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return resultList;
     }
 }

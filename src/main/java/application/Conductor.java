@@ -88,9 +88,9 @@ public class Conductor {
     }
 
     public Position calculateBestMove(Position currentPosition) {
-        GameNode currentGameTree = new ImpGameTree(currentPosition, new GameNodeSelfDestructingAlphaBetaPruning()).calculateBestMove(5);
-        UCIOperator.sendBestmove(currentGameTree.getContent().getMove());
-        appendMove(new Move(currentGameTree.getContent().getMove().toStringAlgebraic()));
+        GameNode currentGameTree = new ImpGameTree(currentPosition, new GameNodeSelfDestructingAlphaBetaPruning()).calculateBestMove(6);
+        UCIOperator.sendBestmove(currentGameTree.getRepresentedMove());
+        appendMove(new Move(currentGameTree.getRepresentedMove().toStringAlgebraic()));
         return currentGameTree.getContent().clone();
     }
 }

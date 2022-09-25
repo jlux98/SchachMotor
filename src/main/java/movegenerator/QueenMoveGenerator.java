@@ -2,14 +2,13 @@ package movegenerator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import model.Position;
 
 
 public class QueenMoveGenerator extends PieceMoveGenerator{
-    public QueenMoveGenerator(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
-        super(position, rank, file, resultList, sem);
+    public QueenMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
     }
 
     @Override

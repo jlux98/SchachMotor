@@ -1,7 +1,6 @@
 package movegenerator;
 
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import model.Position;
 
@@ -10,7 +9,6 @@ public abstract class PieceMoveGenerator implements Runnable{
     private int rank;
     private int file;
     private List<Position> resultList;
-    private Semaphore sem;
 
 
     public Position getPosition() {
@@ -45,20 +43,11 @@ public abstract class PieceMoveGenerator implements Runnable{
         this.resultList = resultList;
     }
 
-    public Semaphore getSem() {
-        return this.sem;
-    }
-
-    public void setSem(Semaphore sem) {
-        this.sem = sem;
-    }
-
-    public PieceMoveGenerator(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
+    public PieceMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
         this.position = position;
         this.rank = rank;
         this.file = file;
         this.resultList = resultList;
-        this.sem = sem;
     }
 
 
@@ -74,7 +63,5 @@ public abstract class PieceMoveGenerator implements Runnable{
         // sem.release();
     }
 
-    public List<Position> computePieceMoves(Position position, int rank, int file) {
-        return null;
-    }
+    public abstract List<Position> computePieceMoves(Position position, int rank, int file);
 }

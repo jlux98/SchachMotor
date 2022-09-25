@@ -1,14 +1,13 @@
 package movegenerator;
 
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import model.Position;
 
 public class BishopMoveGenerator extends PieceMoveGenerator{
 
-    public BishopMoveGenerator(Position position, int rank, int file, List<Position> resultList, Semaphore sem) {
-        super(position, rank, file, resultList, sem);
+    public BishopMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
     }
 
     @Override

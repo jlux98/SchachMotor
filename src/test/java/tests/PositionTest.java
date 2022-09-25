@@ -66,6 +66,7 @@ public class PositionTest {
         assertFalse(knightTestPosition.getWhiteInCheck());
         assertFalse(pawnAttackMapTestPosition.getWhiteInCheck());
         assertFalse(kingTestPosition.getWhiteInCheck());
+        assertTrue(FenParser.parseFen("K5q1/8/8/8/8/8/8/k7 b - - 0 1").getWhiteInCheck());
     }
 
 
