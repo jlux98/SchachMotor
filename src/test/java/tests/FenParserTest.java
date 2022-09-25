@@ -27,6 +27,32 @@ public class FenParserTest {
     }
 
     @Test
+    public void parseStartingPositionToStringTest() {
+        Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        String startingStringActual = startingPosition.toString();
+        String startingStringExpected = """
+                [rnbqkbnr,
+                pppppppp,
+                00000000,
+                00000000,
+                00000000,
+                00000000,
+                PPPPPPPP,
+                RNBQKBNR]
+                Generating Move: null
+                White Next Move
+                White Castling: Kingside and Queenside
+                Black Castling: Kingside and Queenside
+                No En Passant possible
+                Halfmove Clock: 0
+                Fullmove Number: 1
+                White in Check: false
+                Black in Check: false
+                    """;
+        assertEquals(startingStringExpected, startingStringActual);
+    }
+
+    @Test
     public void parseStartingPositionTest() {
         Position position = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         assertTrue(position.getBlackCastlingKingside());
@@ -44,12 +70,11 @@ public class FenParserTest {
         assertEquals(-1, position.getEnPassantTargetRank());
         assertTrue(position.getWhitesTurn());
         assertEquals(1, position.getFullMoves());
-        assertEquals(0, position.getHalfMoves()); 
+        assertEquals(0, position.getHalfMoves());
     }
 
     @Test
     public void piecesInCornerTest() {
-        //FIXME check board orientation
         Position position = FenParser.parseFen("k6N/8/8/8/8/8/8/K6n w - - 0 1");
         Board board = position.getBoard();
         Piece a8Piece = board.getPieceAt(0, 0);

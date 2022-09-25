@@ -7,13 +7,17 @@ import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
 import minimax.GameNodeAlphaBetaPruning;
+import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import model.Move;
 import model.Position;
 import uciservice.FenParseException;
 import uciservice.FenParser;
+import utility.PerformanceData;
 import utility.TimeUtility;
+
+import static utility.NumberFormatter.format;
 
 public class DemoApplicationFenToAlgebraic {
     private Scanner scanner;
@@ -45,7 +49,7 @@ public class DemoApplicationFenToAlgebraic {
      * fen will not be configurable if this is set
      */
     private boolean setDefaultPosition = false;
-    private String FEN; //TODO make lowercase again
+    private String fen;
     private Position position;
 
     private long calculationTime = -1;
@@ -159,13 +163,13 @@ public class DemoApplicationFenToAlgebraic {
             shutdown();
         }
     }
-    //TODO reduce ccode redundancy
+    //TODO reduce code redundancy
 
     private void parseDefaultPositionArgument(String[] args, int index) {
         boolean failure = false;
         if (args.length > index + 1) {
             String fenArg = args[index + 1]; //do not use lower case for fen strings
-            FEN = fenArg; //store the fen representing the board
+            fen = fenArg; //store the fen representing the board
             setDefaultPosition = true;
             try {
                 usePosition(fenArg);
@@ -191,13 +195,18 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void useAlgorithm(String algorithm) {
         switch (algorithm) {
-            case "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
+            case "ab", "alphabeta", "alpha-beta", "alpha-beta-pruning" -> {
                 algorithmName = "Alpha-Beta-Pruning";
                 evaluator = new GameNodeAlphaBetaPruning();
             }
-            case "selfdestructing", "self-destructing", "self-destructing alpha-beta-pruning" -> {
+            case "sd", "selfdestructing", "self-destructing", "self-destructing alpha-beta-pruning" -> {
                 algorithmName = "Self-Destructing Alpha-Beta-Pruning";
                 evaluator = new GameNodeSelfDestructingAlphaBetaPruning();
+            }
+            case "mo", "move-ordering", "moveordering", "self-destructing move-ordering",
+                    "self-destructing move-ordering alpha-beta-pruning" -> {
+                algorithmName = "Move-Ordering Self-Destructing Alpha-Beta-Pruning";
+                evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
             }
             default -> {
                 throw new NoSuchElementException("algorithm could not be found");
@@ -206,17 +215,12 @@ public class DemoApplicationFenToAlgebraic {
     }
 
     /**
+     * Uses the passed fen as position.
      * @throws FenParseException if the fen is invalid
-     * @param fen
+     * @param fen the fen to use
      */
     private void usePosition(String fen) {
-        //TODO update doc
         position = FenParser.parseFen(fen);
-    }
-
-    private void useDefaultAlgorithm() {
-        algorithmName = "limited Alpha-Beta"; //TODO update default algorithm
-        evaluator = new GameNodeAlphaBetaPruning();
     }
 
     /**
@@ -254,6 +258,12 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void prepareNextRun() {
         evaluator.resetEvaluatedNodeCount();
+        PerformanceData.moveGenerationTime = 0;
+        PerformanceData.roughlyEvaluateStaticallyCalls = 0;
+        PerformanceData.evaluateStaticallyCalls = 0;
+        PerformanceData.ascendingComparisons = 0;
+        PerformanceData.descendingComparisons = 0;
+        PerformanceData.computeStaticValueCalls = 0;
         calculationTime = -1; //not required, but better safe than sorry
         System.gc();
     }
@@ -335,43 +345,26 @@ public class DemoApplicationFenToAlgebraic {
     }
 
     /**
-     * If no default fen is set,
-     * prompts the user to enter a fen string and
-     * returns it.
-     * Otherwise, returns the default fen string.
-     * @return 
-     * <ul>
-     *       <li>the default fen, if set</li>
-     *       <li>a fen entered by the user, if no default fen is set</li>       
-     * </ul>
+     * Prompts the user to enter a fen string and stores it.
+     * <p>
+     * Does not validate the read fen.
+     * </p>
      */
-    private String readFen() {
-        //TODO update doc
-        return readInput("enter fen:");
+    private void readFen() {
+        fen =   readInput("enter fen:");
     }
 
     /**
-     * If no default fen is set,
-     * prompts the user to enter a fen string and
+     * Prompts the user to enter a fen string and
      * returns the corresponding Position object.
-     * Otherwise, returns the position represented by the
-     * default fen string.
      * This method prompts for a fen repeatedly, 
      * until a valid one is entered.
-     * @return
-     * <ul>
-     *       <li>the position represented by the default fen, if set</li>
-     *       <li>
-     *          the position represented by a fen entered by the user, 
-     *          if no default fen is set
-     *      </li>       
-     * </ul>
      */
     private void readPosition() {
-        //TODO update doc 
         while (true) {
             try {
-                position = FenParser.parseFen(readFen());
+                readFen();
+                position = FenParser.parseFen(fen);
                 return;
             } catch (FenParseException exception) {
                 System.out.println("fen could not be parsed");
@@ -441,15 +434,6 @@ public class DemoApplicationFenToAlgebraic {
         }
 
         System.out.println("\n" + movedColor + " : " + startingSpace + " -> " + targetSpace + promoted);
-
-    }
-
-    /**
-     * Prints the board stored by the passed position.
-     * @param position
-     */
-    private void printBoard(Position position) {
-        System.out.println("\ninternal board:\n" + position.toString());
     }
 
     /**
@@ -473,7 +457,7 @@ public class DemoApplicationFenToAlgebraic {
         return builder
                 .append("\n\talgorithm: " + algorithmName)
                 .append("\n\tdepth: " + depth)
-                .append("\n\tposition: " + FEN);
+                .append("\n\tposition: " + fen);
     }
 
     /**
@@ -484,9 +468,15 @@ public class DemoApplicationFenToAlgebraic {
      */
     private StringBuilder addPerformanceInfo(StringBuilder builder) {
         return addCoreInfo(builder)
-                .append("\n\tevaluated positions: " + evaluator.getEvaluatedNodeCount())
+                .append("\n\tevaluated positions: " + format(evaluator.getEvaluatedNodeCount()))
                 .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
-                .append("\n\tmove gen zeit: " + TimeUtility.nanoToSeconds(GameNode.totalChildGenerationTime));
+                .append("\n\ttime spent by movegen: " + TimeUtility.nanoToSeconds(PerformanceData.moveGenerationTime))
+                .append("\n\troughlyEvaluateStatically calls: "
+                        + format(PerformanceData.roughlyEvaluateStaticallyCalls))
+                .append("\n\tevaluateStatically calls: " + format(PerformanceData.evaluateStaticallyCalls))
+                .append("\n\tascending comparisons:   " + format(PerformanceData.ascendingComparisons))
+                .append("\n\tdescending comparisons:  " + format(PerformanceData.descendingComparisons))
+                .append("\n\tactual static value computations: " + format(PerformanceData.computeStaticValueCalls));
     }
 
     /**

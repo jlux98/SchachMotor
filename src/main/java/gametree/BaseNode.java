@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import utility.PerformanceData;
+
 /**
  * Abstract class providing a basic node implementation.
  * The only abstract methods subtypes have to implement are {@link #computeChildren()}
  * which is used to generate children of a node to grow a tree as needed,
- * and {@link Evaluable#evaluateStatically()} used to evaluate nodes statically.
+ * and {@link #computeStaticValue(boolean, int)} used to evaluate nodes statically.
  */
 public abstract class BaseNode<T> implements Node<T> {
 
@@ -17,6 +19,8 @@ public abstract class BaseNode<T> implements Node<T> {
     private List<Node<T>> children;
     private int value;
     private boolean isInteresting;
+    private boolean staticEvaluationCached = false;
+    private int staticValue;
 
     /**
      * Creates a root node.
@@ -103,22 +107,22 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     /**
-    * Whether this node has children. Note that returning false does not imply that this note cannot generate 
-    * children when calling {@link #queryChildren()}.
-    * @return true - if this node currently has any children, false - if not
-    */
+     * Whether this node has children. Note that returning false does not imply that this note cannot generate 
+     * children when calling {@link #queryChildren()}.
+     * @return true - if this node currently has any children, false - if not
+     */
     @Override
     public boolean hasChildren() {
         return this.children != null && this.children.size() != 0;
     }
 
     /**
-     * Adds a child node to this node.
-     * <br><br>
-     * <b>Note:</b>
-     * Only type safe if only GameNodes and subtypes of GameNode are passed into this method.
-     * Otherwise a class cast exception might arise.
-     */
+    * Adds a child node to this node.
+    * <br><br>
+    * <b>Note:</b>
+    * Only type safe if only GameNodes and subtypes of GameNode are passed into this method.
+    * Otherwise a class cast exception might arise.
+    */
     @Override
     public void insertChild(Node<T> node) {
         createChildListIfNotExists();
@@ -142,25 +146,26 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     /**
-    * Creates a child of this node.
-    * The nodes are properly linked to each other.
-    * <p>
-    * Override this to control which type of GameNode is instantiated
-    * by {@link #computeChildren()}.
-    * </p>
-    * @param position the position to be stored in the child node
-    * @return a child of this node
-    */
+     * Creates a child of this node.
+     * The nodes are properly linked to each other.
+     * <p>
+     * Override this to control which type of GameNode is instantiated
+     * by {@link #computeChildren()}.
+     * </p>
+     * @param position the position to be stored in the child node
+     * @return a child of this node
+     */
     public abstract Node<T> createChild(T content);
 
     /**
-    * Computes this node's children and overwrites its current child list accordingly.
-    * <br><br>
-    * <b>Note:</b> Do not use this method directly to generate children of this node.
-    * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
-    * Use queryChildren() to generate children of this node.
-    * @throws ComputeChildrenException if no children can be computed
-    */
+     * Computes this node's children and overwrites its current child list accordingly.
+     * <p>
+     * <b>Note:</b> Do not use this method directly to generate children of this node.
+     * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
+     * Use queryChildren() to generate children of this node.
+     * </p>
+     * @throws ComputeChildrenException if no children can be computed
+     */
     protected abstract void computeChildren() throws ComputeChildrenException;
 
     @Override
@@ -180,6 +185,41 @@ public abstract class BaseNode<T> implements Node<T> {
      */
     protected void detachChildGenerationData() {
         //do nothing
+    }
+
+    /**
+     * Evaluates this node statically and returns the determined value.
+     * <p>
+     * <b>Note:</b> Do not use this method directly to evaluate this node statically.
+     * This is a helper method that is implemented individually by subtypes and called by 
+     * {@link #evaluateStatically(boolean, int)} and {@link #roughlyEvaluateStatically()}.
+     * Use {@link #evaluateStatically(boolean, int)} or {@link #roughlyEvaluateStatically()} to evaluate this node statically.
+     * </p>
+     * @param isNaturaLeaf
+     * @param depth
+     * @return the static evaluation of this node
+     */
+    protected abstract int computeStaticValue(boolean isNaturaLeaf, int depth);
+
+    @Override
+    public int roughlyEvaluateStatically() {
+        PerformanceData.roughlyEvaluateStaticallyCalls += 1;
+        if (!staticEvaluationCached) {
+            //only compute static value once
+            //compute static value with depth = 0 and non-leaf
+            staticValue = computeStaticValue(false, 0);
+            staticEvaluationCached = true;
+        }
+        value = staticValue; //overwrite "general" value
+        return staticValue;
+    }
+
+    @Override
+    public int evaluateStatically(boolean isNaturaLeaf, int depth) {
+        PerformanceData.evaluateStaticallyCalls += 1;
+        //overwrite value
+        value = computeStaticValue(isNaturaLeaf, depth);
+        return value;
     }
 
     /**

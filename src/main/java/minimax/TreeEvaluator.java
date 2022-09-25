@@ -15,7 +15,7 @@ public interface TreeEvaluator<T> {
      * @param whitesTurn whether the turn to be searched is played by white
      * @return the Node representing the turn to be played
      */
-    public abstract Node<T> evaluateTree(Tree<? extends Node<T>> tree ,int depth, boolean whitesTurn) ;
+    public abstract Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn);
 
     /**
      * Evaluates the sub tree starting with the passed node and returns the Node that should be played.
@@ -36,5 +36,5 @@ public interface TreeEvaluator<T> {
      * Resets the counter for evaluated nodes to 0.
      */
     public abstract void resetEvaluatedNodeCount();
-    
+
 }

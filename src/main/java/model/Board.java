@@ -14,7 +14,6 @@ public interface Board {
      * @param file file of the piece
      * @return the piece at the specified rank and file
      */    
-    //TODO might be worth throwing an exception if the square is empty (instead of returning null)?
     /**
      * The Piece at (0,0) represents the space a8, (0,7) represents h8,
      * (7,0) represents a1 and (7,7) represents h1.

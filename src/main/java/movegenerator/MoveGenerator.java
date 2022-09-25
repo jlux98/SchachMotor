@@ -20,7 +20,7 @@ import model.Board;
  */
 public abstract class MoveGenerator {
 
-
+    public static final byte EMPTY_SQUARE = 0;
     public static final byte WHITE_BISHOP = 1;
     public static final byte WHITE_KING = 2;
     public static final byte WHITE_KNIGHT = 3;
