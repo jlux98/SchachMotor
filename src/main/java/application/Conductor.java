@@ -7,6 +7,7 @@ import java.util.Scanner;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import minimax.MoveOrderingSelfDestructingAlphaBetaPruning;
+import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import model.ArrayBoard;
 import model.ByteBoard;
 import model.Move;
@@ -90,8 +91,9 @@ public class Conductor {
     }
 
     public Position calculateBestMove(Position currentPosition) {
-        GameTree tree = new ImpGameTree(currentPosition, (GameTreeEvaluator) new MoveOrderingSelfDestructingAlphaBetaPruning<Position>());
-        GameNode bestChild = tree.calculateBestMove(6);
+        GameTreeEvaluator evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
+        GameTree tree = new ImpGameTree(currentPosition, evaluator);
+        GameNode bestChild = tree.calculateBestMove(7);
         UCIOperator.sendBestmove(bestChild.getRepresentedMove());
         appendMove(new Move(bestChild.getRepresentedMove().toStringAlgebraic()));
         return bestChild.getContent().clone();
