@@ -70,7 +70,7 @@ public class MoveGeneratorTest {
         List<Position>actualPositionsWhite = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 6, 0));
         Collections.sort(actualPositionsWhite);
-        PositionHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
 
         Position stepPositionBlack = FenParser.parseFen("8/p6k/8/8/8/8/8/K7 " +
             "b - - 0 1");
@@ -83,7 +83,7 @@ public class MoveGeneratorTest {
         List<Position>actualPositionsBlack = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPositionBlack, 1, 0));
         Collections.sort(actualPositionsBlack);
-        PositionHelper.compareFenStringsToPosition(expectedPositionsBlack, actualPositionsBlack);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsBlack, actualPositionsBlack);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class MoveGeneratorTest {
         List<Position>actualPositionsWhite = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 5, 0));
         Collections.sort(actualPositionsWhite);
-        PositionHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
 
         Position stepPosition = FenParser.parseFen("8/7k/p7/8/8/8/8/K7 " +
             "b - - 0 1");
@@ -110,7 +110,7 @@ public class MoveGeneratorTest {
         List<Position>actualPositions = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(stepPosition, 2, 0));
         Collections.sort(actualPositions);
-        PositionHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class MoveGeneratorTest {
         List<Position>actualPositions = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(capturePosition,2,1));
         Collections.sort(actualPositions);
-        PositionHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class MoveGeneratorTest {
         List<Position> actualPositions = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(promotionPosition,6,0));
         Collections.sort(actualPositions);
-        PositionHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositions, actualPositions);
     }
 
     @Test
@@ -162,13 +162,13 @@ public class MoveGeneratorTest {
             "w KQkq - 0 2");
         List<Position> actualPositionsLeft = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(enPassantLeftPosition,1,1));
-        PositionHelper.compareFenStringsToPosition(expectedPositionLeft, actualPositionsLeft);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionLeft, actualPositionsLeft);
         List<String> expectedPositionRight = new ArrayList<>();
         expectedPositionRight.add("8/7k/pP6/8/8/8/8/7K " +
             "w KQkq - 0 2");
         List<Position> actualPositionsRight = new ArrayList<Position>(
             MoveGenerator.generatePossibleMovesPerPiece(enPassantRightPosition,1,1));
-        PositionHelper.compareFenStringsToPosition(expectedPositionRight, actualPositionsRight);
+        MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionRight, actualPositionsRight);
     }
     
     @Test
