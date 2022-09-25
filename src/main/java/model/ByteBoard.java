@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ByteBoard implements Board {
-    private byte[][] spaces;
+    private byte[] spaces;
     private static final byte WHITE_BISHOP = 1;
     private static final byte WHITE_KING = 2;
     private static final byte WHITE_KNIGHT = 3;
@@ -20,16 +20,16 @@ public class ByteBoard implements Board {
     // private static final byte BLACK_ROOK = 12;
 
     public ByteBoard(Piece[][] spaces) {
-        byte[][] result = new byte[8][8];
+        byte[] result = new byte[64];
+        this.spaces = result;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                result[i][j] = pieceToByte(spaces[i][j]);
+                setByteAt(i, j, pieceToByte(spaces[i][j]));
             }
         }
-        this.spaces = result;
     }
 
-    public ByteBoard(byte[][] spaces) {
+    public ByteBoard(byte[] spaces) {
         this.spaces = spaces;
     }
 
@@ -38,7 +38,7 @@ public class ByteBoard implements Board {
      * @return a new instance
      */
     public static Board createEmpty() {
-        return new ByteBoard(new byte[8][8]);
+        return new ByteBoard(new byte[64]);
     }
 
     private byte pieceToByte(Piece piece) {
@@ -76,7 +76,7 @@ public class ByteBoard implements Board {
 
     @Override
     public Piece getPieceAt(int rank, int file) {
-        return byteToPiece(spaces[rank][file]);
+        return byteToPiece(spaces[rank*8+file]);
     }
 
     private Piece byteToPiece(byte b) {
@@ -114,7 +114,7 @@ public class ByteBoard implements Board {
     public Coordinate getKingPosition(boolean isWhite) {
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                byte currentByte = spaces[rank][file];
+                byte currentByte = spaces[rank*8+file];
                 if (isWhite && currentByte != 0 &&
                     currentByte == WHITE_KING){
                     return new Coordinate(rank, file);
@@ -128,13 +128,8 @@ public class ByteBoard implements Board {
         return null;
     }
 
-    public byte[][] copySpaces() {
-        byte[][] copy = new byte[8][8];
-        for (int index = 0; index < spaces.length; index++) {
-            //copy the 8 inner arrays
-            copy[index] = spaces[index].clone();
-        }
-        return copy;
+    public byte[] copySpaces() {
+        return spaces.clone();
     }
 
     @Override
@@ -143,7 +138,7 @@ public class ByteBoard implements Board {
         for (int rank = 0; rank < 8; rank++) {
             String result = "";
             for (int file = 0; file < 8; file++) {
-                Piece currentPiece = byteToPiece(spaces[rank][file]);
+                Piece currentPiece = byteToPiece(spaces[rank*8+file]);
                 if (currentPiece != null) {
                     result += currentPiece.toString();
                 } else {
@@ -167,15 +162,15 @@ public class ByteBoard implements Board {
 
     @Override
     public void setPieceAt(int rank, int file, Piece piece) {
-        spaces[rank][file] = pieceToByte(piece);
+        spaces[rank*8+file] = pieceToByte(piece);
         return;
     }
 
     @Override
     public List<Piece> getRank(int rank) {
         List<Piece> result = new ArrayList<>();
-        for (int i = 0; i < spaces.length; i++) {
-            result.add(byteToPiece(spaces[rank][i]));
+        for (int file = 0; file < spaces.length; file++) {
+            result.add(byteToPiece(spaces[rank*8+file]));
         }
         return result;
     }
@@ -202,7 +197,7 @@ public class ByteBoard implements Board {
 
     @Override
     public byte getByteAt(int rank, int file) {
-        return spaces[rank][file];
+        return spaces[rank*8+file];
     }
 
     @Override
@@ -212,6 +207,6 @@ public class ByteBoard implements Board {
 
     @Override
     public void setByteAt(int rank, int file, byte b) {
-        spaces[rank][file] = b;
+        spaces[rank*8+file] = b;
     }
 }
