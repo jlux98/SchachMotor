@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import gametree.GameNode;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
+import minimax.GameTreeEvaluator;
+import minimax.MoveOrderingSelfDestructingAlphaBetaPruning;
 import model.ArrayBoard;
 import model.ByteBoard;
 import model.Move;
 import model.Position;
+import positionevaluator.Evaluator;
 import uciservice.Tokenizer;
 import uciservice.UCIOperator;
 import uciservice.UCIParserAlphaBetaPruning;
@@ -88,9 +90,10 @@ public class Conductor {
     }
 
     public Position calculateBestMove(Position currentPosition) {
-        GameNode currentGameTree = new ImpGameTree(currentPosition, new GameNodeSelfDestructingAlphaBetaPruning()).calculateBestMove(6);
-        UCIOperator.sendBestmove(currentGameTree.getRepresentedMove());
-        appendMove(new Move(currentGameTree.getRepresentedMove().toStringAlgebraic()));
-        return currentGameTree.getContent().clone();
+        GameTree tree = new ImpGameTree(currentPosition, (GameTreeEvaluator) new MoveOrderingSelfDestructingAlphaBetaPruning<Position>());
+        GameNode bestChild = tree.calculateBestMove(6);
+        UCIOperator.sendBestmove(bestChild.getRepresentedMove());
+        appendMove(new Move(bestChild.getRepresentedMove().toStringAlgebraic()));
+        return bestChild.getContent().clone();
     }
 }
