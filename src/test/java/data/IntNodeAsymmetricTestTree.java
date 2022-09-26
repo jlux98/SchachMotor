@@ -20,7 +20,7 @@ public class IntNodeAsymmetricTestTree implements Tree<IntNode> {
 
     //layers and nodes are 0 based
     //root would be layer0Node0
-    //children of root are layer1Node0 and layer1Node1
+    //children of root are layer1Node0 and layer1Node1...
 
     //layer 6
     public final IntNode layer6Node0;
