@@ -385,5 +385,35 @@ public class PositionTest {
         assertFalse(testPosition.equals(comparedPosition));
     }
 
-    
+    @Test
+    public void threefoldRepetitionTestTrue(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1"));
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1"));
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2"));
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2"));
+        assertTrue(testPos.isDraw());
+    }
+
+    @Test
+    public void threefoldRepetitionTestFalse(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1"));
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1"));
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2"));
+        testPos.appendAncestor(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2"));
+        assertFalse(testPos.isDraw());
+    }
+
+    @Test
+    public void fiftyMovesTestTrue(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 100 50");
+        assertTrue(testPos.isDraw());
+    }
+
+    @Test
+    public void fiftyMovesTestFalse(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 88 50");
+        assertFalse(testPos.isDraw());
+    }
 }

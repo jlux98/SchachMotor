@@ -1,5 +1,9 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
 import positionevaluator.PositionEvaluator;
@@ -35,6 +39,7 @@ public class Position implements Comparable<Position>, Cloneable {
     private boolean[][] attackedByWhite;
     private boolean[][] attackedByBlack;
     private Move generatedByMove;
+    private List<Position> ancestors = new ArrayList<>();
 
     /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
@@ -245,6 +250,28 @@ public class Position implements Comparable<Position>, Cloneable {
         }
     }
 
+    /**
+     * Watered down version of equals that disregards among other fullmove count
+     * and halfmove count, used for checking for Threefold Repetition.
+     * @param obj
+     * @return
+     */
+    public boolean equalsLight(Object obj) {
+        if (obj instanceof Position){
+            Position position = (Position) obj;
+            return  (blackCastlingKingside == position.getBlackCastlingKingside()) &&
+                    (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
+                    (getEnPassantTargetFile() == position.getEnPassantTargetFile()) &&
+                    (getEnPassantTargetRank() == position.getEnPassantTargetRank()) &&
+                    (board.equals(position.getBoard())) &&
+                    (whiteCastlingKingside == position.getWhiteCastlingKingside()) &&
+                    (whiteCastlingQueenside == position.getWhiteCastlingQueenside()) &&
+                    (whiteNextMove == position.getWhiteNextMove());
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public String toString() {
         String result;
@@ -309,9 +336,24 @@ public class Position implements Comparable<Position>, Cloneable {
                 this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
     }
 
+    public int compareToLegacy(Position otherPosition) {
+        return this.toString().compareTo(otherPosition.toString());
+    }
+
     @Override
     public int compareTo(Position otherPosition) {
-        return this.toString().compareTo(otherPosition.toString());
+        return this.toStringLight().compareTo(otherPosition.toStringLight());
+    }
+
+    public String toStringLight(){
+        String result = board.toString() + "\n";
+        result += whiteNextMove + "\n";
+        result += whiteCastlingKingside + "\n";
+        result += whiteCastlingQueenside + "\n";
+        result += blackCastlingKingside + "\n";
+        result += blackCastlingQueenside + "\n";
+        result += enPassantTargetSpace + "\n";
+        return result;
     }
 
     /**
@@ -508,6 +550,40 @@ public class Position implements Comparable<Position>, Cloneable {
 
     public byte getByteAt(int rank, int file) {
         return board.getByteAt(rank, file);
+    }
+
+    public List<Position> getAncestors(){
+        return ancestors;
+    }
+
+    public void appendAncestor(Position position){
+        ancestors.add(position);
+    }
+
+    public boolean isDraw() {
+        if (halfMovesSincePawnMoveOrCapture >= 100){
+            return true;
+        }
+        if (checkForThreefoldRepetition()){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkForThreefoldRepetition() {
+        List<Position> cloneOfAncestors = new ArrayList<>(ancestors);
+        cloneOfAncestors.add(clone());
+        Collections.sort(cloneOfAncestors);
+        for (int i = 0; i + 2 < cloneOfAncestors.size(); i++){
+            if (cloneOfAncestors.get(i).equalsLight(cloneOfAncestors.get(i+1))){
+                if (cloneOfAncestors.get(i).equalsLight(cloneOfAncestors.get(i+2))){
+                    if (cloneOfAncestors.get(i+1).equalsLight(cloneOfAncestors.get(i+2))){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

@@ -64,33 +64,34 @@ public abstract class MoveGenerator {
 
     public static Position[] generatePossibleMoves(Position position) {
         List<Position> followUpPositions = new ArrayList<>();
-        List<Future<?>> futureList = new ArrayList<>();
-        List<List<Position>> resultListList = new ArrayList<>();
-        for (int rank = 0; rank < 8; rank++) {
-            List<Position> resultList = new ArrayList<>();
-            Future<?> f = generatePossibleMovesPerRow(position, rank, resultList);
-            if (f != null) {
-                futureList.add(f);
-                resultListList.add(resultList);
-            }
-        }
-        for (int i = 0; i < futureList.size(); i++){
-            if (futureList.get(i) != null){
-                try {
-                    futureList.get(i).get();
-                    followUpPositions.addAll(resultListList.get(i));
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (!position.isDraw()){
+            List<Future<?>> futureList = new ArrayList<>();
+            List<List<Position>> resultListList = new ArrayList<>();
+            for (int rank = 0; rank < 8; rank++) {
+                List<Position> resultList = new ArrayList<>();
+                Future<?> f = generatePossibleMovesPerRow(position, rank, resultList);
+                if (f != null) {
+                    futureList.add(f);
+                    resultListList.add(resultList);
                 }
-            } else {
-                throw new IllegalArgumentException();
+            }
+            for (int i = 0; i < futureList.size(); i++){
+                if (futureList.get(i) != null){
+                    try {
+                        futureList.get(i).get();
+                        followUpPositions.addAll(resultListList.get(i));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    throw new IllegalArgumentException();
+                }
             }
         }
         Position[] output = new Position[followUpPositions.size()];
         followUpPositions.toArray(output);
         return output;
     }
-
 
     /**
      * @param position the game for which to compute follow-ups
@@ -345,11 +346,13 @@ public abstract class MoveGenerator {
             if (currentPosition.getWhiteNextMove()){
                 if (!generatedPosition.getWhiteInCheck()){
                     generatedPosition.setMove(startingRank, startingFile, targetRank, targetFile);
+                    generatedPosition.appendAncestor(currentPosition);
                     moves.add(generatedPosition);
                 }
             } else {
                 if (!generatedPosition.getBlackInCheck()){
                     generatedPosition.setMove(startingRank, startingFile, targetRank, targetFile);
+                    generatedPosition.appendAncestor(currentPosition);
                     moves.add(generatedPosition);
                 }
             }
