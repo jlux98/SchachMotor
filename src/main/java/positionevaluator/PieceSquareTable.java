@@ -79,6 +79,9 @@ public class PieceSquareTable {
             default:
                 return 0;
         }
+        if (!piece.getIsWhite()){
+            rank = 7-rank;
+        }
         return relevantTable[rank*8+file];
     }
 }
