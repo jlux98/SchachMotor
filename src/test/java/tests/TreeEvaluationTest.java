@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import data.IntNodeAsymmetricTestTree;
+import data.IntNodeSmallAsymmetricTestTree;
 import data.IntNodeWikipediaTestTree;
 import helper.IntTreeEvaluationHelper;
 import helper.GameTreeEvaluationHelper;
@@ -241,6 +242,16 @@ public abstract class TreeEvaluationTest {
     @Test
     public void asymmetricTestTreeBlackTest() {
         intTreeEvaluator.verifyTreeAndInvertedTree(-20, 7, false, () -> new IntNodeAsymmetricTestTree());
+    }
+
+    @Test
+    public void smallAsymmetricTestTreeWhiteTest() {
+        intTreeEvaluator.verifyTreeAndInvertedTree(3, 4, true, () -> new IntNodeSmallAsymmetricTestTree());
+    }
+
+    @Test
+    public void smallAsymmetricTestTreeBlackTest() {
+        intTreeEvaluator.verifyTreeAndInvertedTree(-6, 4, false, () -> new IntNodeSmallAsymmetricTestTree());
     }
     // TODO add test with more extensive pruning (black)
     // TODO add test with more extensive pruning (white)
