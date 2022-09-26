@@ -54,7 +54,7 @@ public class PositionEvaluator implements Evaluator<Position> {
                         sign = -1;
                     }
                     result += sign*currentPiece.getPieceType().getPointValue();
-                    result += PieceSquareTable.evaluatePiecePosition(rank, file, currentPiece);
+                    result += sign*PieceSquareTable.evaluatePiecePosition(rank, file, currentPiece);
                 }
             }
             if (whiteBishops >= 2){
