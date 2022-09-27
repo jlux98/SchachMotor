@@ -181,7 +181,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         if ( bs.getWhitesTurn() && !resultingPosition.getWhiteInCheck()||
             !bs.getWhitesTurn() && !resultingPosition.getBlackInCheck()){
             resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
-            resultingPosition.appendAncestor(bs);
+            // resultingPosition.appendAncestor(bs);
             results.add(resultingPosition);
         }
     }

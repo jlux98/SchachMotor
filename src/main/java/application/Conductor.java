@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
-import minimax.MoveOrderingSelfDestructingAlphaBetaPruning;
+import minimax.MoveOrderingSelfDestructingAlphaBetaPruningPastPositions;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import model.ArrayBoard;
 import model.ByteBoard;
@@ -26,13 +26,12 @@ public class Conductor {
      * clarify if this list should just contain Moves or the whole
      * position (would cost more memory but make finding draws easier when 
      * checking if the same Position occurs thrice in the list)*/
-    private List<Move> pastMoves;
+    private static List<Move> pastMoves = new ArrayList<Move>();
+    private static List<Position> pastPositions = new ArrayList<>();
     private String startingPosition;
     private GameTree currentGameTree;
-
-    public Conductor(){
-        pastMoves = new ArrayList<Move>();
-    }
+    // TODO: make sure only one calculation runs at a time
+    private boolean isCalculating;
 
     private void start(){
         System.out.println("New Conductor entering the stage.");
@@ -78,16 +77,32 @@ public class Conductor {
         this.startingPosition = startingPosition;
     }
 
-    public void appendMove(Move move){
+    public static void appendPosition(Position position){
+        pastPositions.add(position);
+    }
+
+    public static void appendMove(Move move){
         pastMoves.add(move);
     }
 
-    public List<Move> getMoves (){
+    public static void deleteLastPosition(){
+        pastPositions.remove(pastPositions.size()-1);
+    }
+
+    public static List<Move> getMoves (){
         return pastMoves;
     }
 
-    public void emptyList(){
-        pastMoves = new ArrayList<Move>();
+    public static void emptyMoveList(){
+        pastMoves.clear();
+    }
+
+    public static void emptyPositionList(){
+        pastPositions.clear();
+    }
+
+    public static List<Position> getPastPositions(){
+        return pastPositions;
     }
 
     public Position calculateBestMove(Position currentPosition) {
@@ -95,7 +110,8 @@ public class Conductor {
         GameTree tree = new ImpGameTree(currentPosition, evaluator);
         GameNode bestChild = tree.calculateBestMove(7);
         UCIOperator.sendBestmove(bestChild.getRepresentedMove());
-        appendMove(new Move(bestChild.getRepresentedMove().toStringAlgebraic()));
+        appendPosition(bestChild.getContent().clone());
+        appendMove(bestChild.getRepresentedMove().clone());
         return bestChild.getContent().clone();
     }
 }

@@ -1,10 +1,8 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
+import application.Conductor;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
 import positionevaluator.PositionEvaluator;
@@ -40,7 +38,6 @@ public class Position implements Comparable<Position>, Cloneable {
     private boolean[][] attackedByWhite;
     private boolean[][] attackedByBlack;
     private Move generatedByMove;
-    private List<Position> ancestors = new ArrayList<>();
 
     /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
@@ -332,9 +329,13 @@ public class Position implements Comparable<Position>, Cloneable {
     @Override
     public Position clone() {
         Board copiedSpaces = this.copyBoard();
-        return new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
+        Position result = new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
                 this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
                 this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
+        if (generatedByMove != null){
+                result.setMove(generatedByMove.clone());
+        }
+        return result;
     }
 
     public int compareToLegacy(Position otherPosition) {
@@ -553,14 +554,6 @@ public class Position implements Comparable<Position>, Cloneable {
         return board.getByteAt(rank, file);
     }
 
-    public List<Position> getAncestors(){
-        return ancestors;
-    }
-
-    public void appendAncestor(Position position){
-        ancestors.add(position);
-    }
-
     public boolean isDraw() {
         if (halfMovesSincePawnMoveOrCapture >= 100){
             return true;
@@ -572,10 +565,9 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     private boolean checkForThreefoldRepetition() {
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        ancestors.add(this);
-        for (int i = 0; i < ancestors.size(); i++){
-            int key = ancestors.get(i).hashCode();
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        for (int i = 0; i < Conductor.getPastPositions().size(); i++){
+            String key = Conductor.getPastPositions().get(i).toStringLight();
             if (hashMap.get(key) == null){
                 hashMap.put(key, 1);
             } else {

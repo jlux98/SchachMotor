@@ -82,6 +82,16 @@ public interface Node<T> extends Evaluable {
     public abstract void unsetParent();
 
     /**
+     * Adds the content of a Node to a type-specific log
+     */
+    public abstract void writeToHistory();
+
+    /**
+     * removes the last entry from a type-specific log
+     */
+    public abstract void deleteLastFromHistory();
+
+    /**
      * Whether this node has children. Note that returning false does not imply that this node cannot generate 
      * children when calling {@link #queryChildren()}.
      * @return true - if this node currently has any children, false - if not

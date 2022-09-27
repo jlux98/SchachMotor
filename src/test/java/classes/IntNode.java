@@ -1,5 +1,8 @@
 package classes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gametree.BaseNode;
 import gametree.ComputeChildrenException;
 import gametree.Node;
@@ -25,6 +28,8 @@ import minimax.TreeEvaluator;
  */
 public class IntNode extends BaseNode<Integer> {
 
+
+    public static List<Integer> pastIntegers = new ArrayList<>();
     /**
      * Creates an IntNode storing the specified Integer as content.
      * @param content
@@ -97,6 +102,17 @@ public class IntNode extends BaseNode<Integer> {
             return this.getContent() == ((IntNode) obj).getContent();
         }
         return false;
+    }
+
+    @Override
+    public void writeToHistory() {
+        // Int-Node does not support writing to history
+        
+    }
+
+    @Override
+    public void deleteLastFromHistory() {
+        // Int-Node does not support deleting from history"
     }
 
 }

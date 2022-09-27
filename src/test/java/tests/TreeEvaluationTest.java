@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import application.Conductor;
 import data.IntNodeTestTree;
 import helper.IntTreeEvaluationHelper;
 import helper.GameTreeEvaluationHelper;
@@ -244,6 +245,7 @@ public abstract class TreeEvaluationTest {
         // assertTrue(expected.contains(actual));
         Move actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(3).getContent()
                 .getMove();
+        Conductor.getPastPositions();
         assertTrue(expected.contains(actual));
         actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(5).getContent()
                 .getMove();
@@ -277,5 +279,13 @@ public abstract class TreeEvaluationTest {
         actual = new ImpGameTree(position, gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(5).getContent()
                 .getMove();
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void conductorHistoryEmptyAfterMovegen(){
+        assertEquals(0, Conductor.getPastPositions().size());
+        new ImpGameTree(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"),
+        gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(3);
+        assertEquals(0, Conductor.getPastPositions().size());
     }
 }

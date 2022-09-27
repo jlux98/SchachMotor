@@ -6,7 +6,7 @@ import gametree.Tree;
 import model.Position;
 
 public class GameNodeMoveOrderingSelfDestructingAlphaBetaPruning
-        extends MoveOrderingSelfDestructingAlphaBetaPruning<Position> implements GameTreeEvaluator {
+        extends MoveOrderingSelfDestructingAlphaBetaPruningPastPositions<Position> implements GameTreeEvaluator {
 
     @Override
     public GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn) {

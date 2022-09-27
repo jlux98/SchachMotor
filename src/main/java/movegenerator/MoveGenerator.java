@@ -346,13 +346,13 @@ public abstract class MoveGenerator {
             if (currentPosition.getWhiteNextMove()){
                 if (!generatedPosition.getWhiteInCheck()){
                     generatedPosition.setMove(startingRank, startingFile, targetRank, targetFile);
-                    generatedPosition.appendAncestor(currentPosition);
+                    // generatedPosition.appendAncestor(currentPosition);
                     moves.add(generatedPosition);
                 }
             } else {
                 if (!generatedPosition.getBlackInCheck()){
                     generatedPosition.setMove(startingRank, startingFile, targetRank, targetFile);
-                    generatedPosition.appendAncestor(currentPosition);
+                    // generatedPosition.appendAncestor(currentPosition);
                     moves.add(generatedPosition);
                 }
             }

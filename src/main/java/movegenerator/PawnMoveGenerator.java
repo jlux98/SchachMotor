@@ -88,7 +88,7 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
                 bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
                 -1,-1, bs.getHalfMoves(), bs.getFullMoves());
             resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile, promoteTo);
-            resultingPosition.appendAncestor(bs);
+            // resultingPosition.appendAncestor(bs);
             results.add(resultingPosition);
     }
 
@@ -224,7 +224,7 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
             if (!checkForPawnPromotions(resultingPosition, results, startingRank,
                 startingFile, targetRank, targetFile, sign)){
                 resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
-                resultingPosition.appendAncestor(bs);
+                // resultingPosition.appendAncestor(bs);
                 results.add(resultingPosition);
             }
         }
