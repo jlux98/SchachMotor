@@ -96,6 +96,11 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
+    public void setContent(T content) {
+        this.content = content;
+    }
+
+    @Override
     public void deleteContent() {
         this.content = null;
     }
@@ -238,6 +243,11 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void unmarkAsInteresting() {
         this.isInteresting = false;
+    }
+
+    @Override
+    public String toString() {
+        return getContent().toString();
     }
 
 }

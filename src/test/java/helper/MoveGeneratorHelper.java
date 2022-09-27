@@ -15,23 +15,52 @@ import static model.PieceEncoding.*;
 
 public class MoveGeneratorHelper {
 
-        /**
-     * Verifies that the MoveGenerator generates the expected follow-up positions.
-     * Computes the follow-ups using 
-     * {@link MoveGenerator#generatePossibleMovesPerPiece(Position, int, int)
-     *  MoveGenerator.generatePossibleMovesPerPiece(position, rank, file)}
-     * and compares them to the expected follow ups.
-     * <p>
-     * Additionally, mirrors the passed position and the follow-up positions, invokes the MoveGeneration
-     * on the mirrored position and compares the mirrored follow-ups with the actual follow-ups
-     * of the mirrored position.
-     * @param position the position that follow-up positions should be generated for
-     * @param piece the piece on the specified rank and file 
-     * (used to make it easier to spot faulty invocations)
-     * @param rank rank of the piece to move
-     * @param file file of the piece to move
-     * @param expectedPositions the expected follow-up positions
+    /**
+     * Asserts that MoveGeneration generates the same moves for black as for white.
+     * Mirrors the given position and compares the follow-ups of
+     * the original and mirrored position.
+     * @param position position for which should be verified that black and white generate the same moves
      */
+    public static void compareWhiteAndBlackMoveGeneration(Position position) {
+        Position mirroredPosition = Mirror.mirrorPosition(position);
+
+        Position[] followUps = MoveGenerator.generatePossibleMoves(position);
+        Position[] mirroredPositionFollowUps = MoveGenerator.generatePossibleMoves(mirroredPosition);
+
+        List<Position> followUpsList = new ArrayList<Position>(followUps.length);
+        List<Position> mirroredPositionFollowUpsList = new ArrayList<Position>(mirroredPositionFollowUps.length);
+
+        Collections.addAll(followUpsList, followUps);
+        Collections.addAll(mirroredPositionFollowUpsList, mirroredPositionFollowUps);
+
+        mirrorExpectedAndComparePositions(followUpsList, mirroredPositionFollowUpsList);
+    }
+
+    /**
+     * Wrapper for {@link #compareWhiteAndBlackMoveGeneration(Position)} accepting FEN-strings for positions.
+     * @param fen the fen representing the testing position
+     */
+    public static void compareWhiteAndBlackMoveGeneration(String fen) {
+        compareWhiteAndBlackMoveGeneration(FenParser.parseFen(fen));
+    }
+
+    /**
+    * Verifies that the MoveGenerator generates the expected follow-up positions.
+    * Computes the follow-ups using 
+    * {@link MoveGenerator#generatePossibleMovesPerPiece(Position, int, int)
+    *  MoveGenerator.generatePossibleMovesPerPiece(position, rank, file)}
+    * and compares them to the expected follow ups.
+    * <p>
+    * Additionally, mirrors the passed position and the follow-up positions, invokes the MoveGeneration
+    * on the mirrored position and compares the mirrored follow-ups with the actual follow-ups
+    * of the mirrored position.
+    * @param position the position that follow-up positions should be generated for
+    * @param piece the piece on the specified rank and file 
+    * (used to make it easier to spot faulty invocations)
+    * @param rank rank of the piece to move
+    * @param file file of the piece to move
+    * @param expectedPositions the expected follow-up positions
+    */
     public static void verifyPieceMoveGeneration(Position position, byte piece, int rank, int file,
     List<Position> expectedPositions) {
         
@@ -55,11 +84,11 @@ public class MoveGeneratorHelper {
                 mirroredFile);
 
         //compare expected positions and actual follow-ups
-        MoveGeneratorHelper.comparePositions(expectedPositions, actualFollowUps);
+        comparePositions(expectedPositions, actualFollowUps);
         //compare mirrored expected positions and actual follow-ups for mirrored position
-        MoveGeneratorHelper.mirrorExpectedAndComparePositions(expectedPositions, actualMirroredPositionFollowUps);
+        mirrorExpectedAndComparePositions(expectedPositions, actualMirroredPositionFollowUps);
     }
-    
+
     /**
      * Wrapper for {@link #verifyPieceMoveGeneration(Position, byte, int, int, List)} 
      * that accepts the expected positions as a list of FEN-strings.
@@ -68,8 +97,8 @@ public class MoveGeneratorHelper {
      */
     public static void verifyPieceMoveGenerationWithFenStrings(Position position, byte piece, int rank, int file,
             List<String> expectedFenStrings) {
-                verifyPieceMoveGeneration(position, piece, rank, file, fenStringsToPositions(expectedFenStrings));
-         }
+        verifyPieceMoveGeneration(position, piece, rank, file, fenStringsToPositions(expectedFenStrings));
+    }
 
     /**
      * Asserts that expected and actual follow-ups are equal.
@@ -80,7 +109,7 @@ public class MoveGeneratorHelper {
 
         //check if no follow-ups are expected if actualFollowUps = null
         if (actualFollowUps == null) {
-            assertEquals(expectedFollowUps.size(),0);
+            assertEquals(expectedFollowUps.size(), 0);
             return;
         }
 
@@ -117,8 +146,7 @@ public class MoveGeneratorHelper {
      */
     public static void mirrorFenStringsAndCompareToPosition(Collection<String> fenStrings,
             Collection<Position> actualMirroredPositionFollowUps) {
-        mirrorExpectedAndComparePositions(MoveGeneratorHelper.fenStringsToPositions(fenStrings),
-                MoveGeneratorHelper.toList(actualMirroredPositionFollowUps));
+        mirrorExpectedAndComparePositions(fenStringsToPositions(fenStrings), toList(actualMirroredPositionFollowUps));
     }
 
     /**
@@ -128,9 +156,9 @@ public class MoveGeneratorHelper {
      */
     public static void compareFenStringsToPosition(Collection<String> fenStrings, Collection<Position> positions) {
         //assure that expected and actual positions are stored in the same type of data structure (list)
-        List<Position> calculatedPositions = MoveGeneratorHelper.toList(positions);
+        List<Position> calculatedPositions = toList(positions);
         //translate the fen strings into positions
-        List<Position> fenStringPositions = MoveGeneratorHelper.fenStringsToPositions(fenStrings);
+        List<Position> fenStringPositions = fenStringsToPositions(fenStrings);
         comparePositions(fenStringPositions, calculatedPositions);
     }
 

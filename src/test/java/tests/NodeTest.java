@@ -13,19 +13,19 @@ import org.junit.jupiter.api.Test;
 
 import classes.GeneratingIntNode;
 import classes.IntNode;
-import data.IntNodeTestTree;
+import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import helper.NodeHelper;
 
 public class NodeTest {
 
-    private IntNodeTestTree testTree;
+    private IntNodeWikipediaTestTree testTree;
 
     @BeforeEach
     //tree data source: https://en.wikipedia.org/wiki/File:Minimax.svg
     public void setUpTree() {
-        testTree = new IntNodeTestTree();
+        testTree = new IntNodeWikipediaTestTree();
     }
 
     @Test

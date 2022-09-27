@@ -597,4 +597,24 @@ public class MoveGeneratorTest {
         MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(pawnPosition, WHITE_PAWN, 1, 5, expectedfollowUpPositions);
     }
 
+    @Test
+    public void mirrorBlackFirstMove() {
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("r1bqkbnr/pppppppp/2n5/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("r1bqkbnr/pppppppp/2n5/8/8/1P6/P1PPPPPP/RNBQKBNR b KQkq - 0 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1rbqkbnr/pppppppp/2n5/8/8/1P6/P1PPPPPP/RNBQKBNR w KQk - 1 3");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1rbqkbnr/pppppppp/2n5/8/8/1P6/PBPPPPPP/RN1QKBNR b KQk - 2 3");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("r1bqkbnr/pppppppp/2n5/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 3 4");
+    }
+
+    @Test
+    public void mirrorWhiteFirstMove() {
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq - 0 1");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/1ppppppp/p7/8/8/P7/1PPPPPPP/RNBQKBNR w KQkq - 0 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/1ppppppp/p7/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1nbqkbnr/rppppppp/p7/8/P7/8/1PPPPPPP/RNBQKBNR w KQk - 1 3");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1nbqkbnr/rppppppp/p7/P7/8/8/1PPPPPPP/RNBQKBNR b KQk - 0 3");
+    }
+
 }

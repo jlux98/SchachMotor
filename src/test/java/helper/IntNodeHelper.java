@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import classes.IntNode;
-//import data.IntNodeWikipediaTestTree;
+import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.ImpTree;
 import gametree.Node;

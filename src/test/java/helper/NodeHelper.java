@@ -10,6 +10,7 @@ import gametree.ComputeChildrenException;
 import gametree.Node;
 
 public class NodeHelper {
+
     /**
     * Verify that the node passed as "deleted" was deleted.
     * If the deleted node was the parent's only child, an empty array or null must be passed to this method.
