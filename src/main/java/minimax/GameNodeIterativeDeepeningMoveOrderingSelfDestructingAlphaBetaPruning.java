@@ -1,12 +1,13 @@
 package minimax;
 
+import model.Position;
 import gametree.GameNode;
 import gametree.Node;
 import gametree.Tree;
-import model.Position;
 
-public class GameNodeSelfDestructingAlphaBetaPruning extends SelfDestructingAlphaBetaPruning<Position>
-        implements GameTreeEvaluator {
+public class GameNodeIterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning
+        extends IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<Position> {
+
     @Override
     protected void saveMove(Node<Position> bestMove) {
         //TODO call save method in conductor or similar

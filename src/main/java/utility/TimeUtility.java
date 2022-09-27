@@ -9,6 +9,10 @@ import java.util.function.Supplier;
 public class TimeUtility<T> {
 
     private long elapsedTime = -1;
+    /**
+     * conversion multiplier: seconds * SECOND_TO_NANO = nanoseconds
+     */
+    public static final  long SECOND_TO_NANO = 1_000_000_000;
 
     /**
      * Converts nanoseconds stored as long to seconds represented as String.

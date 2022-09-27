@@ -17,6 +17,10 @@ import model.Position;
  * and subtypes of gamenode.
  */
 public class GameNodeAlphaBetaPruning extends GenericAlphaBetaPruning<Position> implements GameTreeEvaluator {
+    @Override
+    protected void saveMove(Node<Position> bestMove) {
+        //TODO call save method in conductor or similar
+    }
 
     @Override
     public GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn) {

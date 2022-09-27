@@ -2,6 +2,8 @@ package minimax;
 
 import gametree.ComputeChildrenException;
 import gametree.Node;
+import gametree.Tree;
+import utility.TimeUtility;
 
 /**
  * Abstract class implementing TreeEvaluator,
@@ -14,7 +16,38 @@ import gametree.Node;
  */
 public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
 
+    private long stopTime;
     private int evaluatedNodeCount = 0;
+
+
+    protected void isTimeLeft() throws OutOfTimeException {
+        if (System.nanoTime() >= stopTime + TimeUtility.SECOND_TO_NANO) {
+            throw new OutOfTimeException();
+        }
+    }
+
+    /**
+     * Used to save an intermediate result of iterative deepning.
+     * <p>
+     * This method is empty by default.
+     * If intermediate results should be stored, subclasses have to implement this method.
+     * @param bestMove the move that should be saved
+     */
+    protected void saveMove(Node<T> bestMove) {
+        //empty by default
+    }
+
+    @Override
+    public Node<T> evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn) {
+        long start = System.nanoTime();
+        stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
+        int depth = 1;
+        while (true) {
+            Node<T> bestMove = evaluateTree(tree, depth, whitesTurn);
+            saveMove(bestMove);
+            depth += 1;
+        }
+    }
 
     /**
      * Determines whether the passed node is a leaf node when inspected by

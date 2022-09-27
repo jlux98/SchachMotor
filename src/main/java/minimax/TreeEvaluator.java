@@ -18,6 +18,15 @@ public interface TreeEvaluator<T> {
     public abstract Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn);
 
     /**
+     * Evaluates the game tree using iterative deepening and returns the Node that should be played.
+     * @param tree the tree to be evaluated
+     * @param secondsToCompute the maximum time in seconds that the computation may take
+     * @param whitesTurn whether the turn to be searched is played by white
+     * @return the Node representing the turn to be played
+     */
+    public abstract Node<T> evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn);
+
+    /**
      * Evaluates the sub tree starting with the passed node and returns the Node that should be played.
      * @param node the subtree to be evaluated
      * @param depth the maximum depth of the tree
