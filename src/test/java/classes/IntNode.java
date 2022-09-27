@@ -113,7 +113,7 @@ public class IntNode extends BaseNode<Integer> {
     }
 
     @Override
-    protected int computeValue() {
+    protected int computeStaticValue() {
         return getContent();
     }
 

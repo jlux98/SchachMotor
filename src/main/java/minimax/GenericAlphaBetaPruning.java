@@ -5,6 +5,7 @@ import java.util.List;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.Tree;
+import gametree.UninitializedValueException;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
@@ -51,8 +52,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta,
-            boolean whiteNextMove) {
+    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
 
         if (whiteNextMove) {
             // maximize this node
@@ -89,7 +89,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         this.increaseEvaluatedNodeCount();
 
-         // assign static evaluation to leaves
+        // assign static evaluation to leaves
         boolean leaf = evaluateIfLeaf(parent, depth);
         if (leaf) {
             return parent;
@@ -104,7 +104,6 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
             List<? extends Node<T>> children = parent.queryChildren();
-
             for (Node<T> child : children) {
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
@@ -120,7 +119,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is greater than all sibling's values
-                if (firstChild || childValue < parent.getValue() ) {
+                if (firstChild || childValue < parent.getValue()) {
                     // since parentValue is initialized to Integer.MAX_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -148,12 +147,17 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 }
 
             }
+
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
 
             return bestChild;
+
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
 
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false
@@ -219,7 +223,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is less than all sibling's values
-                if (firstChild || childValue > parent.getValue() ) {
+                if (firstChild || childValue > parent.getValue()) {
                     // since parentValue is initialized to Integer.MIN_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -246,13 +250,17 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 }
 
             }
+
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
 
             return bestChild;
-
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
+            
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false
             // nodes that are not leaves may not throw ComputeChildrenException

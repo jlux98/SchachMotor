@@ -1,5 +1,7 @@
 package positionevaluator;
 
+import gametree.UninitializedValueException;
+
 /**
  * Interface for classes that can be evaluated to a numeric value.
  * <br><br>
@@ -15,23 +17,46 @@ package positionevaluator;
  * Use {@link #isInteresting()} to determine whether a node is currently marked
  * as interesting.
  */
+//TODO update class doc
 public interface Evaluable {
 
     /**
-     * Returns the value of this Evaluable.
-     * If no value is stored, the value is determined statically and stored.
-     * @return this Evaluable's value
+     * If a value was assigned to this Evaluable using {@link #evaluateKnownLeafStatically(int)} 
+     * or {@link #setValue(int)}, returns that value.
+     * <p>
+     * Otherwise, returns the statcc value of this Evaluable.
+     * @return this Evaluable's static value or the value set by 
+     * {@link #evaluateKnownLeafStatically(int)} or {@link #setValue(int)}
      */
     public abstract int getOrComputeValue();
 
     /**
-     * Evaluates this evaluable statically while considering that it cannot generate any children
+     * If a value was explicitly assigned to this Evaluable using {@link #setValue(int)},
+     * returns that value.
+     * <p>
+     * Otherwise, evaluates this evaluable statically while considering that it cannot generate any children
      * (is a terminal node). This static evaluation is more specific than the one provided by
      * {@link #getOrComputeValue()}.
      * @param depth the depth of the leaf in the tree
-     * @return the leaf's static evaluation
+     * @return the leaf's static evaluation or the explicitly set value
      */
     public abstract int evaluateKnownLeafStatically(int depth);
+
+    /**
+     * This method simply returns the value that is currently stored by this Evaluable.
+     * Values can be stored by calls to
+     * {@link #getOrComputeValue()}, {@link #evaluateKnownLeafStatically(int)} or {@link #setValue(int)}.
+     * 
+     * @return the value stored by this evaluable
+     * @throws UninitializedValueException if this evaluable was not yet evaluated
+     */
+    public abstract int getValue() throws UninitializedValueException;
+
+    /**
+     * Overwrites the current value of this evaluable with the specified value.
+     * @param value the value that should be stored
+     */
+    public abstract void setValue(int value);
 
     /**
      * Used to determine if this node is marked as especially interesting.
@@ -53,29 +78,5 @@ public interface Evaluable {
      * If this Evaluable was not marked, does nothing.
      */
     public abstract void unmarkAsInteresting();
-
-    /**
-     * This method does not evaluate this Evaluable, it simply returns the
-     * value that is currently stored by it.
-     * Values can be stored by calls to evaluateStatically() or setValue().
-     * @return the value stored by this evaluable
-     */
-    public abstract int getValue();
-
-    /**
-     * Overwrites the current value of this evaluable with the specified value.
-     * <br><br>
-     * <ul>
-     *      <li>
-     *          Calling getValue() afterwards will return that value.
-     *      </li>
-     *      <li>
-     *          Calling evaluateStatically() afterwards will <b>not</b> return that value
-     *          but will evaluate this Evaluable and overwrite the value set by this method.
-     *      </li>
-     * </ul>
-     * @param value the value that should be stored
-     */
-    public abstract void setValue(int value);
 
 }

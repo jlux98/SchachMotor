@@ -17,9 +17,12 @@ public abstract class BaseNode<T> implements Node<T> {
     private Node<T> parent;
     private T content;
     private List<Node<T>> children;
-    private boolean isValueSet = false;
+
     private int value;
-    private boolean isInteresting;
+    private boolean isStaticValueOrBetter = false;
+    private boolean isStaticLeafValueOrBetter = false;
+    private boolean isExplicitValue = false;
+    private boolean isInteresting = false;
 
     /**
      * Creates a root node.
@@ -181,6 +184,22 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     /**
+     * This method is intended <b>for testing only.</b>
+     * Do not use this to retrieve the children of a node.
+     * <br><br>
+     * Use {@link #queryChildren()} instead.
+     * @return this node's stored children
+     */
+    protected List<? extends Node<T>> getChildren() {
+        return this.children;
+    }
+
+    @Override
+    public String toString() {
+        return getContent().toString();
+    }
+
+    /**
      * Hook for subclasses.
      * Called after {@link #computeChildren()} in {@link #queryChildren()}.
      * Intended to allow for deletion of data from the node that is
@@ -190,43 +209,56 @@ public abstract class BaseNode<T> implements Node<T> {
         //do nothing
     }
 
+    //  *************************************
+    //  *     evaluable functionality       *
+    //  *************************************
+
     @Override
     public int getOrComputeValue() {
-        if (isValueSet) {
-            return getValue();
+        if (isStaticValueOrBetter) {
+            return value;
         }
-        setValue(computeValue());
+        isStaticValueOrBetter = true;
+        value = computeStaticValue();
         return value;
     }
 
     /**
-     * 
-     * @return the static evaluation of this node
+     * Computes the static value of this evaluable.
+     * @return the static evaluation of this evaluable
      */
-    protected abstract int computeValue();
+    protected abstract int computeStaticValue();
 
     @Override
-    public abstract int evaluateKnownLeafStatically(int depth);
-
-    /**
-     * This method is intended <b>for testing only.</b>
-     * Do not use this to retrieve the children of a node.
-     * <br><br>
-     * Use {@link #queryChildren()} instead.
-     * @return this nodes stored children
-     */
-    protected List<? extends Node<T>> getChildren() {
-        return this.children;
+    public int evaluateKnownLeafStatically(int depth) {
+        if (isStaticLeafValueOrBetter) {
+            return value;
+        }
+        isStaticLeafValueOrBetter = true;
+        value = computeStaticLeafValue(depth);
+        return value;
     }
 
+    /**
+     * Compute the value of this evaluable statically while considering that it cannot generate any children
+     * (is a terminal node). This static evaluation should be more specific than the one provided by
+     * {@link #computeStaticValue()()}.
+     * @param depth the depth of the leaf in the tree
+     * @return the leaf's static evaluation
+     */
+    protected abstract int computeStaticLeafValue(int depth);
+
     @Override
-    public int getValue() {
-        return value;
+    public int getValue() throws UninitializedValueException {
+        if (isStaticValueOrBetter || isStaticLeafValueOrBetter || isExplicitValue) {
+            return value;
+        }
+        throw new UninitializedValueException("this node was not yet evaluated");
     }
 
     @Override
     public void setValue(int value) {
-        isValueSet = true;
+        isExplicitValue = true;
         this.value = value;
     }
 
@@ -243,11 +275,6 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void unmarkAsInteresting() {
         this.isInteresting = false;
-    }
-
-    @Override
-    public String toString() {
-        return getContent().toString();
     }
 
 }

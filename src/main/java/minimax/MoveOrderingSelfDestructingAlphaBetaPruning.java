@@ -5,6 +5,7 @@ import java.util.List;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.Tree;
+import gametree.UninitializedValueException;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
@@ -14,7 +15,7 @@ import gametree.Tree;
  */
 public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
-    //FIXME initialisattion, see genericalphabetapruning
+    //FIXME initialisation, see genericalphabetapruning
 
     private DescendingStaticValueComparator<T> whiteComparator;
     private AscendingStaticValueComparator<T> blackComparator;
@@ -171,6 +172,9 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
             return bestChild;
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
 
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false
@@ -274,6 +278,10 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
             return bestChild;
+            
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
 
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false

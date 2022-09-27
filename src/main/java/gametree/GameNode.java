@@ -108,7 +108,7 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    protected int computeValue() {
+    protected int computeStaticValue() {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
@@ -117,8 +117,11 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    public int evaluateKnownLeafStatically(int depth) {
-        setValue(PositionEvaluator.evaluateLeafPosition(getContent(), depth));
-        return getValue();
+    protected int computeStaticLeafValue(int depth) {
+        if (getContent() == null) {
+            throw new NullPointerException("cannot evaluate because position was already detached");
+        }
+        return PositionEvaluator.evaluateLeafPosition(getContent(), depth);
     }
+
 }
