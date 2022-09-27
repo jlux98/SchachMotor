@@ -26,7 +26,7 @@ public class Move {
             this.startingSpace = new Coordinate(moveString.substring(0,2));
             this.targetSpace = new Coordinate(moveString.substring(2,4));
         } else {
-            throw new IllegalArgumentException("Error: Move not correctly formatted");
+            throw new IllegalArgumentException("Error: Move not correctly formatted: " + moveString);
         }
     }    
     
