@@ -406,6 +406,15 @@ public class PositionTest {
     }
 
     @Test
+    public void hashTestTrue(){
+        Position position1 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        Position position2 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        Position position3 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        assertEquals(position1.hashCode(), position2.hashCode());
+        assertEquals(position2.hashCode(), position3.hashCode());
+    }
+
+    @Test
     public void fiftyMovesTestTrue(){
         Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 100 50");
         assertTrue(testPos.isDraw());

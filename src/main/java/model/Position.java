@@ -1,8 +1,9 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
@@ -571,19 +572,31 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     private boolean checkForThreefoldRepetition() {
-        List<Position> cloneOfAncestors = new ArrayList<>(ancestors);
-        cloneOfAncestors.add(clone());
-        Collections.sort(cloneOfAncestors);
-        for (int i = 0; i + 2 < cloneOfAncestors.size(); i++){
-            if (cloneOfAncestors.get(i).equalsLight(cloneOfAncestors.get(i+1))){
-                if (cloneOfAncestors.get(i).equalsLight(cloneOfAncestors.get(i+2))){
-                    if (cloneOfAncestors.get(i+1).equalsLight(cloneOfAncestors.get(i+2))){
-                        return true;
-                    }
-                }
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        ancestors.add(this);
+        for (int i = 0; i < ancestors.size(); i++){
+            int key = ancestors.get(i).hashCode();
+            if (hashMap.get(key) == null){
+                hashMap.put(key, 1);
+            } else {
+                hashMap.put(key, hashMap.get(key) +1);
+            }
+            if (hashMap.get(key) >= 3){
+                return true;
             }
         }
         return false;
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        // return Objects.hash(
+        //     board, whiteNextMove, whiteCastlingKingside,
+        //     whiteCastlingQueenside, blackCastlingKingside,
+        //     blackCastlingQueenside, enPassantTargetSpace);
+        return toStringLight().hashCode();
     }
 
 }
