@@ -202,4 +202,10 @@ public class ArrayBoard implements Board {
         return new Piece(result);
     }
 
+    @Override
+    public String toStringFen() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

@@ -385,5 +385,13 @@ public class PositionTest {
         assertFalse(testPosition.equals(comparedPosition));
     }
 
-    
+    @Test
+    public void toStringFenTest(){
+        String startpos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        String benchmark1 = "rn2kb1r/pppppppp/1b4n1/4q3/2Q3B1/3N4/PPPPPPPP/RNB1K2R w KQkq - 0 1";
+        String benchmark2 = "rnb1kbnr/ppp1pppp/8/8/1PP5/2N5/Pq1PBPPP/3QK1NR b Kkq - 0 1";
+        assertEquals(startpos, FenParser.parseFen(startpos).toStringFen());
+        assertEquals(benchmark1, FenParser.parseFen(benchmark1).toStringFen());
+        assertEquals(benchmark2, FenParser.parseFen(benchmark2).toStringFen());
+    }
 }
