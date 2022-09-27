@@ -25,7 +25,7 @@ public class DescendingStaticValueComparator<T> implements Comparator<Node<T>> {
         PerformanceData.descendingComparisons += 1;
         //FIXME is it a problem that this does not provide depth to evaluation function (provides depth=0)
         //evaluation may not require child generation here
-        return -(evaluable1.roughlyEvaluateStatically() - evaluable2.roughlyEvaluateStatically());
+        return -(evaluable1.getOrComputeValue() - evaluable2.getOrComputeValue());
     }
 
 }

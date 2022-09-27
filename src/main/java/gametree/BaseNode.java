@@ -17,10 +17,9 @@ public abstract class BaseNode<T> implements Node<T> {
     private Node<T> parent;
     private T content;
     private List<Node<T>> children;
+    private boolean isValueSet = false;
     private int value;
     private boolean isInteresting;
-    private boolean staticEvaluationCached = false;
-    private int staticValue;
 
     /**
      * Creates a root node.
@@ -139,8 +138,7 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void setParent(Node<T> parent) {
         if (this.parent != null) {
-            throw new IllegalStateException(
-                    "a node can only be child to a single node, this node already has a parent");
+            throw new IllegalStateException("a node can only be child to a single node, this node already has a parent");
         }
         this.parent = parent;
     }
@@ -192,40 +190,23 @@ public abstract class BaseNode<T> implements Node<T> {
         //do nothing
     }
 
-    /**
-     * Evaluates this node statically and returns the determined value.
-     * <p>
-     * <b>Note:</b> Do not use this method directly to evaluate this node statically.
-     * This is a helper method that is implemented individually by subtypes and called by 
-     * {@link #evaluateStatically(boolean, int)} and {@link #roughlyEvaluateStatically()}.
-     * Use {@link #evaluateStatically(boolean, int)} or {@link #roughlyEvaluateStatically()} to evaluate this node statically.
-     * </p>
-     * @param isNaturaLeaf
-     * @param depth
-     * @return the static evaluation of this node
-     */
-    protected abstract int computeStaticValue(boolean isNaturaLeaf, int depth);
-
     @Override
-    public int roughlyEvaluateStatically() {
-        PerformanceData.roughlyEvaluateStaticallyCalls += 1;
-        if (!staticEvaluationCached) {
-            //only compute static value once
-            //compute static value with depth = 0 and non-leaf
-            staticValue = computeStaticValue(false, 0);
-            staticEvaluationCached = true;
+    public int getOrComputeValue() {
+        if (isValueSet) {
+            return getValue();
         }
-        value = staticValue; //overwrite "general" value
-        return staticValue;
-    }
-
-    @Override
-    public int evaluateStatically(boolean isNaturaLeaf, int depth) {
-        PerformanceData.evaluateStaticallyCalls += 1;
-        //overwrite value
-        value = computeStaticValue(isNaturaLeaf, depth);
+        setValue(computeValue());
         return value;
     }
+
+    /**
+     * 
+     * @return the static evaluation of this node
+     */
+    protected abstract int computeValue();
+
+    @Override
+    public abstract int evaluateKnownLeafStatically(int depth);
 
     /**
      * This method is intended <b>for testing only.</b>
@@ -245,6 +226,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public void setValue(int value) {
+        isValueSet = true;
         this.value = value;
     }
 

@@ -3,6 +3,7 @@ package gametree;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
+import positionevaluator.PositionEvaluator;
 import utility.PerformanceData;
 import utility.TimeUtility;
 
@@ -96,8 +97,7 @@ public class GameNode extends BaseNode<Position> {
 
         if (followUpPositions.length == 0) {
             // no moves were generated
-            throw new ComputeChildrenException(
-                    "no children could be generated for this position: " + this.getContent().toString());
+            throw new ComputeChildrenException("no children could be generated for this position: " + this.getContent().toString());
         }
 
         // add follow-up moves as child nodes to this node
@@ -108,12 +108,17 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    protected int computeStaticValue(boolean isNaturalLeaf, int depth) {
+    protected int computeValue() {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
-        PerformanceData.computeStaticValueCalls += 1;
-        return getContent().evaluateBoard(isNaturalLeaf, depth);
+        //PerformanceData.computeStaticValueCalls += 1;
+        return PositionEvaluator.evaluatePosition(getContent());
     }
 
+    @Override
+    public int evaluateKnownLeafStatically(int depth) {
+        setValue(PositionEvaluator.evaluateLeafPosition(getContent(), depth));
+        return getValue();
+    }
 }

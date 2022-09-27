@@ -4,9 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Board;
+import model.PieceEncoding;
 import model.Position;
+import static model.PieceEncoding.*;
 
-public class KnightMoveGenerator {
+public class KnightMoveGenerator extends PieceMoveGenerator{
+
+    
+
+    public KnightMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeKnightMoves(position, rank, file);
+    }
+
     public static List<Position> computeKnightMoves(Position position, int rank, int file) {
         List<Position> results = new ArrayList<Position>();
         knightMoveSupervisor(position, results, rank, file, rank-2, file-1);
@@ -29,7 +43,7 @@ public class KnightMoveGenerator {
         boolean hasCaptured = false;
         byte targetPiece = position.getByteAt(targetRank, targetFile);
         if (targetPiece != 0){
-            if (targetPiece < MoveGenerator.BLACK_BISHOP == position.getWhitesTurn()){
+            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;

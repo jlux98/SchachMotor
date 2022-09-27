@@ -64,28 +64,6 @@ public class IntNode extends BaseNode<Integer> {
         throw new ComputeChildrenException("int node cannot dynamically generate children");
     }
 
-    /**
-     * Evaluates this IntNode statically by setting and 
-     * returning the integer that is stored as content as this node's value.
-     */
-    @Override
-    public int evaluateStatically(boolean isNaturalLeaf, int depth) {
-        this.setValue(getContent());
-        return this.getContent();
-    }
-
-    @Override
-    protected int computeStaticValue(boolean isNaturaLeaf, int depth) {
-        //set content as value and staticValue
-        return getContent();
-    }
-
-    @Override
-    public int roughlyEvaluateStatically() {
-        //overwrite any caching mechanisms so changes to stored content are reflected by value
-        return this.evaluateStatically(false, -1);
-    }
-
     @Override
     public Node<Integer> createChild(Integer content) {
         return new IntNode(content, this);
@@ -134,5 +112,14 @@ public class IntNode extends BaseNode<Integer> {
         return whiteAlignedRepresentation;
     }
 
+    @Override
+    protected int computeValue() {
+        return getContent();
+    }
+
+    @Override
+    public int evaluateKnownLeafStatically(int depth) {
+        return getContent(); //FIXME use different value so this can be used for testing
+    }
 
 }

@@ -320,7 +320,7 @@ public class Position implements Comparable<Position>, Cloneable {
      * @return the board's static evaluation
      */
     public int evaluateBoard(boolean isNaturalLeaf, int depth) {
-        this.pointValue = PositionEvaluator.evaluatePosition(this, isNaturalLeaf, depth);
+        this.pointValue = PositionEvaluator.evaluatePosition(this);
         return this.pointValue;
     }
 
@@ -496,6 +496,10 @@ public class Position implements Comparable<Position>, Cloneable {
     public void setMove(int startingRank, int startingFile, int targetRank, int targetFile, Byte promotedTo) {
         this.generatedByMove = new Move(new Coordinate(startingRank, startingFile),
             new Coordinate(targetRank, targetFile), promotedTo);
+    }
+
+    public void deleteMove(){
+        this.generatedByMove = null;
     }
 
     public Board getBoard() {

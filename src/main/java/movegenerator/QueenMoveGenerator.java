@@ -6,7 +6,16 @@ import java.util.List;
 import model.Position;
 
 
-public class QueenMoveGenerator {
+public class QueenMoveGenerator extends PieceMoveGenerator{
+    public QueenMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeQueenMoves(position, rank, file);
+    }
+
     /**
     * Generates all legal moves for a specific queen.
     * @param position the position for which a follow-up position should be generated

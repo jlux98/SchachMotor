@@ -4,10 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Board;
+import model.PieceEncoding;
 import model.Position;
+import static model.PieceEncoding.*;
 
+public class KingMoveGenerator extends PieceMoveGenerator {
+    
+    public KingMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
+    }
 
-public class KingMoveGenerator {
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computeKingMoves(position, rank, file);
+    }
+
     public static List<Position> computeKingMoves(Position position, int rank, int file) {
         List<Position> results = new ArrayList<>();
         // Attack north
@@ -127,7 +138,7 @@ public class KingMoveGenerator {
         boolean hasCaptured = false;
         byte targetPiece = position.getByteAt(targetRank, targetFile);
         if (targetPiece != 0){
-            if (targetPiece < MoveGenerator.BLACK_BISHOP == position.getWhitesTurn()){
+            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;

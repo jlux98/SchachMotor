@@ -13,8 +13,8 @@ public class Main {
         Position blackPosition = FenParser.parseFen(blackEndingFen);
         Position whitePosition = FenParser.parseFen(whiteEndingFen);
 
-        int blackValue = PositionEvaluator.evaluatePosition(blackPosition, false, 0);
-        int whiteValue = PositionEvaluator.evaluatePosition(whitePosition, false, 0);
+        int blackValue = PositionEvaluator.evaluatePosition(blackPosition);
+        int whiteValue = PositionEvaluator.evaluatePosition(whitePosition);
 
         System.out.println("black value: " + blackValue);
         System.out.println("white value: " + whiteValue);

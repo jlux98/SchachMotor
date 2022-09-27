@@ -4,9 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Board;
+import model.PieceEncoding;
 import model.Position;
+import static model.PieceEncoding.*;
 
-public class PawnMoveGenerator {
+public class PawnMoveGenerator extends PieceMoveGenerator{
+
+    public PawnMoveGenerator(Position position, int rank, int file, List<Position> resultList) {
+        super(position, rank, file, resultList);
+    }
+
+    @Override
+    public List<Position> computePieceMoves(Position position, int rank, int file) {
+        return computePawnMoves(position, rank, file);
+    }
+
         /**
      * Computes all possible follow-up positions for a specific pawn on a 
      * given position
@@ -20,7 +32,7 @@ public class PawnMoveGenerator {
         byte currentPiece = position.getByteAt(rank, file);
         List<Position> results = new ArrayList<Position>();
         int sign = 0;
-        if (currentPiece < MoveGenerator.BLACK_BISHOP){
+        if (PieceEncoding.isBytePieceWhite(currentPiece)){
             sign = -1;
         } else {
             sign = 1;
@@ -49,18 +61,18 @@ public class PawnMoveGenerator {
     int startingRank, int startingFile, int targetRank, int targetFile, int sign) {
         byte offset = 0;
         if (sign == 1){
-            offset = MoveGenerator.WHITE_ROOK;
+            offset = PIECE_OFFSET;
         }
         if ((sign == -1) && targetRank == 0 ||
             (sign == 1) && targetRank == 7){
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, (byte) (MoveGenerator.WHITE_BISHOP + offset));
+                targetRank, targetFile, sign, (byte) (WHITE_BISHOP + offset));
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, (byte) (MoveGenerator.WHITE_KNIGHT + offset));
+                targetRank, targetFile, sign, (byte) (WHITE_KNIGHT + offset));
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, (byte) (MoveGenerator.WHITE_QUEEN + offset));
+                targetRank, targetFile, sign, (byte) (WHITE_QUEEN + offset));
             computePawnPromotion(position, results, startingRank, startingFile, 
-                targetRank, targetFile, sign, (byte) (MoveGenerator.WHITE_ROOK + offset));
+                targetRank, targetFile, sign, (byte) (WHITE_ROOK + offset));
             return true;
         } else {
             return false;
@@ -115,7 +127,7 @@ public class PawnMoveGenerator {
         if (file != 0){
             byte targetPiece = bs.getByteAt(rank+(sign*1), file-1);
             if (targetPiece != 0 &&
-                targetPiece < MoveGenerator.BLACK_BISHOP != (sign == -1)){
+                PieceEncoding.isBytePieceWhite(targetPiece) != (sign == -1)){
                 Board resultingSpaces = MoveGenerator.getBoardAfterMove(bs.copyBoard(),
                     rank, file, rank+(sign*1), file-1);
                 addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, true, false);
@@ -128,7 +140,7 @@ public class PawnMoveGenerator {
         if (file != 7){
             byte targetPiece = bs.getByteAt(rank+(sign*1), file+1);
             if (targetPiece != 0 &&
-                targetPiece < MoveGenerator.BLACK_BISHOP != (sign == -1)){
+                PieceEncoding.isBytePieceWhite(targetPiece) != (sign == -1)){
                 Board resultingSpaces = MoveGenerator.getBoardAfterMove(bs.copyBoard(),
                     rank, file, rank+(sign*1), file+1);
                 addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, false, true);
