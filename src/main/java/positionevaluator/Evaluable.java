@@ -5,53 +5,73 @@ import gametree.UninitializedValueException;
 /**
  * Interface for classes that can be evaluated to a numeric value.
  * <br><br>
- * Classes must be able to evaluate themselves but must store the determined
- * value after a call to {@link #evaluateStatically()}
- * so it can be overwritten by {@link #setValue(int)}.
- * The method {@link #getValue()} is used to retrieve the current value, whether
- * it has been set by {@link #evaluateStatically()}
- * or by explicitly assigning a value by calling {@link #setValue(int)}.
- * <br><br>
- * Nodes can be marked as especially interesting by {@link #markAsInteresting()}
+ * Evaluable offer 3  value levels:
+ * <ul>
+ *      <li>computed static values</li>
+ *      <li>computed values of leaves ("leaf values")</li>
+ *      <li>values that were explicitly set</li>
+ * </ul>
+ * Values supersede each other in this order.
+ * <p>
+ * Any value computation stores the determined value. This value can then
+ * be retrieved by {@link #getValue()}.
+ * In most cases the more specific methods
+ * {@link #computeOrGetStaticValueOrBetter()} and {@link #computeOrGetLeafValueOrBetter(int)}
+ * should be used to get values from Evaluables.
+ * These methods guarantee to return a value of the expected level (static or leaf) or "better".
+ * Any value that is of higher level (lower in the list) is considered to be better and will be
+ * returned instead. If no suitable value (of demanded or higher level) is available, the value
+ * of the demanded level will be computed, stored and returned.
+ * <p>
+ * If only explicitly set values should be retrieved, use
+ * {@link #getExplicitValue()} which throws an Exception if the value was not set by {@link #setValue(int)}.
+ * <p>
+ * Evaluables can be marked as especially interesting by {@link #markAsInteresting()}
  * and are unmarked by {@link #unmarkAsInteresting()}.
- * Use {@link #isInteresting()} to determine whether a node is currently marked
+ * Use {@link #isInteresting()} to determine whether an Evaluable is currently marked
  * as interesting.
  */
 //TODO update class doc
 public interface Evaluable {
 
     /**
-     * If a value was assigned to this Evaluable using {@link #evaluateKnownLeafStatically(int)} 
+    * This method simply returns the value that is currently stored by this Evaluable.
+    * Values can be stored by calls to
+    * {@link #computeOrGetStaticValueOrBetter()}, {@link #computeOrGetLeafValueOrBetter(int)} or {@link #setValue(int)}.
+    * 
+    * @return the value stored by this evaluable
+    * @throws UninitializedValueException if this evaluable was not yet evaluated
+    */
+    public abstract int getValue() throws UninitializedValueException;
+    //FIXME replace occurances with getExplicitValue where stuiable (not in alphabeta because static values of leaves have to be read)
+
+    /**
+     * If a value was assigned to this Evaluable using {@link #computeOrGetLeafValueOrBetter(int)} 
      * or {@link #setValue(int)}, returns that value.
      * <p>
      * Otherwise, returns the statcc value of this Evaluable.
      * @return this Evaluable's static value or the value set by 
-     * {@link #evaluateKnownLeafStatically(int)} or {@link #setValue(int)}
+     * {@link #computeOrGetLeafValueOrBetter(int)} or {@link #setValue(int)}
      */
-    public abstract int getOrComputeValue();
+    public abstract int computeOrGetStaticValueOrBetter();
 
     /**
      * If a value was explicitly assigned to this Evaluable using {@link #setValue(int)},
      * returns that value.
      * <p>
-     * Otherwise, evaluates this evaluable statically while considering that it cannot generate any children
-     * (is a terminal node). This static evaluation is more specific than the one provided by
-     * {@link #getOrComputeValue()}.
+     * Otherwise, evaluates this Evaluable while considering that it cannot generate any children
+     * (is a terminal node). This static evaluation supersedes the one provided by
+     * {@link #computeOrGetStaticValueOrBetter()}.
      * @param depth the depth of the leaf in the tree
      * @return the leaf's static evaluation or the explicitly set value
      */
-    public abstract int evaluateKnownLeafStatically(int depth);
+    public abstract int computeOrGetLeafValueOrBetter(int depth);
 
     /**
-     * This method simply returns the value that is currently stored by this Evaluable.
-     * Values can be stored by calls to
-     * {@link #getOrComputeValue()}, {@link #evaluateKnownLeafStatically(int)} or {@link #setValue(int)}.
-     * 
-     * @return the value stored by this evaluable
-     * @throws UninitializedValueException if this evaluable was not yet evaluated
+     * @return the value of this Evaluable if it was set explicitly
+     * @throws UninitializedValueException if no value was set explicitly
      */
-    public abstract int getValue() throws UninitializedValueException;
-
+    public abstract int getExplicitValue() throws UninitializedValueException;
     /**
      * Overwrites the current value of this evaluable with the specified value.
      * @param value the value that should be stored

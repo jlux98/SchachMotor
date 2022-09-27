@@ -9,12 +9,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import classes.FailureException;
 import classes.IntNode;
 import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.ImpTree;
 import gametree.Node;
 import gametree.Tree;
+import gametree.UninitializedValueException;
 
 public class IntNodeHelper {
 
@@ -47,7 +49,11 @@ public class IntNodeHelper {
      * @param node the IntNode that should be storing this value
      */
     public static void compareIntNodeValue(int expected, IntNode node) {
+        try {
         assertEquals(expected, node.getValue());
+        } catch (UninitializedValueException exception) {
+            throw new FailureException("atempted to compare against a node without value");
+        }
     }
 
     /**
@@ -57,7 +63,7 @@ public class IntNodeHelper {
      */
     public static void compareStaticIntNodeValue(int expectedStaticValue, IntNode node) {
         //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
-        assertEquals(expectedStaticValue, node.getOrComputeValue()); //FIXME
+        assertEquals(expectedStaticValue, node.computeOrGetStaticValueOrBetter()); //FIXME can trigger evaluation on an unevaluted node
     }
 
     /**

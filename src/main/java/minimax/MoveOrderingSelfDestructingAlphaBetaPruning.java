@@ -15,7 +15,7 @@ import gametree.UninitializedValueException;
  */
 public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
-    //FIXME initialisation, see genericalphabetapruning
+    //FIXME initialization, see genericalphabetapruning
 
     private DescendingStaticValueComparator<T> whiteComparator;
     private AscendingStaticValueComparator<T> blackComparator;

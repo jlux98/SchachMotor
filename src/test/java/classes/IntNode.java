@@ -118,8 +118,8 @@ public class IntNode extends BaseNode<Integer> {
     }
 
     @Override
-    public int evaluateKnownLeafStatically(int depth) {
-        return getContent(); //FIXME use different value so this can be used for testing
+    protected int computeStaticLeafValue(int depth) {
+        return getContent(); //TODO return a special value to differentiate from computeStaticValue?
     }
 
 }

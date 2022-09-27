@@ -214,7 +214,15 @@ public abstract class BaseNode<T> implements Node<T> {
     //  *************************************
 
     @Override
-    public int getOrComputeValue() {
+    public final int getValue() throws UninitializedValueException {
+        if (isStaticValueOrBetter || isStaticLeafValueOrBetter || isExplicitValue) {
+            return value;
+        }
+        throw new UninitializedValueException("this node was not yet evaluated");
+    }
+
+    @Override
+    public final int computeOrGetStaticValueOrBetter() {
         if (isStaticValueOrBetter) {
             return value;
         }
@@ -230,10 +238,11 @@ public abstract class BaseNode<T> implements Node<T> {
     protected abstract int computeStaticValue();
 
     @Override
-    public int evaluateKnownLeafStatically(int depth) {
+    public final int computeOrGetLeafValueOrBetter(int depth) {
         if (isStaticLeafValueOrBetter) {
             return value;
         }
+        isStaticValueOrBetter = true;
         isStaticLeafValueOrBetter = true;
         value = computeStaticLeafValue(depth);
         return value;
@@ -249,16 +258,18 @@ public abstract class BaseNode<T> implements Node<T> {
     protected abstract int computeStaticLeafValue(int depth);
 
     @Override
-    public int getValue() throws UninitializedValueException {
-        if (isStaticValueOrBetter || isStaticLeafValueOrBetter || isExplicitValue) {
+    public int getExplicitValue() throws UninitializedValueException {
+        if (isExplicitValue) {
             return value;
         }
-        throw new UninitializedValueException("this node was not yet evaluated");
+        throw new UninitializedValueException("no value was set explicitly");
     }
 
     @Override
-    public void setValue(int value) {
+    public final void setValue(int value) {
         isExplicitValue = true;
+        isStaticValueOrBetter = true;
+        isStaticLeafValueOrBetter = true;
         this.value = value;
     }
 
