@@ -217,4 +217,34 @@ public class ByteBoard implements Board {
             whiteKingSpace = (byte)(rank*8+file);
         }
     }
+
+    @Override
+    public String toStringFen() {
+        String result = "";
+        for (int rank = 0; rank < 8; rank ++){
+            int countEmpty = 0;
+            for (int file = 0; file < 8; file++){
+                if (getByteAt(rank, file) == 0){
+                    countEmpty++;
+                } else {
+                    result += printEmpty(countEmpty);
+                    countEmpty = 0;
+                    result += getPieceAt(rank, file).toString();
+                }
+            }
+            result += printEmpty(countEmpty);
+            if (rank < 7){
+                result += "/";
+            }
+        }
+        return result;
+    }
+
+    private String printEmpty(int countEmpty) {
+        if (countEmpty == 0){
+            return "";
+        } else {
+            return "" + countEmpty;
+        }
+    }
 }

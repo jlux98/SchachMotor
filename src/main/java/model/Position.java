@@ -469,6 +469,39 @@ public class Position implements Comparable<Position>, Cloneable {
         return attackedByBlack;
     }
 
+    public String toStringFen(){
+        String result = board.toStringFen();
+        if (whiteNextMove){
+            result += " w ";
+        } else {
+            result += " b ";
+        }
+        if (whiteCastlingKingside || whiteCastlingQueenside || blackCastlingKingside || blackCastlingQueenside){
+            if (whiteCastlingKingside){
+                result += "K";
+            }
+            if (whiteCastlingQueenside){
+                result += "Q";
+            }
+            if (blackCastlingKingside){
+                result += "k";
+            }
+            if (blackCastlingQueenside){
+                result += "q";
+            }
+        } else {
+            result += "-";
+        }
+        if (enPassantTargetSpace != null){
+            result += " " + enPassantTargetSpace + " ";
+        } else {
+            result += " - ";
+        }
+        result += halfMovesSincePawnMoveOrCapture + " ";
+        result += fullMoveCount;
+        return result;
+    }
+
     public void setAttackedByBlack(boolean[][] attackedByBlack) {
         this.attackedByBlack = attackedByBlack;
     }
