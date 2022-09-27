@@ -14,6 +14,8 @@ import gametree.Tree;
  */
 public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
+    //FIXME initialisattion, see genericalphabetapruning
+
     private DescendingStaticValueComparator<T> whiteComparator;
     private AscendingStaticValueComparator<T> blackComparator;
 

@@ -97,10 +97,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         try {
             // minimize
-            parent.setValue(Integer.MAX_VALUE);
-
             int childValue;
             Node<T> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
@@ -121,7 +120,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is greater than all sibling's values
-                if (childValue < parent.getValue()) {
+                if (firstChild || childValue < parent.getValue() ) {
                     // since parentValue is initialized to Integer.MAX_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -131,6 +130,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
                 if (childValue <= alpha) {
                     // minimizing player can achieve a lower score than maximizing player is already
@@ -195,10 +195,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         try {
             //maximize
-            parent.setValue(Integer.MIN_VALUE);
-
             int childValue;
             Node<T> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
@@ -220,7 +219,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is less than all sibling's values
-                if (childValue > parent.getValue()) {
+                if (firstChild || childValue > parent.getValue() ) {
                     // since parentValue is initialized to Integer.MIN_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -229,6 +228,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
                 if (childValue >= beta) {
                     // maximizing player can achieve a higher score than minimizing player is
