@@ -61,8 +61,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta,
-            boolean whiteNextMove) {
+    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
 
         if (whiteNextMove) {
             // maximize this node
@@ -100,13 +99,10 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
         this.increaseEvaluatedNodeCount();
 
         // assign static evaluation to leaves
-        switch (isLeaf(parent, depth)) {
-            case 1:
-                parent.evaluateStatically(false, depth);
-                return parent;
-            case 2:
-                parent.evaluateStatically(true, depth);
-                return parent;
+        // assign static evaluation to leaves
+        boolean leaf = evaluateIfLeaf(parent, depth);
+        if (leaf) {
+            return parent;
         }
 
         try {
@@ -207,13 +203,9 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
         this.increaseEvaluatedNodeCount();
 
         // assign static evaluation to leaves
-        switch (isLeaf(parent, depth)) {
-            case 1:
-                parent.evaluateStatically(false, depth);
-                return parent;
-            case 2:
-                parent.evaluateStatically(true, depth);
-                return parent;
+        boolean leaf = evaluateIfLeaf(parent, depth);
+        if (leaf) {
+            return parent;
         }
 
         try {

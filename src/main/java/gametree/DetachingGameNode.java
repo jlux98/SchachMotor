@@ -43,17 +43,6 @@ public class DetachingGameNode extends GameNode {
     protected void detachChildGenerationData() {
         this.deleteContent(); //position = null
     }
+    //FIXME detach position after evaluation if possible
 
-    @Override
-    public int evaluateStatically(boolean isNaturalLeaf, int depth) {
-        if (getContent() == null) {
-            throw new NullPointerException("cannot evaluate because position was already detached");
-        }
-        int value = super.evaluateStatically(isNaturalLeaf, depth);
-        //cannot detach position in computeStaticValue because that would
-        //delete the position in initial move ordering
-        //but position is required when properly evaluating a leaf
-        this.deleteContent();
-        return value;
-    }
 }

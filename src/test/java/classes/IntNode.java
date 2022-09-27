@@ -1,5 +1,7 @@
 package classes;
 
+import java.util.List;
+
 import gametree.BaseNode;
 import gametree.ComputeChildrenException;
 import gametree.Node;
@@ -24,6 +26,7 @@ import minimax.TreeEvaluator;
  * does not necessarily stay the same as the stored content.
  */
 public class IntNode extends BaseNode<Integer> {
+    private StringBuilder whiteAlignedRepresentation;
 
     /**
      * Creates an IntNode storing the specified Integer as content.
@@ -61,22 +64,6 @@ public class IntNode extends BaseNode<Integer> {
         throw new ComputeChildrenException("int node cannot dynamically generate children");
     }
 
-    /**
-     * Evaluates this IntNode statically by setting and 
-     * returning the integer that is stored as content as this node's value.
-     */
-    @Override
-    public int evaluateStatically(boolean isNaturalLeaf, int depth) {
-        this.setValue(getContent());
-        return this.getContent();
-    }
-
-    @Override
-    protected int computeStaticValue(boolean isNaturaLeaf, int depth) {
-        //set content as value and staticValue
-        return getContent();
-    }
-
     @Override
     public Node<Integer> createChild(Integer content) {
         return new IntNode(content, this);
@@ -97,6 +84,42 @@ public class IntNode extends BaseNode<Integer> {
             return this.getContent() == ((IntNode) obj).getContent();
         }
         return false;
+    }
+
+    //increase visibility to public in this class
+    @Override
+    public List<? extends Node<Integer>> getChildren() {
+        return super.getChildren();
+    }
+
+    /**
+     * Sets this node's representation used by {@link helper.TreePrinter}.
+     * The representation is a StringBuilder that should be aligned with special characters as demanded
+     * by TreePrinter.
+     * @param whiteSpaceAlignedRepresentation a StringBuilder whose content represents this node and is aligned
+     */
+    public void setAlignedRepresentation(StringBuilder whiteSpaceAlignedRepresentation) {
+        this.whiteAlignedRepresentation = whiteSpaceAlignedRepresentation;
+    }
+
+    /**
+     * Retrieves this node's aligned representation.
+     * The representation is a StringBuilder containing a String that is
+     * enclosed by special characters for alignment in output.
+     * @return this node's aligned representation
+     */
+    public StringBuilder getAlignedRepresentation() {
+        return whiteAlignedRepresentation;
+    }
+
+    @Override
+    protected int computeValue() {
+        return getContent();
+    }
+
+    @Override
+    public int evaluateKnownLeafStatically(int depth) {
+        return getContent(); //FIXME use different value so this can be used for testing
     }
 
 }

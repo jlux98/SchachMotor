@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import classes.IntNode;
+//import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.ImpTree;
 import gametree.Node;
@@ -47,6 +48,16 @@ public class IntNodeHelper {
      */
     public static void compareIntNodeValue(int expected, IntNode node) {
         assertEquals(expected, node.getValue());
+    }
+
+    /**
+     * Compares the IntNode's static value (= stored integer) to the expected value.
+     * @param expectedStaticValue the expected static value
+     * @param node the node
+     */
+    public static void compareStaticIntNodeValue(int expectedStaticValue, IntNode node) {
+        //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
+        assertEquals(expectedStaticValue, node.getOrComputeValue()); //FIXME
     }
 
     /**
@@ -162,6 +173,50 @@ public class IntNodeHelper {
         return children.get(0);
     } */
 
+    /**
+     * Inverts the content stored in the tree's leaf nodes (content = -1 * content).
+     * @param tree tree whose leaves should be inverted
+     */
+    public static void invertLeaves(Tree<? extends Node<Integer>> tree) {
+        invertLeaves(tree.getRoot());
+    }
+
+    /**
+     * Inverts the content stored in this node if it is a leaf (cont = -1 * content).
+     * Otherwise, inverts the content stored by its children.
+     * @param node node whose value or whose childrens' value should be inverted
+     */
+    public static void invertLeaves(Node<Integer> node) {
+        //invert node if it has no children
+        if (!node.hasChildren()) {
+            invertLeaf(node);
+            return;
+        }
+        //iterate tree and call invertLeaves on each node
+        for (Node<Integer> child : ((IntNode) node).getChildren()) {
+            invertLeaves((IntNode) child);
+        }
+    }
+
+    /**
+     * Inverts a leaf by multiplying its content with -1.
+     * @param node leaf node whose value should be inverted
+     */
+    public static void invertLeaf(Node<Integer> node) {
+        int content = node.getContent();
+        if (content == Integer.MIN_VALUE) {
+            //required as MIN_VALUE * -1 == MIN_VALUE
+            node.setContent(Integer.MAX_VALUE);
+            return;
+        }
+        if (content == Integer.MAX_VALUE) {
+            //required as MAX_VALUE * -1 == MIN_VALUE + 1
+            node.setContent(Integer.MIN_VALUE);
+            return;
+        }
+        node.setContent(content * -1);
+    }
+
     @Test
     public void createRootNodeTest() throws ComputeChildrenException {
         Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4);
@@ -184,4 +239,38 @@ public class IntNodeHelper {
         assertEquals(3, layer2children2.get(0).getContent());
         assertEquals(4, layer2children2.get(1).getContent());
     }
+
+    @Test
+    public void invertLeavesTest() throws ComputeChildrenException {
+        IntNodeWikipediaTestTree testTree = new IntNodeWikipediaTestTree();
+        invertLeaves(testTree);
+
+        NodeHelper.verifyChildren(testTree.root, testTree.layer1Node0, testTree.layer1Node1);
+        //layer 1
+        NodeHelper.verifyChildren(testTree.layer1Node0, testTree.layer2Node0, testTree.layer2Node1);
+        NodeHelper.verifyChildren(testTree.layer1Node1, testTree.layer2Node2, testTree.layer2Node3);
+        //layer2
+        NodeHelper.verifyChildren(testTree.layer2Node0, testTree.layer3Node0, testTree.layer3Node1);
+        NodeHelper.verifyChildren(testTree.layer2Node1, testTree.layer3Node2);
+        NodeHelper.verifyChildren(testTree.layer2Node2, testTree.layer3Node3, testTree.layer3Node4);
+        NodeHelper.verifyChildren(testTree.layer2Node3, testTree.layer3Node5);
+        //layer 3
+        NodeHelper.verifyChildren(testTree.layer3Node0, testTree.layer4Node0, testTree.layer4Node1);
+        NodeHelper.verifyChildren(testTree.layer3Node1, testTree.layer4Node2);
+        NodeHelper.verifyChildren(testTree.layer3Node2, testTree.layer4Node3);
+        NodeHelper.verifyChildren(testTree.layer3Node3, testTree.layer4Node4, testTree.layer4Node5);
+        NodeHelper.verifyChildren(testTree.layer3Node4, testTree.layer4Node6);
+        NodeHelper.verifyChildren(testTree.layer3Node5, testTree.layer4Node7, testTree.layer4Node8);
+        //layer 4: leaf values
+        assertEquals(-10, testTree.layer4Node0.getContent());
+        assertEquals(Integer.MIN_VALUE, testTree.layer4Node1.getContent());
+        assertEquals(-5, testTree.layer4Node2.getContent());
+        assertEquals(10, testTree.layer4Node3.getContent());
+        assertEquals(-7, testTree.layer4Node4.getContent());
+        assertEquals(-5, testTree.layer4Node5.getContent());
+        assertEquals(Integer.MAX_VALUE, testTree.layer4Node6.getContent());
+        assertEquals(7, testTree.layer4Node7.getContent());
+        assertEquals(5, testTree.layer4Node8.getContent());
+    }
+
 }

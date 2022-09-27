@@ -18,28 +18,20 @@ package positionevaluator;
 public interface Evaluable {
 
     /**
-     * Evaluates this Evaluable and sets its value accordingly.
-     * <p>
-     * This overwrites this Evaluable's current value with the determined value such that
-     * calling {@link #getValue()} after calling {@link #evaluateStatically()} will return the same value.
-     * </p>
-     * @param isNaturalLeaf
-     * @param depth
-     * @return the calculated value of this evaluable
+     * Returns the value of this Evaluable.
+     * If no value is stored, the value is determined statically and stored.
+     * @return this Evaluable's value
      */
-    public abstract int evaluateStatically(boolean isNaturalLeaf, int depth);
+    public abstract int getOrComputeValue();
 
     /**
-     * Roughly evaluates this evaluable and returns the determined value.
-     * This method should serves as a more lightweight approximation of {@link #evaluateStatically(boolean, int)}.
-     * <p>
-     * The result of this method may not change in the lifetime of this Evaluable
-     * and should be cached.
-     * <p>
-     * Does <b>not</b> overwrite the stored value.
-     * @return the static value of this evaluable
+     * Evaluates this evaluable statically while considering that it cannot generate any children
+     * (is a terminal node). This static evaluation is more specific than the one provided by
+     * {@link #getOrComputeValue()}.
+     * @param depth the depth of the leaf in the tree
+     * @return the leaf's static evaluation
      */
-    public abstract int roughlyEvaluateStatically();
+    public abstract int evaluateKnownLeafStatically(int depth);
 
     /**
      * Used to determine if this node is marked as especially interesting.
