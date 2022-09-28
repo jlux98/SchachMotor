@@ -879,7 +879,7 @@ public class MoveGeneratorTest {
                 "c7c6", "d7d6", "e7e6", "f7f6", "g7g6", "h7h6", "a7a5", "c7c5", "d7d5", "e7e5", "f7f5", "g7g5", "h7h5", "b8a6",
                 "b8c6", "g8f6", "g8h6", "b7g2", "b7f3", "b7e4", "b7d5", "b7a6", "b7c6", "b7c8", "d8c8");
 
-                GameNode node = new GameNode(FenParser.parseFen("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPP1P/1RBQKBNR b Kkq - 0 1"));
+                GameNode node = new GameNode(FenParser.parseFen("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1"));
                 List<? extends Node<Position>> children = node.queryChildren();
                 Position bishopCapture = null;
                 for (Node<Position> child : children) {
@@ -889,8 +889,7 @@ public class MoveGeneratorTest {
                         System.out.println(child.getValue());
                     }
                 }
-                assertEquals(-100, PositionEvaluator.evaluatePosition(bishopCapture, false, 0));
-                assertNotNull(bishopCapture);                
+                assertEquals(-100, PositionEvaluator.evaluatePosition(bishopCapture, false, 0));             
     }
 
     @Test

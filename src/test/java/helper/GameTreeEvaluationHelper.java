@@ -63,14 +63,15 @@ public class GameTreeEvaluationHelper {
      * @param depth depth to which the position should be evaluated
      * @param whitesTurn whether it's white's turn
      * @param moves the expected moves in algebraic notation
+     * @return the move that was evaluated to be best
      */
-    public void assertBestMoveIn(Position position, int depth, boolean whitesTurn, String... moves)
+    public GameNode assertBestMoveIn(Position position, int depth, boolean whitesTurn, String... moves)
             throws ComputeChildrenException {
         GameNode bestMove = evaluate(position, depth, whitesTurn);
         String bestMoveAlgebraic = bestMove.getRepresentedMove().toStringAlgebraic();
         List<String> expectedMoves = Arrays.asList(moves);
         assertTrue(expectedMoves.contains(bestMoveAlgebraic), "move was " + bestMoveAlgebraic);
-        TreePrinter.alignAndPrintTree(bestMove, depth);
+        return bestMove;
     }
 
     /**
@@ -79,9 +80,10 @@ public class GameTreeEvaluationHelper {
      * @param depth depth to which the position should be evaluated
      * @param whitesTurn whether it's white's turn
      * @param moves the expected moves in algebraic notation
+     * @return the move that was evaluated to be best
      */
-    public void assertBestMoveIn(String fen, int depth, boolean whitesTurn, String... moves) throws ComputeChildrenException {
-        assertBestMoveIn(FenParser.parseFen(fen), depth, whitesTurn, moves);
+    public GameNode assertBestMoveIn(String fen, int depth, boolean whitesTurn, String... moves) throws ComputeChildrenException {
+        return assertBestMoveIn(FenParser.parseFen(fen), depth, whitesTurn, moves);
     }
 
     /**
@@ -90,13 +92,14 @@ public class GameTreeEvaluationHelper {
     * @param depth depth to which the position should be evaluated
     * @param whitesTurn whether it's white's turn
     * @param moves "banned" moves in algebraic notation
+    * @return the move that was evaluated to be best
     */
-    public void assertMoveNotIn(Position position, int depth, boolean whitesTurn, String... moves) throws ComputeChildrenException {
+    public GameNode assertMoveNotIn(Position position, int depth, boolean whitesTurn, String... moves) throws ComputeChildrenException {
         GameNode bestMove = evaluate(position, depth, whitesTurn);
         String bestMoveAlgebraic = bestMove.getRepresentedMove().toStringAlgebraic();
         List<String> expectedMoves = Arrays.asList(moves);
         assertFalse(expectedMoves.contains(bestMoveAlgebraic), "move was " + bestMoveAlgebraic);
-        //TreePrinter.alignAndPrintTree(bestMove, depth);
+        return bestMove;
     }
 
     /**
@@ -105,9 +108,10 @@ public class GameTreeEvaluationHelper {
     * @param depth depth to which the position should be evaluated
     * @param whitesTurn whether it's white's turn
     * @param moves "banned" moves in algebraic notation
+    * @return the move that was evaluated to be best
     */
-    public void assertBestMoveNotIn(String fen, int depth, boolean whitesTurn, String... moves) throws ComputeChildrenException {
-        assertMoveNotIn(FenParser.parseFen(fen), depth, whitesTurn, moves);
+    public GameNode assertBestMoveNotIn(String fen, int depth, boolean whitesTurn, String... moves) throws ComputeChildrenException {
+        return assertMoveNotIn(FenParser.parseFen(fen), depth, whitesTurn, moves);
     }
 
     /**
