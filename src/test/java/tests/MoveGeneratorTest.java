@@ -10,11 +10,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import data.MoveGeneratorData;
+import gametree.ComputeChildrenException;
+import gametree.GameNode;
+import gametree.Node;
 import helper.Mirror;
 import helper.MoveGeneratorHelper;
 import helper.PositionHelper;
 import model.Position;
 import movegenerator.MoveGenerator;
+import positionevaluator.PositionEvaluator;
 import uciservice.FenParser;
 
 import static movegenerator.MoveGenerator.EMPTY_SQUARE;
@@ -788,11 +792,11 @@ public class MoveGeneratorTest {
 
     @Test
     public void moveGenerationMove19Test() {
-        MoveGeneratorHelper.verifyMoveGeneration("r2qk2r/pppbbppp/5n2/8/2BP4/2N5/PP3PPP/R1BQ1RK1 b kq - 0 10", "a2a3", "b2b3",
-                "a7a6", "b7b6", "c7c6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "g7g5", "h7h5", "f6e4", "f6g4", "f6d5", "f6h5",
-                "f6g8", "d7h3", "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "e7a3", "e7b4", "e7c5", "e7d6", "e7f8",
-                "a8b8", "a8c8", "h8f8", "h8g8", "d8b8", "d8c8", "e8f8", "e8g8");
-                //e8g8 is black castling kingside
+        MoveGeneratorHelper.verifyMoveGeneration("r2qk2r/pppbbppp/5n2/8/2BP4/2N5/PP3PPP/R1BQ1RK1 b kq - 0 10", "a7a6", "b7b6",
+                "c7c6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "g7g5", "h7h5", "f6e4", "f6g4", "f6d5", "f6h5", "f6g8", "d7h3",
+                "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "e7a3", "e7b4", "e7c5", "e7d6", "e7f8", "a8b8", "a8c8",
+                "h8f8", "h8g8", "d8b8", "d8c8", "e8f8", "e8g8");
+        //e8g8 is black castling kingside
     }
 
     @Test
@@ -802,4 +806,103 @@ public class MoveGeneratorTest {
                 "c3d5", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "c4e2", "c4b3", "c4d3", "c4b5", "c4d5", "c4a6", "c4e6", "c4f7",
                 "a1b1", "f1e1", "d1e1", "d1c2", "d1d2", "d1e2", "d1b3", "d1d3", "d1f3", "d1a4", "d1g4", "d1h5", "g1h1");
     }
+
+    @Test
+    public void moveGenerationMove21Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pppbbppp/5n2/8/2BP4/2N5/PP3PPP/R1BQR1K1 b - - 2 11", "a7a6", "b7b6",
+                "c7c6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "g7g5", "h7h5", "f6e4", "f6g4", "f6d5", "f6h5", "f6e8", "d7h3",
+                "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "d7e8", "e7a3", "e7b4", "e7c5", "e7d6", "a8b8", "a8c8",
+                "f8e8", "d8b8", "d8c8", "d8e8", "g8h8");
+    }
+
+    @Test
+    public void moveGenerationMove22Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pp1bbppp/2p2n2/8/2BP4/2N5/PP3PPP/R1BQR1K1 w - - 0 12", "a2a3", "b2b3",
+                "f2f3", "g2g3", "h2h3", "d4d5", "a2a4", "b2b4", "f2f4", "g2g4", "h2h4", "c3b1", "c3e2", "c3a4", "c3e4", "c3b5",
+                "c3d5", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "c4f1", "c4e2", "c4b3", "c4d3", "c4b5", "c4d5", "c4a6", "c4e6",
+                "c4f7", "a1b1", "e1f1", "e1e2", "e1e3", "e1e4", "e1e5", "e1e6", "e1e7", "d1c2", "d1d2", "d1e2", "d1b3", "d1d3",
+                "d1f3", "d1a4", "d1g4", "d1h5", "g1f1", "g1h1");
+    }
+
+    @Test
+    public void moveGenerationMove23Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pp1bbppp/2p2n2/8/2BP4/2N4P/PP3PP1/R1BQR1K1 b - - 0 12", "c6c5", "a7a6", "b7b6", "g7g6", "h7h6", "a7a5", "b7b5", "g7g5", "h7h5",
+                "f6e4", "f6g4", "f6d5", "f6h5", "f6e8", "d7h3", "d7g4", "d7f5", "d7e6", "d7c8", "d7e8", "e7a3", "e7b4", "e7c5",
+                "e7d6", "a8b8", "a8c8", "f8e8", "d8a5", "d8b6", "d8c7", "d8b8", "d8c8", "d8e8", "g8h8");
+    }
+
+    @Test
+    public void moveGenerationMove24Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pp1bbppp/2p2n2/8/2BP4/2N4P/PP3PP1/R1BQR1K1 b - - 0 12", "a2a3", "b2b3",
+                "f2f3", "g2g3", "h3h4", "d4d5", "a2a4", "b2b4", "f2f4", "g2g4", "c3b1", "c3e2", "c3a4", "c3e4", "c3b5", "c3d5",
+                "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "c4f1", "c4e2", "c4b3", "c4d3", "c4b5", "c4d5", "c4e6", "c4f7", "a1b1",
+                "e1f1", "e1e2", "e1e3", "e1e4", "e1e5", "e1e6", "e1e7", "d1c2", "d1d2", "d1e2", "d1b3", "d1d3", "d1f3", "d1a4",
+                "d1g4", "d1h5", "g1f1", "g1h1", "g1h2");
+    }
+
+    @Test
+    public void chaosPositionTest() {
+        MoveGeneratorHelper.verifyMoveGeneration("qb1rb3/1n6/2pkppn1/8/N1p1Q2r/P1P2P1P/1R1B2RK/1B3N2 b - - 0 1", "c6c5", "e6e5",
+                "f6f5", "g6f4", "g6e5", "g6e7", "g6f8", "g6h8", "b7a5", "b7c5", "b8a7", "b8c7", "e8d7", "e8f7", "h4h3", "h4e4",
+                "h4f4", "h4g4", "h4h5", "h4h6", "h4h7", "h4h8", "d8d7", "d8c8", "a8a4", "a8a5", "a8a6", "a8a7", "d6e7", "d6d7",
+                "d6c7");
+    }
+
+    @Test
+    public void onePossibleMoveTest() {
+        MoveGeneratorHelper.verifyMoveGeneration("1qRk4/3r4/8/2Q3K1/8/8/8/8 b - - 1 1", "b8c8");
+    }
+
+    @Test
+    public void blackSeesBishopMoveTest() throws ComputeChildrenException {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/R1BQKBNR b Kkq - 0 1", "b6b5", "a7a6",
+                "c7c6", "d7d6", "e7e6", "f7f6", "g7g6", "h7h6", "a7a5", "c7c5", "d7d5", "e7e5", "f7f5", "g7g5", "h7h5", "b8a6",
+                "b8c6", "g8f6", "g8h6", "c8a6", "c8b7");
+
+        GameNode node = new GameNode(FenParser.parseFen("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/R1BQKBNR b Kkq - 0 1"));
+        List<? extends Node<Position>> children = node.queryChildren();
+        Position bishopMove = null;
+        for (Node<Position> child : children) {
+            if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("c8b7")) {
+                bishopMove = child.getContent();
+                System.out.println(child.getContent());
+                System.out.println(child.getValue());
+            }
+        }
+        assertEquals(0, PositionEvaluator.evaluatePosition(bishopMove, false, 0));
+        assertNotNull(bishopMove);
+    }
+
+    @Test
+    public void blackSeesCaptureTest() throws ComputeChildrenException {
+        MoveGeneratorHelper.verifyMoveGeneration("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", "b6b5", "a7a6",
+                "c7c6", "d7d6", "e7e6", "f7f6", "g7g6", "h7h6", "a7a5", "c7c5", "d7d5", "e7e5", "f7f5", "g7g5", "h7h5", "b8a6",
+                "b8c6", "g8f6", "g8h6", "b7g2", "b7f3", "b7e4", "b7d5", "b7a6", "b7c6", "b7c8", "d8c8");
+
+                GameNode node = new GameNode(FenParser.parseFen("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPP1P/1RBQKBNR b Kkq - 0 1"));
+                List<? extends Node<Position>> children = node.queryChildren();
+                Position bishopCapture = null;
+                for (Node<Position> child : children) {
+                    if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("b7g2")) {
+                        bishopCapture = child.getContent();
+                        System.out.println(child.getContent());
+                        System.out.println(child.getValue());
+                    }
+                }
+                assertEquals(-100, PositionEvaluator.evaluatePosition(bishopCapture, false, 0));
+                assertNotNull(bishopCapture);                
+    }
+
+    @Test
+    public void Test() {
+        Position pos1 = FenParser.parseFen("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 b - - 1 1");
+        Position pos2 = FenParser.parseFen("2qk4/3r4/8/2Q3K1/8/8/8/8 w - - 1 1");
+        System.out.println(PositionEvaluator.evaluatePosition(pos1, false, -1));
+        System.out.println(PositionEvaluator.evaluatePosition(pos2, false, -1));
+    }
+
+    public static void main(String[] args) {
+        new MoveGeneratorTest().Test();
+    }
+
 }
