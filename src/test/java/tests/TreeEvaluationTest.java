@@ -14,6 +14,7 @@ import data.IntNodeSmallAsymmetricTestTree;
 import data.IntNodeWikipediaTestTree;
 import helper.IntTreeEvaluationHelper;
 import helper.MoveGeneratorHelper;
+import helper.TreePrinter;
 import helper.GameTreeEvaluationHelper;
 import helper.IntNodeHelper;
 import minimax.GameNodeAlphaBetaPruning;
@@ -335,4 +336,20 @@ public abstract class TreeEvaluationTest {
         gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 5, true);
     }
 
+
+    @Test
+    public void bishopCaptureDepth1Test() {
+    GameNode bestMove = gameTreeEvaluator.evaluate("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 1, false);
+    System.out.println(bestMove);
+    System.out.println(bestMove.getRepresentedMove().toStringAlgebraic());
+
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth2Test() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.assertBestMoveIn("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 3,
+                false, "c8b7", "c8a6");
+        assertEquals(-100, bestMove.getValue());
+
+    }
 }
