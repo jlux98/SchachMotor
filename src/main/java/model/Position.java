@@ -1,5 +1,8 @@
 package model;
 
+import java.util.HashMap;
+
+import application.Conductor;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
 import positionevaluator.PositionEvaluator;
@@ -245,6 +248,28 @@ public class Position implements Comparable<Position>, Cloneable {
         }
     }
 
+    /**
+     * Watered down version of equals that disregards among other fullmove count
+     * and halfmove count, used for checking for Threefold Repetition.
+     * @param obj
+     * @return
+     */
+    public boolean equalsLight(Object obj) {
+        if (obj instanceof Position){
+            Position position = (Position) obj;
+            return  (blackCastlingKingside == position.getBlackCastlingKingside()) &&
+                    (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
+                    (getEnPassantTargetFile() == position.getEnPassantTargetFile()) &&
+                    (getEnPassantTargetRank() == position.getEnPassantTargetRank()) &&
+                    (board.equals(position.getBoard())) &&
+                    (whiteCastlingKingside == position.getWhiteCastlingKingside()) &&
+                    (whiteCastlingQueenside == position.getWhiteCastlingQueenside()) &&
+                    (whiteNextMove == position.getWhiteNextMove());
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public String toString() {
         String result;
@@ -304,14 +329,29 @@ public class Position implements Comparable<Position>, Cloneable {
     @Override
     public Position clone() {
         Board copiedSpaces = this.copyBoard();
-        return new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
+        Position result = new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
                 this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
                 this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
+        if (generatedByMove != null){
+                result.setMove(generatedByMove.clone());
+        }
+        return result;
     }
 
     @Override
     public int compareTo(Position otherPosition) {
         return this.toString().compareTo(otherPosition.toString());
+    }
+
+    public String toStringLight(){
+        String result = board.toString() + "\n";
+        result += whiteNextMove + "\n";
+        result += whiteCastlingKingside + "\n";
+        result += whiteCastlingQueenside + "\n";
+        result += blackCastlingKingside + "\n";
+        result += blackCastlingQueenside + "\n";
+        result += enPassantTargetSpace + "\n";
+        return result;
     }
 
     /**
@@ -541,6 +581,43 @@ public class Position implements Comparable<Position>, Cloneable {
 
     public byte getByteAt(int rank, int file) {
         return board.getByteAt(rank, file);
+    }
+
+    public boolean isDraw() {
+        if (halfMovesSincePawnMoveOrCapture >= 100){
+            return true;
+        }
+        if (checkForThreefoldRepetition()){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkForThreefoldRepetition() {
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        for (int i = 0; i < Conductor.getPastPositions().size(); i++){
+            String key = Conductor.getPastPositions().get(i).toStringLight();
+            if (hashMap.get(key) == null){
+                hashMap.put(key, 1);
+            } else {
+                hashMap.put(key, hashMap.get(key) +1);
+            }
+            if (hashMap.get(key) >= 3){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        // return Objects.hash(
+        //     board, whiteNextMove, whiteCastlingKingside,
+        //     whiteCastlingQueenside, blackCastlingKingside,
+        //     blackCastlingQueenside, enPassantTargetSpace);
+        return toStringLight().hashCode();
     }
 
 }

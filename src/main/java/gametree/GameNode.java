@@ -1,5 +1,6 @@
 package gametree;
 
+import application.Conductor;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
@@ -114,6 +115,16 @@ public class GameNode extends BaseNode<Position> {
         }
         PerformanceData.computeStaticValueCalls += 1;
         return getContent().evaluateBoard(isNaturalLeaf, depth);
+    }
+
+    @Override
+    public void writeContentToHistory() {
+        Conductor.appendPosition(getContent());
+    }
+
+    @Override
+    public void deleteContentFromHistory() {
+        Conductor.deleteLastPosition();
     }
 
 }

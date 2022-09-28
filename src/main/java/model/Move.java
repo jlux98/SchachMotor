@@ -2,7 +2,7 @@ package model;
 
 import static model.PieceEncoding.*;
 
-public class Move {
+public class Move implements Cloneable {
     private Coordinate startingSpace;
     private Coordinate targetSpace;
     private byte promotedTo;
@@ -122,5 +122,10 @@ public class Move {
                     && this.getTargetSpace().equals(otherMove.getTargetSpace());
         }
         return false;
+    }
+
+    @Override
+    public Move clone() {
+        return new Move(toStringAlgebraic());
     }
 }

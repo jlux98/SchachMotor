@@ -2,12 +2,15 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import application.Conductor;
 import model.Position;
 import model.ArrayBoard;
 import model.Board;
@@ -30,6 +33,10 @@ public class PositionTest {
     private static Position kingTestPosition;
     private static Position knightTestPosition;
 
+    @AfterEach
+    public void cleanup(){
+        Conductor.emptyPositionList();
+    }
 
     @BeforeAll
     public static void setup() {
@@ -45,6 +52,7 @@ public class PositionTest {
             "w KQkq - 0 1");
         knightTestPosition = FenParser.parseFen("8/1n4k1/8/8/8/8/1K4Q1/8 " +
             "w KQkq - 0 1");
+        Conductor.emptyPositionList();
     }
 
     @BeforeEach
@@ -383,6 +391,60 @@ public class PositionTest {
         Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, false, false, false, 0,
                 0, 0, 2);
         assertFalse(testPosition.equals(comparedPosition));
+    }
+
+    @Test
+    public void threefoldRepetitionTestTrue(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1"));
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1"));
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2"));
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2"));
+        Conductor.appendPosition(testPos);
+        assertTrue(testPos.isDraw());
+    }
+
+    @Test
+    public void threefoldRepetitionTestFalse(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1"));
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1"));
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2"));
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2"));
+        Conductor.appendPosition(testPos);
+        assertFalse(testPos.isDraw());
+    }
+
+    @Test
+    public void hashTestTrue(){
+        Position position1 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        Position position2 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        Position position3 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        assertEquals(position1.hashCode(), position2.hashCode());
+        assertEquals(position2.hashCode(), position3.hashCode());
+    }
+
+    @Test
+    public void hashTestFalse(){
+        Position position1 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        Position position2 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w - - 5 3");
+        Position position3 = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 5 3");
+        Position position4 = FenParser.parseFen("r1bqkbnr/pppppppp/3n4/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
+        assertNotEquals(position1.hashCode(), position2.hashCode());
+        assertNotEquals(position1.hashCode(), position3.hashCode());
+        assertNotEquals(position1.hashCode(), position4.hashCode());
+    }
+
+    @Test
+    public void fiftyMovesTestTrue(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 100 50");
+        assertTrue(testPos.isDraw());
+    }
+
+    @Test
+    public void fiftyMovesTestFalse(){
+        Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 88 50");
+        assertFalse(testPos.isDraw());
     }
 
     @Test
