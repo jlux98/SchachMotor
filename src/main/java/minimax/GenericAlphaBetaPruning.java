@@ -55,7 +55,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      */
     private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
         Node<T> result;
-        Node<T> realresult = null;
+        Node<T> realResult;
         if (whiteNextMove) {
             // maximize this node
             result = alphaBetaMaximize(parent, depth, alpha, beta);
@@ -65,14 +65,17 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             result = alphaBetaMinimize(parent, depth, alpha, beta);
 
         }
+        realResult = result;
+        int bestValue = result.getValue();
+    
 
-        System.out.println("best move with bestchild:");
+        /* System.out.println("best move with bestchild:");
         System.out.println("value: " + result.getValue());
-        System.out.println(result);
-        try {
+        System.out.println(result); */
+       /*  try {
             int bestValue = Integer.MAX_VALUE; //smake it obvious if bestvalue init leaks
             List<? extends Node<T>> children = parent.queryChildren();
-            /* if (whiteNextMove) {
+            if (whiteNextMove) {
                 bestValue = Integer.MIN_VALUE;
                 for (Node<T> node : children) {
                     if (node.getValue() > bestValue) {
@@ -92,37 +95,38 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 }
             } */
             
-            for (Node<T> node : children) {
+            /* for (Node<T> node : children) {
                 if (((GameNode) node).getRepresentedMove().toStringAlgebraic().equals("b7b6")) {
                     result = node;
                     bestValue = result.getValue();
                     break;
                 }
-            }
+            } */
 
-            System.out.println("proper best move:");
+            /* System.out.println("proper best move:");
             System.out.println("value: " + result.getValue());
-            System.out.println(result);
-            if (!result.hasChildren()) {
+            System.out.println(result); 
+             if (!result.hasChildren()) {
                 return result;
-            }
+            } */
 
-            for (Node<T> node : children) {
+         /* for (Node<T> node : children) {
                 if (((GameNode) node).getRepresentedMove().toStringAlgebraic().equals("c8b7")) {
                     result = node;
                     bestValue = result.getValue();
                     break;
                 }
-            }
-
-            System.out.println("proper best move:");
+            } */
+ 
+            /* System.out.println("proper best move:");
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
                 return result;
-            }
+            } */
 
-
+            try {
+            List<? extends Node<T>> children = parent.queryChildren();
             children = result.queryChildren();
             result = null;
             for (Node<T> node : children) {
@@ -136,7 +140,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
-                return realresult;
+                return realResult;
             }
 
             children = result.queryChildren();
@@ -152,7 +156,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
-                return realresult;
+                return realResult;
             }
 
             children = result.queryChildren();
@@ -168,7 +172,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
-                return realresult;
+                return realResult;
             }
 
             children = result.queryChildren();
@@ -184,7 +188,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
-                return realresult;
+                return realResult;
             }
 
             children = result.queryChildren();
@@ -200,7 +204,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
-                return realresult;
+                return realResult;
             }
 
             children = result.queryChildren();
@@ -216,7 +220,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
-                return realresult;
+                return realResult;
             }
 
             children = result.queryChildren();
@@ -232,12 +236,13 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
             System.out.println("value: " + result.getValue());
             System.out.println(result);
             if (!result.hasChildren()) {
-                return realresult;
+                return realResult;
             }
+           
 
         } catch (ComputeChildrenException e) {
             throw new IllegalStateException("uh oh");
-        }
+        } 
         return result;
     }
 
