@@ -3,9 +3,14 @@ package minimax;
 import java.util.List;
 
 import gametree.ComputeChildrenException;
+import gametree.GameNode;
+import gametree.ImpGameTree;
+import gametree.ImpTree;
 import gametree.Node;
 import gametree.Tree;
 import gametree.UninitializedValueException;
+import model.Position;
+import uciservice.FenParser;
 import utility.TimeUtility;
 
 /**
@@ -35,12 +40,17 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
         }
     }
 
+    //public static Node<?> lastResult;
+
     /**
      * Used to save an intermediate result of iterative deepning.
      * @param bestMove the move that should be saved
      */
     private void saveMove(Node<T> bestMove) {
         //empty by default
+        //lastResult = bestMove;
+        System.out.println(bestMove);
+        System.out.println(((GameNode)bestMove).getRepresentedMove().toStringAlgebraic());
     }
 
     /**
@@ -50,15 +60,18 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
     * @param whitesTurn whether the turn to be searched is played by white
     * @return the Node representing the turn to be played
     */
-    public Node<T> evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn) {
+    public void     evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn,
+            int maxDepth) {
         long start = System.nanoTime();
         stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
         int depth = 1;
-        while (true) {
-            Node<T> bestMove = evaluateTree(tree, depth, whitesTurn);
+        Node<T> bestMove = null;
+        while (depth <= maxDepth) {
+            bestMove = evaluateTree(tree, depth, whitesTurn);
             saveMove(bestMove);
             depth += 1;
         }
+        System.out.println("finished with: "  + (((GameNode)bestMove).getRepresentedMove().toStringAlgebraic()));
     }
 
     @Override
@@ -84,14 +97,13 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
      * @return the child node that has the best value
      */
     private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
-
         if (whiteNextMove) {
             // maximize this node
-            return alphaBetaMaximize(parent, depth, alpha, beta);
+            return alphaBetaMaximize(parent, depth, alpha, beta, 1);
 
         } else {
             // minimize this node
-            return alphaBetaMinimize(parent, depth, alpha, beta);
+            return alphaBetaMinimize(parent, depth, alpha, beta, 1);
 
         }
     }
@@ -111,7 +123,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (smallest) value
      */
-    protected Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
+    protected Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta, int currentDepth) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -119,6 +131,8 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
          */
 
         this.increaseEvaluatedNodeCount();
+
+        parent.writeContentToHistory();
 
         // assign static evaluation to leaves
         // assign static evaluation to leaves
@@ -145,7 +159,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
-                alphaBetaMaximize(child, depth - 1, alpha, beta);
+                alphaBetaMaximize(child, depth - 1, alpha, beta, currentDepth + 1);
 
                 // read value of child node = value of the node returned by alphaBetaMaximize(child ...)
                 childValue = child.getValue();
@@ -185,12 +199,15 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
             }
 
             // delete children from tree after parent was evaluated
-            parent.deleteChildren();
+            if (currentDepth > 3) {
+                parent.deleteChildren();
+            }
 
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
+            parent.deleteContentFromHistory();
             return bestChild;
         } catch (UninitializedValueException exception) {
             //thrown by getValue()
@@ -209,7 +226,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
      * node with the best (greatest) value.
      * 
      * @param parent the node whose value should be determined
-     * @param depth  the additional depth to which the tree should be evaluated
+     * @param depthLeft  the additional depth to which the tree should be evaluated
      *               (e.g. depth = 2 means that children of the passed node and
      *               their children should be evaluated
      *               to determine the value of the passed node)
@@ -219,7 +236,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (greatest) value
      */
-    protected Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
+    protected Node<T> alphaBetaMaximize(Node<T> parent, int depthLeft, int alpha, int beta, int currentDepth) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -227,9 +244,10 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
          */
 
         this.increaseEvaluatedNodeCount();
+        parent.writeContentToHistory();
 
         // assign static evaluation to leaves
-        boolean leaf = evaluateIfLeaf(parent, depth);
+        boolean leaf = evaluateIfLeaf(parent, depthLeft);
         if (leaf) {
             parent.deleteContentFromHistory();
             return parent;
@@ -253,7 +271,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
                 // evaluate all children
                 // if this node is maximizing, child nodes are minimizing
                 // child nodes are passed the determined alpha and beta values
-                alphaBetaMinimize(child, depth - 1, alpha, beta);
+                alphaBetaMinimize(child, depthLeft - 1, alpha, beta, currentDepth + 1);
 
                 // read value of child node = value of the node returned by alphaBetaMinimize(child ...)
                 childValue = child.getValue();
@@ -292,12 +310,15 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
             }
 
             // delete children from tree after parent was evaluated
-            parent.deleteChildren();
+            if (currentDepth > 3) {
+                parent.deleteChildren();
+            }
 
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
+            parent.deleteContentFromHistory();
             return bestChild;
 
         } catch (UninitializedValueException exception) {

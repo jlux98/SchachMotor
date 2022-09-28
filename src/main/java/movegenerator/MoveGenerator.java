@@ -23,6 +23,10 @@ public abstract class MoveGenerator {
 
     public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(9);
 
+    public static void shutDownThreads() {
+        executor.shutdown();
+    }
+
     /**
      * A method that generates all possible follow-up-positions for a given game
      * state
