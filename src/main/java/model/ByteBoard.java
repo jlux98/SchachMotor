@@ -152,7 +152,8 @@ public class ByteBoard implements Board {
             }
             spaceStrings[rank] = result;
         }
-        return Arrays.toString(spaceStrings).replace(", ", ",\n");
+         return Arrays.toString(spaceStrings).replace(", ", ",\n").replace("[", "").replace("]", "");
+         
     }
 
     @Override

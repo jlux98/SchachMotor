@@ -1,11 +1,13 @@
 package classes;
 
+import gametree.GameNode;
 import helper.TreePrinter;
+import uciservice.FenParser;
 
 /**
  * Nodes used as placeholder for "missing" nodes in incomplete trees by {@link TreePrinter}.
  */
-public class AlignmentNode extends IntNode {
+public class AlignmentNode extends GameNode {
     private static String TO_STRING = "x";
 
     /**
@@ -13,7 +15,7 @@ public class AlignmentNode extends IntNode {
      * The super instance of IntNode stores a content of 0.
      */
     public AlignmentNode() {
-        super(0);
+        super(FenParser.parseFen("qbnrbnkr/pppppppp/8/8/8/8/PPPPPPPP/QBNRBNKR w - - 0 1"));
     }
 
     /**

@@ -40,6 +40,7 @@ public abstract class MoveGenerator {
     public static Position[] generatePossibleMoves(Position position) {
         List<Position> followUpPositions = new ArrayList<>(); //is hashset preferable over array for us? set initial size of hashset in constructor
         for (int rank = 0; rank < 8; rank++) {
+        //for (int rank = 7; rank >= 0; rank--) { //iterate ranks in reverse so knight moves are seen before pawn moves
             for (int file = 0; file < 8; file++) {
                 List<Position> results = generatePossibleMovesPerPiece(position, rank, file);
                 if (results != null){

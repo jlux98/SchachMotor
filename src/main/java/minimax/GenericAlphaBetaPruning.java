@@ -3,8 +3,10 @@ package minimax;
 import java.util.List;
 
 import gametree.ComputeChildrenException;
+import gametree.GameNode;
 import gametree.Node;
 import gametree.Tree;
+import model.Position;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
@@ -51,18 +53,192 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta,
-            boolean whiteNextMove) {
-
+    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
+        Node<T> result;
+        Node<T> realresult = null;
         if (whiteNextMove) {
             // maximize this node
-            return alphaBetaMaximize(parent, depth, alpha, beta);
+            result = alphaBetaMaximize(parent, depth, alpha, beta);
 
         } else {
             // minimize this node
-            return alphaBetaMinimize(parent, depth, alpha, beta);
+            result = alphaBetaMinimize(parent, depth, alpha, beta);
 
         }
+
+        System.out.println("best move with bestchild:");
+        System.out.println("value: " + result.getValue());
+        System.out.println(result);
+        try {
+            int bestValue = Integer.MAX_VALUE; //smake it obvious if bestvalue init leaks
+            List<? extends Node<T>> children = parent.queryChildren();
+            /* if (whiteNextMove) {
+                bestValue = Integer.MIN_VALUE;
+                for (Node<T> node : children) {
+                    if (node.getValue() > bestValue) {
+                        result = node;
+                        realresult = node;
+                        bestValue = node.getValue();
+                    }
+                }
+            } else {
+                bestValue = Integer.MAX_VALUE;
+                for (Node<T> node : children) {
+                    if (node.getValue() < bestValue) {
+                        result = node;
+                        realresult = node;
+                        bestValue = node.getValue();
+                    }
+                }
+            } */
+            
+            for (Node<T> node : children) {
+                if (((GameNode) node).getRepresentedMove().toStringAlgebraic().equals("b7b6")) {
+                    result = node;
+                    bestValue = result.getValue();
+                    break;
+                }
+            }
+
+            System.out.println("proper best move:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return result;
+            }
+
+            for (Node<T> node : children) {
+                if (((GameNode) node).getRepresentedMove().toStringAlgebraic().equals("c8b7")) {
+                    result = node;
+                    bestValue = result.getValue();
+                    break;
+                }
+            }
+
+            System.out.println("proper best move:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return result;
+            }
+
+
+            children = result.queryChildren();
+            result = null;
+            for (Node<T> node : children) {
+                if (node.getValue() == bestValue) {
+                    result = node;
+                    bestValue = node.getValue();
+                    break;
+                }
+            }
+            System.out.println("counter move for opponent:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return realresult;
+            }
+
+            children = result.queryChildren();
+            result = null;
+            for (Node<T> node : children) {
+                if (node.getValue() == bestValue) {
+                    result = node;
+                    bestValue = node.getValue();
+                    break;
+                }
+            }
+            System.out.println("own answer:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return realresult;
+            }
+
+            children = result.queryChildren();
+            result = null;
+            for (Node<T> node : children) {
+                if (node.getValue() == bestValue) {
+                    result = node;
+                    bestValue = node.getValue();
+                    break;
+                }
+            }
+            System.out.println("opponent answer:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return realresult;
+            }
+
+            children = result.queryChildren();
+            result = null;
+            for (Node<T> node : children) {
+                if (node.getValue() == bestValue) {
+                    result = node;
+                    bestValue = node.getValue();
+                    break;
+                }
+            }
+            System.out.println("own answer:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return realresult;
+            }
+
+            children = result.queryChildren();
+            result = null;
+            for (Node<T> node : children) {
+                if (node.getValue() == bestValue) {
+                    result = node;
+                    bestValue = node.getValue();
+                    break;
+                }
+            }
+            System.out.println("opponent answer:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return realresult;
+            }
+
+            children = result.queryChildren();
+            result = null;
+            for (Node<T> node : children) {
+                if (node.getValue() == bestValue) {
+                    result = node;
+                    bestValue = node.getValue();
+                    break;
+                }
+            }
+            System.out.println("own answer:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return realresult;
+            }
+
+            children = result.queryChildren();
+            result = null;
+            for (Node<T> node : children) {
+                if (node.getValue() == bestValue) {
+                    result = node;
+                    bestValue = node.getValue();
+                    break;
+                }
+            }
+            System.out.println("opponent answer:");
+            System.out.println("value: " + result.getValue());
+            System.out.println(result);
+            if (!result.hasChildren()) {
+                return realresult;
+            }
+
+        } catch (ComputeChildrenException e) {
+            throw new IllegalStateException("uh oh");
+        }
+        return result;
     }
 
     /**
@@ -91,12 +267,16 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
-            case 1:
-                parent.evaluateStatically(false, depth);
-                return parent;
-            case 2:
-                parent.evaluateStatically(true, depth);
-                return parent;
+        case 1:
+            parent.evaluateStatically(false, depth);
+            return parent;
+        case 2:
+            //System.out.println("pre value: " + parent.getValue());
+            parent.evaluateStatically(true, depth);
+            /* System.out.println("minimize in depth: " + depth);
+            System.out.println("evaluated value: " + parent.getValue());
+            System.out.println(parent.getContent()); */
+            return parent;
         }
 
         try {
@@ -193,12 +373,16 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
-            case 1:
-                parent.evaluateStatically(false, depth);
-                return parent;
-            case 2:
-                parent.evaluateStatically(true, depth);
-                return parent;
+        case 1:
+            parent.evaluateStatically(false, depth);
+            return parent;
+        case 2:
+            //System.out.println("pre value: " + parent.getValue());
+            parent.evaluateStatically(true, depth);
+            /* System.out.println("maximize in depth: " + depth);
+            System.out.println("evaluated value: " + parent.getValue());
+            System.out.println(parent.getContent()); */
+            return parent;
         }
 
         try {

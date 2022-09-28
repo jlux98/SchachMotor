@@ -893,16 +893,4 @@ public class MoveGeneratorTest {
                 assertNotNull(bishopCapture);                
     }
 
-    @Test
-    public void Test() {
-        Position pos1 = FenParser.parseFen("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 b - - 1 1");
-        Position pos2 = FenParser.parseFen("2qk4/3r4/8/2Q3K1/8/8/8/8 w - - 1 1");
-        System.out.println(PositionEvaluator.evaluatePosition(pos1, false, -1));
-        System.out.println(PositionEvaluator.evaluatePosition(pos2, false, -1));
-    }
-
-    public static void main(String[] args) {
-        new MoveGeneratorTest().Test();
-    }
-
 }

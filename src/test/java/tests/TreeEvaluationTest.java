@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -12,11 +13,16 @@ import data.IntNodeAsymmetricTestTree;
 import data.IntNodeSmallAsymmetricTestTree;
 import data.IntNodeWikipediaTestTree;
 import helper.IntTreeEvaluationHelper;
+import helper.MoveGeneratorHelper;
 import helper.GameTreeEvaluationHelper;
 import helper.IntNodeHelper;
+import minimax.GameNodeAlphaBetaPruning;
+import minimax.GameNodeMiniMax;
+import minimax.GenericAlphaBetaPruning;
 import minimax.TreeEvaluator;
 import model.Move;
 import model.Position;
+import positionevaluator.PositionEvaluator;
 import uciservice.FenParser;
 
 import static java.lang.Integer.MAX_VALUE;
@@ -157,8 +163,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -170,8 +176,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -182,8 +188,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -195,8 +201,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -303,4 +309,30 @@ public abstract class TreeEvaluationTest {
                 .getMove();
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void zugzwangStallTest() throws ComputeChildrenException {
+        //FIXME c7c8 is fine
+        gameTreeEvaluator.assertBestMoveNotIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 w - - 0 1", 5, true, "c7c8", "c5f8");
+    }
+
+    @Test
+    public void bestMoveTest() throws ComputeChildrenException {
+
+        //FIXME d7d5 is fine
+        gameTreeEvaluator.assertBestMoveIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 b - - 0 1", 5, false, "d7d5");
+    }
+
+    @Test
+    public void Test() throws ComputeChildrenException {
+        GameTreeEvaluationHelper minimax = new GameTreeEvaluationHelper(() -> new GameNodeMiniMax());
+        minimax.assertBestMoveIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 b - - 0 1", 4, false, "d7c7", "d7d5");
+        minimax.assertBestMoveNotIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 w - - 0 1", 4, true, "c7c8");
+    }
+
+    @Test
+    public void startTest() {
+        gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 5, true);
+    }
+
 }

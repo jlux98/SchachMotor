@@ -90,7 +90,7 @@ public class IntNodeSmallAsymmetricTestTree implements Tree<IntNode> {
     }
 
    public void printTree() throws ComputeChildrenException {
-    TreePrinter.alignAndPrintTree(this, 3);
+    //TreePrinter.alignAndPrintTree(this, 3);
    }
 
 }

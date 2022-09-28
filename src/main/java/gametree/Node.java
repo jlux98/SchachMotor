@@ -116,5 +116,7 @@ public interface Node<T> extends Evaluable {
     //List<S extends T> list = new List<A>;
     //list.add(new B()) <- not type safe as a List<A> does not accept B
     public abstract List<? extends Node<T>> queryChildren() throws ComputeChildrenException;
-
+    
+    public StringBuilder getAlignedRepresentation();
+    public void setAlignedRepresentation(StringBuilder whitespaceAlignedRepresentation);
 }
