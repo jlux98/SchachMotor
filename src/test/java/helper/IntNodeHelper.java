@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import classes.IntNode;
+import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.ImpTree;
 import gametree.Node;
@@ -47,6 +48,16 @@ public class IntNodeHelper {
      */
     public static void compareIntNodeValue(int expected, IntNode node) {
         assertEquals(expected, node.getValue());
+    }
+
+    /**
+     * Compares the IntNode's static value (= stored integer) to the expected value.
+     * @param expectedStaticValue the expected static value
+     * @param node the node
+     */
+    public static void compareStaticIntNodeValue(int expectedStaticValue, IntNode node) {
+        //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
+        assertEquals(expectedStaticValue, node.roughlyEvaluateStatically());
     }
 
     /**
@@ -128,39 +139,48 @@ public class IntNodeHelper {
     }
 
     /**
-     * Creates a binary tree with the specified leaf values.
-     * @param values the values that should be stored by the leaf nodes
-     * @return the tree's root node
+     * Inverts the content stored in the tree's leaf nodes (content = -1 * content).
+     * @param tree tree whose leaves should be inverted
      */
-    /* public static IntNode createBinaryTree(int depth, int... values) {
-        if (Math.pow(2, depth) != values.length) { //no delta for comparison should be fine in this value range
-            throw new IllegalArgumentException("value count != 2^depth, but a value for each leaf is required");
+    public static void invertLeaves(Tree<? extends Node<Integer>> tree) {
+        invertLeaves(tree.getRoot());
+    }
+
+    /**
+     * Inverts the content stored in this node if it is a leaf (cont = -1 * content).
+     * Otherwise, inverts the content stored by its children.
+     * @param node node whose value or whose childrens' value should be inverted
+     */
+    public static void invertLeaves(Node<Integer> node) {
+        //invert node if it has no children
+        if (!node.hasChildren()) {
+            invertLeaf(node);
+            return;
         }
-        //create a binary tree by using createParent
-        //add a variant of createParent that takes values instead of nodes
-    
-        //translate values into intnodes wihtout parents
-        List<IntNode> children = new ArrayList<IntNode>();
-        for (int i : values) {
-            children.add(new IntNode(i));
+        //iterate tree and call invertLeaves on each node
+        for (Node<Integer> child : ((IntNode) node).getChildren()) {
+            invertLeaves((IntNode) child);
         }
-    
-        List<IntNode> parents = new ArrayList<IntNode>();
-        for (int j = 0; j < depth; j++) { //while(children.size() != 1)
-            //System.out.println(children.size());
-            for (int i = 0; i < children.size(); i++) {
-                parents.add(createParent(children.get(i), children.get(i + 1)));
-                i++; //skip the child at i+1
-            }
-            children = parents; //last iteration's parents are next iteration's children
-            parents = new ArrayList<IntNode>(children.size() / 2); //create a new parent list (cant call parents.clear() because that would delete the children list)
+    }
+
+    /**
+     * Inverts a leaf by multiplying its content with -1.
+     * @param node leaf node whose value should be inverted
+     */
+    public static void invertLeaf(Node<Integer> node) {
+        int content = node.getContent();
+        if (content == Integer.MIN_VALUE) {
+            //required as MIN_VALUE * -1 == MIN_VALUE
+            node.setContent(Integer.MAX_VALUE);
+            return;
         }
-        if (children.size() != 1) {
-            //number of iterations was wrong
-            throw new IllegalStateException("createBinaryTree failed to construct a tree and identify its root");
+        if (content == Integer.MAX_VALUE) {
+            //required as MAX_VALUE * -1 == MIN_VALUE + 1
+            node.setContent(Integer.MIN_VALUE);
+            return;
         }
-        return children.get(0);
-    } */
+        node.setContent(content * -1);
+    }
 
     @Test
     public void createRootNodeTest() throws ComputeChildrenException {
@@ -168,20 +188,54 @@ public class IntNodeHelper {
         IntNode root = tree.getRoot();
 
         //list containing 2 inner nodes
-        List<? extends Node<Integer>> layer1 = root.queryChildren();
+        List<? extends Node<Integer>> layer1 = root.getOrCompute();
         assertEquals(layer1.size(), 2);
 
         //lists containing 2 leaf nodes each
-        List<? extends Node<Integer>> layer2children1 = layer1.get(0).queryChildren();
-        List<? extends Node<Integer>> layer2children2 = layer1.get(1).queryChildren();
+        List<? extends Node<Integer>> layer2children1 = layer1.get(0).getOrCompute();
+        List<? extends Node<Integer>> layer2children2 = layer1.get(1).getOrCompute();
 
         assertEquals(layer2children1.size(), 2);
         assertEquals(layer2children2.size(), 2);
-        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).queryChildren());
-        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).getOrCompute());
+        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).getOrCompute());
         assertEquals(1, layer2children1.get(0).getContent());
         assertEquals(2, layer2children1.get(1).getContent());
         assertEquals(3, layer2children2.get(0).getContent());
         assertEquals(4, layer2children2.get(1).getContent());
     }
+
+    @Test
+    public void invertLeavesTest() throws ComputeChildrenException {
+        IntNodeWikipediaTestTree testTree = new IntNodeWikipediaTestTree();
+        invertLeaves(testTree);
+
+        NodeHelper.verifyChildren(testTree.root, testTree.layer1Node0, testTree.layer1Node1);
+        //layer 1
+        NodeHelper.verifyChildren(testTree.layer1Node0, testTree.layer2Node0, testTree.layer2Node1);
+        NodeHelper.verifyChildren(testTree.layer1Node1, testTree.layer2Node2, testTree.layer2Node3);
+        //layer2
+        NodeHelper.verifyChildren(testTree.layer2Node0, testTree.layer3Node0, testTree.layer3Node1);
+        NodeHelper.verifyChildren(testTree.layer2Node1, testTree.layer3Node2);
+        NodeHelper.verifyChildren(testTree.layer2Node2, testTree.layer3Node3, testTree.layer3Node4);
+        NodeHelper.verifyChildren(testTree.layer2Node3, testTree.layer3Node5);
+        //layer 3
+        NodeHelper.verifyChildren(testTree.layer3Node0, testTree.layer4Node0, testTree.layer4Node1);
+        NodeHelper.verifyChildren(testTree.layer3Node1, testTree.layer4Node2);
+        NodeHelper.verifyChildren(testTree.layer3Node2, testTree.layer4Node3);
+        NodeHelper.verifyChildren(testTree.layer3Node3, testTree.layer4Node4, testTree.layer4Node5);
+        NodeHelper.verifyChildren(testTree.layer3Node4, testTree.layer4Node6);
+        NodeHelper.verifyChildren(testTree.layer3Node5, testTree.layer4Node7, testTree.layer4Node8);
+        //layer 4: leaf values
+        assertEquals(-10, testTree.layer4Node0.getContent());
+        assertEquals(Integer.MIN_VALUE, testTree.layer4Node1.getContent());
+        assertEquals(-5, testTree.layer4Node2.getContent());
+        assertEquals(10, testTree.layer4Node3.getContent());
+        assertEquals(-7, testTree.layer4Node4.getContent());
+        assertEquals(-5, testTree.layer4Node5.getContent());
+        assertEquals(Integer.MAX_VALUE, testTree.layer4Node6.getContent());
+        assertEquals(7, testTree.layer4Node7.getContent());
+        assertEquals(5, testTree.layer4Node8.getContent());
+    }
+
 }

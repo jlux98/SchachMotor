@@ -44,7 +44,7 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
         }
         try {
             // attempt to retrieve or if none are stored calculate children
-            parent.queryChildren();
+            parent.getOrCompute();
         } catch (ComputeChildrenException exception) {
             // node could not generate children -> is a leaf
             return 2;

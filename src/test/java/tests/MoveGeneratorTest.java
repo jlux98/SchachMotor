@@ -1,4 +1,5 @@
 package tests;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -9,11 +10,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import data.MoveGeneratorData;
+import gametree.ComputeChildrenException;
+import gametree.GameNode;
+import gametree.Node;
 import helper.Mirror;
 import helper.MoveGeneratorHelper;
 import helper.PositionHelper;
 import model.Position;
 import movegenerator.MoveGenerator;
+import positionevaluator.PositionEvaluator;
 import uciservice.FenParser;
 
 import static model.PieceEncoding.*;
@@ -22,18 +27,17 @@ public class MoveGeneratorTest {
 
     private static Position blackCastlingPosition;
     private static Position whiteCastlingPosition;
-    
+
     /**
      * Shared empty list instance. Never add anything to this list!
      */
     private static final List<Position> EMPTY_LIST = new ArrayList<Position>(0);
-    
 
     @BeforeAll
     public static void setup() {
         blackCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R b KQkq - 0 1");
         whiteCastlingPosition = FenParser.parseFen("r3k2r/p6p/8/8/8/8/P6P/R3K2R w KQkq - 0 1");
-   }
+    }
 
     @Test
     public void pawnCheckDetectionTest() {
@@ -44,7 +48,7 @@ public class MoveGeneratorTest {
     }
 
     @Test
-    public void pawnStepGenerationTestDoubleStepAllowed(){
+    public void pawnStepGenerationTestDoubleStepAllowed() {
         // Pawn can either do a double step or a single step
 
         Position stepPositionWhite = FenParser.parseFen ("8/7k/8/8/8/8/P7/K7 " +
@@ -56,7 +60,7 @@ public class MoveGeneratorTest {
             "b - a3 0 1");
         Collections.sort(expectedPositionsWhite);
         List<Position>actualPositionsWhite = new ArrayList<Position>(
-            MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 6, 0));
+                MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 6, 0));
         Collections.sort(actualPositionsWhite);
         MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
 
@@ -69,13 +73,13 @@ public class MoveGeneratorTest {
             "w - a6 0 2");
         Collections.sort(expectedPositionsBlack);
         List<Position>actualPositionsBlack = new ArrayList<Position>(
-            MoveGenerator.generatePossibleMovesPerPiece(stepPositionBlack, 1, 0));
+                MoveGenerator.generatePossibleMovesPerPiece(stepPositionBlack, 1, 0));
         Collections.sort(actualPositionsBlack);
         MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsBlack, actualPositionsBlack);
     }
 
     @Test
-    public void pawnStepGenerationTestDoubleStepNotAllowed(){
+    public void pawnStepGenerationTestDoubleStepNotAllowed() {
         // Pawn should only do a single step
 
         Position stepPositionWhite = FenParser.parseFen ("8/7k/8/8/8/P7/8/K7 " +
@@ -85,7 +89,7 @@ public class MoveGeneratorTest {
             "b - - 0 1");
         Collections.sort(expectedPositionsWhite);
         List<Position>actualPositionsWhite = new ArrayList<Position>(
-            MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 5, 0));
+                MoveGenerator.generatePossibleMovesPerPiece(stepPositionWhite, 5, 0));
         Collections.sort(actualPositionsWhite);
         MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionsWhite, actualPositionsWhite);
 
@@ -158,7 +162,7 @@ public class MoveGeneratorTest {
             MoveGenerator.generatePossibleMovesPerPiece(enPassantRightPosition,1,1));
         MoveGeneratorHelper.compareFenStringsToPosition(expectedPositionRight, actualPositionsRight);
     }
-    
+
     @Test
     public void knightGenerationTest() {
         Position knightPosition = FenParser.parseFen("7k/1n6/8/P7/8/8/8/7K b KQkq - 0 1");
@@ -195,7 +199,7 @@ public class MoveGeneratorTest {
         expectedPositions.add("7K/8/8/8/8/8/3k4/8 w - - 0 2");
         expectedPositions.add("7K/8/8/8/8/8/3P4/2k5 w - - 1 2");
         expectedPositions.add("7K/8/8/8/8/8/3P4/4k3 w - - 1 2");
-        
+
         MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(kingPosition, BLACK_KING, 7, 3, expectedPositions);
     }
 
@@ -226,8 +230,6 @@ public class MoveGeneratorTest {
         MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(castlingPosition, WHITE_KING, 7, 4, expectedPosition);
     }
 
-
-
     @Test
     public void moveBishopTest() {
         Position bishopTestPosition = FenParser.parseFen("7K/8/1n6/4P3/3b4/8/8/7k b - - 0 1"); //bishop starts at d4
@@ -242,7 +244,8 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/5b2/7k w - - 1 2"); //move to f2 - two squares to bottom right
         expectedfollowUpPositions.add("7K/8/1n6/4P3/8/8/8/6bk w - - 1 2"); //move to g1 - three squares to bottom right
 
-        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(bishopTestPosition, BLACK_BISHOP, 4, 3, expectedfollowUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(bishopTestPosition, BLACK_BISHOP, 4, 3,
+                expectedfollowUpPositions);
     }
 
     @Test
@@ -271,7 +274,8 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k1r1/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to g8 - one square to the left
         expectedfollowUpPositions.add("r3kr2/p6p/8/8/8/8/P6P/R3K2R w KQq - 1 2"); //move to f8 - two squares to the left
 
-        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(blackCastlingPosition, BLACK_ROOK, 0, 7, expectedfollowUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(blackCastlingPosition, BLACK_ROOK, 0, 7,
+                expectedfollowUpPositions);
     }
 
     @Test
@@ -281,7 +285,8 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("2r1k2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to c8 - two squares to the right
         expectedfollowUpPositions.add("3rk2r/p6p/8/8/8/8/P6P/R3K2R w KQk - 1 2"); //move to d8 - three squares to the right
 
-        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(blackCastlingPosition, BLACK_ROOK, 0, 0, expectedfollowUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(blackCastlingPosition, BLACK_ROOK, 0, 0,
+                expectedfollowUpPositions);
 
     }
 
@@ -291,7 +296,8 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3K1R1 b Qkq - 1 1"); //move to g1 - one square to the left
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/R3KR2 b Qkq - 1 1"); //move to f1 - two squares to the left
 
-        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(whiteCastlingPosition, WHITE_ROOK, 7, 7, expectedfollowUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(whiteCastlingPosition, WHITE_ROOK, 7, 7,
+                expectedfollowUpPositions);
     }
 
     @Test
@@ -302,7 +308,8 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/2R1K2R b Kkq - 1 1"); //move to c1 - two squares to the right
         expectedfollowUpPositions.add("r3k2r/p6p/8/8/8/8/P6P/3RK2R b Kkq - 1 1"); //move to d1 - three squares to the right
 
-        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(whiteCastlingPosition, WHITE_ROOK, 7, 0, expectedfollowUpPositions);
+        MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(whiteCastlingPosition, WHITE_ROOK, 7, 0,
+                expectedfollowUpPositions);
     }
 
     @Test
@@ -345,8 +352,9 @@ public class MoveGeneratorTest {
         //copy array data into list
         List<Position> actualFollowUpPositions = new ArrayList<Position>();
         Collections.addAll(actualFollowUpPositions, actualFollowUpPositionsArray);
-        
-        MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), actualFollowUpPositions);
+
+        MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(),
+                actualFollowUpPositions);
 
         //mirrored test
         Position mirroredAllBlackPiecesPosition = Mirror.mirrorPosition(allBlackPiecesPosition);
@@ -356,7 +364,8 @@ public class MoveGeneratorTest {
         List<Position> mirroredActualFollowUpPositions = new ArrayList<Position>();
         Collections.addAll(mirroredActualFollowUpPositions, mirroredActualFollowUpPositionsArray);
 
-         MoveGeneratorHelper.mirrorFenStringsAndCompareToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), mirroredActualFollowUpPositions);
+        MoveGeneratorHelper.mirrorFenStringsAndCompareToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(),
+                mirroredActualFollowUpPositions);
     }
 
     @Test
@@ -417,7 +426,6 @@ public class MoveGeneratorTest {
         MoveGenerator.generatePossibleMoves(captureAndPromotion);
         MoveGenerator.generatePossibleMoves(blockedByPieceOnLastRank);
 
-        
         MoveGenerator.generatePossibleMoves(Mirror.mirrorPosition(promotion));
         MoveGenerator.generatePossibleMoves(Mirror.mirrorPosition(captureAndPromotion));
         MoveGenerator.generatePossibleMoves(Mirror.mirrorPosition(blockedByPieceOnLastRank));
@@ -595,6 +603,279 @@ public class MoveGeneratorTest {
         expectedfollowUpPositions.add("k5N1/8/8/8/8/8/8/K7 b - - 0 25"); //capture on g8, promote to knight
 
         MoveGeneratorHelper.verifyPieceMoveGenerationWithFenStrings(pawnPosition, WHITE_PAWN, 1, 5, expectedfollowUpPositions);
+    }
+
+    @Test
+    public void mirrorBlackFirstMove() {
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("r1bqkbnr/pppppppp/2n5/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("r1bqkbnr/pppppppp/2n5/8/8/1P6/P1PPPPPP/RNBQKBNR b KQkq - 0 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1rbqkbnr/pppppppp/2n5/8/8/1P6/P1PPPPPP/RNBQKBNR w KQk - 1 3");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1rbqkbnr/pppppppp/2n5/8/8/1P6/PBPPPPPP/RN1QKBNR b KQk - 2 3");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("r1bqkbnr/pppppppp/2n5/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 3 4");
+    }
+
+    @Test
+    public void mirrorWhiteFirstMove() {
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq - 0 1");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/1ppppppp/p7/8/8/P7/1PPPPPPP/RNBQKBNR w KQkq - 0 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("rnbqkbnr/1ppppppp/p7/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 2");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1nbqkbnr/rppppppp/p7/8/P7/8/1PPPPPPP/RNBQKBNR w KQk - 1 3");
+        MoveGeneratorHelper.compareWhiteAndBlackMoveGeneration("1nbqkbnr/rppppppp/p7/P7/8/8/1PPPPPPP/RNBQKBNR b KQk - 0 3");
+    }
+
+    @Test
+    public void moveGenerationStartPositionTest() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "a2a3", "b2b3", "c2c3",
+                "d2d3", "e2e3", "f2f3", "g2g3", "h2h3", "a2a4", "b2b4", "c2c4", "d2d4", "e2e4", "f2f4", "g2g4", "h2h4", "b1a3",
+                "b1c3", "g1f3", "g1h3");
+    }
+
+    @Test
+    public void moveGenerationMove2Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", "a7a6", "b7b6",
+                "c7c6", "d7d6", "e7e6", "f7f6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "d7d5", "e7e5", "f7f5", "g7g5", "h7h5",
+                "b8a6", "b8c6", "g8f6", "g8h6");
+    }
+
+    @Test
+    public void moveGenerationMove3Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2", "a2a3", "b2b3",
+                "c2c3", "d2d3", "f2f3", "g2g3", "h2h3", "a2a4", "b2b4", "c2c4", "d2d4", "f2f4", "g2g4", "h2h4", "b1a3", "b1c3",
+                "g1e2", "g1f3", "g1h3", "f1e2", "f1d3", "f1c4", "f1b5", "f1a6", "d1e2", "d1f3", "d1g4", "d1h5", "e1e2");
+    }
+
+    @Test
+    public void moveGenerationMove4Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2", "a7a6", "b7b6",
+                "c7c6", "d7d6", "f7f6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "d7d5", "f7f5", "g7g5", "h7h5", "b8a6", "b8c6",
+                "g8f6", "g8h6", "g8e7", "f8a3", "f8b4", "f8c5", "f8d6", "f8e7", "d8h4", "d8g5", "d8f6", "d8e7", "e8e7");
+    }
+
+    @Test
+    public void moveGenerationMove5Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3", "a2a3", "b2b3",
+                "c2c3", "d2d3", "g2g3", "h2h3", "a2a4", "b2b4", "c2c4", "d2d4", "g2g4", "h2h4", "b1a3", "b1c3", "f3g1", "f3d4",
+                "f3h4", "f3e5", "f3g5", "f1e2", "f1d3", "f1c4", "f1b5", "f1a6", "h1g1", "d1e2", "e1e2");
+    }
+
+    @Test
+    public void moveGenerationMove6Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkb1r/pppp1ppp/5n2/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3", "a7a6", "b7b6",
+                "c7c6", "d7d6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "d7d5", "g7g5", "h7h5", "e5d4", "f6e4", "f6g4", "f6d5",
+                "f6h5", "f6g8", "b8a6", "b8c6", "f8a3", "f8b4", "f8c5", "f8d6", "f8e7", "h8g8", "d8e7", "e8e7");
+
+    }
+
+    @Test
+    public void moveGenerationMove7Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkb1r/pppp1ppp/8/4p3/3Pn3/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 4",
+
+                "a2a3", "b2b3", "c2c3", "g2g3", "h2h3", "d4d5", "a2a4", "b2b4", "c2c4", "g2g4", "h2h4", "d4e5", "b1d2", "b1a3",
+                "b1c3", "f3g1", "f3d2", "f3h4", "f3e5", "f3g5", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "f1e2", "f1d3", "f1c4",
+                "f1b5", "f1a6", "h1g1", "d1d2", "d1e2", "d1d3", "e1e2");
+
+    }
+
+    @Test
+    public void moveGEnerationMove8Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkb1r/pppp1ppp/8/4N3/3Pn3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4", "a7a6", "b7b6",
+                "c7c6", "d7d6", "f7f6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "d7d5", "f7f5", "g7g5", "h7h5", "e4d2", "e4f2",
+                "e4c3", "e4g3", "e4c5", "e4g5", "e4d6", "e4f6", "b8a6", "b8c6", "f8a3", "f8b4", "f8c5", "f8d6", "f8e7", "h8g8",
+                "d8h4", "d8g5", "d8f6", "d8e7", "e8e7");
+    }
+
+    @Test
+    public void moveGenerationMove9Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkb1r/ppp2ppp/8/3pN3/3Pn3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5", "a2a3", "b2b3",
+                "c2c3", "f2f3", "g2g3", "h2h3", "a2a4", "b2b4", "c2c4", "f2f4", "g2g4", "h2h4", "b1d2", "b1a3", "b1c3", "e5d3",
+                "e5f3", "e5c4", "e5g4", "e5c6", "e5g6", "e5d7", "e5f7", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "f1e2", "f1d3",
+                "f1c4", "f1b5", "f1a6", "h1g1", "d1d2", "d1e2", "d1d3", "d1f3", "d1g4", "d1h5", "e1e2");
+    }
+
+    @Test
+    public void moveGenerationMove10Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkb1r/ppp2ppp/8/3pN3/3Pn3/3B4/PPP2PPP/RNBQK2R b KQkq - 1 5", "a7a6", "b7b6",
+                "c7c6", "f7f6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "f7f5", "g7g5", "h7h5", "e4d2", "e4f2", "e4c3", "e4g3",
+                "e4c5", "e4g5", "e4d6", "e4f6", "b8a6", "b8c6", "b8d7", "c8h3", "c8g4", "c8f5", "c8e6", "c8d7", "f8a3", "f8b4",
+                "f8c5", "f8d6", "f8e7", "h8g8", "d8h4", "d8g5", "d8d6", "d8f6", "d8d7", "d8e7", "e8e7"
+
+        );
+    }
+
+    @Test
+    public void moveGenerationMove11Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r1bqkb1r/pppn1ppp/8/3pN3/3Pn3/3B4/PPP2PPP/RNBQK2R w KQkq - 2 6", "a2a3", "b2b3",
+                "c2c3", "f2f3", "g2g3", "h2h3", "a2a4", "b2b4", "c2c4", "f2f4", "g2g4", "h2h4", "b1d2", "b1a3", "b1c3", "e5f3",
+                "e5c4", "e5g4", "e5c6", "e5g6", "e5d7", "e5f7", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "d3f1", "d3e2", "d3c4",
+                "d3e4", "d3b5", "d3a6", "h1f1", "h1g1", "d1d2", "d1e2", "d1f3", "d1g4", "d1h5", "e1f1", "e1g1", "e1e2"
+
+        );
+    }
+
+    @Test
+    public void moveGenerationMoveT11Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r1bqkb1r/pppN1ppp/8/3p4/3Pn3/3B4/PPP2PPP/RNBQK2R b KQkq - 0 6", "a7a6", "b7b6",
+                "c7c6", "f7f6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "f7f5", "g7g5", "h7h5", "e4d2", "e4f2", "e4c3", "e4g3",
+                "e4c5", "e4g5", "e4d6", "e4f6", "c8d7", "f8a3", "f8b4", "f8c5", "f8d6", "f8e7", "a8b8", "h8g8", "d8h4", "d8g5",
+                "d8f6", "d8d7", "d8e7", "e8d7", "e8e7");
+    }
+
+    @Test
+    public void moveGenerationMove12Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qkb1r/pppb1ppp/8/3p4/3Pn3/3B4/PPP2PPP/RNBQK2R w KQkq - 0 7", "a2a3", "b2b3",
+                "c2c3", "f2f3", "g2g3", "h2h3", "a2a4", "b2b4", "c2c4", "f2f4", "g2g4", "h2h4", "b1d2", "b1a3", "b1c3", "c1d2",
+                "c1e3", "c1f4", "c1g5", "c1h6", "d3f1", "d3e2", "d3c4", "d3e4", "d3b5", "d3a6", "h1f1", "h1g1", "d1d2", "d1e2",
+                "d1f3", "d1g4", "d1h5", "e1f1", "e1g1", "e1e2");
+        //e1g1 is white castling kingside
+    }
+
+    @Test
+    public void moveGenerationMove13Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qkb1r/pppb1ppp/8/3p4/3Pn3/3B4/PPP2PPP/RNBQ1RK1 b kq - 1 7", "a7a6", "b7b6",
+                "c7c6", "f7f6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "f7f5", "g7g5", "h7h5", "e4d2", "e4f2", "e4c3", "e4g3",
+                "e4c5", "e4g5", "e4d6", "e4f6", "d7h3", "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "f8a3", "f8b4",
+                "f8c5", "f8d6", "f8e7", "a8b8", "a8c8", "h8g8", "d8h4", "d8g5", "d8f6", "d8e7", "d8b8", "d8c8", "e8e7");
+    }
+
+    @Test
+    public void moveGenerationMove14Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qkb1r/pppb1ppp/5n2/3p4/3P4/3B4/PPP2PPP/RNBQ1RK1 w kq - 2 8", "a2a3", "b2b3",
+                "c2c3", "f2f3", "g2g3", "h2h3", "a2a4", "b2b4", "c2c4", "f2f4", "g2g4", "h2h4", "b1d2", "b1a3", "b1c3", "c1d2",
+                "c1e3", "c1f4", "c1g5", "c1h6", "d3e2", "d3c4", "d3e4", "d3b5", "d3f5", "d3a6", "d3g6", "d3h7", "f1e1", "d1e1",
+                "d1d2", "d1e2", "d1f3", "d1g4", "d1h5", "g1h1");
+    }
+
+    @Test
+    public void moveGenerationMove15Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qkb1r/pppb1ppp/5n2/3p4/2PP4/3B4/PP3PPP/RNBQ1RK1 b kq - 0 8", "a7a6", "b7b6",
+                "c7c6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "g7g5", "h7h5", "d5c4", "f6e4", "f6g4", "f6h5", "f6g8", "d7h3",
+                "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "f8a3", "f8b4", "f8c5", "f8d6", "f8e7", "a8b8", "a8c8",
+                "h8g8", "d8e7", "d8b8", "d8c8", "e8e7");
+    }
+
+    @Test
+    public void moveGenerationMove16Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qk2r/pppbbppp/5n2/3p4/2PP4/3B4/PP3PPP/RNBQ1RK1 w kq - 1 9", "a2a3", "b2b3",
+                "f2f3", "g2g3", "h2h3", "c4c5", "a2a4", "b2b4", "f2f4", "g2g4", "h2h4", "c4d5", "b1d2", "b1a3", "b1c3", "c1d2",
+                "c1e3", "c1f4", "c1g5", "c1h6", "d3c2", "d3e2", "d3e4", "d3f5", "d3g6", "d3h7", "f1e1", "d1e1", "d1c2", "d1d2",
+                "d1e2", "d1b3", "d1f3", "d1a4", "d1g4", "d1h5", "g1h1");
+    }
+
+    @Test
+    public void moveGenerationMove17Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qk2r/pppbbppp/5n2/3p4/2PP4/2NB4/PP3PPP/R1BQ1RK1 b kq - 2 9", "a7a6", "b7b6",
+                "c7c6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "g7g5", "h7h5", "d5c4", "f6e4", "f6g4", "f6h5", "f6g8", "d7h3",
+                "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "e7a3", "e7b4", "e7c5", "e7d6", "e7f8", "a8b8", "a8c8",
+                "h8f8", "h8g8", "d8b8", "d8c8", "e8f8", "e8g8");
+    }
+
+    @Test
+    public void moveGenerationMove18Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qk2r/pppbbppp/5n2/8/2pP4/2NB4/PP3PPP/R1BQ1RK1 w kq - 0 10", "a2a3", "b2b3",
+                "f2f3", "g2g3", "h2h3", "d4d5", "a2a4", "b2b4", "f2f4", "g2g4", "h2h4", "c3b1", "c3e2", "c3a4", "c3e4", "c3b5",
+                "c3d5", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "d3b1", "d3c2", "d3e2", "d3c4", "d3e4", "d3f5", "d3g6", "d3h7",
+                "a1b1", "f1e1", "d1e1", "d1c2", "d1d2", "d1e2", "d1b3", "d1f3", "d1a4", "d1g4", "d1h5", "g1h1");
+    }
+
+    @Test
+    public void moveGenerationMove19Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2qk2r/pppbbppp/5n2/8/2BP4/2N5/PP3PPP/R1BQ1RK1 b kq - 0 10", "a7a6", "b7b6",
+                "c7c6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "g7g5", "h7h5", "f6e4", "f6g4", "f6d5", "f6h5", "f6g8", "d7h3",
+                "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "e7a3", "e7b4", "e7c5", "e7d6", "e7f8", "a8b8", "a8c8",
+                "h8f8", "h8g8", "d8b8", "d8c8", "e8f8", "e8g8");
+        //e8g8 is black castling kingside
+    }
+
+    @Test
+    public void moveGenerationMove20Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pppbbppp/5n2/8/2BP4/2N5/PP3PPP/R1BQ1RK1 w - - 1 11", "a2a3", "b2b3",
+                "f2f3", "g2g3", "h2h3", "d4d5", "a2a4", "b2b4", "f2f4", "g2g4", "h2h4", "c3b1", "c3e2", "c3a4", "c3e4", "c3b5",
+                "c3d5", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "c4e2", "c4b3", "c4d3", "c4b5", "c4d5", "c4a6", "c4e6", "c4f7",
+                "a1b1", "f1e1", "d1e1", "d1c2", "d1d2", "d1e2", "d1b3", "d1d3", "d1f3", "d1a4", "d1g4", "d1h5", "g1h1");
+    }
+
+    @Test
+    public void moveGenerationMove21Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pppbbppp/5n2/8/2BP4/2N5/PP3PPP/R1BQR1K1 b - - 2 11", "a7a6", "b7b6",
+                "c7c6", "g7g6", "h7h6", "a7a5", "b7b5", "c7c5", "g7g5", "h7h5", "f6e4", "f6g4", "f6d5", "f6h5", "f6e8", "d7h3",
+                "d7a4", "d7g4", "d7b5", "d7f5", "d7c6", "d7e6", "d7c8", "d7e8", "e7a3", "e7b4", "e7c5", "e7d6", "a8b8", "a8c8",
+                "f8e8", "d8b8", "d8c8", "d8e8", "g8h8");
+    }
+
+    @Test
+    public void moveGenerationMove22Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pp1bbppp/2p2n2/8/2BP4/2N5/PP3PPP/R1BQR1K1 w - - 0 12", "a2a3", "b2b3",
+                "f2f3", "g2g3", "h2h3", "d4d5", "a2a4", "b2b4", "f2f4", "g2g4", "h2h4", "c3b1", "c3e2", "c3a4", "c3e4", "c3b5",
+                "c3d5", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "c4f1", "c4e2", "c4b3", "c4d3", "c4b5", "c4d5", "c4a6", "c4e6",
+                "c4f7", "a1b1", "e1f1", "e1e2", "e1e3", "e1e4", "e1e5", "e1e6", "e1e7", "d1c2", "d1d2", "d1e2", "d1b3", "d1d3",
+                "d1f3", "d1a4", "d1g4", "d1h5", "g1f1", "g1h1");
+    }
+
+    @Test
+    public void moveGenerationMove23Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pp1bbppp/2p2n2/8/2BP4/2N4P/PP3PP1/R1BQR1K1 b - - 0 12", "c6c5", "a7a6", "b7b6", "g7g6", "h7h6", "a7a5", "b7b5", "g7g5", "h7h5",
+                "f6e4", "f6g4", "f6d5", "f6h5", "f6e8", "d7h3", "d7g4", "d7f5", "d7e6", "d7c8", "d7e8", "e7a3", "e7b4", "e7c5",
+                "e7d6", "a8b8", "a8c8", "f8e8", "d8a5", "d8b6", "d8c7", "d8b8", "d8c8", "d8e8", "g8h8");
+    }
+
+    @Test
+    public void moveGenerationMove24Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/p2bbppp/2p2n2/1p6/2BP4/2N4P/PP3PP1/R1BQR1K1 w - b6 0 12", "a2a3", "b2b3",
+                "f2f3", "g2g3", "h3h4", "d4d5", "a2a4", "b2b4", "f2f4", "g2g4", "c3b1", "c3e2", "c3a4", "c3e4", "c3b5", "c3d5",
+                "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "c4f1", "c4e2", "c4b3", "c4d3", "c4b5", "c4d5", "c4e6", "c4f7", "a1b1",
+                "e1f1", "e1e2", "e1e3", "e1e4", "e1e5", "e1e6", "e1e7", "d1c2", "d1d2", "d1e2", "d1b3", "d1d3", "d1f3", "d1a4",
+                "d1g4", "d1h5", "g1f1", "g1h1", "g1h2");
+    }
+
+    @Test
+    public void chaosPositionTest() {
+        MoveGeneratorHelper.verifyMoveGeneration("qb1rb3/1n6/2pkppn1/8/N1p1Q2r/P1P2P1P/1R1B2RK/1B3N2 b - - 0 1", "c6c5", "e6e5",
+                "f6f5", "g6f4", "g6e5", "g6e7", "g6f8", "g6h8", "b7a5", "b7c5", "b8a7", "b8c7", "e8d7", "e8f7", "h4h3", "h4e4",
+                "h4f4", "h4g4", "h4h5", "h4h6", "h4h7", "h4h8", "d8d7", "d8c8", "a8a4", "a8a5", "a8a6", "a8a7", "d6e7", "d6d7",
+                "d6c7");
+    }
+
+    @Test
+    public void onePossibleMoveTest() {
+        MoveGeneratorHelper.verifyMoveGeneration("1qRk4/3r4/8/2Q3K1/8/8/8/8 b - - 1 1", "b8c8");
+    }
+
+    @Test
+    public void blackSeesBishopMoveTest() throws ComputeChildrenException {
+        MoveGeneratorHelper.verifyMoveGeneration("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/R1BQKBNR b Kkq - 0 1", "b6b5", "a7a6",
+                "c7c6", "d7d6", "e7e6", "f7f6", "g7g6", "h7h6", "a7a5", "c7c5", "d7d5", "e7e5", "f7f5", "g7g5", "h7h5", "b8a6",
+                "b8c6", "g8f6", "g8h6", "c8a6", "c8b7");
+
+        GameNode node = new GameNode(FenParser.parseFen("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/R1BQKBNR b Kkq - 0 1"));
+        List<? extends Node<Position>> children = node.getOrCompute();
+        Position bishopMove = null;
+        for (Node<Position> child : children) {
+            if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("c8b7")) {
+                bishopMove = child.getContent();
+            }
+        }
+        assertNotNull(bishopMove);
+        assertEquals(40, PositionEvaluator.evaluatePosition(bishopMove, false, 0));
+    }
+
+
+    @Test
+    public void blackSeesCaptureTest() throws ComputeChildrenException {
+        MoveGeneratorHelper.verifyMoveGeneration("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", "b6b5", "a7a6",
+                "c7c6", "d7d6", "e7e6", "f7f6", "g7g6", "h7h6", "a7a5", "c7c5", "d7d5", "e7e5", "f7f5", "g7g5", "h7h5", "b8a6",
+                "b8c6", "g8f6", "g8h6", "b7g2", "b7f3", "b7e4", "b7d5", "b7a6", "b7c6", "b7c8", "d8c8");
+
+                GameNode node = new GameNode(FenParser.parseFen("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1"));
+                List<? extends Node<Position>> children = node.getOrCompute();
+                Position bishopCapture = null;
+                for (Node<Position> child : children) {
+                    if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("b7g2")) {
+                        bishopCapture = child.getContent();
+                    }
+                }
+                assertEquals(-115, PositionEvaluator.evaluatePosition(bishopCapture, false, 0));             
     }
 
 }

@@ -1,7 +1,5 @@
 package data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 
 import classes.IntNode;
@@ -16,12 +14,12 @@ import helper.NodeHelper;
    * Inner nodes have a value of 0.
    * Tree structure is the same as in the image.
    */
-public class IntNodeTestTree implements Tree<IntNode> {
+public class IntNodeWikipediaTestTree implements Tree<IntNode> {
 
     /**
      * Constructs a tree matching https://en.wikipedia.org/wiki/File:Minimax.svg.
      */
-    public IntNodeTestTree() {
+    public IntNodeWikipediaTestTree() {
         setUpTree();
     }
 
@@ -34,7 +32,7 @@ public class IntNodeTestTree implements Tree<IntNode> {
     //root would be layer0Node0
     //children of root are layer1Node0 and layer1Node1
     //layer 4 = leaves
-    public IntNode root;
+
     //layer 4
     public IntNode layer4Node0;
     public IntNode layer4Node1;
@@ -60,6 +58,8 @@ public class IntNodeTestTree implements Tree<IntNode> {
     //layer1
     public IntNode layer1Node0;
     public IntNode layer1Node1;
+    //layer0    
+    public IntNode root;
 
     //tree data source: https://en.wikipedia.org/wiki/File:Minimax.svg
     public void setUpTree() {
@@ -115,16 +115,15 @@ public class IntNodeTestTree implements Tree<IntNode> {
         NodeHelper.verifyChildren(this.layer3Node4, this.layer4Node6);
         NodeHelper.verifyChildren(this.layer3Node5, this.layer4Node7, this.layer4Node8);
         //layer 4: leaf values
-        assertEquals(10, this.layer4Node0.getContent());
-        assertEquals(Integer.MAX_VALUE, this.layer4Node1.getContent());
-        assertEquals(5, this.layer4Node2.getContent());
-        assertEquals(-10, this.layer4Node3.getContent());
-        assertEquals(7, this.layer4Node4.getContent());
-        assertEquals(5, this.layer4Node5.getContent());
-        assertEquals(Integer.MIN_VALUE, this.layer4Node6.getContent());
-        assertEquals(-7, this.layer4Node7.getContent());
-        assertEquals(-5, this.layer4Node8.getContent());
-
+        IntNodeHelper.compareStaticIntNodeValue(10, layer4Node0);
+        IntNodeHelper.compareStaticIntNodeValue(Integer.MAX_VALUE, layer4Node1);
+        IntNodeHelper.compareStaticIntNodeValue(5, layer4Node2);
+        IntNodeHelper.compareStaticIntNodeValue(-10, layer4Node3);
+        IntNodeHelper.compareStaticIntNodeValue(7, layer4Node4);
+        IntNodeHelper.compareStaticIntNodeValue(5, layer4Node5);
+        IntNodeHelper.compareStaticIntNodeValue(Integer.MIN_VALUE, layer4Node6);
+        IntNodeHelper.compareStaticIntNodeValue(-7, layer4Node7);
+        IntNodeHelper.compareStaticIntNodeValue(-5, layer4Node8);
     }
 
 }

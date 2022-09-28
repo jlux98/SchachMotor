@@ -6,7 +6,6 @@ import java.util.List;
 import model.Board;
 import model.PieceEncoding;
 import model.Position;
-import static model.PieceEncoding.*;
 
 public class KingMoveGenerator extends PieceMoveGenerator {
     

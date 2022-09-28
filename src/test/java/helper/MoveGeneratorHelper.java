@@ -3,11 +3,14 @@ package helper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import classes.MoveComparator;
 import model.Coordinate;
+import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;
@@ -15,27 +18,126 @@ import static model.PieceEncoding.*;
 
 public class MoveGeneratorHelper {
 
-        /**
-     * Verifies that the MoveGenerator generates the expected follow-up positions.
-     * Computes the follow-ups using 
-     * {@link MoveGenerator#generatePossibleMovesPerPiece(Position, int, int)
-     *  MoveGenerator.generatePossibleMovesPerPiece(position, rank, file)}
-     * and compares them to the expected follow ups.
-     * <p>
-     * Additionally, mirrors the passed position and the follow-up positions, invokes the MoveGeneration
-     * on the mirrored position and compares the mirrored follow-ups with the actual follow-ups
-     * of the mirrored position.
-     * @param position the position that follow-up positions should be generated for
-     * @param piece the piece on the specified rank and file 
-     * (used to make it easier to spot faulty invocations)
-     * @param rank rank of the piece to move
-     * @param file file of the piece to move
-     * @param expectedPositions the expected follow-up positions
+    /**
+     * Asserts that MoveGeneration generates the same moves for black as for white.
+     * Mirrors the given position and compares the follow-ups of
+     * the original and mirrored position.
+     * @param position position for which should be verified that black and white generate the same moves
      */
+    public static void compareWhiteAndBlackMoveGeneration(Position position) {
+        Position mirroredPosition = Mirror.mirrorPosition(position);
+
+        Position[] followUps = MoveGenerator.generatePossibleMoves(position);
+        Position[] mirroredPositionFollowUps = MoveGenerator.generatePossibleMoves(mirroredPosition);
+
+        List<Position> followUpsList = new ArrayList<Position>(followUps.length);
+        List<Position> mirroredPositionFollowUpsList = new ArrayList<Position>(mirroredPositionFollowUps.length);
+
+        Collections.addAll(followUpsList, followUps);
+        Collections.addAll(mirroredPositionFollowUpsList, mirroredPositionFollowUps);
+
+        mirrorExpectedAndComparePositions(followUpsList, mirroredPositionFollowUpsList);
+    }
+
+    /**
+     * Wrapper for {@link #compareWhiteAndBlackMoveGeneration(Position)} accepting FEN-strings for positions.
+     * @param fen the fen representing the testing position
+     */
+    public static void compareWhiteAndBlackMoveGeneration(String fen) {
+        compareWhiteAndBlackMoveGeneration(FenParser.parseFen(fen));
+    }
+
+    /**
+     * Sorts a list of positions by the algebraic representation of the moves stored by the positions.
+     * @param positions
+     */
+    private static void sortPositionsByMove(List<Position> positions) {
+        positions.sort(new MoveComparator());
+    }
+
+    /**
+     * 
+     * @param positions
+     * @return the list of moves in algebraic notation stored by the positions
+     */
+    private static List<String> extractAlgebraicMoves(List<Position> positions) {
+        List<String> moves = new ArrayList<String>(positions.size());
+        for (Position position : positions) {
+            moves.add(position.getMove().toStringAlgebraic());
+        }
+        return moves;
+    }
+
+    /**
+     * Mirrors the passed move and returns its algebraic representation.
+     * @param algebraicMove a move in algebraic notation
+     * @return the mirrored move
+     */
+    private static String mirrorAlgebraicMove(String algebraicMove) {
+        Move move = new Move(algebraicMove);
+        return Mirror.mirrorMove(move).toStringAlgebraic();
+    }
+
+    /**
+     * Verifies that the move generation generates exactly the expected moves.
+     * <p>
+     * Additionally, mirrors the passed position and expected moves and verifies that the move generation
+     * also generates the expected moves for the mirrored position.
+     * @param position the test position
+     * @param expectedAlgebraicMovesArray the expected moves in algebraic notation
+     */
+    public static void verifyMoveGeneration(Position position, String... expectedAlgebraicMovesArray) {
+        List<String> expectedAlgebraicMoves = toList(expectedAlgebraicMovesArray);
+
+        Position mirroredPosition = Mirror.mirrorPosition(position);
+
+        //get follow-up moves
+        List<String> actualFollowUpMoves = extractAlgebraicMoves(toList(MoveGenerator.generatePossibleMoves(position)));
+
+        //get follow ups to mirrored position
+        List<String> mirroredPositionActualFollowUpMoves = extractAlgebraicMoves(
+                toList(MoveGenerator.generatePossibleMoves(mirroredPosition)));
+
+        //mirror expected followups
+        List<String> mirroredExpectedAlgebraicMoves = new ArrayList<String>(expectedAlgebraicMoves.size());
+        for (String expectedMove : expectedAlgebraicMoves) {
+            mirroredExpectedAlgebraicMoves.add(mirrorAlgebraicMove(expectedMove));
+        }
+
+        Collections.sort(expectedAlgebraicMoves);        
+        Collections.sort(actualFollowUpMoves);
+        Collections.sort(mirroredExpectedAlgebraicMoves);
+        Collections.sort(mirroredPositionActualFollowUpMoves);
+
+        assertEquals(expectedAlgebraicMoves, actualFollowUpMoves);
+        assertEquals(mirroredExpectedAlgebraicMoves, mirroredPositionActualFollowUpMoves);
+    }
+
+    public static void verifyMoveGeneration(String fen, String... expectedAlgebraicMoves) {
+        verifyMoveGeneration(FenParser.parseFen(fen), expectedAlgebraicMoves);
+    }
+
+    /**
+    * Verifies that the MoveGenerator generates the expected follow-up positions.
+    * Computes the follow-ups using 
+    * {@link MoveGenerator#generatePossibleMovesPerPiece(Position, int, int)
+    *  MoveGenerator.generatePossibleMovesPerPiece(position, rank, file)}
+    * and compares them to the expected follow ups.
+    * <p>
+    * Additionally, mirrors the passed position and the follow-up positions, invokes the MoveGeneration
+    * on the mirrored position and compares the mirrored follow-ups with the actual follow-ups
+    * of the mirrored position.
+    * @param position the position that follow-up positions should be generated for
+    * @param piece the piece on the specified rank and file 
+    * (used to make it easier to spot faulty invocations)
+    * @param rank rank of the piece to move
+    * @param file file of the piece to move
+    * @param expectedPositions the expected follow-up positions
+    */
     public static void verifyPieceMoveGeneration(Position position, byte piece, int rank, int file,
-    List<Position> expectedPositions) {
-        
-        if (piece < 1 || piece > UPPER_LIMIT) {
+            List<Position> expectedPositions) {
+
+        if (piece < 1 || piece > BLACK_ROOK) {
             throw new IllegalArgumentException("piece must be value between 1 and 12");
         }
 
@@ -55,11 +157,11 @@ public class MoveGeneratorHelper {
                 mirroredFile);
 
         //compare expected positions and actual follow-ups
-        MoveGeneratorHelper.comparePositions(expectedPositions, actualFollowUps);
+        comparePositions(expectedPositions, actualFollowUps);
         //compare mirrored expected positions and actual follow-ups for mirrored position
-        MoveGeneratorHelper.mirrorExpectedAndComparePositions(expectedPositions, actualMirroredPositionFollowUps);
+        mirrorExpectedAndComparePositions(expectedPositions, actualMirroredPositionFollowUps);
     }
-    
+
     /**
      * Wrapper for {@link #verifyPieceMoveGeneration(Position, byte, int, int, List)} 
      * that accepts the expected positions as a list of FEN-strings.
@@ -68,8 +170,8 @@ public class MoveGeneratorHelper {
      */
     public static void verifyPieceMoveGenerationWithFenStrings(Position position, byte piece, int rank, int file,
             List<String> expectedFenStrings) {
-                verifyPieceMoveGeneration(position, piece, rank, file, fenStringsToPositions(expectedFenStrings));
-         }
+        verifyPieceMoveGeneration(position, piece, rank, file, fenStringsToPositions(expectedFenStrings));
+    }
 
     /**
      * Asserts that expected and actual follow-ups are equal.
@@ -80,7 +182,7 @@ public class MoveGeneratorHelper {
 
         //check if no follow-ups are expected if actualFollowUps = null
         if (actualFollowUps == null) {
-            assertEquals(expectedFollowUps.size(),0);
+            assertEquals(expectedFollowUps.size(), 0);
             return;
         }
 
@@ -117,8 +219,7 @@ public class MoveGeneratorHelper {
      */
     public static void mirrorFenStringsAndCompareToPosition(Collection<String> fenStrings,
             Collection<Position> actualMirroredPositionFollowUps) {
-        mirrorExpectedAndComparePositions(MoveGeneratorHelper.fenStringsToPositions(fenStrings),
-                MoveGeneratorHelper.toList(actualMirroredPositionFollowUps));
+        mirrorExpectedAndComparePositions(fenStringsToPositions(fenStrings), toList(actualMirroredPositionFollowUps));
     }
 
     /**
@@ -128,22 +229,31 @@ public class MoveGeneratorHelper {
      */
     public static void compareFenStringsToPosition(Collection<String> fenStrings, Collection<Position> positions) {
         //assure that expected and actual positions are stored in the same type of data structure (list)
-        List<Position> calculatedPositions = MoveGeneratorHelper.toList(positions);
+        List<Position> calculatedPositions = toList(positions);
         //translate the fen strings into positions
-        List<Position> fenStringPositions = MoveGeneratorHelper.fenStringsToPositions(fenStrings);
+        List<Position> fenStringPositions = fenStringsToPositions(fenStrings);
         comparePositions(fenStringPositions, calculatedPositions);
     }
 
     /**
     * Converts the collection into a list if it is not already one.
-    * @param positions 
-    * @return positions as a list
+    * @param collection 
+    * @return the collection as a list
     */
-    static List<Position> toList(Collection<Position> positions) {
-        if (positions instanceof List<Position>) {
-            return (List<Position>) positions;
+    private static <ElementType> List<ElementType> toList(Collection<ElementType> collection) {
+        if (collection instanceof List<ElementType>) {
+            return (List<ElementType>) collection;
         }
-        return new ArrayList<Position>(positions);
+        return new ArrayList<ElementType>(collection);
+    }
+
+    /**
+    * Converts the array into a list.
+    * @param array 
+    * @return the array as a list
+    */
+    private static <ElementType> List<ElementType> toList(ElementType[] array) {
+        return Arrays.asList(array);
     }
 
     /**
@@ -151,7 +261,7 @@ public class MoveGeneratorHelper {
      * @param fenStrings 
      * @return the corresponding positions
      */
-    static List<Position> fenStringsToPositions(Collection<String> fenStrings) {
+    private static List<Position> fenStringsToPositions(Collection<String> fenStrings) {
         List<Position> positions = new ArrayList<Position>(fenStrings.size());
         for (String fen : fenStrings) {
             positions.add(FenParser.parseFen(fen));

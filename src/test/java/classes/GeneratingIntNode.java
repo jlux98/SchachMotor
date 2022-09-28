@@ -1,6 +1,5 @@
 package classes;
 
-import java.util.List;
 
 import gametree.ComputeChildrenException;
 import gametree.Node;
@@ -35,11 +34,5 @@ public class GeneratingIntNode extends IntNode {
         for (int i = 0; i < childCount; i++) {
             new GeneratingIntNode(0, this, i);
         }
-    }
-
-    //increase visibility to public in this class
-    @Override
-    public List<? extends Node<Integer>> getChildren() {
-        return super.getChildren();
     }
 }
