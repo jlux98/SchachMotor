@@ -31,18 +31,4 @@ public interface GameTreeEvaluator extends TreeEvaluator<Position> {
     @Override
     public abstract GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn);
 
-    /**
-     * Evaluates the sub tree starting with the passed node and returns the GameNode
-     * that should be played.
-     * 
-     * @param node       the subtree to be evaluated
-     * @param depth      the maximum depth of the tree
-     * @param whitesTurn whether the turn to be searched is played by white
-     * @return the GameNode representing the turn to be played
-     * @deprecated will probably be removed from interfaces and changed to a private
-     *             method, use {@link #evaluateTree(Tree, int, boolean)} instead
-     */
-    @Override
-    public abstract GameNode evaluateNode(Node<Position> node, int depth, boolean whitesTurn);
-
 }

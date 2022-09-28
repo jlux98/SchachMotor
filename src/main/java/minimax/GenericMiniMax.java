@@ -13,15 +13,6 @@ import gametree.UninitializedValueException;
 public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
 
     @Override
-    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
-        resetEvaluatedNodeCount();
-        return evaluateNode(tree.getRoot(), depth, whitesTurn);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Override
     public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
         return miniMax(node, depth, whitesTurn);
     }

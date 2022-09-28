@@ -21,28 +21,46 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
     private DescendingStaticValueComparator<T> whiteComparator;
     private AscendingStaticValueComparator<T> blackComparator;
 
+    private long stopTime;
+
     public IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning() {
         //TODO use singletons instead?
         whiteComparator = new DescendingStaticValueComparator<T>();
         blackComparator = new AscendingStaticValueComparator<T>();
     }
 
-    // Note on storing values in nodes:
-    // values stored by nodes do not have to be marked as invalid
-    // leaves overwrite their old value (they can have an old value because
-    // iterative deepening doesn't start with old
-    // max depth, so nodes that are leaves for this iteration might not actually be
-    // leaves in the gametree)
-    // inner nodes overwrite their own value with values of their children
-
-    @Override
-    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
-        return evaluateNode(tree.getRoot(), depth, whitesTurn);
+    protected void isTimeLeft() throws OutOfTimeException {
+        if (System.nanoTime() >= stopTime - 1 * TimeUtility.SECOND_TO_NANO) {
+            throw new OutOfTimeException();
+        }
     }
 
     /**
-     * @deprecated
+     * Used to save an intermediate result of iterative deepning.
+     * @param bestMove the move that should be saved
      */
+    private void saveMove(Node<T> bestMove) {
+        //empty by default
+    }
+
+    /**
+    * Evaluates the game tree using iterative deepening and returns the Node that should be played.
+    * @param tree the tree to be evaluated
+    * @param secondsToCompute the maximum time in seconds that the computation may take
+    * @param whitesTurn whether the turn to be searched is played by white
+    * @return the Node representing the turn to be played
+    */
+    public Node<T> evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn) {
+        long start = System.nanoTime();
+        stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
+        int depth = 1;
+        while (true) {
+            Node<T> bestMove = evaluateTree(tree, depth, whitesTurn);
+            saveMove(bestMove);
+            depth += 1;
+        }
+    }
+
     @Override
     public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
         int alpha = Integer.MIN_VALUE;

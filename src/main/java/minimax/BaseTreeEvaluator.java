@@ -16,38 +16,22 @@ import utility.TimeUtility;
  */
 public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
 
-    private long stopTime;
     private int evaluatedNodeCount = 0;
 
-
-    protected void isTimeLeft() throws OutOfTimeException {
-        if (System.nanoTime() >= stopTime + TimeUtility.SECOND_TO_NANO) {
-            throw new OutOfTimeException();
-        }
-    }
-
-    /**
-     * Used to save an intermediate result of iterative deepning.
-     * <p>
-     * This method is empty by default.
-     * If intermediate results should be stored, subclasses have to implement this method.
-     * @param bestMove the move that should be saved
-     */
-    protected void saveMove(Node<T> bestMove) {
-        //empty by default
-    }
-
     @Override
-    public Node<T> evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn) {
-        long start = System.nanoTime();
-        stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
-        int depth = 1;
-        while (true) {
-            Node<T> bestMove = evaluateTree(tree, depth, whitesTurn);
-            saveMove(bestMove);
-            depth += 1;
-        }
+    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
+        resetEvaluatedNodeCount();
+        return evaluateNode(tree.getRoot(), depth, whitesTurn);
     }
+
+     /**
+     * Evaluates the sub tree starting with the passed node and returns the Node that should be played.
+     * @param node the subtree to be evaluated
+     * @param depth the maximum depth of the tree
+     * @param whitesTurn whether the turn to be searched is played by white
+     * @return the Node representing the turn to be played
+     */
+    protected abstract Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn);
 
     /**
      * Determines whether the passed node is a leaf node when inspected by
@@ -87,7 +71,7 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
         // node is a leaf if it has no children
         if (parent.hasChildren()) {
             return false;
-        } 
+        }
         //getOrComputeChildren guarantees ComputeChildrenException or parent.hasChildren()
         throw new IllegalStateException("branching error");
     }

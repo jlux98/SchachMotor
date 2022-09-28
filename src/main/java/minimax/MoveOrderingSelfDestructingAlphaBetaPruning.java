@@ -26,22 +26,6 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
         blackComparator = new AscendingStaticValueComparator<T>();
     }
 
-    // Note on storing values in nodes:
-    // values stored by nodes do not have to be marked as invalid
-    // leaves overwrite their old value (they can have an old value because
-    // iterative deepening doesn't start with old
-    // max depth, so nodes that are leaves for this iteration might not actually be
-    // leaves in the gametree)
-    // inner nodes overwrite their own value with values of their children
-
-    @Override
-    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
-        return evaluateNode(tree.getRoot(), depth, whitesTurn);
-    }
-
-    /**
-     * @deprecated
-     */
     @Override
     public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
         int alpha = Integer.MIN_VALUE;
