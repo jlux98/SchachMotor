@@ -17,6 +17,7 @@ import helper.Mirror;
 import minimax.GameNodeMiniMax;
 import model.Move;
 import model.Position;
+import positionevaluator.PositionEvaluator;
 import uciservice.FenParser;
 
  /**
@@ -119,9 +120,21 @@ public abstract class GameTreeEvaluationTest {
         helper.instantiateTreeEvaluator()).calculateBestMove(3);
         assertEquals(0, Conductor.getPastPositions().size());
     }
-    public void zugzwangStallTest() throws ComputeChildrenException {
-        //FIXME c7c8 is fine
-        GameNode node = helper.assertBestMoveNotIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 w - - 0 1", 5, true, "c7c8", "c5f8");
+
+    @Test
+    public void firstMoveDepth1Test() {
+        GameNode whiteMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 1, true);
+        GameNode blackMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 1, false);
+        assertEquals(whiteMove.getValue(), -blackMove.getValue());
+        assertEquals(whiteMove.getRepresentedMove(), Mirror.mirrorMove(blackMove.getRepresentedMove()));
+    }
+
+    @Test
+    public void firstMoveDepth2Test() {
+        GameNode whiteMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 2, true);
+        GameNode blackMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 2, false);
+        assertEquals(whiteMove.getValue(), -blackMove.getValue());
+        assertEquals(whiteMove.getRepresentedMove(), Mirror.mirrorMove(blackMove.getRepresentedMove()));
     }
 
     @Test
@@ -143,55 +156,46 @@ public abstract class GameTreeEvaluationTest {
     @Test
     public void bishopCaptureDepth1BlackTest() {
         GameNode bestMove = helper.evaluate("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 1, false);
-        assertEquals(-100, bestMove.getValue());
+        assertEquals(-115, bestMove.getValue());
     }
 
     @Test
     public void bishopCaptureDepth1WhiteTest() {
         GameNode bestMove = helper.evaluate("1rbqkbnr/pppppppp/n7/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 0 1", 1, true);
-        assertEquals(100, bestMove.getValue());
+        assertEquals(115, bestMove.getValue());
     }
 
     @Test
-    public void bishopCaptureDepth2WhiteTest() {
-        GameNode bestMove = helper.evaluate("1rbqkbnr/pppppppp/n7/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 0 1", 2, true);
-        assertEquals(100, bestMove.getValue());
+    public void bishopCaptureDepth2WhiteTest() throws ComputeChildrenException {
+        helper.assertBestMoveNotIn("1rbqkbnr/pppppppp/n7/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 0 1", 2, true, "b2g7");
     }
 
     @Test
     public void bishopCaptureDepth2BlackTest() throws ComputeChildrenException {
-        GameNode bestMove = helper.evaluate("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 2, false);
-        assertEquals(-100, bestMove.getValue());
+        helper.assertBestMoveNotIn("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 2, false, "b7g2");
 
     }
 
     @Test
     public void prepareBishopCaptureDepth3WhiteTest() throws ComputeChildrenException {
-        GameNode bestMove = helper.evaluate("r1bqkbnr/pppppppp/n7/8/8/1P6/P1PPPPPP/NRBQKBNR w Kkq - 0 1", 3, true);
-        assertEquals(100, bestMove.getValue());
+        helper.assertBestMoveIn("r1bqkbnr/pppppppp/n7/8/8/1P6/P1PPPPPP/NRBQKBNR w Kkq - 0 1", 3, true, "c1b2");
     }
 
     @Test
     public void prepareBishopCaptureDepth3BlackTest() throws ComputeChildrenException {
-        GameNode bestMove = helper.assertBestMoveIn("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 3,
-                false, "c8b7", "c8a6");
-        assertEquals(-100, bestMove.getValue());
+        helper.assertBestMoveIn("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 3, false, "c8b7");
     }
 
     @Test
-    public void prepareBishopCaptureDepth4WhiteTest() throws ComputeChildrenException {
-        GameNode bestMove = helper.evaluate("r1bqkbnr/pppppppp/n7/8/8/1P6/P1PPPPPP/NRBQKBNR w Kkq - 0 1", 4, true);
-        assertEquals(100, bestMove.getValue());
+    public void bishopNotCaptureDepth4WhiteTest() throws ComputeChildrenException {
+        helper.assertBestMoveNotIn("1rbqkbnr/pppppppp/n7/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 0 1", 4, true, "b2g7");
     }
 
     @Test
-    public void prepareBishopCaptureDepth4BlackTest() throws ComputeChildrenException {
-        GameNode bestMove = helper.evaluate("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 4, false);
-        assertEquals(-100, bestMove.getValue());
+    public void bishopNotCaptureDepth4BlackTest() throws ComputeChildrenException {
+        helper.assertBestMoveNotIn("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 4, false, "b7g2");
+
     }
-
-
-
 
     //TODO apply mirroring to these tests
 }

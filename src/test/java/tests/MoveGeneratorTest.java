@@ -822,7 +822,7 @@ public class MoveGeneratorTest {
 
     @Test
     public void moveGenerationMove24Test() {
-        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/pp1bbppp/2p2n2/8/2BP4/2N4P/PP3PP1/R1BQR1K1 b - - 0 12", "a2a3", "b2b3",
+        MoveGeneratorHelper.verifyMoveGeneration("r2q1rk1/p2bbppp/2p2n2/1p6/2BP4/2N4P/PP3PP1/R1BQR1K1 w - b6 0 12", "a2a3", "b2b3",
                 "f2f3", "g2g3", "h3h4", "d4d5", "a2a4", "b2b4", "f2f4", "g2g4", "c3b1", "c3e2", "c3a4", "c3e4", "c3b5", "c3d5",
                 "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "c4f1", "c4e2", "c4b3", "c4d3", "c4b5", "c4d5", "c4e6", "c4f7", "a1b1",
                 "e1f1", "e1e2", "e1e3", "e1e4", "e1e5", "e1e6", "e1e7", "d1c2", "d1d2", "d1e2", "d1b3", "d1d3", "d1f3", "d1a4",
@@ -854,13 +854,12 @@ public class MoveGeneratorTest {
         for (Node<Position> child : children) {
             if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("c8b7")) {
                 bishopMove = child.getContent();
-                System.out.println(child.getContent());
-                System.out.println(child.getValue());
             }
         }
-        assertEquals(0, PositionEvaluator.evaluatePosition(bishopMove, false, 0));
         assertNotNull(bishopMove);
+        assertEquals(40, PositionEvaluator.evaluatePosition(bishopMove, false, 0));
     }
+
 
     @Test
     public void blackSeesCaptureTest() throws ComputeChildrenException {
@@ -874,11 +873,9 @@ public class MoveGeneratorTest {
                 for (Node<Position> child : children) {
                     if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("b7g2")) {
                         bishopCapture = child.getContent();
-                        System.out.println(child.getContent());
-                        System.out.println(child.getValue());
                     }
                 }
-                assertEquals(-100, PositionEvaluator.evaluatePosition(bishopCapture, false, 0));             
+                assertEquals(-115, PositionEvaluator.evaluatePosition(bishopCapture, false, 0));             
     }
 
 }
