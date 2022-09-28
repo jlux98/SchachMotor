@@ -9,7 +9,6 @@ import classes.IntNode;
 import gametree.Node;
 import gametree.Tree;
 import minimax.TreeEvaluator;
-import tests.TreeEvaluationTest;
 
 /**
  * Class used to help with testing instances of {@link TreeEvaluator TreeEvaluator < Integer >}.

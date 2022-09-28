@@ -113,7 +113,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     /**
      * Whether this node has children. Note that returning false does not imply that this note cannot generate 
-     * children when calling {@link #queryChildren()}.
+     * children when calling {@link #getOrCompute()}.
      * @return true - if this node currently has any children, false - if not
      */
     @Override
@@ -166,7 +166,7 @@ public abstract class BaseNode<T> implements Node<T> {
      * Computes this node's children and overwrites its current child list accordingly.
      * <p>
      * <b>Note:</b> Do not use this method directly to generate children of this node.
-     * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
+     * This is a helper method that is implemented individually by subtypes and called by {@link #getOrCompute()}.
      * Use queryChildren() to generate children of this node.
      * </p>
      * @throws ComputeChildrenException if no children can be computed
@@ -174,7 +174,7 @@ public abstract class BaseNode<T> implements Node<T> {
     protected abstract void computeChildren() throws ComputeChildrenException;
 
     @Override
-    public List<? extends Node<T>> queryChildren() throws ComputeChildrenException {
+    public List<? extends Node<T>> getOrCompute() throws ComputeChildrenException {
         if (!hasChildren()) {
             computeChildren();
             detachChildGenerationData();
@@ -184,7 +184,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     /**
      * Hook for subclasses.
-     * Called after {@link #computeChildren()} in {@link #queryChildren()}.
+     * Called after {@link #computeChildren()} in {@link #getOrCompute()}.
      * Intended to allow for deletion of data from the node that is
      * only required to generate children.
      */

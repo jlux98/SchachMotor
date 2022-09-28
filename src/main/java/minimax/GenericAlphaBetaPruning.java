@@ -112,7 +112,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrCompute();
 
             for (Node<T> child : children) {
                 // evaluate all children
@@ -221,7 +221,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrCompute();
 
             for (Node<T> child : children) {
 

@@ -78,7 +78,7 @@ public class GameNode extends BaseNode<Position> {
     * Uses {@link #createChild(Position)} to instantiate children.
     * <br><br>
     * <b>Note:</b> Do not use this method directly to generate children of this node.
-    * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
+    * This is a helper method that is implemented individually by subtypes and called by {@link #getOrCompute()}.
     * Use queryChildren() to generate children of this node.
     * @throws ComputeChildrenException if no children can be computed
     */

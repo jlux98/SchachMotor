@@ -30,7 +30,7 @@ public class IntNode extends BaseNode<Integer> {
 
 
     public static List<Integer> pastIntegers = new ArrayList<>(); //FIXME usage?
-    private StringBuilder whiteAlignedRepresentation;
+    private StringBuilder whitespaceAlignedRepresentation;
     /**
      * Creates an IntNode storing the specified Integer as content.
      * @param content
@@ -123,7 +123,7 @@ public class IntNode extends BaseNode<Integer> {
      * @param whiteSpaceAlignedRepresentation a StringBuilder whose content represents this node and is aligned
      */
     public void setAlignedRepresentation(StringBuilder whiteSpaceAlignedRepresentation) {
-        this.whiteAlignedRepresentation = whiteSpaceAlignedRepresentation;
+        this.whitespaceAlignedRepresentation = whiteSpaceAlignedRepresentation;
     }
 
     /**
@@ -133,7 +133,7 @@ public class IntNode extends BaseNode<Integer> {
      * @return this node's aligned representation
      */
     public StringBuilder getAlignedRepresentation() {
-        return whiteAlignedRepresentation;
+        return whitespaceAlignedRepresentation;
     }
 
 }

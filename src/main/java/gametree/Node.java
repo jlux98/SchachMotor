@@ -99,7 +99,7 @@ public interface Node<T> extends Evaluable {
 
     /**
      * Whether this node has children. Note that returning false does not imply that this node cannot generate 
-     * children when calling {@link #queryChildren()}.
+     * children when calling {@link #getOrCompute()}.
      * @return true - if this node currently has any children, false - if not
      */
     public abstract boolean hasChildren();
@@ -127,14 +127,14 @@ public interface Node<T> extends Evaluable {
     //e.g: A extends T, B extends T
     //List<S extends T> list = new List<A>;
     //list.add(new B()) <- not type safe as a List<A> does not accept B
-    public abstract List<? extends Node<T>> queryChildren() throws ComputeChildrenException;
+    public abstract List<? extends Node<T>> getOrCompute() throws ComputeChildrenException;
 
 
     /**
      * Returns the this node's children.
      * <p>
-     * Different from {@link #queryChildren()}, this method may return both null and an empty list.
-     * If the demanded children can be computed, use {@link #queryChildren()} instead.
+     * Different from {@link #getOrCompute()}, this method may return both null and an empty list.
+     * If the demanded children can be computed, use {@link #getOrCompute()} instead.
      * @return
      */
     public abstract List<? extends Node<T>> getChildren(); 

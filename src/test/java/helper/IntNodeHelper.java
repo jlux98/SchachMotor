@@ -223,17 +223,17 @@ public class IntNodeHelper {
         IntNode root = tree.getRoot();
 
         //list containing 2 inner nodes
-        List<? extends Node<Integer>> layer1 = root.queryChildren();
+        List<? extends Node<Integer>> layer1 = root.getOrCompute();
         assertEquals(layer1.size(), 2);
 
         //lists containing 2 leaf nodes each
-        List<? extends Node<Integer>> layer2children1 = layer1.get(0).queryChildren();
-        List<? extends Node<Integer>> layer2children2 = layer1.get(1).queryChildren();
+        List<? extends Node<Integer>> layer2children1 = layer1.get(0).getOrCompute();
+        List<? extends Node<Integer>> layer2children2 = layer1.get(1).getOrCompute();
 
         assertEquals(layer2children1.size(), 2);
         assertEquals(layer2children2.size(), 2);
-        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).queryChildren());
-        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).getOrCompute());
+        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).getOrCompute());
         assertEquals(1, layer2children1.get(0).getContent());
         assertEquals(2, layer2children1.get(1).getContent());
         assertEquals(3, layer2children2.get(0).getContent());

@@ -27,16 +27,16 @@ public class TreePrinter {
     }
 
     
-    public static void main(String[] args) throws ComputeChildrenException {
-        /* Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4, 5, 6, 7, 8);
-        alignAndPrintTree(tree, 3); */
-        /* Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(3, 1, 2, 3, 4, 5, 6, 7, 8);
-        alignAndPrintTree(tree, 2); */
-        /* IntNodeWikipediaTestTree tree = new IntNodeWikipediaTestTree();
-        alignAndPrintTree(tree, 4); */
-        IntNodeAsymmetricTestTree tree = new IntNodeAsymmetricTestTree();
-        alignAndPrintTree(tree, 6);
-    }
+    // public static void main(String[] args) throws ComputeChildrenException {
+    //     /* Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4, 5, 6, 7, 8);
+    //     alignAndPrintTree(tree, 3); */
+    //     /* Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(3, 1, 2, 3, 4, 5, 6, 7, 8);
+    //     alignAndPrintTree(tree, 2); */
+    //     /* IntNodeWikipediaTestTree tree = new IntNodeWikipediaTestTree();
+    //     alignAndPrintTree(tree, 4); */
+    //     IntNodeAsymmetricTestTree tree = new IntNodeAsymmetricTestTree();
+    //     alignAndPrintTree(tree, 6);
+    // }
 
     /**
      * Encloses a string with OFFSET_CHARACTERs until its width is >= <code>width</code>.
@@ -144,7 +144,7 @@ public class TreePrinter {
             return;
         }
 
-        List<? extends Node<Integer>> children = node.queryChildren();
+        List<? extends Node<Integer>> children = node.getOrCompute();
         for (Node<Integer> child : children) {
             updateAlignments((IntNode) child, currentDepth + 1, treeMaxDepth);
         }
@@ -173,7 +173,7 @@ public class TreePrinter {
         }
 
         int childrenWidth = 0;
-        List<? extends Node<Integer>> children = node.queryChildren();
+        List<? extends Node<Integer>> children = node.getOrCompute();
         IntNode child;
         for (int i = 0; i < children.size(); i++) {
             child = (IntNode) children.get(i);
@@ -217,7 +217,7 @@ public class TreePrinter {
             System.out.print(node.getAlignedRepresentation());
             return;
         }
-        List<? extends Node<Integer>> children = node.queryChildren();
+        List<? extends Node<Integer>> children = node.getOrCompute();
         for (Node<Integer> child : children) {
             printNodes((IntNode) child, layerDepth, currentDepth + 1, treeMaxDepth);
         }

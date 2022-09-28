@@ -849,7 +849,7 @@ public class MoveGeneratorTest {
                 "b8c6", "g8f6", "g8h6", "c8a6", "c8b7");
 
         GameNode node = new GameNode(FenParser.parseFen("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/R1BQKBNR b Kkq - 0 1"));
-        List<? extends Node<Position>> children = node.queryChildren();
+        List<? extends Node<Position>> children = node.getOrCompute();
         Position bishopMove = null;
         for (Node<Position> child : children) {
             if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("c8b7")) {
@@ -869,7 +869,7 @@ public class MoveGeneratorTest {
                 "b8c6", "g8f6", "g8h6", "b7g2", "b7f3", "b7e4", "b7d5", "b7a6", "b7c6", "b7c8", "d8c8");
 
                 GameNode node = new GameNode(FenParser.parseFen("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1"));
-                List<? extends Node<Position>> children = node.queryChildren();
+                List<? extends Node<Position>> children = node.getOrCompute();
                 Position bishopCapture = null;
                 for (Node<Position> child : children) {
                     if (((GameNode) child).getRepresentedMove().toStringAlgebraic().equals("b7g2")) {

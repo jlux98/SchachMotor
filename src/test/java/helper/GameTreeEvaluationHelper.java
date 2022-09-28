@@ -15,7 +15,6 @@ import gametree.Tree;
 import minimax.GameTreeEvaluator;
 import minimax.TreeEvaluator;
 import model.Position;
-import tests.TreeEvaluationTest;
 import uciservice.FenParser;
 
 /**

@@ -49,7 +49,7 @@ public class NodeHelper {
         } else {
             //verify that parent has the expected children
             assertTrue(parent.hasChildren());
-            List<? extends Node<?>> actualChildren = parent.queryChildren(); //should never throw ComputeChildrenException
+            List<? extends Node<?>> actualChildren = parent.getOrCompute(); //should never throw ComputeChildrenException
             assertEquals(expectedChildren.length, actualChildren.size());
 
             //compare expected and actual children

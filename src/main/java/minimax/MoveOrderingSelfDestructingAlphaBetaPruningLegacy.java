@@ -118,7 +118,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruningLegacy<T> extends BaseTr
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrCompute();
 
             children.sort(blackComparator);
 
@@ -225,7 +225,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruningLegacy<T> extends BaseTr
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrCompute();
 
             children.sort(whiteComparator);
 
