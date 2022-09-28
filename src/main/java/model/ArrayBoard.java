@@ -202,4 +202,9 @@ public class ArrayBoard implements Board {
         return new Piece(result);
     }
 
+    @Override
+    public String toStringFen() {
+        throw new UnsupportedOperationException("array board does not support converting to fen");
+    }
+
 }

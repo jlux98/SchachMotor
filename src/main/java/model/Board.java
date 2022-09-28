@@ -53,5 +53,7 @@ public interface Board {
     // public abstract Piece[][] copySpaces();
     
     public abstract Board copyBoard();
+
+    public abstract String toStringFen();
     
 }

@@ -11,19 +11,12 @@ import org.junit.jupiter.api.Test;
 import classes.GeneratingIntNode;
 import gametree.ImpTree;
 import gametree.Node;
-import helper.GameTreeEvaluationHelper;
 import helper.IntTreeEvaluationHelper;
-import minimax.GameNodeAlphaBetaPruning;
 import minimax.GenericAlphaBetaPruning;
 
-/**
- * Subtype of {@link TreeEvaluationTest} for testing GenericAlphaBetaPruning.
- */
-public class AlphaBetaTest extends TreeEvaluationTest {
-
-    public AlphaBetaTest() {
-        super(new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>()),
-                new GameTreeEvaluationHelper(() -> new GameNodeAlphaBetaPruning()));
+public class AlphaBetaIntTreeTest extends IntTreeEvaluationTest {
+    public AlphaBetaIntTreeTest() {
+        super(new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>()));
     }
 
     // the first line's whitespace within the <pre> block is trimmed ("Tree:" has to

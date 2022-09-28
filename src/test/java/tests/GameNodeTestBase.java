@@ -52,7 +52,7 @@ public abstract class GameNodeTestBase {
 
         Position position = FenParser.parseFen(MoveGeneratorData.allBlackPiecesFen);
         GameNode root = createRoot(position);
-        root.queryChildren(); //initial call; computes children
+        root.getOrComputeChildren(); //initial call; computes children
         List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root); //2nd call, retrieves stored children
 
         MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), followUpPositions);
@@ -65,7 +65,7 @@ public abstract class GameNodeTestBase {
     public void queryChildrenCheckmateKingAttackedThrowsComputeChildrenException() throws ComputeChildrenException {
         Position whiteMate = FenParser.parseFen("8/3K4/8/2rrr3/8/8/8/3k4 w - - 0 1");
         GameNode mateNode = createRoot(whiteMate);
-        assertThrows(ComputeChildrenException.class, () -> mateNode.queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> mateNode.getOrComputeChildren());
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class GameNodeTestBase {
     public void queryChildrenCheckmateKingNotAttackedThrowsComputeChildrenException() throws ComputeChildrenException {
         Position blackMate = FenParser.parseFen("k7/4R3/8/1R6/8/8/8/K7 b - - 0 1");
         GameNode mateNode = createRoot(blackMate);
-        assertThrows(ComputeChildrenException.class, () -> mateNode.queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> mateNode.getOrComputeChildren());
     }
 
 }

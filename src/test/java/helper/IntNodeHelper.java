@@ -145,41 +145,6 @@ public class IntNodeHelper {
     }
 
     /**
-     * Creates a binary tree with the specified leaf values.
-     * @param values the values that should be stored by the leaf nodes
-     * @return the tree's root node
-     */
-    /* public static IntNode createBinaryTree(int depth, int... values) {
-        if (Math.pow(2, depth) != values.length) { //no delta for comparison should be fine in this value range
-            throw new IllegalArgumentException("value count != 2^depth, but a value for each leaf is required");
-        }
-        //create a binary tree by using createParent
-        //add a variant of createParent that takes values instead of nodes
-    
-        //translate values into intnodes wihtout parents
-        List<IntNode> children = new ArrayList<IntNode>();
-        for (int i : values) {
-            children.add(new IntNode(i));
-        }
-    
-        List<IntNode> parents = new ArrayList<IntNode>();
-        for (int j = 0; j < depth; j++) { //while(children.size() != 1)
-            //System.out.println(children.size());
-            for (int i = 0; i < children.size(); i++) {
-                parents.add(createParent(children.get(i), children.get(i + 1)));
-                i++; //skip the child at i+1
-            }
-            children = parents; //last iteration's parents are next iteration's children
-            parents = new ArrayList<IntNode>(children.size() / 2); //create a new parent list (cant call parents.clear() because that would delete the children list)
-        }
-        if (children.size() != 1) {
-            //number of iterations was wrong
-            throw new IllegalStateException("createBinaryTree failed to construct a tree and identify its root");
-        }
-        return children.get(0);
-    } */
-
-    /**
      * Inverts the content stored in the tree's leaf nodes (content = -1 * content).
      * @param tree tree whose leaves should be inverted
      */
@@ -229,17 +194,17 @@ public class IntNodeHelper {
         IntNode root = tree.getRoot();
 
         //list containing 2 inner nodes
-        List<? extends Node<Integer>> layer1 = root.queryChildren();
+        List<? extends Node<Integer>> layer1 = root.getOrComputeChildren();
         assertEquals(layer1.size(), 2);
 
         //lists containing 2 leaf nodes each
-        List<? extends Node<Integer>> layer2children1 = layer1.get(0).queryChildren();
-        List<? extends Node<Integer>> layer2children2 = layer1.get(1).queryChildren();
+        List<? extends Node<Integer>> layer2children1 = layer1.get(0).getOrComputeChildren();
+        List<? extends Node<Integer>> layer2children2 = layer1.get(1).getOrComputeChildren();
 
         assertEquals(layer2children1.size(), 2);
         assertEquals(layer2children2.size(), 2);
-        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).queryChildren());
-        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).getOrComputeChildren());
+        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).getOrComputeChildren());
         assertEquals(1, layer2children1.get(0).getContent());
         assertEquals(2, layer2children1.get(1).getContent());
         assertEquals(3, layer2children2.get(0).getContent());

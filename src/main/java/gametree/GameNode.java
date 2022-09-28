@@ -1,5 +1,6 @@
 package gametree;
 
+import application.Conductor;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
@@ -78,7 +79,7 @@ public class GameNode extends BaseNode<Position> {
     * Uses {@link #createChild(Position)} to instantiate children.
     * <br><br>
     * <b>Note:</b> Do not use this method directly to generate children of this node.
-    * This is a helper method that is implemented individually by subtypes and called by {@link #queryChildren()}.
+    * This is a helper method that is implemented individually by subtypes and called by {@link #getOrComputeChildren()}.
     * Use queryChildren() to generate children of this node.
     * @throws ComputeChildrenException if no children can be computed
     */
@@ -122,6 +123,16 @@ public class GameNode extends BaseNode<Position> {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
         return PositionEvaluator.evaluateLeafPosition(getContent(), depth);
+    }
+
+    @Override
+    public void writeContentToHistory() {
+        Conductor.appendPosition(getContent());
+    }
+
+    @Override
+    public void deleteContentFromHistory() {
+        Conductor.deleteLastPosition();
     }
 
 }

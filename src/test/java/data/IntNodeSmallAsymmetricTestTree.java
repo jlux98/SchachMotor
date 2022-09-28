@@ -89,8 +89,8 @@ public class IntNodeSmallAsymmetricTestTree implements Tree<IntNode> {
         root = IntNodeHelper.createParent(layer1Node0, layer1Node1, layer1Node2, layer1Node3, layer1Node4);
     }
 
-   public void printTree() throws ComputeChildrenException {
-    TreePrinter.alignAndPrintTree(this, 3);
-   }
+    public void printTree() throws ComputeChildrenException {
+        TreePrinter.alignAndPrintTree(this, 3);
+    }
 
 }

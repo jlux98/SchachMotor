@@ -2,7 +2,7 @@ package model;
 
 import static model.PieceEncoding.*;
 
-public class Move {
+public class Move implements Cloneable {
     private Coordinate startingSpace;
     private Coordinate targetSpace;
     private byte promotedTo;
@@ -26,7 +26,7 @@ public class Move {
             this.startingSpace = new Coordinate(moveString.substring(0,2));
             this.targetSpace = new Coordinate(moveString.substring(2,4));
         } else {
-            throw new IllegalArgumentException("Error: Move not correctly formatted");
+            throw new IllegalArgumentException("Error: Move not correctly formatted: " + moveString);
         }
     }    
     
@@ -122,5 +122,10 @@ public class Move {
                     && this.getTargetSpace().equals(otherMove.getTargetSpace());
         }
         return false;
+    }
+
+    @Override
+    public Move clone() {
+        return new Move(toStringAlgebraic());
     }
 }

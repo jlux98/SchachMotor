@@ -156,10 +156,13 @@ public abstract class UCIParserAlphaBetaPruning{
                 }
                 Move currentMove = new Move(currentMoveCommand.getData());
                 currentPosition = currentPosition.getFollowUpByMove(currentMove);
+                Conductor.appendPosition(currentPosition);
                 conductor.appendMove(currentMove);
             // }
             System.out.println("only " + currentMove.toStringAlgebraic() + " was applied.");
         } else {
+            Conductor.emptyPositionList();
+            conductor.emptyMoveList();
             if (children.get(0).getType() == CommandType.STARTPOS){
                 conductor.setStartingPosition("startpos");
             } else {
@@ -175,6 +178,7 @@ public abstract class UCIParserAlphaBetaPruning{
                         }
                         // TODO: actually apply this
                         Move currentMove = new Move(currentMoveCommand.getData());
+                        Conductor.appendPosition(currentPosition);
                         currentPosition = currentPosition.getFollowUpByMove(currentMove);
                         conductor.appendMove(currentMove);
                         System.out.println("applying move "+currentMoveCommand.getData());

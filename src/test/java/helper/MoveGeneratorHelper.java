@@ -3,11 +3,14 @@ package helper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import classes.MoveComparator;
 import model.Coordinate;
+import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
 import uciservice.FenParser;
@@ -42,6 +45,76 @@ public class MoveGeneratorHelper {
      */
     public static void compareWhiteAndBlackMoveGeneration(String fen) {
         compareWhiteAndBlackMoveGeneration(FenParser.parseFen(fen));
+    }
+
+    /**
+     * Sorts a list of positions by the algebraic representation of the moves stored by the positions.
+     * @param positions
+     */
+    private static void sortPositionsByMove(List<Position> positions) {
+        positions.sort(new MoveComparator());
+    }
+
+    /**
+     * 
+     * @param positions
+     * @return the list of moves in algebraic notation stored by the positions
+     */
+    private static List<String> extractAlgebraicMoves(List<Position> positions) {
+        List<String> moves = new ArrayList<String>(positions.size());
+        for (Position position : positions) {
+            moves.add(position.getMove().toStringAlgebraic());
+        }
+        return moves;
+    }
+
+    /**
+     * Mirrors the passed move and returns its algebraic representation.
+     * @param algebraicMove a move in algebraic notation
+     * @return the mirrored move
+     */
+    private static String mirrorAlgebraicMove(String algebraicMove) {
+        Move move = new Move(algebraicMove);
+        return Mirror.mirrorMove(move).toStringAlgebraic();
+    }
+
+    /**
+     * Verifies that the move generation generates exactly the expected moves.
+     * <p>
+     * Additionally, mirrors the passed position and expected moves and verifies that the move generation
+     * also generates the expected moves for the mirrored position.
+     * @param position the test position
+     * @param expectedAlgebraicMovesArray the expected moves in algebraic notation
+     */
+    public static void verifyMoveGeneration(Position position, String... expectedAlgebraicMovesArray) {
+        List<String> expectedAlgebraicMoves = toList(expectedAlgebraicMovesArray);
+
+        Position mirroredPosition = Mirror.mirrorPosition(position);
+
+        //get follow-up moves
+        List<String> actualFollowUpMoves = extractAlgebraicMoves(toList(MoveGenerator.generatePossibleMoves(position)));
+
+        //get follow ups to mirrored position
+        List<String> mirroredPositionActualFollowUpMoves = extractAlgebraicMoves(
+                toList(MoveGenerator.generatePossibleMoves(mirroredPosition)));
+
+        //mirror expected followups
+        List<String> mirroredExpectedAlgebraicMoves = new ArrayList<String>(expectedAlgebraicMoves.size());
+        for (String expectedMove : expectedAlgebraicMoves) {
+            mirroredExpectedAlgebraicMoves.add(mirrorAlgebraicMove(expectedMove));
+        }
+
+        Collections.sort(expectedAlgebraicMoves);        
+        Collections.sort(actualFollowUpMoves);
+        Collections.sort(mirroredExpectedAlgebraicMoves);
+        Collections.sort(mirroredPositionActualFollowUpMoves);
+
+        assertEquals(expectedAlgebraicMoves, actualFollowUpMoves);
+        assertEquals(mirroredExpectedAlgebraicMoves, mirroredPositionActualFollowUpMoves);
+    }
+
+    public static void verifyMoveGeneration(String fen, String... expectedAlgebraicMoves) {
+        verifyMoveGeneration(FenParser.parseFen(fen), expectedAlgebraicMoves);
     }
 
     /**
@@ -164,14 +237,23 @@ public class MoveGeneratorHelper {
 
     /**
     * Converts the collection into a list if it is not already one.
-    * @param positions 
-    * @return positions as a list
+    * @param collection 
+    * @return the collection as a list
     */
-    static List<Position> toList(Collection<Position> positions) {
-        if (positions instanceof List<Position>) {
-            return (List<Position>) positions;
+    private static <ElementType> List<ElementType> toList(Collection<ElementType> collection) {
+        if (collection instanceof List<ElementType>) {
+            return (List<ElementType>) collection;
         }
-        return new ArrayList<Position>(positions);
+        return new ArrayList<ElementType>(collection);
+    }
+
+    /**
+    * Converts the array into a list.
+    * @param array 
+    * @return the array as a list
+    */
+    private static <ElementType> List<ElementType> toList(ElementType[] array) {
+        return Arrays.asList(array);
     }
 
     /**
@@ -179,7 +261,7 @@ public class MoveGeneratorHelper {
      * @param fenStrings 
      * @return the corresponding positions
      */
-    static List<Position> fenStringsToPositions(Collection<String> fenStrings) {
+    private static List<Position> fenStringsToPositions(Collection<String> fenStrings) {
         List<Position> positions = new ArrayList<Position>(fenStrings.size());
         for (String fen : fenStrings) {
             positions.add(FenParser.parseFen(fen));

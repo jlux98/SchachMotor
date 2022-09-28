@@ -101,10 +101,13 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
 
         this.increaseEvaluatedNodeCount();
 
+        parent.writeContentToHistory();
+
         // assign static evaluation to leaves
         // assign static evaluation to leaves
         boolean leaf = evaluateIfLeaf(parent, depth);
         if (leaf) {
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -117,7 +120,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrComputeChildren();
 
             children.sort(blackComparator);
 
@@ -167,6 +170,8 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             // delete children from tree after parent was evaluated
             parent.deleteChildren();
 
+            parent.deleteContentFromHistory();
+
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
@@ -208,9 +213,12 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
 
         this.increaseEvaluatedNodeCount();
 
+        parent.writeContentToHistory();
+
         // assign static evaluation to leaves
         boolean leaf = evaluateIfLeaf(parent, depth);
         if (leaf) {
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -223,7 +231,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrComputeChildren();
 
             children.sort(whiteComparator);
 
@@ -272,6 +280,8 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
 
             // delete children from tree after parent was evaluated
             parent.deleteChildren();
+
+            parent.deleteContentFromHistory();
 
             // return the best child node
             // the value stored by that node also is the value of this parent node

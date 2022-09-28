@@ -88,8 +88,18 @@ public interface Node<T> extends Evaluable {
     public abstract void unsetParent();
 
     /**
+     * Adds the content of a Node to a type-specific log
+     */
+    public abstract void writeContentToHistory();
+
+    /**
+     * removes the last entry from a type-specific log
+     */
+    public abstract void deleteContentFromHistory();
+
+    /**
      * Whether this node has children. Note that returning false does not imply that this node cannot generate 
-     * children when calling {@link #queryChildren()}.
+     * children when calling {@link #getOrComputeChildren()}.
      * @return true - if this node currently has any children, false - if not
      */
     public abstract boolean hasChildren();
@@ -97,10 +107,12 @@ public interface Node<T> extends Evaluable {
     /**
     * Returns this node's children.
     * If necessary, calculates the children.
-    * <br><br>
+    * <p>
     * If children are calculated, they should be stored so invoking queryChildren() again can
     * read the stored children instead of recalculating them.
-    * <br><br>
+    * <p>
+    * This method will never return null or an empty list.
+    * <p>
     * <b>Note:</b>
     * Results of this methods should be referenced as List < ? extends Node < Type > > which allows reading Node < Type > from the list.
     * Writing to the list is not possible.
@@ -115,6 +127,15 @@ public interface Node<T> extends Evaluable {
     //e.g: A extends T, B extends T
     //List<S extends T> list = new List<A>;
     //list.add(new B()) <- not type safe as a List<A> does not accept B
-    public abstract List<? extends Node<T>> queryChildren() throws ComputeChildrenException;
+    public abstract List<? extends Node<T>> getOrComputeChildren() throws ComputeChildrenException;
 
+
+    /**
+     * Returns the this node's children.
+     * <p>
+     * Different from {@link #getOrComputeChildren()}, this method may return both null and an empty list.
+     * If the demanded children can be computed, use {@link #getOrComputeChildren()} instead.
+     * @return
+     */
+    public abstract List<? extends Node<T>> getChildren(); 
 }

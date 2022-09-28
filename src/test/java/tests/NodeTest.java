@@ -43,7 +43,7 @@ public class NodeTest {
     public void createChildNodeTest() throws ComputeChildrenException {
         IntNode root = new IntNode(3);
         IntNode child = new IntNode(18, root);
-        List<? extends Node<Integer>> children = root.queryChildren();
+        List<? extends Node<Integer>> children = root.getOrComputeChildren();
         Node<Integer> retrievedChild = children.get(0);
         assertTrue(root.hasChildren());
         assertEquals(1, children.size());
@@ -58,7 +58,7 @@ public class NodeTest {
         //create a second root node called child and add it to the root node
         IntNode child = new IntNode(7);
         root.insertChild(child);
-        List<? extends Node<Integer>> children = root.queryChildren();
+        List<? extends Node<Integer>> children = root.getOrComputeChildren();
         Node<Integer> retrievedChild = children.get(0);
         assertTrue(root.hasChildren());
         assertEquals(1, children.size());
@@ -157,7 +157,7 @@ public class NodeTest {
     @Test
     public void queryChildrenCallsComputeChildrenIfNoChildrenStoredTest() {
         IntNode leaf = testTree.layer4Node3;
-        assertThrows(ComputeChildrenException.class, () -> leaf.queryChildren());
+        assertThrows(ComputeChildrenException.class, () -> leaf.getOrComputeChildren());
     }
 
     /**
@@ -172,8 +172,8 @@ public class NodeTest {
 
     @Test
     public void queryChildrenGeneratesChildrenTest() throws ComputeChildrenException {
-        GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        List<? extends Node<Integer>> children = parent.queryChildren();
+        GeneratingIntNode parent = new GeneratingIntNode(0,3);
+        List<? extends Node<Integer>> children = parent.getOrComputeChildren();
         //test that parent generated exactly 3 children
         assertTrue(parent.hasChildren());
         assertEquals(3, children.size());

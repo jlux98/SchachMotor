@@ -106,6 +106,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
         // assign static evaluation to leaves
         boolean leaf = evaluateIfLeaf(parent, depth);
         if (leaf) {
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -118,7 +119,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrComputeChildren();
 
             children.sort(blackComparator);
 
@@ -212,6 +213,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
         // assign static evaluation to leaves
         boolean leaf = evaluateIfLeaf(parent, depth);
         if (leaf) {
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -224,7 +226,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrComputeChildren();
 
             children.sort(whiteComparator);
 

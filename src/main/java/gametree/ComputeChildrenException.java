@@ -1,7 +1,7 @@
 package gametree;
 
 /**
- * Thrown to indicate that {@link Node#queryChildren()} could not generate children.
+ * Thrown to indicate that {@link Node#getOrComputeChildren()} could not generate children.
  */
 public class ComputeChildrenException extends Exception {
     public ComputeChildrenException(String message) {

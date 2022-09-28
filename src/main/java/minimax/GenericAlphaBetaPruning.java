@@ -89,9 +89,12 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         this.increaseEvaluatedNodeCount();
 
+        parent.writeContentToHistory();
+
         // assign static evaluation to leaves
         boolean leaf = evaluateIfLeaf(parent, depth);
-        if (leaf) {
+        if (leaf) {            
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -103,7 +106,8 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrComputeChildren();
+
             for (Node<T> child : children) {
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
@@ -148,6 +152,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
             }
 
+            parent.deleteContentFromHistory();
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
@@ -191,9 +196,12 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         this.increaseEvaluatedNodeCount();
 
+        parent.writeContentToHistory();
+
         // assign static evaluation to leaves
         boolean leaf = evaluateIfLeaf(parent, depth);
         if (leaf) {
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -205,7 +213,7 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.queryChildren();
+            List<? extends Node<T>> children = parent.getOrComputeChildren();
 
             for (Node<T> child : children) {
 
@@ -251,6 +259,8 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
             }
 
+            parent.deleteContentFromHistory();
+            
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if beta-cutoff (break statement reached) return some node that will be

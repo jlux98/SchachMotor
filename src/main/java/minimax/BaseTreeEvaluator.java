@@ -72,14 +72,13 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
      * depth == 0 and 2 if it is a leaf because no children could be generated
      */
     protected boolean evaluateIfLeaf(Node<T> parent, int depth) {
-        //FIXME
         if (depth == 0) {
             parent.computeOrGetStaticValueOrBetter(); //evaluate statically if no value is stored
             return true;
         }
         try {
             // attempt to retrieve or if none are stored calculate children
-            parent.queryChildren();
+            parent.getOrComputeChildren();
         } catch (ComputeChildrenException exception) {
             // node could not generate children -> is a leaf
             parent.computeOrGetLeafValueOrBetter(depth);
@@ -89,6 +88,7 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
         if (parent.hasChildren()) {
             return false;
         } 
+        //getOrComputeChildren guarantees ComputeChildrenException or parent.hasChildren()
         throw new IllegalStateException("branching error");
     }
 

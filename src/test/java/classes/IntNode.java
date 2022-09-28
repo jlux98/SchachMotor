@@ -1,5 +1,6 @@
 package classes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gametree.BaseNode;
@@ -26,8 +27,10 @@ import minimax.TreeEvaluator;
  * does not necessarily stay the same as the stored content.
  */
 public class IntNode extends BaseNode<Integer> {
-    private StringBuilder whiteAlignedRepresentation;
 
+
+    public static List<Integer> pastIntegers = new ArrayList<>(); //FIXME usage?
+    private StringBuilder whitespaceAlignedRepresentation;
     /**
      * Creates an IntNode storing the specified Integer as content.
      * @param content
@@ -86,20 +89,25 @@ public class IntNode extends BaseNode<Integer> {
         return false;
     }
 
-    //increase visibility to public in this class
     @Override
-    public List<? extends Node<Integer>> getChildren() {
-        return super.getChildren();
+    public void writeContentToHistory() {
+        // Int-Node does not support writing to history
+        
     }
 
-    /**
+    @Override
+    public void deleteContentFromHistory() {
+        // Int-Node does not support deleting from history"
+    }
+
+        /**
      * Sets this node's representation used by {@link helper.TreePrinter}.
      * The representation is a StringBuilder that should be aligned with special characters as demanded
      * by TreePrinter.
      * @param whiteSpaceAlignedRepresentation a StringBuilder whose content represents this node and is aligned
      */
     public void setAlignedRepresentation(StringBuilder whiteSpaceAlignedRepresentation) {
-        this.whiteAlignedRepresentation = whiteSpaceAlignedRepresentation;
+        this.whitespaceAlignedRepresentation = whiteSpaceAlignedRepresentation;
     }
 
     /**
@@ -109,7 +117,7 @@ public class IntNode extends BaseNode<Integer> {
      * @return this node's aligned representation
      */
     public StringBuilder getAlignedRepresentation() {
-        return whiteAlignedRepresentation;
+        return whitespaceAlignedRepresentation;
     }
 
     @Override
