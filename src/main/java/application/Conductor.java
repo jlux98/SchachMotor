@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
-import minimax.MoveOrderingSelfDestructingAlphaBetaPruningPastPositions;
+import minimax.MoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import model.ArrayBoard;
 import model.ByteBoard;

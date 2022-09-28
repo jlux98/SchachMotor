@@ -12,12 +12,12 @@ import gametree.Tree;
  * after evaluating their parent to save memory and applies basic move ordering
  * using the static evaluation of each child node.
  */
-public class MoveOrderingSelfDestructingAlphaBetaPruningPastPositions<T> extends BaseTreeEvaluator<T> {
+public class MoveOrderingSelfDestructingAlphaBetaPruningLegacy<T> extends BaseTreeEvaluator<T> {
 
     private DescendingStaticValueComparator<T> whiteComparator;
     private AscendingStaticValueComparator<T> blackComparator;
 
-    public MoveOrderingSelfDestructingAlphaBetaPruningPastPositions() {
+    public MoveOrderingSelfDestructingAlphaBetaPruningLegacy() {
         //TODO use singletons instead?
         whiteComparator = new DescendingStaticValueComparator<T>();
         blackComparator = new AscendingStaticValueComparator<T>();
@@ -99,17 +99,13 @@ public class MoveOrderingSelfDestructingAlphaBetaPruningPastPositions<T> extends
 
         this.increaseEvaluatedNodeCount();
 
-        parent.writeToHistory();
-
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
                 parent.evaluateStatically(false, depth);
-                parent.deleteLastFromHistory();
                 return parent;
             case 2:
                 parent.evaluateStatically(true, depth);
-                parent.deleteLastFromHistory();
                 return parent;
         }
 
@@ -172,8 +168,6 @@ public class MoveOrderingSelfDestructingAlphaBetaPruningPastPositions<T> extends
             // delete children from tree after parent was evaluated
             parent.deleteChildren();
 
-            parent.deleteLastFromHistory();
-
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
@@ -212,17 +206,13 @@ public class MoveOrderingSelfDestructingAlphaBetaPruningPastPositions<T> extends
 
         this.increaseEvaluatedNodeCount();
 
-        parent.writeToHistory();
-
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
                 parent.evaluateStatically(false, depth);
-                parent.deleteLastFromHistory();
                 return parent;
             case 2:
                 parent.evaluateStatically(true, depth);
-                parent.deleteLastFromHistory();
                 return parent;
         }
 
@@ -284,8 +274,6 @@ public class MoveOrderingSelfDestructingAlphaBetaPruningPastPositions<T> extends
 
             // delete children from tree after parent was evaluated
             parent.deleteChildren();
-
-            parent.deleteLastFromHistory();
 
             // return the best child node
             // the value stored by that node also is the value of this parent node

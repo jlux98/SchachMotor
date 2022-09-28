@@ -105,13 +105,13 @@ public class IntNode extends BaseNode<Integer> {
     }
 
     @Override
-    public void writeToHistory() {
+    public void writeContentToHistory() {
         // Int-Node does not support writing to history
         
     }
 
     @Override
-    public void deleteLastFromHistory() {
+    public void deleteContentFromHistory() {
         // Int-Node does not support deleting from history"
     }
 

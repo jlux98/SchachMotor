@@ -118,12 +118,12 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    public void writeToHistory() {
+    public void writeContentToHistory() {
         Conductor.appendPosition(getContent());
     }
 
     @Override
-    public void deleteLastFromHistory() {
+    public void deleteContentFromHistory() {
         Conductor.deleteLastPosition();
     }
 

@@ -84,12 +84,12 @@ public interface Node<T> extends Evaluable {
     /**
      * Adds the content of a Node to a type-specific log
      */
-    public abstract void writeToHistory();
+    public abstract void writeContentToHistory();
 
     /**
      * removes the last entry from a type-specific log
      */
-    public abstract void deleteLastFromHistory();
+    public abstract void deleteContentFromHistory();
 
     /**
      * Whether this node has children. Note that returning false does not imply that this node cannot generate 

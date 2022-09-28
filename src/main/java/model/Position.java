@@ -338,13 +338,9 @@ public class Position implements Comparable<Position>, Cloneable {
         return result;
     }
 
-    public int compareToLegacy(Position otherPosition) {
-        return this.toString().compareTo(otherPosition.toString());
-    }
-
     @Override
     public int compareTo(Position otherPosition) {
-        return this.toStringLight().compareTo(otherPosition.toStringLight());
+        return this.toString().compareTo(otherPosition.toString());
     }
 
     public String toStringLight(){

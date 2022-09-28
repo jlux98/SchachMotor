@@ -89,13 +89,17 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         this.increaseEvaluatedNodeCount();
 
+        parent.writeContentToHistory();
+
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
                 parent.evaluateStatically(false, depth);
+                parent.deleteContentFromHistory();
                 return parent;
             case 2:
                 parent.evaluateStatically(true, depth);
+                parent.deleteContentFromHistory();
                 return parent;
         }
 
@@ -152,6 +156,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 }
 
             }
+
+            parent.deleteContentFromHistory();
+
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if alpha-cutoff (break statement reached) return some node that will be
@@ -191,13 +198,17 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
         this.increaseEvaluatedNodeCount();
 
+        parent.writeContentToHistory();
+
         // assign static evaluation to leaves
         switch (isLeaf(parent, depth)) {
             case 1:
                 parent.evaluateStatically(false, depth);
+                parent.deleteContentFromHistory();
                 return parent;
             case 2:
                 parent.evaluateStatically(true, depth);
+                parent.deleteContentFromHistory();
                 return parent;
         }
 
@@ -254,6 +265,9 @@ public class GenericAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
                 }
 
             }
+
+            parent.deleteContentFromHistory();
+
             // return the best child node
             // the value stored by that node also is the value of this parent node
             // or if beta-cutoff (break statement reached) return some node that will be
