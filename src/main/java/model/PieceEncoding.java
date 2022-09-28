@@ -57,4 +57,79 @@ public class PieceEncoding {
     public static boolean isBytePieceValid(byte piece){
         return (piece >= LOWER_LIMIT && piece <= UPPER_LIMIT);
     }
+
+    public static PieceType getBytePieceType(byte piece){
+        switch(piece){
+            case BLACK_BISHOP:
+            case WHITE_BISHOP:
+                return PieceType.BISHOP;
+            case BLACK_KING:
+            case WHITE_KING:
+                return PieceType.KING;
+            case BLACK_KNIGHT:
+            case WHITE_KNIGHT:
+                return PieceType.KNIGHT;
+            case BLACK_PAWN:
+            case WHITE_PAWN:
+                return PieceType.PAWN;
+            case BLACK_QUEEN:
+            case WHITE_QUEEN:
+                return PieceType.QUEEN;
+            case BLACK_ROOK:
+            case WHITE_ROOK:
+                return PieceType.ROOK;
+            default:
+                return null;
+        }
+    }
+
+    public static byte getBytePieceFromCharacter(char pieceCharacter){
+        boolean isWhite = Character.isUpperCase(pieceCharacter);
+        byte result = 0;
+        //determine type
+        pieceCharacter = Character.toLowerCase(pieceCharacter);
+        switch (pieceCharacter) {
+            case 'k' -> result = BLACK_KING;
+            case 'q' -> result = BLACK_QUEEN;
+            case 'r' -> result = BLACK_ROOK;
+            case 'b' -> result = BLACK_BISHOP;
+            case 'n' -> result = BLACK_KNIGHT;
+            case 'p' -> result = BLACK_PAWN;
+            default -> throw new IllegalArgumentException("piece characters must be k,q,r,b,n or p, not " + pieceCharacter);
+        }
+        if (isWhite){
+            result = switchBytePieceColor(result);
+        }
+        return result;
+    }
+
+    public static char getCharacterFromBytePiece(byte piece){
+        char result = ' ';
+        switch(getBytePieceType(piece)){
+            case BISHOP:
+                result = 'b';
+                break;
+            case KING:
+                result = 'k';
+                break;
+            case KNIGHT:
+                result = 'n';
+                break;
+            case PAWN:
+                result = 'p';
+                break;
+            case QUEEN:
+                result = 'q';
+                break;
+            case ROOK:
+                result = 'r';
+                break;
+            default:
+                break;
+        }
+        if (isBytePieceWhite(piece)){
+            result = Character.toUpperCase(result);
+        }
+        return result;
+    }
 }

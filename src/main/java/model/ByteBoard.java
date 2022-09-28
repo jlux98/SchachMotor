@@ -141,9 +141,9 @@ public class ByteBoard implements Board {
         for (int rank = 0; rank < 8; rank++) {
             String result = "";
             for (int file = 0; file < 8; file++) {
-                Piece currentPiece = byteToPiece(spaces[rank*8+file]);
-                if (currentPiece != null) {
-                    result += currentPiece.toString();
+                byte currentPiece = getByteAt(rank, file);
+                if (currentPiece != EMPTY_SQUARE) {
+                    result += getCharacterFromBytePiece(currentPiece);
                 } else {
                     result += "0";
                 }

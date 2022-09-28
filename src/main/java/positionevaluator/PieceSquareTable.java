@@ -1,6 +1,6 @@
 package positionevaluator;
 
-import model.Piece;
+import static model.PieceEncoding.*;
 
 public class PieceSquareTable {
     private static int[] bishopTable = {
@@ -55,9 +55,9 @@ public class PieceSquareTable {
         0,  0,  0,  5,  5,  0,  0,  0
     };
 
-    public static int evaluatePiecePosition(int rank, int file, Piece piece){
+    public static int evaluatePiecePosition(int rank, int file, byte piece){
         int[] relevantTable = null;
-        switch(piece.getPieceType()){
+        switch(getBytePieceType(piece)){
             case BISHOP:
                 relevantTable = bishopTable;
                 break;
@@ -79,7 +79,7 @@ public class PieceSquareTable {
             default:
                 return 0;
         }
-        if (!piece.getIsWhite()){
+        if (isBytePieceWhite(piece)){
             rank = 7-rank;
         }
         return relevantTable[rank*8+file];
