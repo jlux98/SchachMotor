@@ -2,8 +2,8 @@ package positionevaluator;
 
 import model.Position;
 
-import model.Piece;
 import model.PieceType;
+import static model.PieceEncoding.*;
 
 public class PositionEvaluator implements Evaluator<Position> {
 
@@ -37,23 +37,23 @@ public class PositionEvaluator implements Evaluator<Position> {
             int whiteBishops = 0;
             for (int rank = 0; rank < 8; rank++){
                 for (int file = 0; file < 8; file++){
-                    Piece currentPiece = position.getPieceAt(rank, file);
-                    if (currentPiece == null){
+                    byte currentPiece = position.getByteAt(rank, file);
+                    if (currentPiece == 0){
                         continue;
                     }
                     int sign = 0;
-                    if (currentPiece.getIsWhite()){
-                        if (currentPiece.getPieceType() == PieceType.BISHOP){
+                    if (isBytePieceWhite(currentPiece)){
+                        if (getBytePieceType(currentPiece) == PieceType.BISHOP){
                             whiteBishops++;
                         }
                         sign = 1;
                     } else {
-                        if (currentPiece.getPieceType() == PieceType.BISHOP){
+                        if (getBytePieceType(currentPiece) == PieceType.BISHOP){
                             blackBishops++;
                         }
                         sign = -1;
                     }
-                    result += sign*currentPiece.getPieceType().getPointValue();
+                    result += sign*getBytePieceType(currentPiece).getPointValue();
                     result += sign*PieceSquareTable.evaluatePiecePosition(rank, file, currentPiece);
                 }
             }

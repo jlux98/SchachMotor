@@ -6,7 +6,7 @@ import model.Position;
 // import model.ArrayBoard;
 import model.Board;
 import model.ByteBoard;
-import model.Piece;
+import static model.PieceEncoding.*;
 
 /**
  * Class used to translate FEN-Strings to instances of {@link Position}.
@@ -45,7 +45,7 @@ public class FenParser {
             throw new NullPointerException("fen string may not be null");
         }
         this.fen = fen;
-        this.piecePositions = new ByteBoard(new Piece[8][8]);
+        this.piecePositions = ByteBoard.createEmpty();
     }
 
     /**
@@ -167,8 +167,8 @@ public class FenParser {
                 xPosition += Character.getNumericValue(character);
             } else {
                 try {
-                    Piece piece = new Piece(character);
-                    piecePositions.setPieceAt(yPosition, xPosition, piece);
+                    byte piece = getBytePieceFromCharacter(character);
+                    piecePositions.setByteAt(yPosition, xPosition, piece);
                     xPosition++;
                 } catch (IllegalArgumentException exception) {
                     throw new FenParseException(exception);

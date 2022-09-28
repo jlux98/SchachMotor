@@ -1,17 +1,17 @@
 package movegenerator;
 
 import model.Board;
-import model.Piece;
 import model.PieceType;
+import static model.PieceEncoding.*;
 
 public abstract class AttackMapGenerator {
     public static boolean[][] computeChecks(Board spaces, boolean isWhite) {
         boolean[][] result = new boolean[8][8];
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
-                Piece currentPiece = spaces.getPieceAt(rank, file);
-                if (currentPiece != null && currentPiece.getIsWhite() == isWhite){
-                    result = paintAttackBoard(spaces, result, rank, file, currentPiece.getPieceType(),isWhite);
+                byte currentPiece = spaces.getByteAt(rank, file);
+                if (currentPiece != EMPTY_SQUARE && isBytePieceWhite(currentPiece) == isWhite){
+                    result = paintAttackBoard(spaces, result, rank, file, getBytePieceType(currentPiece),isWhite);
                 }
             }
         }
