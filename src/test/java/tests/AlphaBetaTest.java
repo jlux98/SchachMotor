@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import classes.GeneratingIntNode;
+import gametree.ComputeChildrenException;
 import gametree.ImpTree;
 import gametree.Node;
 import helper.GameTreeEvaluationHelper;
@@ -20,7 +21,13 @@ import minimax.GenericAlphaBetaPruning;
  * Subtype of {@link TreeEvaluationTest} for testing GenericAlphaBetaPruning.
  */
 public class AlphaBetaTest extends TreeEvaluationTest {
-
+public static void main(String[] args) throws ComputeChildrenException {
+    AlphaBetaTest test = new AlphaBetaTest();
+    //test.Test();
+    //test.bestMoveTest();
+    //test.zugzwangStallTest();
+    //test.startTest();
+}
     public AlphaBetaTest() {
         super(new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>()),
                 new GameTreeEvaluationHelper(() -> new GameNodeAlphaBetaPruning()));

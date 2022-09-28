@@ -4,21 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import minimax.GameNodeSelfDestructingAlphaBetaPruning;
-import minimax.GameTreeEvaluator;
-import minimax.MoveOrderingSelfDestructingAlphaBetaPruning;
+import gametree.GameNode;
+import gametree.GameTree;
+import gametree.ImpGameTree;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
+import minimax.GameTreeEvaluator;
 import model.ArrayBoard;
 import model.ByteBoard;
 import model.Move;
 import model.Position;
-import positionevaluator.Evaluator;
 import uciservice.Tokenizer;
 import uciservice.UCIOperator;
 import uciservice.UCIParserAlphaBetaPruning;
 import uciservice.UCITokenizer;
-
-import gametree.*;
 
 public class Conductor {
     private boolean contd = true;

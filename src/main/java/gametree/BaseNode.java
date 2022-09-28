@@ -97,6 +97,11 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
+    public void setContent(T content) {
+        this.content = content;
+    }
+
+    @Override
     public void deleteContent() {
         this.content = null;
     }
@@ -222,14 +227,7 @@ public abstract class BaseNode<T> implements Node<T> {
         return value;
     }
 
-    /**
-     * This method is intended <b>for testing only.</b>
-     * Do not use this to retrieve the children of a node.
-     * <br><br>
-     * Use {@link #queryChildren()} instead.
-     * @return this nodes stored children
-     */
-    protected List<? extends Node<T>> getChildren() {
+    public List<? extends Node<T>> getChildren() {
         return this.children;
     }
 
@@ -256,6 +254,11 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void unmarkAsInteresting() {
         this.isInteresting = false;
+    }
+
+    @Override
+    public String toString() {
+        return getContent().toString();
     }
 
 }

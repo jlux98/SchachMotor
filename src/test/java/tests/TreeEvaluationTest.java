@@ -1,5 +1,7 @@
 package tests;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,18 +11,21 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import application.Conductor;
-import data.IntNodeTestTree;
-import helper.IntTreeEvaluationHelper;
+import data.IntNodeAsymmetricTestTree;
+import data.IntNodeSmallAsymmetricTestTree;
+import data.IntNodeWikipediaTestTree;
+import gametree.ComputeChildrenException;
+import gametree.GameNode;
+import gametree.ImpGameTree;
 import helper.GameTreeEvaluationHelper;
 import helper.IntNodeHelper;
+import helper.IntTreeEvaluationHelper;
+import helper.Mirror;
+import minimax.GameNodeMiniMax;
 import minimax.TreeEvaluator;
 import model.Move;
 import model.Position;
 import uciservice.FenParser;
-
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
-import gametree.*;
 
 /**
  * This abstract class implements test for TreeEvaluators such as minimax
@@ -78,7 +83,7 @@ public abstract class TreeEvaluationTest {
     // FIXME this test assumes that no pruning is happening whatsoever
     @Test
     public void incompleteBinaryTreeDepth4Test() {
-        IntNodeTestTree testTree = new IntNodeTestTree();
+        IntNodeWikipediaTestTree testTree = new IntNodeWikipediaTestTree();
         intTreeEvaluator.evaluateTree(testTree, 4, true);
         // root
         IntNodeHelper.compareIntNodeValue(-7, testTree.root);
@@ -107,6 +112,8 @@ public abstract class TreeEvaluationTest {
         IntNodeHelper.compareIntNodeValue(MIN_VALUE, testTree.layer4Node6);
         IntNodeHelper.compareIntNodeValue(-7, testTree.layer4Node7);
         IntNodeHelper.compareIntNodeValue(-5, testTree.layer4Node8);
+
+        intTreeEvaluator.verifyTreeAndInvertedTree(-7, 4, true, () -> new IntNodeWikipediaTestTree());
     }
 
     /**
@@ -114,7 +121,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void lagueDepth3BinaryTreeWhiteTest() {
-        intTreeEvaluator.testBinaryTree(3, 3, true, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 3, true, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -122,7 +129,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void lagueDepth3BinaryTreeBlackTest() {
-        intTreeEvaluator.testBinaryTree(0, 3, false, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 3, false, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -134,7 +141,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void lagueDepth3binaryTreeExaggeratedDepthWhiteTest() {
-        intTreeEvaluator.testBinaryTree(3, 4, true, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 4, true, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -143,7 +150,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void lagueDepth3binaryTreeExaggeratedDepthBlackTest() {
-        intTreeEvaluator.testBinaryTree(0, 4, false, -1, 3, 5, 1, -6, -4, 0, 9);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 4, false, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -154,8 +161,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.testBinaryTree(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -167,8 +174,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.testBinaryTree(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -179,8 +186,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.testBinaryTree(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -192,8 +199,8 @@ public abstract class TreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.testBinaryTree(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE, MIN_VALUE, MAX_VALUE,
-                MAX_VALUE);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+                MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
     /**
@@ -202,7 +209,7 @@ public abstract class TreeEvaluationTest {
 
     @Test
     public void javatpointBinaryTreeDepth3WhiteTest() {
-        intTreeEvaluator.testBinaryTree(4, 3, true, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(4, 3, true, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -211,7 +218,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3BlackTest() {
-        intTreeEvaluator.testBinaryTree(0, 3, false, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 3, false, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -219,7 +226,7 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3ExaggeratedDepthWhiteTest() {
-        intTreeEvaluator.testBinaryTree(4, 4, true, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(4, 4, true, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -228,12 +235,33 @@ public abstract class TreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3ExaggeratedDepthBlackTest() {
-        intTreeEvaluator.testBinaryTree(0, 4, false, -1, 4, 2, 6, -3, -5, 0, 7);
+        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 4, false, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
+    @Test
+    public void asymmetricTestTreeWhiteTest() {
+        intTreeEvaluator.verifyTreeAndInvertedTree(23, 7, true, () -> new IntNodeAsymmetricTestTree());
+    }
+
+    @Test
+    public void asymmetricTestTreeBlackTest() {
+        intTreeEvaluator.verifyTreeAndInvertedTree(-20, 7, false, () -> new IntNodeAsymmetricTestTree());
+    }
+
+    @Test
+    public void smallAsymmetricTestTreeWhiteTest() {
+        intTreeEvaluator.verifyTreeAndInvertedTree(3, 4, true, () -> new IntNodeSmallAsymmetricTestTree());
+    }
+
+    @Test
+    public void smallAsymmetricTestTreeBlackTest() {
+        intTreeEvaluator.verifyTreeAndInvertedTree(-6, 4, false, () -> new IntNodeSmallAsymmetricTestTree());
+    }
     // TODO add test with more extensive pruning (black)
     // TODO add test with more extensive pruning (white)
 
+    //TODO move game tree code to a new class GameTreeEvaluationTest, also move gameTreeEvaluator-supplier there
+    //TODO apply mirroring to these tests
     @Test
     public void findCheckMateBlack() {
         List<Move> expected = new ArrayList<Move>();
@@ -287,5 +315,132 @@ public abstract class TreeEvaluationTest {
         new ImpGameTree(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"),
         gameTreeEvaluator.instantiateTreeEvaluator()).calculateBestMove(3);
         assertEquals(0, Conductor.getPastPositions().size());
+    }
+    public void zugzwangStallTest() throws ComputeChildrenException {
+        //FIXME c7c8 is fine
+        GameNode node = gameTreeEvaluator.assertBestMoveNotIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 w - - 0 1", 5, true, "c7c8", "c5f8");
+    }
+
+    @Test
+    public void bestMoveTest() throws ComputeChildrenException {
+
+        //FIXME d7d5 is fine
+        //GameNode node = gameTreeEvaluator.assertBestMoveIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 b - - 0 1", 5, false, "d7d5");
+        GameNode node = gameTreeEvaluator.evaluate("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 b - - 0 1", 5, false);
+        System.out.println(node.getRepresentedMove().toStringAlgebraic());
+        
+    }
+
+    @Test
+    public void Test() throws ComputeChildrenException {
+        GameTreeEvaluationHelper minimax = new GameTreeEvaluationHelper(() -> new GameNodeMiniMax());
+        minimax.assertBestMoveIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 b - - 0 1", 4, false, "d7c7", "d7d5");
+        minimax.assertBestMoveNotIn("1q1k4/2Rr4/8/2Q3K1/8/8/8/8 w - - 0 1", 4, true, "c7c8");
+    }
+
+    @Test
+    public void firstMoveDepth3Test() {
+        GameNode whiteMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3, true);
+        GameNode blackMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 3, false);
+        assertEquals(whiteMove.getValue(), -blackMove.getValue());
+        assertEquals(whiteMove.getRepresentedMove(), Mirror.mirrorMove(blackMove.getRepresentedMove()));
+    }
+
+    @Test
+    public void firstMoveDepth4Test() {
+        GameNode whiteMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 4, true);
+        GameNode blackMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 4, false);
+        assertEquals(whiteMove.getValue(), -blackMove.getValue());
+        assertEquals(whiteMove.getRepresentedMove(), Mirror.mirrorMove(blackMove.getRepresentedMove()));
+    }
+
+    @Test
+    public void firstMoveDepth5Test() {
+        GameNode whiteMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 5, true);
+        GameNode blackMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 5, false);
+        assertEquals(whiteMove.getValue(), -blackMove.getValue());
+        assertEquals(whiteMove.getRepresentedMove(), Mirror.mirrorMove(blackMove.getRepresentedMove()));
+    }
+
+    @Test
+    public void firstMoveDepth6Test() {
+        GameNode whiteMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 6, true);
+        GameNode blackMove = gameTreeEvaluator.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 6, false);
+        assertEquals(whiteMove.getValue(), -blackMove.getValue());
+        assertEquals(whiteMove.getRepresentedMove(), Mirror.mirrorMove(blackMove.getRepresentedMove()));
+    }
+
+    @Test
+    public void bishopCaptureDepth1BlackTest() {
+        GameNode bestMove = gameTreeEvaluator.evaluate("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 1, false);
+        assertEquals(-100, bestMove.getValue());
+    }
+
+    @Test
+    public void bishopCaptureDepth1WhiteTest() {
+        GameNode bestMove = gameTreeEvaluator.evaluate("1rbqkbnr/pppppppp/n7/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 0 1", 1, true);
+        assertEquals(100, bestMove.getValue());
+    }
+
+    @Test
+    public void bishopCaptureDepth2WhiteTest() {
+        GameNode bestMove = gameTreeEvaluator.evaluate("1rbqkbnr/pppppppp/n7/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 0 1", 2, true);
+        assertEquals(100, bestMove.getValue());
+    }
+
+    @Test
+    public void bishopCaptureDepth2BlackTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 2, false);
+        assertEquals(-100, bestMove.getValue());
+
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth3WhiteTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("r1bqkbnr/pppppppp/n7/8/8/1P6/P1PPPPPP/NRBQKBNR w Kkq - 0 1", 3, true);
+        assertEquals(100, bestMove.getValue());
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth3BlackTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.assertBestMoveIn("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 3,
+                false, "c8b7", "c8a6");
+        assertEquals(-100, bestMove.getValue());
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth4WhiteTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("r1bqkbnr/pppppppp/n7/8/8/1P6/P1PPPPPP/NRBQKBNR w Kkq - 0 1", 4, true);
+        assertEquals(100, bestMove.getValue());
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth4BlackTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 4, false);
+        assertEquals(-100, bestMove.getValue());
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth5WhiteTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("r1bqkbnr/pppppppp/n7/8/8/1P6/P1PPPPPP/NRBQKBNR w Kkq - 0 1", 5, true);
+        assertEquals(100, bestMove.getValue());
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth5BlackTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 5, false);
+        assertEquals(-100, bestMove.getValue());
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth6WhiteTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("r1bqkbnr/pppppppp/n7/8/8/1P6/P1PPPPPP/NRBQKBNR w Kkq - 0 1", 6, true);
+        assertEquals(100, bestMove.getValue());
+    }
+
+    @Test
+    public void prepareBishopCaptureDepth6BlackTest() throws ComputeChildrenException {
+        GameNode bestMove = gameTreeEvaluator.evaluate("rnbqkbnr/p1pppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 6, false);
+        assertEquals(-100, bestMove.getValue());
     }
 }
