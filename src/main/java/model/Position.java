@@ -387,18 +387,6 @@ public class Position implements Comparable<Position>, Cloneable {
         return result;
     }
 
-    // public void applyMove(Move toApply){
-    // Coordinate targetSpace = toApply.getTargetSpace();
-    // Coordinate startingSpace = toApply.getStartingSpace();
-    // board.setPieceAt(targetSpace, getPieceAt(startingSpace));
-    // board.setPieceAt(startingSpace, null);
-    // whiteNextMove = !whiteNextMove;
-    // implement en passant
-    // }
-
-    // public void toggleWhiteNextMove(){
-    // whiteNextMove = !whiteNextMove;
-    // }
 
     public Position getFollowUpByMove(Move toApply) {
         Position[] followUps = MoveGenerator.generatePossibleMoves(
