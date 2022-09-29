@@ -22,14 +22,14 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> ext
 
     //FIXME initialization, see genericalphabetapruning
 
-    private DescendingStaticValueComparator<ContentType> whiteComparator;
-    private AscendingStaticValueComparator<ContentType> blackComparator;
+    private DescendingValueComparator whiteComparator;
+    private AscendingValueComparator blackComparator;
 
     public static final int STORED_LEVELS = 4;
 
     public StoringMoveOrderingSelfDestructingAlphaBetaPruning() {
-        whiteComparator = new DescendingStaticValueComparator<ContentType>();
-        blackComparator = new AscendingStaticValueComparator<ContentType>();
+        whiteComparator = new DescendingValueComparator();
+        blackComparator = new AscendingValueComparator();
     }
 
     @Override

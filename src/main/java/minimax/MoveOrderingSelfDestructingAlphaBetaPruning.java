@@ -14,13 +14,13 @@ import gametree.UninitializedValueException;
  */
 public class MoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends BaseTreeEvaluator<ContentType> {
 
-    private DescendingStaticValueComparator<ContentType> whiteComparator;
-    private AscendingStaticValueComparator<ContentType> blackComparator;
+    private DescendingValueComparator whiteComparator;
+    private AscendingValueComparator blackComparator;
 
     public MoveOrderingSelfDestructingAlphaBetaPruning() {
         //TODO use singletons instead?
-        whiteComparator = new DescendingStaticValueComparator<ContentType>();
-        blackComparator = new AscendingStaticValueComparator<ContentType>();
+        whiteComparator = new DescendingValueComparator();
+        blackComparator = new AscendingValueComparator();
     }
 
     @Override

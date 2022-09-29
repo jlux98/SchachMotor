@@ -2,15 +2,15 @@ package minimax;
 
 import java.util.Comparator;
 
-import gametree.Node;
+import gametree.Evaluable;
 import utility.PerformanceData;
 
-//FIXME make comparator for evaluables instead
 /**
- * A comparator ordering nodes by their static evaluation {@link Node#evaluateStatically(boolean, int)}
- *  in descending order.
+ * A comparator ordering evaluables in descending order.
+ * Evaluables are compared using their "best" available value.
+ * If no value is stored by the evaluable, it will be evaluated statically.
  */
-public class DescendingStaticValueComparator<ContentType> implements Comparator<Node<ContentType>> {
+public class DescendingValueComparator implements Comparator<Evaluable> {
     /**
      * Orders the data structure from greatest to smallest.
      * @return 
@@ -21,7 +21,7 @@ public class DescendingStaticValueComparator<ContentType> implements Comparator<
      * </ul>
      */
     @Override
-    public int compare(Node<ContentType> evaluable1, Node<ContentType> evaluable2) {
+    public int compare(Evaluable evaluable1, Evaluable evaluable2) {
         PerformanceData.descendingComparisons += 1;
         //evaluation may not require child generation here
         return -(evaluable1.computeOrGetStaticValueOrBetter() - evaluable2.computeOrGetStaticValueOrBetter());

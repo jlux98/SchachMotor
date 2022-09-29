@@ -13,14 +13,14 @@ import classes.EvaluableTestNode;
 import classes.IntNode;
 import gametree.GameNode;
 import gametree.Node;
-import minimax.AscendingStaticValueComparator;
-import minimax.DescendingStaticValueComparator;
+import minimax.AscendingValueComparator;
+import minimax.DescendingValueComparator;
 import model.Position;
 import uciservice.FenParser;
 
 public class ValueComparatorTest {
-    private DescendingStaticValueComparator<Integer> whiteComparator = new DescendingStaticValueComparator<Integer>();
-    private AscendingStaticValueComparator<Integer> blackComparator = new AscendingStaticValueComparator<Integer>();
+    private DescendingValueComparator whiteComparator = new DescendingValueComparator();
+    private AscendingValueComparator blackComparator = new AscendingValueComparator();
 
     @Test
     public void positiveLessThanTest() {
@@ -207,8 +207,7 @@ public class ValueComparatorTest {
         GameNode neutral = new GameNode(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
         List<GameNode> nodes = Arrays.asList(neutral, whiteLosing, blackLosing);
 
-        DescendingStaticValueComparator<Position> whiteNodeComparator = new DescendingStaticValueComparator<Position>();
-        nodes.sort(whiteNodeComparator);
+        nodes.sort(whiteComparator);
 
         assertTrue(nodes.get(0) == blackLosing); 
         assertTrue(nodes.get(1) == neutral);
@@ -222,8 +221,7 @@ public class ValueComparatorTest {
         GameNode neutral = new GameNode(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
         List<GameNode> nodes = Arrays.asList(neutral, whiteLosing, blackLosing);
 
-        AscendingStaticValueComparator<Position> blackNodeComparator = new AscendingStaticValueComparator<Position>();
-        nodes.sort(blackNodeComparator);
+        nodes.sort(blackComparator);
 
         assertTrue(nodes.get(0) == whiteLosing);
         assertTrue(nodes.get(1) == neutral);
