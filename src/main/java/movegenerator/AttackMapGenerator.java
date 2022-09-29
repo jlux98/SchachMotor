@@ -106,7 +106,7 @@ public abstract class AttackMapGenerator {
         }
         while(isInbounds(targetRank) && isInbounds(targetFile) && (!collision)){
             result[targetRank*8+targetFile] = true;
-            if (spaces.getPieceAt(targetRank, targetFile) != null){
+            if (spaces.getByteAt(targetRank, targetFile) != EMPTY_SQUARE){
                 collision = true;
                 break;
             }
@@ -249,8 +249,8 @@ public abstract class AttackMapGenerator {
             return result;
         }
         while(isInbounds(targetRank) && isInbounds(targetFile) && (!collision)){
-            setBitToTrue(targetRank, targetFile,result);
-            if (spaces.getPieceAt(targetRank, targetFile) != null){
+            setBitToTrue(targetRank, targetFile, result);
+            if (spaces.getByteAt(targetRank, targetFile) != EMPTY_SQUARE){
                 collision = true;
                 break;
             }
@@ -261,13 +261,13 @@ public abstract class AttackMapGenerator {
     }
 
     private static void setBitToTrue(int rank, int file, byte[] result){
-        byte mask = (byte) (1 << file);
-        result[rank] = (byte) (result[rank] | mask);
+        int mask = (1 << 7-file);
+        result[rank] = (byte) ((result[rank] | mask) & 0b11111111);
     }
 
     public static boolean getBoolFromByte(int rank, int file, byte[] bytes){
-        byte mask = (byte) (1 << file);
-        int result = bytes[rank] & mask;
+        int mask = (1 << 7-file);
+        byte result = (byte) ((bytes[rank] & mask) & 0b11111111);
         return result != 0;
     }
 

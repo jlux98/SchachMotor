@@ -7,8 +7,6 @@ import static model.PieceEncoding.*;
 
 public class ByteBoard implements Board {
     private byte[] spaces;
-    private byte blackKingSpace = -1;
-    private byte whiteKingSpace = -1;
 
     public ByteBoard(Piece[][] spaces) {
         byte[] result = new byte[64];
@@ -67,7 +65,7 @@ public class ByteBoard implements Board {
 
     @Override
     public Piece getPieceAt(int rank, int file) {
-        return byteToPiece(spaces[rank*8+file]);
+        return byteToPiece(getByteAt(rank, file));
     }
 
     private Piece byteToPiece(byte b) {
@@ -104,26 +102,17 @@ public class ByteBoard implements Board {
 
     @Override
     public Coordinate getKingPosition(boolean isWhite) {
-        if (isWhite && whiteKingSpace >= 0){
-            if (spaces[whiteKingSpace] == WHITE_KING){
-                return new Coordinate(whiteKingSpace/8, whiteKingSpace%8);
-            }
-        } else if (!isWhite && blackKingSpace >= 0){
-            if (spaces[blackKingSpace] == BLACK_KING){
-                return new Coordinate(blackKingSpace/8, blackKingSpace%8);
-            }
-        }
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                byte currentByte = spaces[rank*8+file];
+                byte currentByte = getByteAt(rank,file);
                 if (isWhite && currentByte != 0 &&
                     currentByte == WHITE_KING){
-                    whiteKingSpace = (byte)(rank*8+file);
+                    // whiteKingSpace = (byte)(rank*8+file);
                     return new Coordinate(rank, file);
                 }
                 if (!isWhite && currentByte != 0 &&
                     currentByte == BLACK_KING){
-                    blackKingSpace = (byte)(rank*8+file);
+                    // blackKingSpace = (byte)(rank*8+file);
                     return new Coordinate(rank, file);
                 }
             }
@@ -173,7 +162,7 @@ public class ByteBoard implements Board {
     public List<Piece> getRank(int rank) {
         List<Piece> result = new ArrayList<>();
         for (int file = 0; file < spaces.length; file++) {
-            result.add(byteToPiece(spaces[rank*8+file]));
+            result.add(byteToPiece(getByteAt(rank, file)));
         }
         return result;
     }
@@ -200,7 +189,13 @@ public class ByteBoard implements Board {
 
     @Override
     public byte getByteAt(int rank, int file) {
-        return spaces[rank*8+file];
+        boolean leftBits = file % 2 == 0;
+        byte piece = spaces[rank*8+file/2];
+        if (leftBits){
+            piece = (byte) (piece >>> 4);
+        } 
+        piece = (byte) (piece & (byte) 0b00001111);
+        return piece;
     }
 
     @Override
@@ -210,12 +205,26 @@ public class ByteBoard implements Board {
 
     @Override
     public void setByteAt(int rank, int file, byte b) {
-        spaces[rank*8+file] = b;
-        if (b == WHITE_KING){
-            whiteKingSpace = (byte)(rank*8+file);
-        } else if (b == BLACK_KING){
-            whiteKingSpace = (byte)(rank*8+file);
+
+        boolean leftBits = file % 2 == 0;
+        
+        byte piece = b;
+        byte resetMask;
+        // reset current value at that space
+        if (leftBits){
+            resetMask = (byte) 0b00001111;
+            piece = (byte) (piece << 4);
+        } else {
+            resetMask = (byte) 0b11110000;
         }
+        spaces[rank*8+file/2] = (byte)(spaces[rank*8+file/2] & resetMask);
+        spaces[rank*8+file/2] = (byte)(spaces[rank*8+file/2] | piece);
+
+        // if (piece == WHITE_KING){
+        //     whiteKingSpace = (byte)(rank*8+file/2);
+        // } else if (piece == BLACK_KING){
+        //     whiteKingSpace = (byte)(rank*8+file/2);
+        // }
     }
 
     @Override
@@ -229,7 +238,7 @@ public class ByteBoard implements Board {
                 } else {
                     result += printEmpty(countEmpty);
                     countEmpty = 0;
-                    result += getPieceAt(rank, file).toString();
+                    result += byteToPiece(getByteAt(rank, file));
                 }
             }
             result += printEmpty(countEmpty);

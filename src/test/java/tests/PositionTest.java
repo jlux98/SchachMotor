@@ -42,8 +42,7 @@ public class PositionTest {
     @BeforeAll
     public static void setup() {
         queenTestPosition = FenParser.parseFen("8/1q4k1/8/8/8/8/1Q4K1/8 w KQkq - 0 1");
-        rookTestPosition = FenParser.parseFen("8/1r4k1/8/8/8/8/1K4Q1/8 " +
-            "w KQkq - 0 1");
+        rookTestPosition = FenParser.parseFen("8/1r4k1/8/8/8/8/1K4Q1/8 w KQkq - 0 1");
         bishopTestPosition = FenParser.parseFen("8/1b4k1/8/8/8/8/1Q4K1/8 " +
             "w KQkq - 0 1");  
         kingTestPosition = FenParser.parseFen("8/1k4R1/8/8/8/8/1K4Q1/8 " +
