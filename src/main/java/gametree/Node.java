@@ -2,8 +2,6 @@ package gametree;
 
 import java.util.List;
 
-import positionevaluator.Evaluable;
-
 /**
  * Interface for nodes that store objects of a specific type.
  * Nodes can be linked to create tree structures.

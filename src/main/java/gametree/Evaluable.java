@@ -1,6 +1,4 @@
-package positionevaluator;
-
-import gametree.UninitializedValueException;
+package gametree;
 
 /**
  * Interface for classes that can be evaluated to a numeric value.

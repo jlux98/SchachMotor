@@ -5,13 +5,7 @@ import model.Position;
 import model.PieceType;
 import static model.PieceEncoding.*;
 
-public class PositionEvaluator implements Evaluator<Position> {
-
-    @Override
-    public int evaluate(Position position, boolean isNaturalLeaf, int depth) {
-        //TODO merge with evaluatePosition when refactoring is defintive
-        return PositionEvaluator.evaluatePosition(position);
-    }
+public class PositionEvaluator {
 
     public static int evaluateLeafPosition(Position position, int depth) {
         if (position.isDraw()) {

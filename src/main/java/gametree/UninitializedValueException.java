@@ -1,7 +1,7 @@
 package gametree;
 
 /**
- * Thrown to indicate that reading the value of {@link positionevaluator.Evaluable} was attempted without
+ * Thrown to indicate that reading the value of {@link gametree.Evaluable} was attempted without
  * ever evaluating it.
  */
 public class UninitializedValueException extends Exception {

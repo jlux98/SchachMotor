@@ -15,7 +15,7 @@ import gametree.UninitializedValueException;
  * after evaluating their parent to save memory.
  * <p>
  * This implementation also applies move ordering
- * using the "best" available value for stored nodes (see {@link positionevaluator.Evaluable})
+ * using the "best" available value for stored nodes (see {@link gametree.Evaluable})
  * and static evaluation of nodes that are not stored.
  */
 public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends BaseTreeEvaluator<ContentType> {
