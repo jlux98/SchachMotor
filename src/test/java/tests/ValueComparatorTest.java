@@ -11,9 +11,12 @@ import org.junit.jupiter.api.Test;
 
 import classes.EvaluableTestNode;
 import classes.IntNode;
+import gametree.GameNode;
 import gametree.Node;
 import minimax.AscendingStaticValueComparator;
 import minimax.DescendingStaticValueComparator;
+import model.Position;
+import uciservice.FenParser;
 
 public class ValueComparatorTest {
     private DescendingStaticValueComparator<Integer> whiteComparator = new DescendingStaticValueComparator<Integer>();
@@ -195,5 +198,35 @@ public class ValueComparatorTest {
             assertEquals(0, node.getComputeStaticValueCalls());
             assertEquals(0, node.getComputeLeafValueCalls());
         }
+    }
+
+    @Test
+    public void sortGameNodesDescendingTest() {
+        GameNode whiteLosing = new GameNode(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/R1B1K1NR b KQkq - 0 1"));
+        GameNode blackLosing = new GameNode(FenParser.parseFen("2bqkbnr/3ppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1"));
+        GameNode neutral = new GameNode(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+        List<GameNode> nodes = Arrays.asList(neutral, whiteLosing, blackLosing);
+
+        DescendingStaticValueComparator<Position> whiteNodeComparator = new DescendingStaticValueComparator<Position>();
+        nodes.sort(whiteNodeComparator);
+
+        assertTrue(nodes.get(0) == blackLosing); 
+        assertTrue(nodes.get(1) == neutral);
+        assertTrue(nodes.get(2) == whiteLosing);
+    }
+
+    @Test
+    public void sortGameNodeAscendingTest() {
+        GameNode whiteLosing = new GameNode(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/R1B1K1NR b KQkq - 0 1"));
+        GameNode blackLosing = new GameNode(FenParser.parseFen("2bqkbnr/3ppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1"));
+        GameNode neutral = new GameNode(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+        List<GameNode> nodes = Arrays.asList(neutral, whiteLosing, blackLosing);
+
+        AscendingStaticValueComparator<Position> blackNodeComparator = new AscendingStaticValueComparator<Position>();
+        nodes.sort(blackNodeComparator);
+
+        assertTrue(nodes.get(0) == whiteLosing);
+        assertTrue(nodes.get(1) == neutral);
+        assertTrue(nodes.get(2) == blackLosing);
     }
 }

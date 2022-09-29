@@ -8,7 +8,7 @@ import gametree.GameNode;
 import gametree.GameTree;
 import gametree.ImpGameTree;
 import minimax.GameNodeAlphaBetaPruning;
-import minimax.GameNodeIterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning;
+import minimax.GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
@@ -211,9 +211,9 @@ public class DemoApplicationFenToAlgebraic {
                 algorithmName = "Move-Ordering Self-Destructing Alpha-Beta-Pruning";
                 evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
             }
-            case "id", "iterative deepening", "iterative deepening move-ordering" -> {
-                algorithmName = "Iterative Deepening Move-Ordering Self-Destructing Alpha-Beta-Pruning";
-                evaluator = new GameNodeIterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning();
+            case "st", "storing", "caching" -> {
+                algorithmName = "Storing Move-Ordering Self-Destructing Alpha-Beta-Pruning";
+                evaluator = new GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning();
 
             }
             default -> {

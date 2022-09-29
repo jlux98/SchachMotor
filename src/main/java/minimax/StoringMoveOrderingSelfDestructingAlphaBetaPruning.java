@@ -4,72 +4,32 @@ import java.util.List;
 
 import gametree.ComputeChildrenException;
 import gametree.Node;
-import gametree.Tree;
 import gametree.UninitializedValueException;
-import utility.TimeUtility;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
- * that store any kind of Object. This implementation deletes child nodes
- * after evaluating their parent to save memory and applies basic move ordering
- * using the static evaluation of each child node.
+ * that store any kind of Object. 
+ * <p>
+ * This implementation stores the first <code>STORED_LEVELS</code> levels of the tree,
+ * but deletes child nodes of deeper layers
+ * after evaluating their parent to save memory.
+ * <p>
+ * This implementation also applies move ordering
+ * using the "best" available value for stored nodes (see {@link positionevaluator.Evaluable})
+ * and static evaluation of nodes that are not stored.
  */
-public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
+public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
 
     //FIXME initialization, see genericalphabetapruning
 
     private DescendingStaticValueComparator<T> whiteComparator;
     private AscendingStaticValueComparator<T> blackComparator;
 
-    private long stopTime;
+    public static final int STORED_LEVELS = 4;
 
-    private static final int STORED_LEVELS = 4;
-
-    public IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning() {
-        //TODO use singletons instead?
+    public StoringMoveOrderingSelfDestructingAlphaBetaPruning() {
         whiteComparator = new DescendingStaticValueComparator<T>();
         blackComparator = new AscendingStaticValueComparator<T>();
-    }
-
-    protected void isTimeLeft() throws OutOfTimeException {
-        if (System.nanoTime() >= stopTime - 1 * TimeUtility.SECOND_TO_NANO) {
-            throw new OutOfTimeException();
-        }
-    }
-
-    public static Node<?> lastResult;
-
-    /**
-     * Used to save an intermediate result of iterative deepning.
-     * @param bestMove the move that should be saved
-     */
-    private void saveMove(Node<T> bestMove) {
-        lastResult = bestMove;
-        //System.out.println(bestMove);
-        //System.out.println(((GameNode)bestMove).getRepresentedMove().toStringAlgebraic());
-    }
-
-    /**
-    * Evaluates the game tree using iterative deepening and returns the Node that should be played.
-    * @param tree the tree to be evaluated
-    * @param secondsToCompute the maximum time in seconds that the computation may take
-    * @param whitesTurn whether the turn to be searched is played by white
-    * @param maxDepth the max depth to which the tree should be evaluated
-    * @return the Node representing the turn to be played
-    */
-    public void evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn,
-            int maxDepth) {
-        long start = System.nanoTime();
-        stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
-        int depth = 1;
-        Node<T> bestMove = null;
-        while (depth <= maxDepth) {
-            //System.out.println("depth " + depth);
-            bestMove = evaluateNode(tree.getRoot(), depth, whitesTurn);
-            saveMove(bestMove);
-            depth += 1;
-        }
-        //System.out.println("finished with: "  + (((GameNode)bestMove).getRepresentedMove().toStringAlgebraic()));
     }
 
     @Override
@@ -146,6 +106,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
 
             int childValue;
             Node<T> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
@@ -168,7 +129,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is greater than all sibling's values
-                if (childValue < parent.getValue()) {
+                if (firstChild || childValue < parent.getValue()) {
                     // since parentValue is initialized to Integer.MAX_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -178,6 +139,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
                 if (childValue <= alpha) {
                     // minimizing player can achieve a lower score than maximizing player is already
@@ -257,6 +219,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
 
             int childValue;
             Node<T> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
@@ -280,7 +243,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is less than all sibling's values
-                if (childValue > parent.getValue()) {
+                if (firstChild || childValue > parent.getValue()) {
                     // since parentValue is initialized to Integer.MIN_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -289,6 +252,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
                 if (childValue >= beta) {
                     // maximizing player can achieve a higher score than minimizing player is

@@ -20,9 +20,4 @@ public class GameNodeMiniMax extends GenericMiniMax<Position> implements GameTre
         return (GameNode) super.evaluateTree(tree, depth, whitesTurn);
     }
 
-    @Override
-    public GameNode evaluateNode(Node<Position> gameTree, int depth, boolean whitesTurn) {
-        return (GameNode) super.evaluateNode(gameTree, depth, whitesTurn);
-    }
-
 }
