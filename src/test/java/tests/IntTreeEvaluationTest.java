@@ -1,10 +1,16 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
 
+import classes.IntNode;
 import data.IntNodeAsymmetricTestTree;
 import data.IntNodeSmallAsymmetricTestTree;
 import data.IntNodeWikipediaTestTree;
+import gametree.ImpTree;
+import gametree.Node;
+import gametree.Tree;
 import helper.IntNodeHelper;
 import helper.IntTreeEvaluationHelper;
 
@@ -43,7 +49,7 @@ import static java.lang.Integer.MIN_VALUE;
  */
 public abstract class IntTreeEvaluationTest {
 
-    protected IntTreeEvaluationHelper intTreeEvaluator;
+    protected IntTreeEvaluationHelper helper;
 
     /**
     * Constructs a new Test instance using the passed TreeEvaluationHelper
@@ -51,7 +57,16 @@ public abstract class IntTreeEvaluationTest {
     * @param intTreeEvaluator the IntTreeEvaluationHelper used to execute these tests
     */
     public IntTreeEvaluationTest(IntTreeEvaluationHelper intTreeEvaluator) {
-        this.intTreeEvaluator = intTreeEvaluator;
+        this.helper = intTreeEvaluator;
+    }
+
+    
+    @Test
+    public void illegalDepthTest() {
+        Tree<Node<Integer>> tree = new ImpTree<Node<Integer>>(new IntNode(1));
+        assertThrows(IllegalArgumentException.class, () -> helper.instantiateTreeEvaluator().evaluateTree(tree, 0, true));
+        assertThrows(IllegalArgumentException.class, () -> helper.instantiateTreeEvaluator().evaluateTree(tree, -1, true));
+        assertThrows(IllegalArgumentException.class, () -> helper.instantiateTreeEvaluator().evaluateTree(tree, Integer.MIN_VALUE, true));
     }
 
     /**
@@ -61,7 +76,7 @@ public abstract class IntTreeEvaluationTest {
     @Test
     public void incompleteBinaryTreeDepth4Test() {
         IntNodeWikipediaTestTree testTree = new IntNodeWikipediaTestTree();
-        intTreeEvaluator.evaluateTree(testTree, 4, true);
+        helper.evaluateTree(testTree, 4, true);
         // root
         IntNodeHelper.compareIntNodeValue(-7, testTree.root);
         // layer1
@@ -90,7 +105,7 @@ public abstract class IntTreeEvaluationTest {
         IntNodeHelper.compareIntNodeValue(-7, testTree.layer4Node7);
         IntNodeHelper.compareIntNodeValue(-5, testTree.layer4Node8);
 
-        intTreeEvaluator.verifyTreeAndInvertedTree(-7, 4, true, () -> new IntNodeWikipediaTestTree());
+        helper.verifyTreeAndInvertedTree(-7, 4, true, () -> new IntNodeWikipediaTestTree());
     }
 
     /**
@@ -98,7 +113,7 @@ public abstract class IntTreeEvaluationTest {
      */
     @Test
     public void lagueDepth3BinaryTreeWhiteTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 3, true, -1, 3, 5, 1, -6, -4, 0, 9);
+        helper.verifyTreeAndInvertedTreeBinary(3, 3, true, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -106,7 +121,7 @@ public abstract class IntTreeEvaluationTest {
      */
     @Test
     public void lagueDepth3BinaryTreeBlackTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 3, false, -1, 3, 5, 1, -6, -4, 0, 9);
+        helper.verifyTreeAndInvertedTreeBinary(0, 3, false, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -118,7 +133,7 @@ public abstract class IntTreeEvaluationTest {
      */
     @Test
     public void lagueDepth3binaryTreeExaggeratedDepthWhiteTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 4, true, -1, 3, 5, 1, -6, -4, 0, 9);
+        helper.verifyTreeAndInvertedTreeBinary(3, 4, true, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -127,7 +142,7 @@ public abstract class IntTreeEvaluationTest {
      */
     @Test
     public void lagueDepth3binaryTreeExaggeratedDepthBlackTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 4, false, -1, 3, 5, 1, -6, -4, 0, 9);
+        helper.verifyTreeAndInvertedTreeBinary(0, 4, false, -1, 3, 5, 1, -6, -4, 0, 9);
     }
 
     /**
@@ -138,7 +153,7 @@ public abstract class IntTreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+        helper.verifyTreeAndInvertedTreeBinary(3, 4, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
                 MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
@@ -151,7 +166,7 @@ public abstract class IntTreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+        helper.verifyTreeAndInvertedTreeBinary(1, 4, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
                 MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
@@ -163,7 +178,7 @@ public abstract class IntTreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+        helper.verifyTreeAndInvertedTreeBinary(3, 8, true, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
                 MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
@@ -176,7 +191,7 @@ public abstract class IntTreeEvaluationTest {
         // nodes storing MIN_VALUE or MAX_VALUE are pruned regardless of their value due
         // to their siblings' values
         // they are assigned extreme values to verify that they do not affect the tree
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
+        helper.verifyTreeAndInvertedTreeBinary(1, 8, false, 8, 5, 6, -4, 3, 8, 4, -6, 1, MIN_VALUE, 5, 2, MIN_VALUE,
                 MIN_VALUE, MAX_VALUE, MAX_VALUE);
     }
 
@@ -186,7 +201,7 @@ public abstract class IntTreeEvaluationTest {
 
     @Test
     public void javatpointBinaryTreeDepth3WhiteTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(4, 3, true, -1, 4, 2, 6, -3, -5, 0, 7);
+        helper.verifyTreeAndInvertedTreeBinary(4, 3, true, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -195,7 +210,7 @@ public abstract class IntTreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3BlackTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 3, false, -1, 4, 2, 6, -3, -5, 0, 7);
+        helper.verifyTreeAndInvertedTreeBinary(0, 3, false, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -203,7 +218,7 @@ public abstract class IntTreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3ExaggeratedDepthWhiteTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(4, 4, true, -1, 4, 2, 6, -3, -5, 0, 7);
+        helper.verifyTreeAndInvertedTreeBinary(4, 4, true, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     /**
@@ -212,26 +227,26 @@ public abstract class IntTreeEvaluationTest {
      */
     @Test
     public void javatpointBinaryTreeDepth3ExaggeratedDepthBlackTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTreeBinary(0, 4, false, -1, 4, 2, 6, -3, -5, 0, 7);
+        helper.verifyTreeAndInvertedTreeBinary(0, 4, false, -1, 4, 2, 6, -3, -5, 0, 7);
     }
 
     @Test
     public void asymmetricTestTreeWhiteTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTree(23, 7, true, () -> new IntNodeAsymmetricTestTree());
+        helper.verifyTreeAndInvertedTree(23, 7, true, () -> new IntNodeAsymmetricTestTree());
     }
 
     @Test
     public void asymmetricTestTreeBlackTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTree(-20, 7, false, () -> new IntNodeAsymmetricTestTree());
+        helper.verifyTreeAndInvertedTree(-20, 7, false, () -> new IntNodeAsymmetricTestTree());
     }
 
     @Test
     public void smallAsymmetricTestTreeWhiteTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTree(3, 4, true, () -> new IntNodeSmallAsymmetricTestTree());
+        helper.verifyTreeAndInvertedTree(3, 4, true, () -> new IntNodeSmallAsymmetricTestTree());
     }
 
     @Test
     public void smallAsymmetricTestTreeBlackTest() {
-        intTreeEvaluator.verifyTreeAndInvertedTree(-6, 4, false, () -> new IntNodeSmallAsymmetricTestTree());
+        helper.verifyTreeAndInvertedTree(-6, 4, false, () -> new IntNodeSmallAsymmetricTestTree());
     }
 }

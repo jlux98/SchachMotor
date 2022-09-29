@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import application.Conductor;
 import gametree.ComputeChildrenException;
 import gametree.GameNode;
+import gametree.GameTree;
 import gametree.ImpGameTree;
 import gametree.UninitializedValueException;
 import helper.GameTreeEvaluationHelper;
@@ -65,6 +67,17 @@ public abstract class GameTreeEvaluationTest {
         this.helper = gameTreeEvaluator;
     }
 
+    @Test
+    public void illegalDepthTest() {
+        GameTree tree = new ImpGameTree(new GameNode(FenParser.parseFen("2k5/8/8/8/8/3rrr2/N2rrr2/2K5 b - - 1 1")), helper.instantiateTreeEvaluator());
+        assertThrows(IllegalArgumentException.class, () -> helper.instantiateTreeEvaluator().evaluateTree(tree, 0, true));
+        assertThrows(IllegalArgumentException.class, () -> helper.instantiateTreeEvaluator().evaluateTree(tree, -1, true));
+        assertThrows(IllegalArgumentException.class, () -> helper.instantiateTreeEvaluator().evaluateTree(tree, Integer.MIN_VALUE, true));
+        assertThrows(IllegalArgumentException.class, () -> tree.calculateBestMove(0));
+        assertThrows(IllegalArgumentException.class, () -> tree.calculateBestMove(-1));
+        assertThrows(IllegalArgumentException.class, () -> tree.calculateBestMove(Integer.MIN_VALUE));
+    }
+    
     @Test
     public void findCheckMateBlack() {
         List<Move> expected = new ArrayList<Move>();

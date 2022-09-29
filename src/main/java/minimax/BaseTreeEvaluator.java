@@ -3,7 +3,6 @@ package minimax;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.Tree;
-import utility.TimeUtility;
 
 /**
  * Abstract class implementing TreeEvaluator,
@@ -20,6 +19,9 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
 
     @Override
     public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
+        if (depth < 1) {
+            throw new IllegalArgumentException("evaluation depth must be at least one");
+        }
         resetEvaluatedNodeCount();
         return evaluateNode(tree.getRoot(), depth, whitesTurn);
     }
