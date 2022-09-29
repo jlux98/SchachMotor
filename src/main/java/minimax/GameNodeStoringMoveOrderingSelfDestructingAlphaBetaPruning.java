@@ -1,12 +1,12 @@
 package minimax;
 
+import model.Position;
 import gametree.GameNode;
 import gametree.Node;
 import gametree.Tree;
-import model.Position;
 
-public class GameNodeSelfDestructingAlphaBetaPruning extends SelfDestructingAlphaBetaPruning<Position>
-        implements GameTreeEvaluator {
+public class GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning
+        extends StoringMoveOrderingSelfDestructingAlphaBetaPruning<Position> implements GameTreeEvaluator {
 
     @Override
     public GameNode evaluateTree(Tree<? extends Node<Position>> tree, int depth, boolean whitesTurn) {

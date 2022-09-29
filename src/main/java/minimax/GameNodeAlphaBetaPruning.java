@@ -23,9 +23,6 @@ public class GameNodeAlphaBetaPruning extends GenericAlphaBetaPruning<Position> 
         return (GameNode) super.evaluateTree(tree, depth, whitesTurn);
     }
 
-    /**
-     * @deprecated
-     */
     @Override
     public GameNode evaluateNode(Node<Position> node, int depth, boolean whitesTurn) {
         return (GameNode) super.evaluateNode(node, depth, whitesTurn);

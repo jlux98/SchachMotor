@@ -210,7 +210,7 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
         Position resultingPosition = new Position(resultingSpaces, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
-            doubleStepRank,doubleStepFile, 0, fullMoves);
+            doubleStepRank,doubleStepFile, (byte)0, fullMoves);
         if ((sign == -1) && !resultingPosition.getWhiteInCheck()||
             (sign == 1) && !resultingPosition.getBlackInCheck()){
             int targetRank = -1;

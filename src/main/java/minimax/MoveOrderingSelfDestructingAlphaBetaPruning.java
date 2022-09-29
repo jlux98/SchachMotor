@@ -4,7 +4,7 @@ import java.util.List;
 
 import gametree.ComputeChildrenException;
 import gametree.Node;
-import gametree.Tree;
+import gametree.UninitializedValueException;
 
 /**
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
@@ -12,35 +12,19 @@ import gametree.Tree;
  * after evaluating their parent to save memory and applies basic move ordering
  * using the static evaluation of each child node.
  */
-public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
+public class MoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends BaseTreeEvaluator<ContentType> {
 
-    private DescendingStaticValueComparator<T> whiteComparator;
-    private AscendingStaticValueComparator<T> blackComparator;
+    private DescendingValueComparator whiteComparator;
+    private AscendingValueComparator blackComparator;
 
     public MoveOrderingSelfDestructingAlphaBetaPruning() {
         //TODO use singletons instead?
-        whiteComparator = new DescendingStaticValueComparator<T>();
-        blackComparator = new AscendingStaticValueComparator<T>();
+        whiteComparator = new DescendingValueComparator();
+        blackComparator = new AscendingValueComparator();
     }
 
-    // Note on storing values in nodes:
-    // values stored by nodes do not have to be marked as invalid
-    // leaves overwrite their old value (they can have an old value because
-    // iterative deepening doesn't start with old
-    // max depth, so nodes that are leaves for this iteration might not actually be
-    // leaves in the gametree)
-    // inner nodes overwrite their own value with values of their children
-
     @Override
-    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
-        return evaluateNode(tree.getRoot(), depth, whitesTurn);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Override
-    public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
+    public Node<ContentType> evaluateNode(Node<ContentType> node, int depth, boolean whitesTurn) {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         return alphaBetaPruningMiniMax(node, depth, alpha, beta, whitesTurn);
@@ -61,8 +45,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta,
-            boolean whiteNextMove) {
+    private Node<ContentType> alphaBetaPruningMiniMax(Node<ContentType> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
 
         if (whiteNextMove) {
             // maximize this node
@@ -90,7 +73,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (smallest) value
      */
-    protected Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
+    protected Node<ContentType> alphaBetaMinimize(Node<ContentType> parent, int depth, int alpha, int beta) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -102,15 +85,11 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
         parent.writeContentToHistory();
 
         // assign static evaluation to leaves
-        switch (isLeaf(parent, depth)) {
-            case 1:
-                parent.evaluateStatically(false, depth);
-                parent.deleteContentFromHistory();
-                return parent;
-            case 2:
-                parent.evaluateStatically(true, depth);
-                parent.deleteContentFromHistory();
-                return parent;
+        // assign static evaluation to leaves
+        boolean leaf = evaluateIfLeaf(parent, depth);
+        if (leaf) {
+            parent.deleteContentFromHistory();
+            return parent;
         }
 
         try {
@@ -118,15 +97,16 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             parent.setValue(Integer.MAX_VALUE);
 
             int childValue;
-            Node<T> bestChild = null; // the child that determines the value of this parent node
+            Node<ContentType> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.getOrCompute();
+            List<? extends Node<ContentType>> children = parent.getOrComputeChildren();
 
             children.sort(blackComparator);
 
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
@@ -141,7 +121,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is greater than all sibling's values
-                if (childValue < parent.getValue()) {
+                if (firstChild || childValue < parent.getValue()) {
                     // since parentValue is initialized to Integer.MAX_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -151,6 +131,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
                 if (childValue <= alpha) {
                     // minimizing player can achieve a lower score than maximizing player is already
@@ -179,6 +160,9 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             // or if alpha-cutoff (break statement reached) return some node that will be
             // "ignored"
             return bestChild;
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
 
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false
@@ -203,7 +187,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (greatest) value
      */
-    protected Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
+    protected Node<ContentType> alphaBetaMaximize(Node<ContentType> parent, int depth, int alpha, int beta) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -215,15 +199,10 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
         parent.writeContentToHistory();
 
         // assign static evaluation to leaves
-        switch (isLeaf(parent, depth)) {
-            case 1:
-                parent.evaluateStatically(false, depth);
-                parent.deleteContentFromHistory();
-                return parent;
-            case 2:
-                parent.evaluateStatically(true, depth);
-                parent.deleteContentFromHistory();
-                return parent;
+        boolean leaf = evaluateIfLeaf(parent, depth);
+        if (leaf) {
+            parent.deleteContentFromHistory();
+            return parent;
         }
 
         try {
@@ -231,15 +210,16 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             parent.setValue(Integer.MIN_VALUE);
 
             int childValue;
-            Node<T> bestChild = null; // the child that determines the value of this parent node
+            Node<ContentType> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.getOrCompute();
+            List<? extends Node<ContentType>> children = parent.getOrComputeChildren();
 
             children.sort(whiteComparator);
 
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
 
                 // evaluate all children
                 // if this node is maximizing, child nodes are minimizing
@@ -255,7 +235,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is less than all sibling's values
-                if (childValue > parent.getValue()) {
+                if (firstChild || childValue > parent.getValue()) {
                     // since parentValue is initialized to Integer.MIN_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -264,6 +244,7 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
                 if (childValue >= beta) {
                     // maximizing player can achieve a higher score than minimizing player is
@@ -292,6 +273,10 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEval
             // or if beta-cutoff (break statement reached) return some node that will be
             // "ignored"
             return bestChild;
+            
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
 
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false

@@ -17,7 +17,7 @@ public class GameNodeHelper {
      * @return a list of the positions stored by the node's children
      */
     public static List<Position> extractChildPositions(GameNode parent) throws ComputeChildrenException {
-        List<? extends Node<Position>> children = parent.getOrCompute();
+        List<? extends Node<Position>> children = parent.getOrComputeChildren();
         List<Position> childPositions = new ArrayList<Position>(children.size());
         for (int i = 0; i < children.size(); i++) {
             childPositions.add(children.get(i).getContent());

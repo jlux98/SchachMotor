@@ -11,14 +11,18 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import classes.EvaluableTestNode;
 import classes.GeneratingIntNode;
 import classes.IntNode;
 import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.Node;
+import gametree.UninitializedValueException;
 import helper.NodeHelper;
 
 public class NodeTest {
+
+    //TODO add tests for new evaluable methods
 
     private IntNodeWikipediaTestTree testTree;
 
@@ -39,7 +43,7 @@ public class NodeTest {
     public void createChildNodeTest() throws ComputeChildrenException {
         IntNode root = new IntNode(3);
         IntNode child = new IntNode(18, root);
-        List<? extends Node<Integer>> children = root.getOrCompute();
+        List<? extends Node<Integer>> children = root.getOrComputeChildren();
         Node<Integer> retrievedChild = children.get(0);
         assertTrue(root.hasChildren());
         assertEquals(1, children.size());
@@ -54,7 +58,7 @@ public class NodeTest {
         //create a second root node called child and add it to the root node
         IntNode child = new IntNode(7);
         root.insertChild(child);
-        List<? extends Node<Integer>> children = root.getOrCompute();
+        List<? extends Node<Integer>> children = root.getOrComputeChildren();
         Node<Integer> retrievedChild = children.get(0);
         assertTrue(root.hasChildren());
         assertEquals(1, children.size());
@@ -153,7 +157,7 @@ public class NodeTest {
     @Test
     public void queryChildrenCallsComputeChildrenIfNoChildrenStoredTest() {
         IntNode leaf = testTree.layer4Node3;
-        assertThrows(ComputeChildrenException.class, () -> leaf.getOrCompute());
+        assertThrows(ComputeChildrenException.class, () -> leaf.getOrComputeChildren());
     }
 
     /**
@@ -169,7 +173,7 @@ public class NodeTest {
     @Test
     public void queryChildrenGeneratesChildrenTest() throws ComputeChildrenException {
         GeneratingIntNode parent = new GeneratingIntNode(0,3);
-        List<? extends Node<Integer>> children = parent.getOrCompute();
+        List<? extends Node<Integer>> children = parent.getOrComputeChildren();
         //test that parent generated exactly 3 children
         assertTrue(parent.hasChildren());
         assertEquals(3, children.size());
@@ -177,6 +181,67 @@ public class NodeTest {
         assertFalse(children.get(0).hasChildren());
         assertFalse(children.get(1).hasChildren());
         assertFalse(children.get(2).hasChildren());
+    }
+
+    @Test
+    public void TestGetValueUnitialized() {
+        EvaluableTestNode node = new EvaluableTestNode(42);
+        assertThrows(UninitializedValueException.class, () -> node.getValue());
+    }
+
+    @Test
+    public void testGetValueStaticValueTest() throws UninitializedValueException {
+        EvaluableTestNode node = new EvaluableTestNode(42);
+        assertThrows(UninitializedValueException.class, () -> node.getValue());
+        int value = node.computeOrGetStaticValueOrBetter();
+        assertEquals(42, value);
+        assertEquals(42, node.getValue());
+        assertEquals(47, node.computeOrGetLeafValueOrBetter(5)); //leaf supersedes
+    }
+
+    @Test
+    public void testStaticLeafValueTest() throws UninitializedValueException {
+        EvaluableTestNode node = new EvaluableTestNode(42);
+        assertThrows(UninitializedValueException.class, () -> node.getValue());
+        int value = node.computeOrGetLeafValueOrBetter(5); //leaf -> value = 42 + depth = 47 expected
+        assertEquals(47, value);
+        assertEquals(47, node.getValue());
+        assertEquals(47, node.computeOrGetStaticValueOrBetter()); //is superseded
+    }
+
+    @Test
+    public void testExplicitValueTest() throws UninitializedValueException {
+        EvaluableTestNode node = new EvaluableTestNode(42);
+        assertThrows(UninitializedValueException.class, () -> node.getExplicitValue());        
+        assertEquals(42, node.computeOrGetStaticValueOrBetter());
+        assertThrows(UninitializedValueException.class, () -> node.getExplicitValue());
+        assertEquals(45, node.computeOrGetLeafValueOrBetter(3)); //leaf supersedes "normal" static value
+        assertThrows(UninitializedValueException.class, () -> node.getExplicitValue());
+        node.setValue(13);
+        assertEquals(13, node.getValue());
+        assertEquals(13, node.computeOrGetStaticValueOrBetter()); //is superseded
+        assertEquals(13, node.computeOrGetLeafValueOrBetter(3)); //is superseded
+        assertEquals(13, node.getExplicitValue());
+    }
+
+    @Test
+    public void setValueOverwritesStaticValueTest() throws UninitializedValueException {        
+        EvaluableTestNode node = new EvaluableTestNode(7);
+        assertEquals(7, node.computeOrGetStaticValueOrBetter());
+        node.setValue(1);
+        assertEquals(1, node.getExplicitValue());
+        assertEquals(1, node.computeOrGetStaticValueOrBetter());
+        assertEquals(1, node.computeOrGetLeafValueOrBetter(3));
+    }
+
+    @Test
+    public void setValueOverwritesStaticLeafValueTest() throws UninitializedValueException {        
+        EvaluableTestNode node = new EvaluableTestNode(7);
+        assertEquals(8, node.computeOrGetLeafValueOrBetter(1));
+        node.setValue(2);
+        assertEquals(2, node.getExplicitValue());
+        assertEquals(2, node.computeOrGetLeafValueOrBetter(3));        
+        assertEquals(2, node.computeOrGetStaticValueOrBetter());
     }
 
 }

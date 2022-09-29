@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import gametree.GameNode;
+import gametree.UninitializedValueException;
 import helper.GameTreeEvaluationHelper;
 import helper.Mirror;
 
@@ -25,7 +26,7 @@ public abstract class ExpensiveGameTreeEvaluationTest extends GameTreeEvaluation
     }
 
     @Test
-    public void firstMoveDepth5Test() {
+    public void firstMoveDepth5Test() throws UninitializedValueException {
         GameNode whiteMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 5, true);
         GameNode blackMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 5, false);
         assertEquals(whiteMove.getValue(), -blackMove.getValue());
@@ -33,7 +34,7 @@ public abstract class ExpensiveGameTreeEvaluationTest extends GameTreeEvaluation
     }
 
     @Test
-    public void firstMoveDepth6Test() {
+    public void firstMoveDepth6Test() throws UninitializedValueException {
         GameNode whiteMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 6, true);
         GameNode blackMove = helper.evaluate("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1", 6, false);
         assertEquals(whiteMove.getValue(), -blackMove.getValue());

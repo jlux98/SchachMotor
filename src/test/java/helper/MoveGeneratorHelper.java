@@ -135,9 +135,9 @@ public class MoveGeneratorHelper {
     * @param expectedPositions the expected follow-up positions
     */
     public static void verifyPieceMoveGeneration(Position position, byte piece, int rank, int file,
-            List<Position> expectedPositions) {
-
-        if (piece < 1 || piece > BLACK_ROOK) {
+    List<Position> expectedPositions) {
+        
+        if (piece < 1 || piece > UPPER_LIMIT) {
             throw new IllegalArgumentException("piece must be value between 1 and 12");
         }
 

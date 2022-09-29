@@ -6,9 +6,13 @@ import java.util.function.Supplier;
  * Class used to time the execution of code.
  * Use {@link #time(Supplier)} to time the execution of code that returns a result.
  */
-public class TimeUtility<T> {
+public class TimeUtility<ResultType> {
 
     private long elapsedTime = -1;
+    /**
+     * conversion multiplier: seconds * SECOND_TO_NANO = nanoseconds
+     */
+    public static final  long SECOND_TO_NANO = 1_000_000_000;
 
     /**
      * Converts nanoseconds stored as long to seconds represented as String.
@@ -43,11 +47,11 @@ public class TimeUtility<T> {
      * @param supplier code that should be timed
      * @return the passed code's result
      */
-    public T time(Supplier<T> supplier) {
+    public ResultType time(Supplier<ResultType> supplier) {
         resetElapsedTime();
 
         long startingTime = System.nanoTime();
-        T result = supplier.get(); //execute passed code
+        ResultType result = supplier.get(); //execute passed code
         long endingTime = System.nanoTime();
 
         //save rough time spent calculating

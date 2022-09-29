@@ -63,7 +63,7 @@ public class KnightMoveGenerator extends PieceMoveGenerator{
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
         }
-        int halfMoves = bs.getHalfMoves()+1;
+        byte halfMoves = (byte) (bs.getHalfMoves()+1);
         if (hasCaptured){
             halfMoves = 0;
         }

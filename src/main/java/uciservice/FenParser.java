@@ -33,7 +33,7 @@ public class FenParser {
     private boolean blackCastlingQueenside = false;
     private int enPassantTargetRank;
     private int enPassantTargetFile;
-    private int halfMoves;
+    private byte halfMoves;
     private int fullMoves;
 
     /**
@@ -245,14 +245,14 @@ public class FenParser {
         //iterate over characters and set corresponding flags
         for (char castlingAbility : castlingAbilities) {
             switch (castlingAbility) {
-                //uppercase characters are white 
-                case 'K' -> whiteCastlingKingside = true;
-                case 'Q' -> whiteCastlingQueenside = true;
-                //lowercase characters are black
-                case 'k' -> blackCastlingKingside = true;
-                case 'q' -> blackCastlingQueenside = true;
-                default -> throw new FenParseException(
-                        "castling abilities must be denoted by characters from KkQq, not " + castlingAbility);
+            //uppercase characters are white 
+            case 'K' -> whiteCastlingKingside = true;
+            case 'Q' -> whiteCastlingQueenside = true;
+            //lowercase characters are black
+            case 'k' -> blackCastlingKingside = true;
+            case 'q' -> blackCastlingQueenside = true;
+            default -> throw new FenParseException(
+                    "castling abilities must be denoted by characters from KkQq, not " + castlingAbility);
             }
 
         }
@@ -344,12 +344,28 @@ public class FenParser {
     }
 
     /**
+    * Attempts to parse the passed String as byte using
+    * <pre>Byte.parseByte(byteString)</pre>
+    * Wraps any occuring NumberFormatExceptions in a FenParseException.
+    * @param byteString a string representing an byte value
+    * @throws FenParseException if parsing the string fails
+    * @return the byte represented by the string
+    */
+    private static byte parseByte(String byteString) {
+        try {
+            return Byte.parseByte(byteString);
+        } catch (NumberFormatException exception) {
+            throw new FenParseException(exception);
+        }
+    }
+
+    /**
      * Parses the half move count provided by a fen string.
      * @param halfMoveCountToken the fen token denoting the half move count
      * @throws FenParseException if the token is not a number
      */
     private void parseHalfMoveCount(String halfMoveCountToken) {
-        halfMoves = FenParser.parseInt(halfMoveCountToken);
+        halfMoves = FenParser.parseByte(halfMoveCountToken);
         if (halfMoves < 0) {
             throw new FenParseException("full move count must be >= 0");
         }

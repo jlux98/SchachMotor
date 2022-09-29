@@ -144,7 +144,7 @@ public class TreePrinter {
             return;
         }
 
-        List<? extends Node<Integer>> children = node.getOrCompute();
+        List<? extends Node<Integer>> children = node.getOrComputeChildren();
         for (Node<Integer> child : children) {
             updateAlignments((IntNode) child, currentDepth + 1, treeMaxDepth);
         }
@@ -173,7 +173,7 @@ public class TreePrinter {
         }
 
         int childrenWidth = 0;
-        List<? extends Node<Integer>> children = node.getOrCompute();
+        List<? extends Node<Integer>> children = node.getOrComputeChildren();
         IntNode child;
         for (int i = 0; i < children.size(); i++) {
             child = (IntNode) children.get(i);
@@ -217,7 +217,7 @@ public class TreePrinter {
             System.out.print(node.getAlignedRepresentation());
             return;
         }
-        List<? extends Node<Integer>> children = node.getOrCompute();
+        List<? extends Node<Integer>> children = node.getOrComputeChildren();
         for (Node<Integer> child : children) {
             printNodes((IntNode) child, layerDepth, currentDepth + 1, treeMaxDepth);
         }

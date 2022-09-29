@@ -6,7 +6,7 @@ import java.util.List;
 public class MoveGeneratorData {
     /**
      * used to test {@link MoveGenerator#generatePossibleMoves(Position)}
-     * and {@link GameNode#getOrCompute()}
+     * and {@link GameNode#getOrComputeChildren()}
      */
     public static String allBlackPiecesFen = "8/6K1/2Rp4/3np3/2r2p2/5qp1/1kb4p/8 b - - 0 1";
 

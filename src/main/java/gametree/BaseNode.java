@@ -12,21 +12,23 @@ import utility.PerformanceData;
  * which is used to generate children of a node to grow a tree as needed,
  * and {@link #computeStaticValue(boolean, int)} used to evaluate nodes statically.
  */
-public abstract class BaseNode<T> implements Node<T> {
+public abstract class BaseNode<ContentType> implements Node<ContentType> {
 
-    private Node<T> parent;
-    private T content;
-    private List<Node<T>> children;
+    private Node<ContentType> parent;
+    private ContentType content;
+    private List<Node<ContentType>> children;
+
     private int value;
-    private boolean isInteresting;
-    private boolean staticEvaluationCached = false;
-    private int staticValue;
+    private boolean isStaticValueOrBetter = false;
+    private boolean isStaticLeafValueOrBetter = false;
+    private boolean isExplicitValue = false;
+    private boolean isInteresting = false;
 
     /**
      * Creates a root node.
      * @param content content stored by the node
      */
-    public BaseNode(T content) {
+    public BaseNode(ContentType content) {
         this.content = content;
         //parent == null here
     }
@@ -37,7 +39,7 @@ public abstract class BaseNode<T> implements Node<T> {
      * @param content content stored by the node
      * @param parent parent of the created node
      */
-    public BaseNode(T content, Node<T> parent) {
+    public BaseNode(ContentType content, Node<ContentType> parent) {
         this(content);
         parent.insertChild(this);
     }
@@ -47,19 +49,19 @@ public abstract class BaseNode<T> implements Node<T> {
      */
     protected void createChildListIfNotExists() {
         if (this.children == null) {
-            this.children = new ArrayList<Node<T>>(20);
+            this.children = new ArrayList<Node<ContentType>>(20);
         }
     }
 
     @Override
-    public void deleteChild(Node<T> node) {
+    public void deleteChild(Node<ContentType> node) {
         // removing with ArrayList.remove(node) would require gamenode.equals()
         // which would probably have to compare positions which is inefficient
 
         // removing by equals also does not guarantee removal of the correct node if 2
         // equal nodes are present,
         // though in that case either all or none of the nodes should be removed
-        Node<T> child = null;
+        Node<ContentType> child = null;
         for (int i = 0; i < children.size(); i++) {
             child = children.get(i);
             if (child == node) {
@@ -74,7 +76,7 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void deleteChildren() {
         if (hasChildren()) {
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
                 child.unsetParent();
             }
             this.children.clear();
@@ -92,12 +94,12 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
-    public T getContent() {
+    public ContentType getContent() {
         return content;
     }
 
     @Override
-    public void setContent(T content) {
+    public void setContent(ContentType content) {
         this.content = content;
     }
 
@@ -107,13 +109,13 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
-    public Node<T> getParent() {
+    public Node<ContentType> getParent() {
         return this.parent; //possibly null
     }
 
     /**
      * Whether this node has children. Note that returning false does not imply that this note cannot generate 
-     * children when calling {@link #getOrCompute()}.
+     * children when calling {@link #getOrComputeChildren()}.
      * @return true - if this node currently has any children, false - if not
      */
     @Override
@@ -129,7 +131,7 @@ public abstract class BaseNode<T> implements Node<T> {
     * Otherwise a class cast exception might arise.
     */
     @Override
-    public void insertChild(Node<T> node) {
+    public void insertChild(Node<ContentType> node) {
         createChildListIfNotExists();
         node.setParent(this);
         this.children.add(node);
@@ -137,10 +139,9 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
-    public void setParent(Node<T> parent) {
+    public void setParent(Node<ContentType> parent) {
         if (this.parent != null) {
-            throw new IllegalStateException(
-                    "a node can only be child to a single node, this node already has a parent");
+            throw new IllegalStateException("a node can only be child to a single node, this node already has a parent");
         }
         this.parent = parent;
     }
@@ -160,13 +161,13 @@ public abstract class BaseNode<T> implements Node<T> {
      * @param position the position to be stored in the child node
      * @return a child of this node
      */
-    public abstract Node<T> createChild(T content);
+    public abstract Node<ContentType> createChild(ContentType content);
 
     /**
      * Computes this node's children and overwrites its current child list accordingly.
      * <p>
      * <b>Note:</b> Do not use this method directly to generate children of this node.
-     * This is a helper method that is implemented individually by subtypes and called by {@link #getOrCompute()}.
+     * This is a helper method that is implemented individually by subtypes and called by {@link #getOrComputeChildren()}.
      * Use queryChildren() to generate children of this node.
      * </p>
      * @throws ComputeChildrenException if no children can be computed
@@ -174,7 +175,7 @@ public abstract class BaseNode<T> implements Node<T> {
     protected abstract void computeChildren() throws ComputeChildrenException;
 
     @Override
-    public List<? extends Node<T>> getOrCompute() throws ComputeChildrenException {
+    public List<? extends Node<ContentType>> getOrComputeChildren() throws ComputeChildrenException {
         if (!hasChildren()) {
             computeChildren();
             detachChildGenerationData();
@@ -182,9 +183,18 @@ public abstract class BaseNode<T> implements Node<T> {
         return children;
     }
 
+    public List<? extends Node<ContentType>> getChildren() {
+        return this.children;
+    }
+
+    @Override
+    public String toString() {
+        return getContent().toString();
+    }
+
     /**
      * Hook for subclasses.
-     * Called after {@link #computeChildren()} in {@link #getOrCompute()}.
+     * Called after {@link #computeChildren()} in {@link #getOrComputeChildren()}.
      * Intended to allow for deletion of data from the node that is
      * only required to generate children.
      */
@@ -192,52 +202,69 @@ public abstract class BaseNode<T> implements Node<T> {
         //do nothing
     }
 
-    /**
-     * Evaluates this node statically and returns the determined value.
-     * <p>
-     * <b>Note:</b> Do not use this method directly to evaluate this node statically.
-     * This is a helper method that is implemented individually by subtypes and called by 
-     * {@link #evaluateStatically(boolean, int)} and {@link #roughlyEvaluateStatically()}.
-     * Use {@link #evaluateStatically(boolean, int)} or {@link #roughlyEvaluateStatically()} to evaluate this node statically.
-     * </p>
-     * @param isNaturaLeaf
-     * @param depth
-     * @return the static evaluation of this node
-     */
-    protected abstract int computeStaticValue(boolean isNaturaLeaf, int depth);
+    //  *************************************
+    //  *     evaluable functionality       *
+    //  *************************************
 
     @Override
-    public int roughlyEvaluateStatically() {
-        PerformanceData.roughlyEvaluateStaticallyCalls += 1;
-        if (!staticEvaluationCached) {
-            //only compute static value once
-            //compute static value with depth = 0 and non-leaf
-            staticValue = computeStaticValue(false, 0);
-            staticEvaluationCached = true;
+    public final int getValue() throws UninitializedValueException {
+        if (isStaticValueOrBetter || isStaticLeafValueOrBetter || isExplicitValue) {
+            return value;
         }
-        value = staticValue; //overwrite "general" value
-        return staticValue;
+        throw new UninitializedValueException("this node was not yet evaluated");
     }
 
     @Override
-    public int evaluateStatically(boolean isNaturaLeaf, int depth) {
-        PerformanceData.evaluateStaticallyCalls += 1;
-        //overwrite value
-        value = computeStaticValue(isNaturaLeaf, depth);
+    public final int computeOrGetStaticValueOrBetter() {
+        PerformanceData.getOrComputeStaticValueCalls += 1;
+        if (isStaticValueOrBetter) {
+            return value;
+        }
+        isStaticValueOrBetter = true;
+        value = computeStaticValue();
         return value;
     }
 
-    public List<? extends Node<T>> getChildren() {
-        return this.children;
-    }
+    /**
+     * Computes the static value of this evaluable.
+     * @return the static evaluation of this evaluable
+     */
+    protected abstract int computeStaticValue();
 
     @Override
-    public int getValue() {
+    public final int computeOrGetLeafValueOrBetter(int depth) {
+        PerformanceData.getOrComputeLeafValueCalls += 1;
+        if (isStaticLeafValueOrBetter) {
+            return value;
+        }
+        isStaticValueOrBetter = true;
+        isStaticLeafValueOrBetter = true;
+        value = computeStaticLeafValue(depth);
         return value;
     }
 
+    /**
+     * Compute the value of this evaluable statically while considering that it cannot generate any children
+     * (is a terminal node). This static evaluation should be more specific than the one provided by
+     * {@link #computeStaticValue()()}.
+     * @param depth the depth of the leaf in the tree
+     * @return the leaf's static evaluation
+     */
+    protected abstract int computeStaticLeafValue(int depth);
+
     @Override
-    public void setValue(int value) {
+    public int getExplicitValue() throws UninitializedValueException {
+        if (isExplicitValue) {
+            return value;
+        }
+        throw new UninitializedValueException("no value was set explicitly");
+    }
+
+    @Override
+    public final void setValue(int value) {
+        isExplicitValue = true;
+        isStaticValueOrBetter = true;
+        isStaticLeafValueOrBetter = true;
         this.value = value;
     }
 
@@ -254,11 +281,6 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void unmarkAsInteresting() {
         this.isInteresting = false;
-    }
-
-    @Override
-    public String toString() {
-        return getContent().toString();
     }
 
 }

@@ -37,7 +37,7 @@ public class AlphaBetaIntTreeTest extends IntTreeEvaluationTest {
     @Test
     public void alphaBetaRespectsDepthWhiteTest() {
         GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        intTreeEvaluator.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, true);
+        helper.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, true);
         assertTrue(parent.hasChildren());
         List<? extends Node<Integer>> children = parent.getChildren();
         GeneratingIntNode layer1Node0 = (GeneratingIntNode) children.get(0);
@@ -69,7 +69,7 @@ public class AlphaBetaIntTreeTest extends IntTreeEvaluationTest {
     @Test
     public void alphaBetaRespectsDepthBlackTest() {
         GeneratingIntNode parent = new GeneratingIntNode(0, 3);
-        intTreeEvaluator.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, false);
+        helper.evaluateTree(new ImpTree<GeneratingIntNode>(parent), 2, false);
         assertTrue(parent.hasChildren());
         List<? extends Node<Integer>> children = parent.getChildren();
         GeneratingIntNode layer1Node0 = (GeneratingIntNode) children.get(0);

@@ -2,6 +2,7 @@ package minimax;
 
 import gametree.ComputeChildrenException;
 import gametree.Node;
+import gametree.Tree;
 
 /**
  * Abstract class implementing TreeEvaluator,
@@ -12,9 +13,27 @@ import gametree.Node;
  * whenever evaluating a node.
  * </p>
  */
-public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
+public abstract class BaseTreeEvaluator<ContentType> implements TreeEvaluator<ContentType> {
 
     private int evaluatedNodeCount = 0;
+
+    @Override
+    public Node<ContentType> evaluateTree(Tree<? extends Node<ContentType>> tree, int depth, boolean whitesTurn) {
+        if (depth < 1) {
+            throw new IllegalArgumentException("evaluation depth must be at least one");
+        }
+        resetEvaluatedNodeCount();
+        return evaluateNode(tree.getRoot(), depth, whitesTurn);
+    }
+
+     /**
+     * Evaluates the sub tree starting with the passed node and returns the Node that should be played.
+     * @param node the subtree to be evaluated
+     * @param depth the maximum depth of the tree
+     * @param whitesTurn whether the turn to be searched is played by white
+     * @return the Node representing the turn to be played
+     */
+    protected abstract Node<ContentType> evaluateNode(Node<ContentType> node, int depth, boolean whitesTurn);
 
     /**
      * Determines whether the passed node is a leaf node when inspected by
@@ -38,23 +57,25 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
      * @return 0 if the passed node is not a leaf node, 1 if is a leaf because
      * depth == 0 and 2 if it is a leaf because no children could be generated
      */
-    protected int isLeaf(Node<T> parent, int depth) {
+    protected boolean evaluateIfLeaf(Node<ContentType> parent, int depth) {
         if (depth == 0) {
-            return 1;
+            parent.computeOrGetStaticValueOrBetter(); //evaluate statically if no value is stored
+            return true;
         }
         try {
             // attempt to retrieve or if none are stored calculate children
-            parent.getOrCompute();
+            parent.getOrComputeChildren();
         } catch (ComputeChildrenException exception) {
             // node could not generate children -> is a leaf
-            return 2;
+            parent.computeOrGetLeafValueOrBetter(depth);
+            return true;
         }
         // node is a leaf if it has no children
         if (parent.hasChildren()) {
-            return 0;
-        } else {
-            return 2;
+            return false;
         }
+        //getOrComputeChildren guarantees ComputeChildrenException or parent.hasChildren()
+        throw new IllegalStateException("branching error");
     }
 
     /**

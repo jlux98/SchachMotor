@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.function.Supplier;
 
+import classes.FailureException;
 import classes.IntNode;
 import gametree.Node;
 import gametree.Tree;
+import gametree.UninitializedValueException;
 import minimax.TreeEvaluator;
 
 /**
@@ -105,10 +107,14 @@ public class IntTreeEvaluationHelper {
      * @return the number of nodes that were evaluated
      */
     public int verifyEvaluateTree(int expectedResult, Tree<? extends Node<Integer>> tree, int depth, boolean whitesTurn) {
+        try {
         TreeEvaluator<Integer> evaluator = instantiateTreeEvaluator();
         int result = evaluator.evaluateTree(tree, depth, whitesTurn).getValue();
         assertEquals(expectedResult, result);
         return evaluator.getEvaluatedNodeCount();
+        } catch (UninitializedValueException exception) {
+            throw new FailureException("evaluator returned node without set value");
+        }
     }
 
     /**

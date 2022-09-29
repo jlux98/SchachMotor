@@ -204,8 +204,7 @@ public class ArrayBoard implements Board {
 
     @Override
     public String toStringFen() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("array board does not support converting to fen");
     }
 
 }

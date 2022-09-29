@@ -4,6 +4,7 @@ import application.Conductor;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
+import positionevaluator.PositionEvaluator;
 import utility.PerformanceData;
 import utility.TimeUtility;
 
@@ -78,7 +79,7 @@ public class GameNode extends BaseNode<Position> {
     * Uses {@link #createChild(Position)} to instantiate children.
     * <br><br>
     * <b>Note:</b> Do not use this method directly to generate children of this node.
-    * This is a helper method that is implemented individually by subtypes and called by {@link #getOrCompute()}.
+    * This is a helper method that is implemented individually by subtypes and called by {@link #getOrComputeChildren()}.
     * Use queryChildren() to generate children of this node.
     * @throws ComputeChildrenException if no children can be computed
     */
@@ -97,8 +98,7 @@ public class GameNode extends BaseNode<Position> {
 
         if (followUpPositions.length == 0) {
             // no moves were generated
-            throw new ComputeChildrenException(
-                    "no children could be generated for this position: " + this.getContent().toString());
+            throw new ComputeChildrenException("no children could be generated for this position: " + this.getContent().toString());
         }
 
         // add follow-up moves as child nodes to this node
@@ -109,16 +109,28 @@ public class GameNode extends BaseNode<Position> {
     }
 
     @Override
-    protected int computeStaticValue(boolean isNaturalLeaf, int depth) {
+    protected int computeStaticValue() {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
-        PerformanceData.computeStaticValueCalls += 1;
-        return getContent().evaluateBoard(isNaturalLeaf, depth);
+        PerformanceData.staticValueComputations += 1;
+        return PositionEvaluator.evaluatePosition(getContent());
+    }
+
+    @Override
+    protected int computeStaticLeafValue(int depth) {
+        if (getContent() == null) {
+            throw new NullPointerException("cannot evaluate because position was already detached");
+        }
+        PerformanceData.leafValueComputations += 1;
+        return PositionEvaluator.evaluateLeafPosition(getContent(), depth);
     }
 
     @Override
     public void writeContentToHistory() {
+        if (getContent() == null) {
+            throw new NullPointerException("cannot write content to history because content is null");
+        }
         Conductor.appendPosition(getContent());
     }
 

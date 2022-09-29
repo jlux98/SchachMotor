@@ -9,12 +9,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import classes.FailureException;
 import classes.IntNode;
 import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.ImpTree;
 import gametree.Node;
 import gametree.Tree;
+import gametree.UninitializedValueException;
 
 public class IntNodeHelper {
 
@@ -47,7 +49,11 @@ public class IntNodeHelper {
      * @param node the IntNode that should be storing this value
      */
     public static void compareIntNodeValue(int expected, IntNode node) {
+        try {
         assertEquals(expected, node.getValue());
+        } catch (UninitializedValueException exception) {
+            throw new FailureException("atempted to compare against a node without value");
+        }
     }
 
     /**
@@ -57,7 +63,7 @@ public class IntNodeHelper {
      */
     public static void compareStaticIntNodeValue(int expectedStaticValue, IntNode node) {
         //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
-        assertEquals(expectedStaticValue, node.roughlyEvaluateStatically());
+        assertEquals(expectedStaticValue, node.computeOrGetStaticValueOrBetter()); //FIXME can trigger evaluation on an unevaluted node
     }
 
     /**
@@ -188,17 +194,17 @@ public class IntNodeHelper {
         IntNode root = tree.getRoot();
 
         //list containing 2 inner nodes
-        List<? extends Node<Integer>> layer1 = root.getOrCompute();
+        List<? extends Node<Integer>> layer1 = root.getOrComputeChildren();
         assertEquals(layer1.size(), 2);
 
         //lists containing 2 leaf nodes each
-        List<? extends Node<Integer>> layer2children1 = layer1.get(0).getOrCompute();
-        List<? extends Node<Integer>> layer2children2 = layer1.get(1).getOrCompute();
+        List<? extends Node<Integer>> layer2children1 = layer1.get(0).getOrComputeChildren();
+        List<? extends Node<Integer>> layer2children2 = layer1.get(1).getOrComputeChildren();
 
         assertEquals(layer2children1.size(), 2);
         assertEquals(layer2children2.size(), 2);
-        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).getOrCompute());
-        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).getOrCompute());
+        assertThrows(ComputeChildrenException.class, () -> layer2children1.get(0).getOrComputeChildren());
+        assertThrows(ComputeChildrenException.class, () -> layer2children2.get(1).getOrComputeChildren());
         assertEquals(1, layer2children1.get(0).getContent());
         assertEquals(2, layer2children1.get(1).getContent());
         assertEquals(3, layer2children2.get(0).getContent());

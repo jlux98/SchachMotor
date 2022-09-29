@@ -190,7 +190,7 @@ public class Mirror {
             mirroredEnPassantTargetFile = -1;
         }
 
-        int mirroredHalfMoves = position.getHalfMoves();
+        byte mirroredHalfMoves = position.getHalfMoves();
         int mirroredFullMoves = position.getFullMoves();
 
         Position mirroredPosition = new Position(mirroredWhiteInCheck, mirroredBlackInCheck, mirroredBoard, mirroredWhiteNextMove,

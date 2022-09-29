@@ -4,24 +4,15 @@ import java.util.List;
 
 import gametree.ComputeChildrenException;
 import gametree.Node;
-import gametree.Tree;
+import gametree.UninitializedValueException;
 
 /**
  * Class implementing Minimax for trees consisting of Nodes that store any kind of Evaluable.
  */
-public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
+public class GenericMiniMax<ContentType> extends BaseTreeEvaluator<ContentType> {
 
     @Override
-    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
-        resetEvaluatedNodeCount();
-        return evaluateNode(tree.getRoot(), depth, whitesTurn);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Override
-    public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
+    public Node<ContentType> evaluateNode(Node<ContentType> node, int depth, boolean whitesTurn) {
         return miniMax(node, depth, whitesTurn);
     }
 
@@ -40,7 +31,7 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    private Node<T> miniMax(Node<T> parent, int depth, boolean whiteNextMove) {
+    private Node<ContentType> miniMax(Node<ContentType> parent, int depth, boolean whiteNextMove) {
 
         if (whiteNextMove) {
             // maximize this node
@@ -68,7 +59,7 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (smallest) value
      */
-    protected Node<T> minimize(Node<T> parent, int depth) {
+    protected Node<ContentType> minimize(Node<ContentType> parent, int depth) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -78,12 +69,9 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
         this.increaseEvaluatedNodeCount();
 
         // assign static evaluation to leaves
-        switch (isLeaf(parent, depth)) {
-        case 1:
-            parent.evaluateStatically(false, depth);
-            return parent;
-        case 2:
-            parent.evaluateStatically(true, depth);
+        boolean leaf = evaluateIfLeaf(parent, depth);
+        if (leaf) {
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -92,13 +80,14 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
             parent.setValue(Integer.MAX_VALUE);
 
             int childValue;
-            Node<T> bestChild = null; // the child that determines the value of this parent node
+            Node<ContentType> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.getOrCompute();
+            List<? extends Node<ContentType>> children = parent.getOrComputeChildren();
 
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
@@ -113,7 +102,7 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is greater than all sibling's values
-                if (childValue < parent.getValue()) {
+                if (firstChild || childValue < parent.getValue()) {
                     // since parentValue is initialized to Integer.MAX_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -123,6 +112,7 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
 
             }
@@ -132,6 +122,10 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
             // "ignored"
 
             return bestChild;
+
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
 
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false
@@ -156,7 +150,7 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (greatest) value
      */
-    protected Node<T> maximize(Node<T> parent, int depth) {
+    protected Node<ContentType> maximize(Node<ContentType> parent, int depth) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -166,12 +160,9 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
         this.increaseEvaluatedNodeCount();
 
         // assign static evaluation to leaves
-        switch (isLeaf(parent, depth)) {
-        case 1:
-            parent.evaluateStatically(false, depth);
-            return parent;
-        case 2:
-            parent.evaluateStatically(true, depth);
+        boolean leaf = evaluateIfLeaf(parent, depth);
+        if (leaf) {
+            parent.deleteContentFromHistory();
             return parent;
         }
 
@@ -180,13 +171,14 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
             parent.setValue(Integer.MIN_VALUE);
 
             int childValue;
-            Node<T> bestChild = null; // the child that determines the value of this parent node
+            Node<ContentType> bestChild = null; // the child that determines the value of this parent node
+            boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.getOrCompute();
+            List<? extends Node<ContentType>> children = parent.getOrComputeChildren();
 
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
 
                 // evaluate all children
                 // if this node is maximizing, child nodes are minimizing
@@ -202,7 +194,7 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
                 // returning a previous child's value currently stored in childValue
                 // might return a value that is not guaranteed to not affect the remaining tree
                 // i.e. a value that is less than all sibling's values
-                if (childValue > parent.getValue()) {
+                if (firstChild || childValue > parent.getValue()) {
                     // since parentValue is initialized to Integer.MIN_VALUE this will always be
                     // true for the first child (unless a child has a value of Integer.MIN_VALUE
                     // itself)
@@ -211,6 +203,7 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
                     parent.setValue(childValue);
                     // store current child as best child
                     bestChild = child;
+                    firstChild = false;
                 }
 
             }
@@ -220,6 +213,10 @@ public class GenericMiniMax<T> extends BaseTreeEvaluator<T> {
             // "ignored"
 
             return bestChild;
+
+        } catch (UninitializedValueException exception) {
+            //thrown by getValue()
+            throw new IllegalStateException("tree evaluation attempted to read an unitialized value");
 
         } catch (ComputeChildrenException exception) {
             // queryChildren() is only called on nodes for which isLeaf(node, depth) = false

@@ -4,6 +4,7 @@ import classes.IntNode;
 import gametree.ComputeChildrenException;
 import gametree.Tree;
 import helper.IntNodeHelper;
+import helper.TreePrinter;
 
 /**
  * A Tree < IntNode > build to represent <code>diagrams/SmallAsymmetricTestTree.drawio.svg</code>.
@@ -88,8 +89,8 @@ public class IntNodeSmallAsymmetricTestTree implements Tree<IntNode> {
         root = IntNodeHelper.createParent(layer1Node0, layer1Node1, layer1Node2, layer1Node3, layer1Node4);
     }
 
-   public void printTree() throws ComputeChildrenException {
-    //TreePrinter.alignAndPrintTree(this, 3);
-   }
+    public void printTree() throws ComputeChildrenException {
+        TreePrinter.alignAndPrintTree(this, 3);
+    }
 
 }
