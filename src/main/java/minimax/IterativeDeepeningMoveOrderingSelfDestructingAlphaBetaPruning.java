@@ -3,14 +3,9 @@ package minimax;
 import java.util.List;
 
 import gametree.ComputeChildrenException;
-import gametree.GameNode;
-import gametree.ImpGameTree;
-import gametree.ImpTree;
 import gametree.Node;
 import gametree.Tree;
 import gametree.UninitializedValueException;
-import model.Position;
-import uciservice.FenParser;
 import utility.TimeUtility;
 
 /**
@@ -28,6 +23,8 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
 
     private long stopTime;
 
+    private static final int STORED_LEVELS = 4;
+
     public IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning() {
         //TODO use singletons instead?
         whiteComparator = new DescendingStaticValueComparator<T>();
@@ -40,17 +37,16 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
         }
     }
 
-    //public static Node<?> lastResult;
+    public static Node<?> lastResult;
 
     /**
      * Used to save an intermediate result of iterative deepning.
      * @param bestMove the move that should be saved
      */
     private void saveMove(Node<T> bestMove) {
-        //empty by default
-        //lastResult = bestMove;
-        System.out.println(bestMove);
-        System.out.println(((GameNode)bestMove).getRepresentedMove().toStringAlgebraic());
+        lastResult = bestMove;
+        //System.out.println(bestMove);
+        //System.out.println(((GameNode)bestMove).getRepresentedMove().toStringAlgebraic());
     }
 
     /**
@@ -58,20 +54,22 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
     * @param tree the tree to be evaluated
     * @param secondsToCompute the maximum time in seconds that the computation may take
     * @param whitesTurn whether the turn to be searched is played by white
+    * @param maxDepth the max depth to which the tree should be evaluated
     * @return the Node representing the turn to be played
     */
-    public void     evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn,
+    public void evaluateTreeIterativeDeepening(Tree<? extends Node<T>> tree, long secondsToCompute, boolean whitesTurn,
             int maxDepth) {
         long start = System.nanoTime();
         stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
         int depth = 1;
         Node<T> bestMove = null;
         while (depth <= maxDepth) {
-            bestMove = evaluateTree(tree, depth, whitesTurn);
+            //System.out.println("depth " + depth);
+            bestMove = evaluateNode(tree.getRoot(), depth, whitesTurn);
             saveMove(bestMove);
             depth += 1;
         }
-        System.out.println("finished with: "  + (((GameNode)bestMove).getRepresentedMove().toStringAlgebraic()));
+        //System.out.println("finished with: "  + (((GameNode)bestMove).getRepresentedMove().toStringAlgebraic()));
     }
 
     @Override
@@ -199,7 +197,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
             }
 
             // delete children from tree after parent was evaluated
-            if (currentDepth > 3) {
+            if (currentDepth > STORED_LEVELS) {
                 parent.deleteChildren();
             }
 
@@ -310,7 +308,7 @@ public class IterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning<T> ex
             }
 
             // delete children from tree after parent was evaluated
-            if (currentDepth > 3) {
+            if (currentDepth > STORED_LEVELS) {
                 parent.deleteChildren();
             }
 

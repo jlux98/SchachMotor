@@ -216,6 +216,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public final int computeOrGetStaticValueOrBetter() {
+        PerformanceData.getOrComputeStaticValueCalls += 1;
         if (isStaticValueOrBetter) {
             return value;
         }
@@ -232,6 +233,7 @@ public abstract class BaseNode<T> implements Node<T> {
 
     @Override
     public final int computeOrGetLeafValueOrBetter(int depth) {
+        PerformanceData.getOrComputeLeafValueCalls += 1;
         if (isStaticLeafValueOrBetter) {
             return value;
         }

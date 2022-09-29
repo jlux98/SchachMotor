@@ -7,6 +7,8 @@ import gametree.Node;
  * provided by BaseNode.
  */
 public class EvaluableTestNode extends IntNode {
+    private int computeStaticValueCalls = 0;
+    private int computeLeafValueCalls = 0;
 
     /**
      * Creates an EvaluableTestNode storing the specified Integer as content.
@@ -28,11 +30,21 @@ public class EvaluableTestNode extends IntNode {
 
     @Override
     protected int computeStaticValue() {
+        computeStaticValueCalls++;
         return getContent();
     }
 
     @Override
     protected int computeStaticLeafValue(int depth) {
+        computeLeafValueCalls++;
         return getContent() + depth;
+    }
+
+    public int getComputeStaticValueCalls() {
+        return computeStaticValueCalls;
+    }
+    
+    public int getComputeLeafValueCalls() {
+        return computeLeafValueCalls;
     }
 }

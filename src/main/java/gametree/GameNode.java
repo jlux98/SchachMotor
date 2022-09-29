@@ -113,7 +113,7 @@ public class GameNode extends BaseNode<Position> {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
-        //PerformanceData.computeStaticValueCalls += 1;
+        PerformanceData.staticValueComputations += 1;
         return PositionEvaluator.evaluatePosition(getContent());
     }
 
@@ -122,11 +122,15 @@ public class GameNode extends BaseNode<Position> {
         if (getContent() == null) {
             throw new NullPointerException("cannot evaluate because position was already detached");
         }
+        PerformanceData.leafValueComputations += 1;
         return PositionEvaluator.evaluateLeafPosition(getContent(), depth);
     }
 
     @Override
     public void writeContentToHistory() {
+        if (getContent() == null) {
+            throw new NullPointerException("cannot write content to history because content is null");
+        }
         Conductor.appendPosition(getContent());
     }
 

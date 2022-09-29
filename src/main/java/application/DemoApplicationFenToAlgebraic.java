@@ -6,12 +6,15 @@ import java.util.Scanner;
 import gametree.DetachingGameTree;
 import gametree.GameNode;
 import gametree.GameTree;
+import gametree.ImpGameTree;
 import minimax.GameNodeAlphaBetaPruning;
+import minimax.GameNodeIterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import model.Move;
 import model.Position;
+import movegenerator.MoveGenerator;
 import uciservice.FenParseException;
 import uciservice.FenParser;
 import utility.PerformanceData;
@@ -208,6 +211,11 @@ public class DemoApplicationFenToAlgebraic {
                 algorithmName = "Move-Ordering Self-Destructing Alpha-Beta-Pruning";
                 evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
             }
+            case "id", "iterative deepening", "iterative deepening move-ordering" -> {
+                algorithmName = "Iterative Deepening Move-Ordering Self-Destructing Alpha-Beta-Pruning";
+                evaluator = new GameNodeIterativeDeepeningMoveOrderingSelfDestructingAlphaBetaPruning();
+
+            }
             default -> {
                 throw new NoSuchElementException("algorithm could not be found");
             }
@@ -259,11 +267,13 @@ public class DemoApplicationFenToAlgebraic {
     private void prepareNextRun() {
         evaluator.resetEvaluatedNodeCount();
         PerformanceData.moveGenerationTime = 0;
-        PerformanceData.roughlyEvaluateStaticallyCalls = 0;
-        PerformanceData.evaluateStaticallyCalls = 0;
+        PerformanceData.leafValueComputations = 0;
+        PerformanceData.getOrComputeStaticValueCalls = 0;
+        PerformanceData.staticValueComputations = 0;
+        PerformanceData.getOrComputeLeafValueCalls = 0;
+        PerformanceData.leafValueComputations = 0;
         PerformanceData.ascendingComparisons = 0;
         PerformanceData.descendingComparisons = 0;
-        PerformanceData.computeStaticValueCalls = 0;
         calculationTime = -1; //not required, but better safe than sorry
         System.gc();
     }
@@ -272,6 +282,7 @@ public class DemoApplicationFenToAlgebraic {
      * run before shutting down
      */
     private void cleanUp() {
+        MoveGenerator.shutDownThreads();
         //nothing to clean up so far
     }
 
@@ -280,6 +291,7 @@ public class DemoApplicationFenToAlgebraic {
      */
     private void shutdown() {
         cleanUp();
+        System.out.println("...exiting");
         System.exit(0); // normal termination
     }
 
@@ -406,7 +418,7 @@ public class DemoApplicationFenToAlgebraic {
     private Move calculateFollowUpMove(Position position) {
         TimeUtility<GameNode> timer = new TimeUtility<GameNode>();
 
-        GameTree tree = new DetachingGameTree(position, evaluator);
+        GameTree tree = new ImpGameTree(position, evaluator); //FIXME possible / worth to use detaching?
         GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
         Move bestMove = bestChild.getRepresentedMove();
 
@@ -472,11 +484,11 @@ public class DemoApplicationFenToAlgebraic {
                 .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
                 .append("\n\ttime spent by movegen: " + TimeUtility.nanoToSeconds(PerformanceData.moveGenerationTime))
                 .append("\n\troughlyEvaluateStatically calls: "
-                        + format(PerformanceData.roughlyEvaluateStaticallyCalls))
-                .append("\n\tevaluateStatically calls: " + format(PerformanceData.evaluateStaticallyCalls))
+                        + format(PerformanceData.leafValueComputations))
+                .append("\n\tevaluateStatically calls: " + format(PerformanceData.getOrComputeStaticValueCalls))
                 .append("\n\tascending comparisons:   " + format(PerformanceData.ascendingComparisons))
                 .append("\n\tdescending comparisons:  " + format(PerformanceData.descendingComparisons))
-                .append("\n\tactual static value computations: " + format(PerformanceData.computeStaticValueCalls));
+                .append("\n\tactual static value computations: " + format(PerformanceData.staticValueComputations));
     }
 
     /**
