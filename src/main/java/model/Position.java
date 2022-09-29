@@ -5,7 +5,6 @@ import java.util.HashMap;
 import application.Conductor;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
-import positionevaluator.PositionEvaluator;
 
 /**
  * Class representing the game state.
@@ -24,7 +23,6 @@ public class Position implements Comparable<Position>, Cloneable {
      * (7,0) represents a1 and (7,7) represents h1.
      */
     private Board board;
-    private int pointValue;
     private boolean whiteInCheck;
     private boolean blackInCheck;
     private boolean whiteNextMove;
@@ -33,7 +31,7 @@ public class Position implements Comparable<Position>, Cloneable {
     private boolean blackCastlingKingside;
     private boolean blackCastlingQueenside;
     private Coordinate enPassantTargetSpace;
-    private int halfMovesSincePawnMoveOrCapture;
+    private byte halfMovesSincePawnMoveOrCapture; //may not be greater than 100 at any time
     private int fullMoveCount;
     private boolean[][] attackedByWhite;
     private boolean[][] attackedByBlack;
@@ -41,38 +39,62 @@ public class Position implements Comparable<Position>, Cloneable {
 
     /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
-    * but without requiring point value and whiteInCheck / blackInCheck to be set.
-    * These value may be set using the corresponding setter at a later time.
+    * but without requiring whiteInCheck and blackInCheck to be set.
+    * These values are automatically set by computing attack maps.
     */
     public Position(Board spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
             boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
-            int halfMoves, int fullMoves) {
+            byte halfMoves, int fullMoves) {
+
         if (spaces == null) {
             throw new NullPointerException("spaces array may not be null");
         }
-        // en passant target coordiantes of -1 are used if no en passant captures are possbile
-        /* if (enPassantTargetRank <= 0 || enPassantTargetFile <= 0) {
-            throw new IllegalArgumentException("coordinates must be greater than 0");
-        } */
-        if (enPassantTargetRank > 8 || enPassantTargetFile > 8) {
-            throw new IllegalArgumentException("coordinates must be less than 8");
-        }
-        if (halfMoves < 0) {
-            throw new IllegalArgumentException("half move count must be greater than 0");
-        }
-        setFullMoveCount(fullMoves);
         this.board = spaces;
+
+        setFullMoveCount(fullMoves);
+        setHalfMoveCount(halfMoves);
         this.whiteNextMove = whiteNextMove;
         this.whiteCastlingKingside = whiteCastlingKingside;
         this.whiteCastlingQueenside = whiteCastlingQueenside;
         this.blackCastlingKingside = blackCastlingKingside;
         this.blackCastlingQueenside = blackCastlingQueenside;
-        if (enPassantTargetRank == -1 && enPassantTargetFile == -1){
+        setEnPAssantTargetSpace(enPassantTargetRank, enPassantTargetFile);
+        computeChecks(spaces);
+    }
+
+ /**
+     * Creates a new position with the specified values.
+     * @param spaces the board holding the chess pieces
+     * @param whiteNextMove whether the next turn is white's
+     * @param whiteInCheck whether white is in checks
+     * @param blackInCheck whether black is in check
+     * @param whiteCastlingKingside whether white has the right to castle kingside
+     * @param whiteCastlingQueenside whether white has the right to castle queenside
+     * @param blackCastlingKingside whether black has the right to castle kingside
+     * @param blackCastlingQueenside whether black has the right to castle queenside
+     * @param enPassantTargetRank if a pawn performed a double-step in the last turn, the rank of the traversed space; -1 otherwise
+     * @param enPassantTargetFile if a pawn performed a double-step in the last turn, the file of the traversed space; -1 otherwise
+     * @param halfMoves the number of half moves since a piece was captured or a pawn was moved . Starts at 0.
+     * @param fullMoves the number of full moves that have been played since the start of this game. Starts at 1.
+     */
+    public Position(boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
+            boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
+            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, byte halfMoves, int fullMoves) {
+        this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
+                enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
+        this.whiteInCheck = whiteInCheck;
+        this.blackInCheck = blackInCheck;
+    }
+
+    private void setEnPAssantTargetSpace(int enPassantTargetRank, int enPassantTargetFile) {
+        if (enPassantTargetRank == -1 && enPassantTargetFile == -1) {
             this.enPassantTargetSpace = null;
         } else {
             this.enPassantTargetSpace = new Coordinate(enPassantTargetRank, enPassantTargetFile);
         }
-        this.halfMovesSincePawnMoveOrCapture = halfMoves;
+    }
+
+    private void computeChecks(Board spaces) {
         this.attackedByWhite = AttackMapGenerator.computeChecks(spaces, true);
         this.attackedByBlack = AttackMapGenerator.computeChecks(spaces, false);
         Coordinate whiteKing = getKingPosition(true);
@@ -93,45 +115,6 @@ public class Position implements Comparable<Position>, Cloneable {
                 sake of point evaluation */
             this.blackInCheck = true;
         }
-    }
-
-    /**
-     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
-     * but without requiring a point value to be set.
-     * The value may be set using Position.setPointValue() at a later time.
-     */
-    public Position(boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
-            boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
-            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
-        this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
-                enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
-        this.whiteInCheck = whiteInCheck;
-        this.blackInCheck = blackInCheck;
-    }
-
-    /**
-     * Creates a new position with the specified values.
-     * @param pointValue the positions evaluated value
-     * @param spaces two dimensional array holding the chess pieces, represents the chess position
-     * @param whiteNextMove whether the enxt turn is white's
-     * @param whiteInCheck whether white is in checks
-     * @param blackInCheck whether black is in check
-     * @param whiteCastlingKingside whether white can castle kingside
-     * @param whiteCastlingQueenside whether white can castle queenside
-     * @param blackCastlingKingside whether black can castle kingside
-     * @param blackCastlingQueenside whether black can castle queenside
-     * @param enPassantTargetRank if a pawn performed a double-step in the last turn, the rank of the traversed space; -1 otherwise
-     * @param enPassantTargetFile if a pawn performed a double-step in the last turn, the file of the traversed space; -1 otherwise
-     * @param halfMoves the number of half moves since a piece was captured or a pawn was moved . Starts at 0.
-     * @param fullMoves the number of full moves that have been played since the start of this game. Starts at 1.
-     */
-    public Position(int pointValue, boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
-            boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
-            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
-        //value may be less than 0 (minimax / negamax)
-        this(whiteInCheck, blackInCheck, spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside,
-                blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
-        this.pointValue = pointValue;
     }
 
     /**
@@ -212,7 +195,7 @@ public class Position implements Comparable<Position>, Cloneable {
             fullMoveCount += 1;
         }
 
-        int halfMoveCount = this.getHalfMoves();
+        byte halfMoveCount = this.getHalfMoves();
         if (captureOrPawnMove) {
             //reset half move count if a piece was captured or a pawn was moved
             halfMoveCount = 0;
@@ -237,7 +220,6 @@ public class Position implements Comparable<Position>, Cloneable {
                     (getEnPassantTargetRank() == position.getEnPassantTargetRank()) &&
                     (fullMoveCount == position.getFullMoves()) &&
                     (halfMovesSincePawnMoveOrCapture == position.getHalfMoves()) &&
-                    (pointValue == position.getPointValue()) &&
                     (board.equals(position.getBoard())) &&
                     (whiteCastlingKingside == position.getWhiteCastlingKingside()) &&
                     (whiteCastlingQueenside == position.getWhiteCastlingQueenside()) &&
@@ -329,7 +311,7 @@ public class Position implements Comparable<Position>, Cloneable {
     @Override
     public Position clone() {
         Board copiedSpaces = this.copyBoard();
-        Position result = new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
+        Position result = new Position(this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
                 this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
                 this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
         if (generatedByMove != null){
@@ -352,27 +334,6 @@ public class Position implements Comparable<Position>, Cloneable {
         result += blackCastlingQueenside + "\n";
         result += enPassantTargetSpace + "\n";
         return result;
-    }
-
-    /**
-     * Statically evaluates this position by calculating the pointvalue
-     * of both sides and returning the difference.
-     * @return the board's static evaluation
-     */
-    public int evaluateBoard(boolean isNaturalLeaf, int depth) {
-        this.pointValue = PositionEvaluator.evaluatePosition(this);
-        return this.pointValue;
-    }
-
-    //TODO remove point attribute from position?
-
-    public void setValue(int pointValue) {
-        // pointvalue may be negative
-        this.pointValue = pointValue;
-    }
-
-    public int getValue() {
-        return this.pointValue;
     }
 
     // public void applyMove(Move toApply){
@@ -421,12 +382,12 @@ public class Position implements Comparable<Position>, Cloneable {
         this.fullMoveCount = fullMoveCount;
     }
 
-    public int getPointValue() {
-        return pointValue;
-    };
-    // public Piece[][] getSpaces() {
-    //     return board.getSpaces();
-    // }
+    private void setHalfMoveCount(byte halfMoveCount) {
+        if (halfMoveCount < 0 || halfMoveCount > 100) {
+            throw new IllegalArgumentException("half move count must be between 0 and 100");
+        }
+        this.halfMovesSincePawnMoveOrCapture = halfMoveCount;
+    }
 
     public boolean getWhitesTurn() {
         return whiteNextMove;
@@ -478,7 +439,7 @@ public class Position implements Comparable<Position>, Cloneable {
         return enPassantTargetSpace.getFile();
     }
 
-    public int getHalfMoves() {
+    public byte getHalfMoves() {
         return halfMovesSincePawnMoveOrCapture;
     }
 
@@ -507,6 +468,10 @@ public class Position implements Comparable<Position>, Cloneable {
 
     public boolean[][] getAttackedByBlack() {
         return attackedByBlack;
+    }
+    
+    public void setAttackedByBlack(boolean[][] attackedByBlack) {
+        this.attackedByBlack = attackedByBlack;
     }
 
     public String toStringFen(){
@@ -540,10 +505,6 @@ public class Position implements Comparable<Position>, Cloneable {
         result += halfMovesSincePawnMoveOrCapture + " ";
         result += fullMoveCount;
         return result;
-    }
-
-    public void setAttackedByBlack(boolean[][] attackedByBlack) {
-        this.attackedByBlack = attackedByBlack;
     }
 
     public Coordinate getKingPosition(boolean isWhite) {

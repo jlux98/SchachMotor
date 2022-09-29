@@ -3,6 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -63,7 +64,7 @@ public class PositionTest {
      * some test methods.
      */
     public void setUpPosition() {
-        this.testPosition = new Position(0, false, false, testBoard, false, false, false, false, false, 0, 0, 0, 1);
+        this.testPosition = new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)0, 1);
     }
 
     @Test
@@ -109,7 +110,7 @@ public class PositionTest {
     private Position generatePositionWithModififedSpaces(int rank, int file, char pieceCharacter) {
         Board modifiedSpaces = testPosition.copyBoard();
         modifiedSpaces.setPieceAt(rank, file, new Piece(pieceCharacter));
-        return new Position(0, false, false, modifiedSpaces, false, false, false, false, false, 0, 0, 0, 1);
+        return new Position(false, false, modifiedSpaces, false, false, false, false, false, 0, 0, (byte)0, 1);
     }
 
     /**
@@ -122,8 +123,7 @@ public class PositionTest {
 
     @Test
     public void constructorTest() {
-        Position constructedPosition = new Position(Integer.MAX_VALUE, true, false, testBoard, true, true, false, false, true, 3, 5, 1297, 4289);
-        assertEquals(Integer.MAX_VALUE, constructedPosition.getPointValue());
+        Position constructedPosition = new Position(true, false, testBoard, true, true, false, false, true, 3, 5, (byte)30, 4289);
         assertTrue(constructedPosition.getWhiteInCheck());
         assertFalse(constructedPosition.getBlackInCheck());
         assertTrue(testBoard == constructedPosition.getBoard());
@@ -134,10 +134,8 @@ public class PositionTest {
         assertTrue(constructedPosition.getBlackCastlingQueenside());
         assertEquals(3, constructedPosition.getEnPassantTargetRank());
         assertEquals(5, constructedPosition.getEnPassantTargetFile());
-        assertEquals(1297, constructedPosition.getHalfMoves());
+        assertEquals(30, constructedPosition.getHalfMoves());
         assertEquals(4289, constructedPosition.getFullMoves());
-
-
     }
 
     @Test
@@ -182,7 +180,7 @@ public class PositionTest {
 
     @Test
     public void copySpacesTest() {
-        Position position = new Position(false, false, testBoard, false, false, false, false, false, 0, 0, 0, 1);
+        Position position = new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)0, 1);
         Board copy = position.copyBoard();
         // verify that a new array was created
         // pieces need not be new instances
@@ -212,7 +210,7 @@ public class PositionTest {
     @Test
     public void generateFollowUpPositionForWhite() {
         //white next move == true
-        Position basePosition = new Position(0, false, false, testBoard, true, false, false, false, false, 0, 0, 0, 1);
+        Position basePosition = new Position(false, false, testBoard, true, false, false, false, false, 0, 0, (byte)0, 1);
         Board copiedSpaces = basePosition.copyBoard();
         Position followUpPosition = basePosition.generateFollowUpPosition(copiedSpaces, false);
 
@@ -286,13 +284,6 @@ public class PositionTest {
     }
 
     @Test
-    public void notEqualsPointValuePositionTest() {
-        Position clonedPosition = testPosition.clone();
-        clonedPosition.setValue(1);
-        assertFalse(testPosition.equals(clonedPosition));
-    }
-
-    @Test
     public void notEqualsWhiteInCheckPositionTest() {
         Position clonedPosition = testPosition.clone();
         clonedPosition.setWhiteInCheck(true);
@@ -332,64 +323,64 @@ public class PositionTest {
 
     @Test
     public void notEqualswhiteNextMove() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), true, false, false, false, false, 0, 0,
-                0, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), true, false, false, false, false, 0, 0,
+        (byte)0, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsWhiteCastlingKingside() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, true, false, false, false, 0, 0,
-                0, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, true, false, false, false, 0, 0,
+        (byte) 0, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsWhiteCastlingQueenside() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, true, false, false, 0, 0,
-                0, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, false, true, false, false, 0, 0,
+        (byte)0, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsBlackCastlingKingside() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, false, true, false, 0, 0,
-                0, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, false, false, true, false, 0, 0,
+        (byte) 0, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsBlackCastlingQueenside() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, false, false, true, 0, 0,
-                0, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, false, false, false, true, 0, 0,
+        (byte)0, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsEnPassantTargetRank() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, false, false, false, 1,
-                0, 0, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, false, false, false, false, 1,
+                0, (byte)0, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsEnPassantTargetFile() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, false, false, false, 0,
-                1, 0, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, false, false, false, false, 0,
+                1, (byte)0, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsHalfMoves() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, false, false, false, 0,
-                0, 1, 1);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, false, false, false, false, 0,
+                0, (byte)1, 1);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
     public void notEqualsFullMoves() {
-        Position comparedPosition = new Position(0, false, false, testPosition.copyBoard(), false, false, false, false, false, 0,
-                0, 0, 2);
+        Position comparedPosition = new Position(false, false, testPosition.copyBoard(), false, false, false, false, false, 0,
+                0, (byte)0, 2);
         assertFalse(testPosition.equals(comparedPosition));
     }
 
@@ -455,5 +446,23 @@ public class PositionTest {
         assertEquals(startpos, FenParser.parseFen(startpos).toStringFen());
         assertEquals(benchmark1, FenParser.parseFen(benchmark1).toStringFen());
         assertEquals(benchmark2, FenParser.parseFen(benchmark2).toStringFen());
+    }
+
+    @Test
+    public void illegalFullMoveCountTest() {
+        assertThrows(IllegalArgumentException.class, () -> new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)3, 0));
+        assertThrows(IllegalArgumentException.class, () -> new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)3, -1));
+        assertThrows(IllegalArgumentException.class, () -> new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)3, Integer.MIN_VALUE));
+        assertThrows(IllegalArgumentException.class, () ->testPosition.clone().setFullMoveCount(0));
+        assertThrows(IllegalArgumentException.class, () ->testPosition.clone().setFullMoveCount(-1));
+        assertThrows(IllegalArgumentException.class, () ->testPosition.clone().setFullMoveCount(Integer.MIN_VALUE));
+    }
+
+    @Test
+    public void illegalHalfMoveCountTest() {
+        assertThrows(IllegalArgumentException.class, () -> new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)-1, 1));
+        assertThrows(IllegalArgumentException.class, () -> new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)101, 1));
+        assertThrows(IllegalArgumentException.class, () -> new Position(false, false, testBoard, false, false, false, false, false, 0, 0, Byte.MAX_VALUE, 1));
+        assertThrows(IllegalArgumentException.class, () -> new Position(false, false, testBoard, false, false, false, false, false, 0, 0, Byte.MIN_VALUE, 1));
     }
 }
