@@ -12,6 +12,7 @@ import minimax.GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameNodeSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
+import minimax.IterativeDeepening;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
@@ -419,7 +420,11 @@ public class DemoApplicationFenToAlgebraic {
         TimeUtility<GameNode> timer = new TimeUtility<GameNode>();
 
         GameTree tree = new ImpGameTree(position, evaluator); //FIXME possible / worth to use detaching?
-        GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
+        //GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
+        GameNode bestChild = timer.time(() -> {
+            new IterativeDeepening<Position>().evaluateTree(tree, evaluator, position.getWhiteNextMove(), -1, depth);
+            return (GameNode) IterativeDeepening.lastResult;
+        });
         Move bestMove = bestChild.getRepresentedMove();
 
         //save rough time spent calculating
