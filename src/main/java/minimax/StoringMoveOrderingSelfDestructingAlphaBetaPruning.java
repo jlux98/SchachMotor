@@ -18,22 +18,22 @@ import gametree.UninitializedValueException;
  * using the "best" available value for stored nodes (see {@link positionevaluator.Evaluable})
  * and static evaluation of nodes that are not stored.
  */
-public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseTreeEvaluator<T> {
+public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends BaseTreeEvaluator<ContentType> {
 
     //FIXME initialization, see genericalphabetapruning
 
-    private DescendingStaticValueComparator<T> whiteComparator;
-    private AscendingStaticValueComparator<T> blackComparator;
+    private DescendingStaticValueComparator<ContentType> whiteComparator;
+    private AscendingStaticValueComparator<ContentType> blackComparator;
 
     public static final int STORED_LEVELS = 4;
 
     public StoringMoveOrderingSelfDestructingAlphaBetaPruning() {
-        whiteComparator = new DescendingStaticValueComparator<T>();
-        blackComparator = new AscendingStaticValueComparator<T>();
+        whiteComparator = new DescendingStaticValueComparator<ContentType>();
+        blackComparator = new AscendingStaticValueComparator<ContentType>();
     }
 
     @Override
-    public Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn) {
+    public Node<ContentType> evaluateNode(Node<ContentType> node, int depth, boolean whitesTurn) {
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
         return alphaBetaPruningMiniMax(node, depth, alpha, beta, whitesTurn);
@@ -54,7 +54,7 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseT
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    private Node<T> alphaBetaPruningMiniMax(Node<T> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
+    private Node<ContentType> alphaBetaPruningMiniMax(Node<ContentType> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
         if (whiteNextMove) {
             // maximize this node
             return alphaBetaMaximize(parent, depth, alpha, beta, 1);
@@ -81,7 +81,7 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseT
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (smallest) value
      */
-    protected Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta, int currentDepth) {
+    protected Node<ContentType> alphaBetaMinimize(Node<ContentType> parent, int depth, int alpha, int beta, int currentDepth) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -105,16 +105,16 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseT
             parent.setValue(Integer.MAX_VALUE);
 
             int childValue;
-            Node<T> bestChild = null; // the child that determines the value of this parent node
+            Node<ContentType> bestChild = null; // the child that determines the value of this parent node
             boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.getOrComputeChildren();
+            List<? extends Node<ContentType>> children = parent.getOrComputeChildren();
 
             children.sort(blackComparator);
 
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
                 // evaluate all children
                 // if this node is minimizing, child nodes are maximizing
                 // child nodes are passed the determined alpha and beta values
@@ -196,7 +196,7 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseT
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best (greatest) value
      */
-    protected Node<T> alphaBetaMaximize(Node<T> parent, int depthLeft, int alpha, int beta, int currentDepth) {
+    protected Node<ContentType> alphaBetaMaximize(Node<ContentType> parent, int depthLeft, int alpha, int beta, int currentDepth) {
         /*
          * if (depth == 0 && parent.isInteresting()) {
          *      depth = depth + 1; //evaluate recursively
@@ -218,16 +218,16 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<T> extends BaseT
             parent.setValue(Integer.MIN_VALUE);
 
             int childValue;
-            Node<T> bestChild = null; // the child that determines the value of this parent node
+            Node<ContentType> bestChild = null; // the child that determines the value of this parent node
             boolean firstChild = true;
 
             // if queryChildren() throws ComputeChildrenException, isLeaf() failed to
             // recognise this node as a leaf
-            List<? extends Node<T>> children = parent.getOrComputeChildren();
+            List<? extends Node<ContentType>> children = parent.getOrComputeChildren();
 
             children.sort(whiteComparator);
 
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
 
                 // evaluate all children
                 // if this node is maximizing, child nodes are minimizing

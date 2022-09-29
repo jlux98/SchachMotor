@@ -7,18 +7,18 @@ import gametree.Node;
  * that store any kind of Object. This implementation deletes child nodes
  * after evaluating their parent to save memory.
  */
-public class SelfDestructingAlphaBetaPruning<T> extends GenericAlphaBetaPruning<T> {
+public class SelfDestructingAlphaBetaPruning<ContentType> extends GenericAlphaBetaPruning<ContentType> {
 
     @Override
-    protected Node<T> alphaBetaMinimize(Node<T> parent, int depth, int alpha, int beta) {
-        Node<T> bestMove = super.alphaBetaMinimize(parent, depth, alpha, beta);
+    protected Node<ContentType> alphaBetaMinimize(Node<ContentType> parent, int depth, int alpha, int beta) {
+        Node<ContentType> bestMove = super.alphaBetaMinimize(parent, depth, alpha, beta);
         parent.deleteChildren();
         return bestMove;
     }
 
     @Override
-    protected Node<T> alphaBetaMaximize(Node<T> parent, int depth, int alpha, int beta) {
-        Node<T> bestMove = super.alphaBetaMaximize(parent, depth, alpha, beta);
+    protected Node<ContentType> alphaBetaMaximize(Node<ContentType> parent, int depth, int alpha, int beta) {
+        Node<ContentType> bestMove = super.alphaBetaMaximize(parent, depth, alpha, beta);
         parent.deleteChildren();
         return bestMove;
     }

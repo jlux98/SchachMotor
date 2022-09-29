@@ -6,7 +6,7 @@ import gametree.Tree;
 /**
  * Interface for classes evaluating trees.
  */
-public interface TreeEvaluator<T> {
+public interface TreeEvaluator<ContentType> {
 
     /**
      * Evaluates the game tree and returns the Node that should be played.
@@ -15,7 +15,7 @@ public interface TreeEvaluator<T> {
      * @param whitesTurn whether the turn to be searched is played by white
      * @return the Node representing the turn to be played
      */
-    public abstract Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn);
+    public abstract Node<ContentType> evaluateTree(Tree<? extends Node<ContentType>> tree, int depth, boolean whitesTurn);
 
     /**
     * @return the number of nodes that were evaluted by this TreeEvaluator

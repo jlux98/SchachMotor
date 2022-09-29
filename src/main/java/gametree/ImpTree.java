@@ -3,20 +3,20 @@ package gametree;
 /**
  * Generic class providing a basic tree implementation.
  */
-public class ImpTree<T extends Node<?>> implements Tree<T> {
+public class ImpTree<NodeType extends Node<?>> implements Tree<NodeType> {
 
-    private T root;
+    private NodeType root;
 
     /**
      * Creates a tree with the specified node as root.
      * @param root
      */
-    public ImpTree(T root) {
+    public ImpTree(NodeType root) {
         this.root = root;
     }
 
     @Override
-    public T getRoot() {
+    public NodeType getRoot() {
         return this.root;
     }
 

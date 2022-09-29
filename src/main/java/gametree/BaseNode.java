@@ -12,11 +12,11 @@ import utility.PerformanceData;
  * which is used to generate children of a node to grow a tree as needed,
  * and {@link #computeStaticValue(boolean, int)} used to evaluate nodes statically.
  */
-public abstract class BaseNode<T> implements Node<T> {
+public abstract class BaseNode<ContentType> implements Node<ContentType> {
 
-    private Node<T> parent;
-    private T content;
-    private List<Node<T>> children;
+    private Node<ContentType> parent;
+    private ContentType content;
+    private List<Node<ContentType>> children;
 
     private int value;
     private boolean isStaticValueOrBetter = false;
@@ -28,7 +28,7 @@ public abstract class BaseNode<T> implements Node<T> {
      * Creates a root node.
      * @param content content stored by the node
      */
-    public BaseNode(T content) {
+    public BaseNode(ContentType content) {
         this.content = content;
         //parent == null here
     }
@@ -39,7 +39,7 @@ public abstract class BaseNode<T> implements Node<T> {
      * @param content content stored by the node
      * @param parent parent of the created node
      */
-    public BaseNode(T content, Node<T> parent) {
+    public BaseNode(ContentType content, Node<ContentType> parent) {
         this(content);
         parent.insertChild(this);
     }
@@ -49,19 +49,19 @@ public abstract class BaseNode<T> implements Node<T> {
      */
     protected void createChildListIfNotExists() {
         if (this.children == null) {
-            this.children = new ArrayList<Node<T>>(20);
+            this.children = new ArrayList<Node<ContentType>>(20);
         }
     }
 
     @Override
-    public void deleteChild(Node<T> node) {
+    public void deleteChild(Node<ContentType> node) {
         // removing with ArrayList.remove(node) would require gamenode.equals()
         // which would probably have to compare positions which is inefficient
 
         // removing by equals also does not guarantee removal of the correct node if 2
         // equal nodes are present,
         // though in that case either all or none of the nodes should be removed
-        Node<T> child = null;
+        Node<ContentType> child = null;
         for (int i = 0; i < children.size(); i++) {
             child = children.get(i);
             if (child == node) {
@@ -76,7 +76,7 @@ public abstract class BaseNode<T> implements Node<T> {
     @Override
     public void deleteChildren() {
         if (hasChildren()) {
-            for (Node<T> child : children) {
+            for (Node<ContentType> child : children) {
                 child.unsetParent();
             }
             this.children.clear();
@@ -94,12 +94,12 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
-    public T getContent() {
+    public ContentType getContent() {
         return content;
     }
 
     @Override
-    public void setContent(T content) {
+    public void setContent(ContentType content) {
         this.content = content;
     }
 
@@ -109,7 +109,7 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
-    public Node<T> getParent() {
+    public Node<ContentType> getParent() {
         return this.parent; //possibly null
     }
 
@@ -131,7 +131,7 @@ public abstract class BaseNode<T> implements Node<T> {
     * Otherwise a class cast exception might arise.
     */
     @Override
-    public void insertChild(Node<T> node) {
+    public void insertChild(Node<ContentType> node) {
         createChildListIfNotExists();
         node.setParent(this);
         this.children.add(node);
@@ -139,7 +139,7 @@ public abstract class BaseNode<T> implements Node<T> {
     }
 
     @Override
-    public void setParent(Node<T> parent) {
+    public void setParent(Node<ContentType> parent) {
         if (this.parent != null) {
             throw new IllegalStateException("a node can only be child to a single node, this node already has a parent");
         }
@@ -161,7 +161,7 @@ public abstract class BaseNode<T> implements Node<T> {
      * @param position the position to be stored in the child node
      * @return a child of this node
      */
-    public abstract Node<T> createChild(T content);
+    public abstract Node<ContentType> createChild(ContentType content);
 
     /**
      * Computes this node's children and overwrites its current child list accordingly.
@@ -175,7 +175,7 @@ public abstract class BaseNode<T> implements Node<T> {
     protected abstract void computeChildren() throws ComputeChildrenException;
 
     @Override
-    public List<? extends Node<T>> getOrComputeChildren() throws ComputeChildrenException {
+    public List<? extends Node<ContentType>> getOrComputeChildren() throws ComputeChildrenException {
         if (!hasChildren()) {
             computeChildren();
             detachChildGenerationData();
@@ -183,7 +183,7 @@ public abstract class BaseNode<T> implements Node<T> {
         return children;
     }
 
-    public List<? extends Node<T>> getChildren() {
+    public List<? extends Node<ContentType>> getChildren() {
         return this.children;
     }
 

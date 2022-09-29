@@ -10,7 +10,7 @@ import utility.PerformanceData;
  * A comparator ordering nodes by their static evaluation {@link Node#evaluateStatically(boolean, int)}
  *  in ascending order.
  */
-public class AscendingStaticValueComparator<T> implements Comparator<Node<T>> {
+public class AscendingStaticValueComparator<ContentType> implements Comparator<Node<ContentType>> {
     /**
      * Orders the data structure from smallest to greatest.
      * @return 
@@ -21,7 +21,7 @@ public class AscendingStaticValueComparator<T> implements Comparator<Node<T>> {
      * </ul>
      */
     @Override
-    public int compare(Node<T> evaluable1, Node<T> evaluable2) {
+    public int compare(Node<ContentType> evaluable1, Node<ContentType> evaluable2) {
         PerformanceData.ascendingComparisons += 1;
         //evaluation may not require child generation here
         return evaluable1.computeOrGetStaticValueOrBetter() - evaluable2.computeOrGetStaticValueOrBetter();

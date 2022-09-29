@@ -13,12 +13,12 @@ import gametree.Tree;
  * whenever evaluating a node.
  * </p>
  */
-public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
+public abstract class BaseTreeEvaluator<ContentType> implements TreeEvaluator<ContentType> {
 
     private int evaluatedNodeCount = 0;
 
     @Override
-    public Node<T> evaluateTree(Tree<? extends Node<T>> tree, int depth, boolean whitesTurn) {
+    public Node<ContentType> evaluateTree(Tree<? extends Node<ContentType>> tree, int depth, boolean whitesTurn) {
         if (depth < 1) {
             throw new IllegalArgumentException("evaluation depth must be at least one");
         }
@@ -33,7 +33,7 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
      * @param whitesTurn whether the turn to be searched is played by white
      * @return the Node representing the turn to be played
      */
-    protected abstract Node<T> evaluateNode(Node<T> node, int depth, boolean whitesTurn);
+    protected abstract Node<ContentType> evaluateNode(Node<ContentType> node, int depth, boolean whitesTurn);
 
     /**
      * Determines whether the passed node is a leaf node when inspected by
@@ -57,7 +57,7 @@ public abstract class BaseTreeEvaluator<T> implements TreeEvaluator<T> {
      * @return 0 if the passed node is not a leaf node, 1 if is a leaf because
      * depth == 0 and 2 if it is a leaf because no children could be generated
      */
-    protected boolean evaluateIfLeaf(Node<T> parent, int depth) {
+    protected boolean evaluateIfLeaf(Node<ContentType> parent, int depth) {
         if (depth == 0) {
             parent.computeOrGetStaticValueOrBetter(); //evaluate statically if no value is stored
             return true;

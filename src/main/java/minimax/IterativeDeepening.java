@@ -4,7 +4,7 @@ import gametree.Node;
 import gametree.Tree;
 import utility.TimeUtility;
 
-public class IterativeDeepening<T> {
+public class IterativeDeepening<ContentType> {
 
     private long stopTime;
     public static Node<?> lastResult;
@@ -19,7 +19,7 @@ public class IterativeDeepening<T> {
      * Used to save an intermediate result of iterative deepning.
      * @param bestMove the move that should be saved
      */
-    private void saveMove(Node<T> bestMove) {
+    private void saveMove(Node<ContentType> bestMove) {
         lastResult = bestMove;
         //System.out.println(bestMove);
         //System.out.println(((GameNode)bestMove).getRepresentedMove().toStringAlgebraic());
@@ -33,12 +33,12 @@ public class IterativeDeepening<T> {
     * @param maxDepth the max depth to which the tree should be evaluated
     * @return the Node representing the turn to be played
     */
-    public void evaluateTree(Tree<? extends Node<T>> tree, TreeEvaluator<T> evaluator, boolean whitesTurn, int secondsToCompute,
+    public void evaluateTree(Tree<? extends Node<ContentType>> tree, TreeEvaluator<ContentType> evaluator, boolean whitesTurn, int secondsToCompute,
             int maxDepth) {
         long start = System.nanoTime();
         stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
         int depth = 1;
-        Node<T> bestMove = null;
+        Node<ContentType> bestMove = null;
         while (depth <= maxDepth) {
             System.out.println("depth " + depth);
             bestMove = evaluator.evaluateTree(tree, depth, whitesTurn);

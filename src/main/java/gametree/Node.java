@@ -9,18 +9,18 @@ import positionevaluator.Evaluable;
  * Nodes can be linked to create tree structures.
  * Nodes have a value associated with them as specified by {@link Evaluable}.
  */
-public interface Node<T> extends Evaluable {
+public interface Node<ContentType> extends Evaluable {
 
     /**
      * @return the content stored by this node
      */
-    public abstract T getContent();
+    public abstract ContentType getContent();
 
     /**
      * Overwrites this node's current content.
      * @param content content that should be stored by this node
      */
-    public void setContent(T content);
+    public void setContent(ContentType content);
 
     /**
      * Deletes the content stored by this node
@@ -31,7 +31,7 @@ public interface Node<T> extends Evaluable {
     /**
      * Adds a child node to this node.
      */
-    public abstract void insertChild(Node<T> node);
+    public abstract void insertChild(Node<ContentType> node);
 
     /**
      * Removes this node from its parent's child list.
@@ -49,7 +49,7 @@ public interface Node<T> extends Evaluable {
      * @param node the node that should be removed from this parent
      * @throws NoSuchElementException if the node could not be found
      */
-    public abstract void deleteChild(Node<T> node);
+    public abstract void deleteChild(Node<ContentType> node);
 
     /**
      * Removes all children of this node.
@@ -60,7 +60,7 @@ public interface Node<T> extends Evaluable {
     /**
      * @return this node's parent
      */
-    public abstract Node<T> getParent();
+    public abstract Node<ContentType> getParent();
 
     /**
      * Sets this node's parent.
@@ -75,7 +75,7 @@ public interface Node<T> extends Evaluable {
      * @param parent this node's parent
      * @throws IllegalStateException if this node already has a parent
      */
-    public abstract void setParent(Node<T> parent);
+    public abstract void setParent(Node<ContentType> parent);
 
     /**
      * Deletes this node's parent reference.
@@ -127,7 +127,7 @@ public interface Node<T> extends Evaluable {
     //e.g: A extends T, B extends T
     //List<S extends T> list = new List<A>;
     //list.add(new B()) <- not type safe as a List<A> does not accept B
-    public abstract List<? extends Node<T>> getOrComputeChildren() throws ComputeChildrenException;
+    public abstract List<? extends Node<ContentType>> getOrComputeChildren() throws ComputeChildrenException;
 
 
     /**
@@ -137,5 +137,5 @@ public interface Node<T> extends Evaluable {
      * If the demanded children can be computed, use {@link #getOrComputeChildren()} instead.
      * @return
      */
-    public abstract List<? extends Node<T>> getChildren(); 
+    public abstract List<? extends Node<ContentType>> getChildren(); 
 }
