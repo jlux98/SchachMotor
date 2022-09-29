@@ -9,24 +9,38 @@ import positionevaluator.PositionEvaluator;
 
 /**
  * Class representing the game state.
- * <br><br>
- * It stores the position of the pieces, the players' castling ability, whose turn it is, if a player is in check
+ * <br>
+ * <br>
+ * It stores the position of the pieces, the players' castling ability, whose
+ * turn it is, if a player is in check
  * and if a pawn may be captured en passant
- * (= all of the information denoted by a fen string plus whether a player is in check).
- * <br><br>
+ * (= all of the information denoted by a fen string plus whether a player is in
+ * check).
+ * <br>
+ * <br>
  * <b>Note:</b>
- * The array element at [0][0] represents the space a8, while [7][7] represents h1.
+ * The array element at [0][0] represents the space a8, while [7][7] represents
+ * h1.
  */
 public class Position implements Comparable<Position>, Cloneable {
 
     /**
-     * The element at the Board-space (0,0) represents the space a8, (0,7) represents h8,
+     * The element at the Board-space (0,0) represents the space a8, (0,7)
+     * represents h8,
      * (7,0) represents a1 and (7,7) represents h1.
      */
     private Board board;
     private int pointValue;
     private boolean whiteInCheck;
     private boolean blackInCheck;
+    private boolean blackKingsideLeft;
+    private boolean blackKingsideRight;
+    private boolean blackQueensideLeft;
+    private boolean blackQueensideRight;
+    private boolean whiteKingsideLeft;
+    private boolean whiteKingsideRight;
+    private boolean whiteQueensideLeft;
+    private boolean whiteQueensideRight;
     private boolean whiteNextMove;
     private boolean whiteCastlingKingside;
     private boolean whiteCastlingQueenside;
@@ -35,25 +49,39 @@ public class Position implements Comparable<Position>, Cloneable {
     private Coordinate enPassantTargetSpace;
     private int halfMovesSincePawnMoveOrCapture;
     private int fullMoveCount;
-    private boolean[][] attackedByWhite;
-    private boolean[][] attackedByBlack;
+    // private boolean[] attackedByWhite;
+    // private boolean[] attackedByBlack;
     private Move generatedByMove;
 
+    private static final int F1 = 61;
+    private static final int G1 = 62;
+    private static final int F8 = 5;
+    private static final int G8 = 6;
+    private static final int C1 = 58;
+    private static final int D1 = 59;
+    private static final int C8 = 2;
+    private static final int D8 = 3;
+
     /**
-    * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
-    * but without requiring point value and whiteInCheck / blackInCheck to be set.
-    * These value may be set using the corresponding setter at a later time.
-    */
+     * Like
+     * {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
+     * but without requiring point value and whiteInCheck / blackInCheck to be set.
+     * These value may be set using the corresponding setter at a later time.
+     */
     public Position(Board spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
-            boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
+            boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank,
+            int enPassantTargetFile,
             int halfMoves, int fullMoves) {
         if (spaces == null) {
             throw new NullPointerException("spaces array may not be null");
         }
-        // en passant target coordiantes of -1 are used if no en passant captures are possbile
-        /* if (enPassantTargetRank <= 0 || enPassantTargetFile <= 0) {
-            throw new IllegalArgumentException("coordinates must be greater than 0");
-        } */
+        // en passant target coordiantes of -1 are used if no en passant captures are
+        // possbile
+        /*
+         * if (enPassantTargetRank <= 0 || enPassantTargetFile <= 0) {
+         * throw new IllegalArgumentException("coordinates must be greater than 0");
+         * }
+         */
         if (enPassantTargetRank > 8 || enPassantTargetFile > 8) {
             throw new IllegalArgumentException("coordinates must be less than 8");
         }
@@ -67,43 +95,64 @@ public class Position implements Comparable<Position>, Cloneable {
         this.whiteCastlingQueenside = whiteCastlingQueenside;
         this.blackCastlingKingside = blackCastlingKingside;
         this.blackCastlingQueenside = blackCastlingQueenside;
-        if (enPassantTargetRank == -1 && enPassantTargetFile == -1){
+        if (enPassantTargetRank == -1 && enPassantTargetFile == -1) {
             this.enPassantTargetSpace = null;
         } else {
             this.enPassantTargetSpace = new Coordinate(enPassantTargetRank, enPassantTargetFile);
         }
         this.halfMovesSincePawnMoveOrCapture = halfMoves;
-        this.attackedByWhite = AttackMapGenerator.computeChecks(spaces, true);
-        this.attackedByBlack = AttackMapGenerator.computeChecks(spaces, false);
+        byte[] attackedByWhite = AttackMapGenerator.computeChecksByteEncoded(spaces, true);
+        byte[] attackedByBlack = AttackMapGenerator.computeChecksByteEncoded(spaces, false);
         Coordinate whiteKing = getKingPosition(true);
         if (whiteKing != null) {
-            this.whiteInCheck = attackedByBlack[whiteKing.getRank()][whiteKing.getFile()];
+            this.whiteInCheck = AttackMapGenerator.getBoolFromByte(whiteKing.getRank(), whiteKing.getFile(),
+                    attackedByBlack);
+            // this.whiteInCheck = isSpaceAttackedByBlack(whiteKing);
         } else {
-            /*  This is done to prevent a position without a king from generating
-                moves without while allowing such a position state to exist for the
-                sake of point evaluation */
+            /*
+             * This is done to prevent a position without a king from generating
+             * moves without while allowing such a position state to exist for the
+             * sake of point evaluation
+             */
             this.whiteInCheck = true;
         }
         Coordinate blackKing = getKingPosition(false);
         if (blackKing != null) {
-            this.blackInCheck = attackedByWhite[blackKing.getRank()][blackKing.getFile()];
+            this.blackInCheck = AttackMapGenerator.getBoolFromByte(blackKing.getRank(), blackKing.getFile(),
+                    attackedByWhite);
+            // this.blackInCheck = isSpaceAttackedByWhite(blackKing);
         } else {
-            /*  This is done to prevent a position without a king from generating
-                moves without while allowing such a position state to exist for the
-                sake of point evaluation */
+            /*
+             * This is done to prevent a position without a king from generating
+             * moves without while allowing such a position state to exist for the
+             * sake of point evaluation
+             */
             this.blackInCheck = true;
         }
+
+        blackQueensideLeft  = AttackMapGenerator.getBoolFromByte(0, 2, attackedByWhite);
+        blackQueensideRight = AttackMapGenerator.getBoolFromByte(0, 3, attackedByWhite);
+        blackKingsideLeft   = AttackMapGenerator.getBoolFromByte(0, 5, attackedByWhite);
+        blackKingsideRight  = AttackMapGenerator.getBoolFromByte(0, 6, attackedByWhite);
+        whiteQueensideLeft  = AttackMapGenerator.getBoolFromByte(7, 2, attackedByBlack);
+        whiteQueensideRight = AttackMapGenerator.getBoolFromByte(7, 3, attackedByBlack);
+        whiteKingsideLeft   = AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack);
+        whiteKingsideRight  = AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack);
+        
     }
 
     /**
-     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
+     * Like
+     * {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
      * but without requiring a point value to be set.
      * The value may be set using Position.setPointValue() at a later time.
      */
     public Position(boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
-            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
-        this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
+            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves,
+            int fullMoves) {
+        this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside,
+                blackCastlingQueenside,
                 enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
         this.whiteInCheck = whiteInCheck;
         this.blackInCheck = blackInCheck;
@@ -111,34 +160,49 @@ public class Position implements Comparable<Position>, Cloneable {
 
     /**
      * Creates a new position with the specified values.
-     * @param pointValue the positions evaluated value
-     * @param spaces two dimensional array holding the chess pieces, represents the chess position
-     * @param whiteNextMove whether the enxt turn is white's
-     * @param whiteInCheck whether white is in checks
-     * @param blackInCheck whether black is in check
-     * @param whiteCastlingKingside whether white can castle kingside
+     * 
+     * @param pointValue             the positions evaluated value
+     * @param spaces                 two dimensional array holding the chess pieces,
+     *                               represents the chess position
+     * @param whiteNextMove          whether the enxt turn is white's
+     * @param whiteInCheck           whether white is in checks
+     * @param blackInCheck           whether black is in check
+     * @param whiteCastlingKingside  whether white can castle kingside
      * @param whiteCastlingQueenside whether white can castle queenside
-     * @param blackCastlingKingside whether black can castle kingside
+     * @param blackCastlingKingside  whether black can castle kingside
      * @param blackCastlingQueenside whether black can castle queenside
-     * @param enPassantTargetRank if a pawn performed a double-step in the last turn, the rank of the traversed space; -1 otherwise
-     * @param enPassantTargetFile if a pawn performed a double-step in the last turn, the file of the traversed space; -1 otherwise
-     * @param halfMoves the number of half moves since a piece was captured or a pawn was moved . Starts at 0.
-     * @param fullMoves the number of full moves that have been played since the start of this game. Starts at 1.
+     * @param enPassantTargetRank    if a pawn performed a double-step in the last
+     *                               turn, the rank of the traversed space; -1
+     *                               otherwise
+     * @param enPassantTargetFile    if a pawn performed a double-step in the last
+     *                               turn, the file of the traversed space; -1
+     *                               otherwise
+     * @param halfMoves              the number of half moves since a piece was
+     *                               captured or a pawn was moved . Starts at 0.
+     * @param fullMoves              the number of full moves that have been played
+     *                               since the start of this game. Starts at 1.
      */
     public Position(int pointValue, boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
-            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves, int fullMoves) {
-        //value may be less than 0 (minimax / negamax)
+            boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, int halfMoves,
+            int fullMoves) {
+        // value may be less than 0 (minimax / negamax)
         this(whiteInCheck, blackInCheck, spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside,
-                blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
+                blackCastlingKingside, blackCastlingQueenside, enPassantTargetRank, enPassantTargetFile, halfMoves,
+                fullMoves);
         this.pointValue = pointValue;
     }
 
     /**
-     * Copies the spaces array to facilitate generation of follow-up positions wtihout affecting this position.
-     * <br><br>
-     * <b>Note:</b> Because pieces are immutable the pieces themselves are not copied (the same piece instances are returned within the copied array).
-     * @return a copy of the two dimensional array representing the chess pieces' positions.
+     * Copies the spaces array to facilitate generation of follow-up positions
+     * wtihout affecting this position.
+     * <br>
+     * <br>
+     * <b>Note:</b> Because pieces are immutable the pieces themselves are not
+     * copied (the same piece instances are returned within the copied array).
+     * 
+     * @return a copy of the two dimensional array representing the chess pieces'
+     *         positions.
      */
     public Board copyBoard() {
         return board.copyBoard();
@@ -146,78 +210,95 @@ public class Position implements Comparable<Position>, Cloneable {
 
     /**
      * Generates a follow-up position without en passant target square.
-     * Same as {@link Position#generateFollowUpPosition(Piece[][], int, int) generateFollowUpPosition(Position, Piece[][], -1, -1)}.
+     * Same as {@link Position#generateFollowUpPosition(Piece[][], int, int)
+     * generateFollowUpPosition(Position, Piece[][], -1, -1)}.
      */
     public Position generateFollowUpPosition(Board newBoard, boolean captureOrPawnMove) {
         return generateFollowUpPosition(newBoard, -1, -1, captureOrPawnMove);
     }
 
     /**
-     * Generates a follow-up position to this position with the specified parameters.
+     * Generates a follow-up position to this position with the specified
+     * parameters.
      * Sets check flags according to the attack maps.
      * Castling right flags are copied from this position.
-     * <br><br>
+     * <br>
+     * <br>
      * <b>Note:</b>
-     * This method is not suitable to generate follow-up positions for rooks and kings since castling rights are copied.
-     * Use {@link #generateFollowUpPosition(Piece[][], int, int, boolean, boolean, boolean, boolean)}  instead.
-     * @param newPosition the piece's  new position 
+     * This method is not suitable to generate follow-up positions for rooks and
+     * kings since castling rights are copied.
+     * Use
+     * {@link #generateFollowUpPosition(Piece[][], int, int, boolean, boolean, boolean, boolean)}
+     * instead.
+     * 
+     * @param newPosition            the piece's new position
      * @param newEnPassantTargetRank rank of the en passant target square
      * @param newEnPassantTargetFile file of the en passant target square
-     * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
-     * @return a follow-up position to this position  
+     * @param captureOrPawnMove      whether a piece was captured or a pawn was
+     *                               moved. if true, half move count is reset
+     * @return a follow-up position to this position
      */
     public Position generateFollowUpPosition(Board newBoard, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean captureOrPawnMove) {
 
-        //use getters over direct field access so additional code can be run if required at a later time
+        // use getters over direct field access so additional code can be run if
+        // required at a later time
         boolean newWhiteCastlingKingside = this.getWhiteCastlingKingside();
         boolean newWhiteCastlingQueenside = this.getWhiteCastlingQueenside();
         boolean newBlackCastlingKingside = this.getBlackCastlingKingside();
         boolean newBlackCastlingQueenside = this.getBlackCastlingQueenside();
 
-        return generateFollowUpPosition(newBoard, newEnPassantTargetRank, newEnPassantTargetFile, newWhiteCastlingKingside,
+        return generateFollowUpPosition(newBoard, newEnPassantTargetRank, newEnPassantTargetFile,
+                newWhiteCastlingKingside,
                 newWhiteCastlingQueenside, newBlackCastlingKingside, newBlackCastlingQueenside, captureOrPawnMove);
     }
 
     /**
-    * Generates a follow-up position to this position with the specified parameters.
-    * Sets check flags according to the attack maps.
-    * <br><br>  
-    * Castling flags represent permanent loss of castling ability, 
-    * not temporary inability to castle e.g. caused by check or a piece placed in between rook and king.
-    * 
-    * @param newBoard the piece's  new position 
-    * @param newEnPassantTargetRank rank of the en passant target square
-    * @param enPassantTargetFileboolean file of the en passant target square
-    * @param newWhiteCastlingKingside whether white may castle kingside
-    * @param newWhiteCastlingQueenside whether white may castle queenside
-    * @param newBlackCastlingKingside whether black may castle kingside
-    * @param newBlackCastlingQueenside whether black may castle queenside
-    * @param captureOrPawnMove whether a piece was captured or a pawn was moved. if true, half move count is reset
-    * @return a follow-up position to this position 
-    */
+     * Generates a follow-up position to this position with the specified
+     * parameters.
+     * Sets check flags according to the attack maps.
+     * <br>
+     * <br>
+     * Castling flags represent permanent loss of castling ability,
+     * not temporary inability to castle e.g. caused by check or a piece placed in
+     * between rook and king.
+     * 
+     * @param newBoard                   the piece's new position
+     * @param newEnPassantTargetRank     rank of the en passant target square
+     * @param enPassantTargetFileboolean file of the en passant target square
+     * @param newWhiteCastlingKingside   whether white may castle kingside
+     * @param newWhiteCastlingQueenside  whether white may castle queenside
+     * @param newBlackCastlingKingside   whether black may castle kingside
+     * @param newBlackCastlingQueenside  whether black may castle queenside
+     * @param captureOrPawnMove          whether a piece was captured or a pawn was
+     *                                   moved. if true, half move count is reset
+     * @return a follow-up position to this position
+     */
     public Position generateFollowUpPosition(Board newBoard, int newEnPassantTargetRank, int newEnPassantTargetFile,
             boolean newWhiteCastlingKingside, boolean newWhiteCastlingQueenside, boolean newBlackCastlingKingside,
             boolean newBlackCastlingQueenside, boolean captureOrPawnMove) {
 
-        //arguments start with "new" to prevent shadowing of / name-clashing with the surrounding position's attributes
-        //such shadowing should be avoided since arguments (e.g. whiteCastlingKingSide) could be missing and the value would be read
-        //from the corresponding attribute, rather than resulting in an error
+        // arguments start with "new" to prevent shadowing of / name-clashing with the
+        // surrounding position's attributes
+        // such shadowing should be avoided since arguments (e.g. whiteCastlingKingSide)
+        // could be missing and the value would be read
+        // from the corresponding attribute, rather than resulting in an error
 
         int fullMoveCount = this.getFullMoves();
         if (!this.getWhiteNextMove()) {
-            //the position following this one is black's turn
-            //so the position being generated from this position represents the game's state after black moved
-            //  -> increment fullMoveCounter
+            // the position following this one is black's turn
+            // so the position being generated from this position represents the game's
+            // state after black moved
+            // -> increment fullMoveCounter
             fullMoveCount += 1;
         }
 
         int halfMoveCount = this.getHalfMoves();
         if (captureOrPawnMove) {
-            //reset half move count if a piece was captured or a pawn was moved
+            // reset half move count if a piece was captured or a pawn was moved
             halfMoveCount = 0;
         } else {
-            //increment otherwise
+            // increment otherwise
             halfMoveCount += 1;
         }
 
@@ -228,9 +309,9 @@ public class Position implements Comparable<Position>, Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Position){
+        if (obj instanceof Position) {
             Position position = (Position) obj;
-            return  (blackCastlingKingside == position.getBlackCastlingKingside()) &&
+            return (blackCastlingKingside == position.getBlackCastlingKingside()) &&
                     (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
                     (blackInCheck == position.getBlackInCheck()) &&
                     (getEnPassantTargetFile() == position.getEnPassantTargetFile()) &&
@@ -251,13 +332,14 @@ public class Position implements Comparable<Position>, Cloneable {
     /**
      * Watered down version of equals that disregards among other fullmove count
      * and halfmove count, used for checking for Threefold Repetition.
+     * 
      * @param obj
      * @return
      */
     public boolean equalsLight(Object obj) {
-        if (obj instanceof Position){
+        if (obj instanceof Position) {
             Position position = (Position) obj;
-            return  (blackCastlingKingside == position.getBlackCastlingKingside()) &&
+            return (blackCastlingKingside == position.getBlackCastlingKingside()) &&
                     (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
                     (getEnPassantTargetFile() == position.getEnPassantTargetFile()) &&
                     (getEnPassantTargetRank() == position.getEnPassantTargetRank()) &&
@@ -308,7 +390,7 @@ public class Position implements Comparable<Position>, Cloneable {
             result += "No En Passant possible\n";
         } else {
             result += "En Passant possible with target square [" +
-            getEnPassantTargetRank() + "][" + getEnPassantTargetFile() + "]\n";
+                    getEnPassantTargetRank() + "][" + getEnPassantTargetFile() + "]\n";
         }
         result += "Halfmove Clock: " + halfMovesSincePawnMoveOrCapture + "\n";
         result += "Fullmove Number: " + fullMoveCount + "\n";
@@ -317,23 +399,28 @@ public class Position implements Comparable<Position>, Cloneable {
         return result;
     }
 
-
     /**
      * Clones this position.
-     * While a new spaces array is created, the contained pieces are the same instances.
+     * While a new spaces array is created, the contained pieces are the same
+     * instances.
      * Thus modifying the array is possible without affecting this position.
      * As pieces are immutable it is valid to use the same instances.
-     * <br><br>
-     * The created Position will not be marked as interesting, even if this Position is.
+     * <br>
+     * <br>
+     * The created Position will not be marked as interesting, even if this Position
+     * is.
      */
     @Override
     public Position clone() {
         Board copiedSpaces = this.copyBoard();
-        Position result = new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces, this.whiteNextMove,
-                this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
-                this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
-        if (generatedByMove != null){
-                result.setMove(generatedByMove.clone());
+        Position result = new Position(this.pointValue, this.whiteInCheck, this.blackInCheck, copiedSpaces,
+                this.whiteNextMove,
+                this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside,
+                this.blackCastlingQueenside,
+                this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture,
+                this.fullMoveCount);
+        if (generatedByMove != null) {
+            result.setMove(generatedByMove.clone());
         }
         return result;
     }
@@ -343,7 +430,7 @@ public class Position implements Comparable<Position>, Cloneable {
         return this.toString().compareTo(otherPosition.toString());
     }
 
-    public String toStringLight(){
+    public String toStringLight() {
         String result = board.toString() + "\n";
         result += whiteNextMove + "\n";
         result += whiteCastlingKingside + "\n";
@@ -357,6 +444,7 @@ public class Position implements Comparable<Position>, Cloneable {
     /**
      * Statically evaluates this position by calculating the pointvalue
      * of both sides and returning the difference.
+     * 
      * @return the board's static evaluation
      */
     public int evaluateBoard(boolean isNaturalLeaf, int depth) {
@@ -364,7 +452,7 @@ public class Position implements Comparable<Position>, Cloneable {
         return this.pointValue;
     }
 
-    //TODO remove point attribute from position?
+    // TODO remove point attribute from position?
 
     public void setValue(int pointValue) {
         // pointvalue may be negative
@@ -376,30 +464,30 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     // public void applyMove(Move toApply){
-    //     Coordinate targetSpace = toApply.getTargetSpace();
-    //     Coordinate startingSpace = toApply.getStartingSpace();
-    //     board.setPieceAt(targetSpace, getPieceAt(startingSpace));
-    //     board.setPieceAt(startingSpace, null);
-    //     whiteNextMove = !whiteNextMove;
-    //     implement en passant 
+    // Coordinate targetSpace = toApply.getTargetSpace();
+    // Coordinate startingSpace = toApply.getStartingSpace();
+    // board.setPieceAt(targetSpace, getPieceAt(startingSpace));
+    // board.setPieceAt(startingSpace, null);
+    // whiteNextMove = !whiteNextMove;
+    // implement en passant
     // }
 
     // public void toggleWhiteNextMove(){
-    //     whiteNextMove = !whiteNextMove;
+    // whiteNextMove = !whiteNextMove;
     // }
 
-    public Position getFollowUpByMove(Move toApply){
+    public Position getFollowUpByMove(Move toApply) {
         Position[] followUps = MoveGenerator.generatePossibleMoves(
-            this);
-        for (int i = 0; i < followUps.length; i++){
-            if (followUps[i].generatedByMove.equals(toApply)){
+                this);
+        for (int i = 0; i < followUps.length; i++) {
+            if (followUps[i].generatedByMove.equals(toApply)) {
                 return followUps[i];
             }
         }
         return null;
     }
 
-     /*
+    /*
      **********************************
      * Getters and Setters
      **********************************
@@ -415,7 +503,7 @@ public class Position implements Comparable<Position>, Cloneable {
 
     public void setFullMoveCount(int fullMoveCount) {
         if (fullMoveCount < 1) {
-            //full move counter starts at 1
+            // full move counter starts at 1
             throw new IllegalArgumentException("full move count must be greater than 0");
         }
         this.fullMoveCount = fullMoveCount;
@@ -425,7 +513,7 @@ public class Position implements Comparable<Position>, Cloneable {
         return pointValue;
     };
     // public Piece[][] getSpaces() {
-    //     return board.getSpaces();
+    // return board.getSpaces();
     // }
 
     public boolean getWhitesTurn() {
@@ -465,14 +553,14 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     public int getEnPassantTargetRank() {
-        if (enPassantTargetSpace == null){
+        if (enPassantTargetSpace == null) {
             return -1;
         }
         return enPassantTargetSpace.getRank();
     }
 
     public int getEnPassantTargetFile() {
-        if (enPassantTargetSpace == null){
+        if (enPassantTargetSpace == null) {
             return -1;
         }
         return enPassantTargetSpace.getFile();
@@ -497,42 +585,74 @@ public class Position implements Comparable<Position>, Cloneable {
     public Piece getPieceAt(Coordinate space) {
         return board.getPieceAt(space);
     }
-    public boolean[][] getAttackedByWhite() {
-        return attackedByWhite;
+    // public boolean[][] getAttackedByWhite() {
+    // return attackedByWhite;
+    // }
+
+    public boolean isKingsideAttacked(boolean isWhite) {
+        if (isWhite) {
+            return whiteKingsideLeft && whiteKingsideRight;
+        } else {
+            return blackKingsideLeft && blackKingsideRight;
+        }
     }
 
-    public void setAttackedByWhite(boolean[][] attackedByWhite) {
-        this.attackedByWhite = attackedByWhite;
+    public boolean isQueensideAttacked(boolean isWhite) {
+        if (isWhite) {
+            return whiteQueensideLeft && whiteQueensideRight;
+        } else {
+            return blackQueensideLeft && blackQueensideRight;
+        }
     }
 
-    public boolean[][] getAttackedByBlack() {
-        return attackedByBlack;
-    }
+    // public boolean isSpaceAttackedByWhite(int rank, int file){
+    // return attackedByWhite[rank*8+file];
+    // }
 
-    public String toStringFen(){
+    // public boolean isSpaceAttackedByWhite(Coordinate space){
+    // return isSpaceAttackedByWhite(space.getRank(), space.getFile());
+    // }
+
+    // public void setAttackedByWhite(boolean[] attackedByWhite) {
+    // this.attackedByWhite = attackedByWhite;
+    // }
+
+    // public boolean isSpaceAttackedByBlack(int rank, int file){
+    // return attackedByBlack[rank*8+file];
+    // }
+
+    // public boolean isSpaceAttackedByBlack(Coordinate space){
+    // return isSpaceAttackedByBlack(space.getRank(), space.getFile());
+    // }
+
+    // public boolean[][] getAttackedByBlack() {
+    // return attackedByBlack;
+    // }
+
+    public String toStringFen() {
         String result = board.toStringFen();
-        if (whiteNextMove){
+        if (whiteNextMove) {
             result += " w ";
         } else {
             result += " b ";
         }
-        if (whiteCastlingKingside || whiteCastlingQueenside || blackCastlingKingside || blackCastlingQueenside){
-            if (whiteCastlingKingside){
+        if (whiteCastlingKingside || whiteCastlingQueenside || blackCastlingKingside || blackCastlingQueenside) {
+            if (whiteCastlingKingside) {
                 result += "K";
             }
-            if (whiteCastlingQueenside){
+            if (whiteCastlingQueenside) {
                 result += "Q";
             }
-            if (blackCastlingKingside){
+            if (blackCastlingKingside) {
                 result += "k";
             }
-            if (blackCastlingQueenside){
+            if (blackCastlingQueenside) {
                 result += "q";
             }
         } else {
             result += "-";
         }
-        if (enPassantTargetSpace != null){
+        if (enPassantTargetSpace != null) {
             result += " " + enPassantTargetSpace + " ";
         } else {
             result += " - ";
@@ -542,9 +662,17 @@ public class Position implements Comparable<Position>, Cloneable {
         return result;
     }
 
-    public void setAttackedByBlack(boolean[][] attackedByBlack) {
-        this.attackedByBlack = attackedByBlack;
-    }
+    // public boolean isSpaceAttacked(int rank, int file, boolean attackedByWhite){
+    // if (attackedByWhite){
+    // return isSpaceAttackedByWhite(rank, file);
+    // } else {
+    // return isSpaceAttackedByBlack(rank, file);
+    // }
+    // }
+
+    // public void setAttackedByBlack(boolean[] attackedByBlack) {
+    // this.attackedByBlack = attackedByBlack;
+    // }
 
     public Coordinate getKingPosition(boolean isWhite) {
         return board.getKingPosition(isWhite);
@@ -557,21 +685,22 @@ public class Position implements Comparable<Position>, Cloneable {
     public void setMove(Move generatedBy) {
         if (generatedBy == null) {
             throw new NullPointerException(
-                "the move this board was generated by may not be explicitly set to null");
+                    "the move this board was generated by may not be explicitly set to null");
         }
         this.generatedByMove = generatedBy;
     }
+
     public void setMove(int startingRank, int startingFile, int targetRank, int targetFile) {
         this.generatedByMove = new Move(new Coordinate(startingRank, startingFile),
-            new Coordinate(targetRank, targetFile));
+                new Coordinate(targetRank, targetFile));
     }
 
     public void setMove(int startingRank, int startingFile, int targetRank, int targetFile, Byte promotedTo) {
         this.generatedByMove = new Move(new Coordinate(startingRank, startingFile),
-            new Coordinate(targetRank, targetFile), promotedTo);
+                new Coordinate(targetRank, targetFile), promotedTo);
     }
 
-    public void deleteMove(){
+    public void deleteMove() {
         this.generatedByMove = null;
     }
 
@@ -584,10 +713,10 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     public boolean isDraw() {
-        if (halfMovesSincePawnMoveOrCapture >= 100){
+        if (halfMovesSincePawnMoveOrCapture >= 100) {
             return true;
         }
-        if (checkForThreefoldRepetition()){
+        if (checkForThreefoldRepetition()) {
             return true;
         }
         return false;
@@ -595,28 +724,26 @@ public class Position implements Comparable<Position>, Cloneable {
 
     private boolean checkForThreefoldRepetition() {
         HashMap<String, Integer> hashMap = new HashMap<>();
-        for (int i = 0; i < Conductor.getPastPositions().size(); i++){
+        for (int i = 0; i < Conductor.getPastPositions().size(); i++) {
             String key = Conductor.getPastPositions().get(i).toStringLight();
-            if (hashMap.get(key) == null){
+            if (hashMap.get(key) == null) {
                 hashMap.put(key, 1);
             } else {
-                hashMap.put(key, hashMap.get(key) +1);
+                hashMap.put(key, hashMap.get(key) + 1);
             }
-            if (hashMap.get(key) >= 3){
+            if (hashMap.get(key) >= 3) {
                 return true;
             }
         }
         return false;
     }
 
-
-
     @Override
     public int hashCode() {
         // return Objects.hash(
-        //     board, whiteNextMove, whiteCastlingKingside,
-        //     whiteCastlingQueenside, blackCastlingKingside,
-        //     blackCastlingQueenside, enPassantTargetSpace);
+        // board, whiteNextMove, whiteCastlingKingside,
+        // whiteCastlingQueenside, blackCastlingKingside,
+        // blackCastlingQueenside, enPassantTargetSpace);
         return toStringLight().hashCode();
     }
 

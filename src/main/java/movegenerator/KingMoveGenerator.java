@@ -43,30 +43,30 @@ public class KingMoveGenerator extends PieceMoveGenerator {
     }
 
     private static void computeCastlingKingside(Position bs, List<Position> results){
-        boolean[][] relevantAttackMap = null;
+        boolean isWhite;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
         if (bs.getWhitesTurn()){
             if (bs.getWhiteInCheck()) {
                 return;
             }
-            relevantAttackMap = bs.getAttackedByBlack();
+            isWhite = true;
             relevantRank = 7;
             relevantCastlingRight = bs.getWhiteCastlingKingside();
         } else {
             if (bs.getBlackInCheck()) {
                 return;
             }
-            relevantAttackMap = bs.getAttackedByWhite();
+            isWhite = false;
             relevantRank = 0;
             relevantCastlingRight = bs.getBlackCastlingKingside();
         }
         if (relevantCastlingRight){
             // check whether the traversed spaces are free and not attacked
+            if (bs.isKingsideAttacked(isWhite)){
+                return;
+            }
             for (int i = 5; i < 7; i++){
-                if (relevantAttackMap[relevantRank][i]){
-                    return;
-                }
                 if (bs.getByteAt(relevantRank, i) != 0){
                     return;
                 }
@@ -83,31 +83,31 @@ public class KingMoveGenerator extends PieceMoveGenerator {
     }
 
     private static void computeCastlingQueenside(Position bs, List<Position> results){
-        boolean[][] relevantAttackMap = null;
+        boolean isWhite;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
         if (bs.getWhitesTurn()){
             if (bs.getWhiteInCheck()) {
                 return;
             }
-            relevantAttackMap = bs.getAttackedByBlack();
+            isWhite = true;
             relevantRank = 7;
             relevantCastlingRight = bs.getWhiteCastlingQueenside();
         } else {
             if (bs.getBlackInCheck()) {
                 return;
             }
-            relevantAttackMap = bs.getAttackedByWhite();
+            isWhite = false;
             relevantRank = 0;
             relevantCastlingRight = bs.getBlackCastlingQueenside();
         }
         if (relevantCastlingRight){
             // check whether the traversed spaces are free and not attacked
-            for (int i = 2; i < 4; i++){
-                if (relevantAttackMap[relevantRank][i]){
-                    return;
-                }
-                if (bs.getByteAt(relevantRank, i) != 0){
+            if (bs.isQueensideAttacked(isWhite)){
+                return;
+            }
+            for (int file = 2; file < 4; file++){
+                if (bs.getByteAt(relevantRank, file) != 0){
                     return;
                 }
             }
