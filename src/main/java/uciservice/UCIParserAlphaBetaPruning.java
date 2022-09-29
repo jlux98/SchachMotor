@@ -76,7 +76,7 @@ public abstract class UCIParserAlphaBetaPruning{
                  * The first child of a position-command should be startpos or a
                  * constant containing a fen string
                  */
-                if (!isTheSameGame(conductor.getStartingPosition(), conductor.getMoves(), children)){
+                if (!isTheSameGame(conductor.getStartingPosition(), Conductor.getMoves(), children)){
                     Command position = children.get(0);
                     if (position.getType() == CommandType.STARTPOS){
                         // if it is startpos we initiate the default starting position
@@ -147,7 +147,7 @@ public abstract class UCIParserAlphaBetaPruning{
         if (moves.getType() != CommandType.MOVES){
             System.out.println("Error: expected \"moves\" keyword. Current Commandtype: "+moves.getType());
         }
-        if (isTheSameGame(conductor.getStartingPosition(), conductor.getMoves(), children)){
+        if (isTheSameGame(conductor.getStartingPosition(), Conductor.getMoves(), children)){
             // for (int i = 0; i < 2; i++) {
                 Command currentMoveCommand = children.get(children.size()-1);
                 if (currentMoveCommand.getData().length()==5 && currentPosition.getWhiteNextMove()){
@@ -157,12 +157,12 @@ public abstract class UCIParserAlphaBetaPruning{
                 Move currentMove = new Move(currentMoveCommand.getData());
                 currentPosition = currentPosition.getFollowUpByMove(currentMove);
                 Conductor.appendPosition(currentPosition);
-                conductor.appendMove(currentMove);
+                Conductor.appendMove(currentMove);
             // }
             System.out.println("only " + currentMove.toStringAlgebraic() + " was applied.");
         } else {
             Conductor.emptyPositionList();
-            conductor.emptyMoveList();
+            Conductor.emptyMoveList();
             if (children.get(0).getType() == CommandType.STARTPOS){
                 conductor.setStartingPosition("startpos");
             } else {
@@ -180,7 +180,7 @@ public abstract class UCIParserAlphaBetaPruning{
                         Move currentMove = new Move(currentMoveCommand.getData());
                         Conductor.appendPosition(currentPosition);
                         currentPosition = currentPosition.getFollowUpByMove(currentMove);
-                        conductor.appendMove(currentMove);
+                        Conductor.appendMove(currentMove);
                         System.out.println("applying move "+currentMoveCommand.getData());
                     }
                 }
