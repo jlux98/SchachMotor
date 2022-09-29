@@ -591,17 +591,17 @@ public class Position implements Comparable<Position>, Cloneable {
 
     public boolean isKingsideAttacked(boolean isWhite) {
         if (isWhite) {
-            return whiteKingsideLeft && whiteKingsideRight;
+            return whiteKingsideLeft || whiteKingsideRight;
         } else {
-            return blackKingsideLeft && blackKingsideRight;
+            return blackKingsideLeft || blackKingsideRight;
         }
     }
 
     public boolean isQueensideAttacked(boolean isWhite) {
         if (isWhite) {
-            return whiteQueensideLeft && whiteQueensideRight;
+            return whiteQueensideLeft || whiteQueensideRight;
         } else {
-            return blackQueensideLeft && blackQueensideRight;
+            return blackQueensideLeft || blackQueensideRight;
         }
     }
 
