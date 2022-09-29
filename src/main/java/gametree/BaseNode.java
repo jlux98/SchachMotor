@@ -175,7 +175,7 @@ public abstract class BaseNode<ContentType> implements Node<ContentType> {
     protected abstract void computeChildren() throws ComputeChildrenException;
 
     @Override
-    public List<? extends Node<ContentType>> getOrComputeChildren() throws ComputeChildrenException {
+    public final List<? extends Node<ContentType>> getOrComputeChildren() throws ComputeChildrenException {
         if (!hasChildren()) {
             computeChildren();
             detachChildGenerationData();
