@@ -17,6 +17,8 @@ import gametree.ImpGameTree;
 import gametree.UninitializedValueException;
 import helper.GameTreeEvaluationHelper;
 import helper.Mirror;
+import minimax.GameTreeEvaluator;
+import minimax.TreeEvaluator;
 import model.Move;
 import model.Position;
 import uciservice.FenParser;
@@ -78,6 +80,148 @@ public abstract class GameTreeEvaluationTest {
         assertThrows(IllegalArgumentException.class, () -> tree.calculateBestMove(Integer.MIN_VALUE));
     }
     
+    /**
+    * Calculates the next move for the given fen twice using
+    * {@link TreeEvaluator#evaluateTree(gametree.Tree, int, boolean)}
+    * and compares both results.
+    * 
+    * @param fen        the position to calculate the move to be plaed for
+    * @param depth      the depth used by alpha-beta pruning
+    * @param whitesTurn whether the move to be played is played by white
+    */
+    private void testEvaluatorEvaluateTreeConsistency(String fen, int depth, boolean whitesTurn) {
+        Position pos1 = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluator1 = helper.instantiateTreeEvaluator();
+        Move result1 = evaluator1.evaluateTree(new ImpGameTree(pos1, evaluator1), depth, whitesTurn).getRepresentedMove();
+
+        Position pos2 = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluator2 = helper.instantiateTreeEvaluator();
+        Move result2 = evaluator2.evaluateTree(new ImpGameTree(pos2, evaluator2), depth, whitesTurn).getRepresentedMove();
+
+        assertEquals(result1, result2);
+    }
+
+    /**
+     * Calculates the next move for the given fen twice using
+     * {@link ImpGameTree#calculateBestMove(int)}
+     * and compares both results.
+     * 
+     * @param fen        the position to calculate the move to be plaed for
+     * @param depth      the depth used by alpha-beta pruning
+     * @param whitesTurn whether the move to be played is played by white
+     */
+    private void testTreeCalculateBestMoveConsistency(String fen, int depth, boolean whitesTurn) {
+        Position pos1 = FenParser.parseFen(fen);
+        Move result1 = new ImpGameTree(pos1, helper.instantiateTreeEvaluator()).calculateBestMove(depth).getRepresentedMove();
+        Position pos2 = FenParser.parseFen(fen);
+        Move result2 = new ImpGameTree(pos2, helper.instantiateTreeEvaluator()).calculateBestMove(depth).getRepresentedMove();
+
+        assertEquals(result1, result2);
+    }
+
+    /**
+     * Calculates the next move for the given fen using
+     * {@link ImpGameTree#calculateBestMove(int)}
+     * and {@link TreeEvaluator#evaluateTree(gametree.Tree, int, boolean)}
+     * and comapares both results.
+     * 
+     * @param fen        the position to calculate the move to be plaed for
+     * @param depth      the depth used by alpha-beta pruning
+     * @param whitesTurn whether the move to be played is played by white
+     */
+    private void testEvaluatorEvaluateTreeEqualsTreeCalculateBestMove(String fen, int depth, boolean whitesTurn) {
+
+        Position pos1 = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluator = helper.instantiateTreeEvaluator();
+        Move result1 = evaluator.evaluateTree(new ImpGameTree(pos1, evaluator), depth, whitesTurn).getRepresentedMove();
+
+        Position pos2 = FenParser.parseFen(fen);
+        Move result2 = new ImpGameTree(pos2, helper.instantiateTreeEvaluator()).calculateBestMove(depth).getRepresentedMove();
+
+        assertEquals(result1, result2);
+    }
+
+    @Test
+    public void evaluatorEvaluateTreeConsistentTest1() {
+        String fen = "k7/3r4/1p1b4/4n3/1R6/8/2N1P3/K7 b - - 0 1";
+        testEvaluatorEvaluateTreeConsistency(fen, 3, false);
+    }
+
+    @Test
+    public void evaluatorEvaluateTreeConsistentTest2() {
+        String fen = "2K5/8/8/8/8/3RRR2/n2RRR2/2k5 w - - 0 1";
+        testEvaluatorEvaluateTreeConsistency(fen, 3, true);
+    }
+
+    @Test
+    public void treeCalculateBestMoveConsistentTest1() {
+        String fen = "1r1b4/6k1/5n2/6p1/3N4/4B3/3R4/K7 w - - 0 1";
+        testTreeCalculateBestMoveConsistency(fen, 3, true);
+    }
+
+    @Test
+    public void treeCalculateBestMoveConsistentTest2() {
+        String fen = "k7/6r1/8/3n1P2/8/1P3N1r/3NB3/K7 b - - 0 1";
+        testTreeCalculateBestMoveConsistency(fen, 3, false);
+    }
+
+    @Test
+    public void evaluatorEvaluateTreeEqualsTreeCalculateBestMoveTest1() {
+        String fen = "2K5/8/8/8/8/3RRR2/n2RRR2/2k5 w - - 0 1";
+        testEvaluatorEvaluateTreeEqualsTreeCalculateBestMove(fen, 3, true);
+    }
+
+    @Test
+    public void evaluatorEvaluateTreeEqualsTreeCalculateBestMoveTest3() {
+        String fen = "k7/2n5/3b1b2/3p4/8/2N3P1/4R3/K7 b - - 0 1";
+        testEvaluatorEvaluateTreeEqualsTreeCalculateBestMove(fen, 3, false);
+    }
+
+    /**
+     * apparently never fails
+     */
+    @Test
+    public void evaluatorEvaluateTreeEqualsTreeCalculateBestMoveTestApparentlyWorkingFen() {
+        String fen = "k7/8/6p1/3rR3/2n5/1P2Bb2/8/K7 b - - 0 1";
+        testEvaluatorEvaluateTreeEqualsTreeCalculateBestMove(fen, 3, false);
+    }
+
+    @Test
+    public void evaluatorEvaluateTreeConsistencyTestApparentlyWorkingFen() {
+        String fen = "k7/8/6p1/3rR3/2n5/1P2Bb2/8/K7 b - - 0 1";
+        testEvaluatorEvaluateTreeConsistency(fen, 3, false);
+    }
+
+    @Test
+    public void treeCalculateBestMoveConsistencyTestApparentlyWorkingFen() {
+        String fen = "k7/8/6p1/3rR3/2n5/1P2Bb2/8/K7 b - - 0 1";
+        testTreeCalculateBestMoveConsistency(fen, 3, false);
+    }
+
+    @Test
+    public void chaosTest() {
+        String fen = "2K5/8/8/8/8/3RRR2/n2RRR2/2k5 w - - 0 1";
+        int depth = 3;
+        Position pos = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluatorA = helper.instantiateTreeEvaluator();
+        GameNode faulty = evaluatorA.evaluateTree(new ImpGameTree(pos, evaluatorA), depth, true);
+
+        pos = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluatorB = helper.instantiateTreeEvaluator();
+        GameNode sensible = new ImpGameTree(pos, evaluatorB).calculateBestMove(depth);
+
+        pos = FenParser.parseFen(fen);
+        GameNode sensible2 = new ImpGameTree(pos, evaluatorB).calculateBestMove(depth);
+
+        pos = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluatorC = helper.instantiateTreeEvaluator();
+        GameNode sensible3 = new ImpGameTree(pos, evaluatorC).calculateBestMove(depth);
+
+        assertEquals(sensible.getRepresentedMove(), sensible3.getRepresentedMove());
+        assertEquals(sensible.getRepresentedMove(), sensible2.getRepresentedMove());
+        assertEquals(sensible.getRepresentedMove(), faulty.getRepresentedMove());
+    }
+
     @Test
     public void findCheckMateBlack() {
         List<Move> expected = new ArrayList<Move>();
