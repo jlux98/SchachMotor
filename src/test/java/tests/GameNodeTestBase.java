@@ -1,11 +1,13 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import classes.TestGameNode;
 import data.MoveGeneratorData;
 import gametree.ComputeChildrenException;
 import gametree.GameNode;
@@ -48,14 +50,25 @@ public abstract class GameNodeTestBase {
      * instead of generating children it will returned the stored children
      */
     @Test
-    public void queryChildrenCalledTwice() throws ComputeChildrenException {
-
+    public void queryChildrenCalledTwiceReturnsSameResult() throws ComputeChildrenException {
         Position position = FenParser.parseFen(MoveGeneratorData.allBlackPiecesFen);
         GameNode root = createRoot(position);
         root.getOrComputeChildren(); //initial call; computes children
         List<Position> followUpPositions = GameNodeHelper.extractChildPositions(root); //2nd call, retrieves stored children
 
         MoveGeneratorHelper.compareFenStringsToPosition(MoveGeneratorData.getExpectedAllBlackPiecesFenFollowUpMoves(), followUpPositions);
+    }
+
+    @Test
+    public void queryChildrenCallsOmputeChildrenOnlyOnceTest() throws ComputeChildrenException {
+        TestGameNode testNode = new TestGameNode(FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+        assertEquals(0, testNode.computeChildrenCalls);
+        testNode.getOrComputeChildren();
+        assertEquals(1, testNode.computeChildrenCalls);
+        testNode.getOrComputeChildren();
+        assertEquals(1, testNode.computeChildrenCalls);
+        testNode.getOrComputeChildren();
+        assertEquals(1, testNode.computeChildrenCalls);
     }
 
     /**

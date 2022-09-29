@@ -29,7 +29,6 @@ package gametree;
  * Use {@link #isInteresting()} to determine whether an Evaluable is currently marked
  * as interesting.
  */
-//TODO update class doc
 public interface Evaluable {
 
     /**
@@ -41,7 +40,6 @@ public interface Evaluable {
     * @throws UninitializedValueException if this evaluable was not yet evaluated
     */
     public abstract int getValue() throws UninitializedValueException;
-    //FIXME replace occurances with getExplicitValue where stuiable (not in alphabeta because static values of leaves have to be read)
 
     /**
      * If a value was assigned to this Evaluable using {@link #computeOrGetLeafValueOrBetter(int)} 

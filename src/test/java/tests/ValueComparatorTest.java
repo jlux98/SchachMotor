@@ -3,19 +3,21 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import classes.DifferentValuesIntNode;
 import classes.EvaluableTestNode;
 import classes.IntNode;
 import gametree.GameNode;
 import gametree.Node;
+import gametree.UninitializedValueException;
 import minimax.AscendingValueComparator;
 import minimax.DescendingValueComparator;
-import model.Position;
 import uciservice.FenParser;
 
 public class ValueComparatorTest {
@@ -226,5 +228,95 @@ public class ValueComparatorTest {
         assertTrue(nodes.get(0) == whiteLosing);
         assertTrue(nodes.get(1) == neutral);
         assertTrue(nodes.get(2) == blackLosing);
+    }
+
+    @Test
+    public void sortingReusesAvailableLeafValuesDescendingComparatorTest() throws UninitializedValueException {
+        List<DifferentValuesIntNode> nodes = new ArrayList<DifferentValuesIntNode>();
+        nodes.add(new DifferentValuesIntNode(15, 23));
+        nodes.add(new DifferentValuesIntNode(1, 21));
+        nodes.add(new DifferentValuesIntNode(-21, -12));
+        nodes.add(new DifferentValuesIntNode(-14, -20));
+
+        for (DifferentValuesIntNode node : nodes) {
+            node.computeOrGetLeafValueOrBetter(0); //parameter has no effect
+        }
+        nodes.sort(blackComparator);
+
+        assertEquals(-20, nodes.get(0).getValue());
+        assertEquals(-12, nodes.get(1).getValue());
+        assertEquals(21, nodes.get(2).getValue());
+        assertEquals(23, nodes.get(3).getValue());
+    }
+
+    @Test
+    public void sortingReusesAvailableLeafValuesAscendingComparatorTest() throws UninitializedValueException {
+        List<DifferentValuesIntNode> nodes = new ArrayList<DifferentValuesIntNode>();
+        nodes.add(new DifferentValuesIntNode(15, 23));
+        nodes.add(new DifferentValuesIntNode(1, 21));
+        nodes.add(new DifferentValuesIntNode(-21, -12));
+        nodes.add(new DifferentValuesIntNode(-14, -20));
+
+        for (DifferentValuesIntNode node : nodes) {
+            node.computeOrGetLeafValueOrBetter(0); //parameter has no effect
+        }
+        nodes.sort(whiteComparator);
+
+        assertEquals(23, nodes.get(0).getValue());
+        assertEquals(21, nodes.get(1).getValue());
+        assertEquals(-12, nodes.get(2).getValue());
+        assertEquals(-20, nodes.get(3).getValue());
+    }
+
+    @Test
+    public void sortingReusesAvailableExplicitValuesDescendingComparatorTest() throws UninitializedValueException {
+        List<DifferentValuesIntNode> nodes = new ArrayList<DifferentValuesIntNode>();
+        DifferentValuesIntNode node3 =new DifferentValuesIntNode(15, 23);
+        DifferentValuesIntNode node2 = new DifferentValuesIntNode(1, 21);
+        DifferentValuesIntNode node4 = new DifferentValuesIntNode(-21, -12);
+        DifferentValuesIntNode node1 = new DifferentValuesIntNode(-14, -20);
+
+        node1.setValue(1);
+        node2.setValue(2);
+        node3.setValue(3);
+        node4.setValue(4);
+
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+
+        nodes.sort(blackComparator);
+
+        assertEquals(1, nodes.get(0).getValue());
+        assertEquals(2, nodes.get(1).getValue());
+        assertEquals(3, nodes.get(2).getValue());
+        assertEquals(4, nodes.get(3).getValue());
+    }
+
+    @Test
+    public void sortingReusesAvailableExplicitValuesAscendingComparatorTest() throws UninitializedValueException {
+        List<DifferentValuesIntNode> nodes = new ArrayList<DifferentValuesIntNode>();
+        DifferentValuesIntNode node3 =new DifferentValuesIntNode(15, 23);
+        DifferentValuesIntNode node2 = new DifferentValuesIntNode(1, 21);
+        DifferentValuesIntNode node4 = new DifferentValuesIntNode(-21, -12);
+        DifferentValuesIntNode node1 = new DifferentValuesIntNode(-14, -20);
+
+        node1.setValue(1);
+        node2.setValue(2);
+        node3.setValue(3);
+        node4.setValue(4);
+
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+
+        nodes.sort(whiteComparator);
+
+        assertEquals(4, nodes.get(0).getValue());
+        assertEquals(3, nodes.get(1).getValue());
+        assertEquals(2, nodes.get(2).getValue());
+        assertEquals(1, nodes.get(3).getValue());
     }
 }
