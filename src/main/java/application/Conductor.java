@@ -28,12 +28,13 @@ public class Conductor {
      * position (would cost more memory but make finding draws easier when 
      * checking if the same Position occurs thrice in the list)*/
     private static List<Move> pastMoves = new ArrayList<Move>();
-    private static List<Position> pastPositions = new ArrayList<>();
 
     public static volatile Position bestFollowUp;
     public static volatile boolean stopCalculating;
     public static volatile int depthCompleted;
 
+
+    private static List<String> pastPositions = new ArrayList<>();
     private String startingPosition;
     // TODO: make sure only one calculation runs at a time
 
@@ -96,7 +97,7 @@ public class Conductor {
         this.startingPosition = startingPosition;
     }
 
-    public static void appendPosition(Position position){
+    public static void appendPosition(String position){
         pastPositions.add(position);
     }
 
@@ -120,7 +121,7 @@ public class Conductor {
         pastPositions.clear();
     }
 
-    public static List<Position> getPastPositions(){
+    public static List<String> getPastPositions(){
         return pastPositions;
     }
 

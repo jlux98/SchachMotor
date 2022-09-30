@@ -22,7 +22,6 @@ public abstract class BaseNode<ContentType> implements Node<ContentType> {
     private boolean isStaticValueOrBetter = false;
     private boolean isStaticLeafValueOrBetter = false;
     private boolean isExplicitValue = false;
-    private boolean isInteresting = false;
 
     /**
      * Creates a root node.
@@ -268,19 +267,5 @@ public abstract class BaseNode<ContentType> implements Node<ContentType> {
         this.value = value;
     }
 
-    @Override
-    public boolean isInteresting() {
-        return isInteresting;
-    }
-
-    @Override
-    public void markAsInteresting() {
-        this.isInteresting = true;
-    }
-
-    @Override
-    public void unmarkAsInteresting() {
-        this.isInteresting = false;
-    }
 
 }

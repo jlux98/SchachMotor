@@ -126,20 +126,20 @@ public class ByteBoard implements Board {
 
     @Override
     public String toString() {
-        String[] spaceStrings = new String[8];
+        StringBuilder spaceStrings = new StringBuilder();
+        spaceStrings.append('\n');
         for (int rank = 0; rank < 8; rank++) {
-            String result = "";
             for (int file = 0; file < 8; file++) {
                 byte currentPiece = getByteAt(rank, file);
                 if (currentPiece != EMPTY_SQUARE) {
-                    result += getCharacterFromBytePiece(currentPiece);
+                    spaceStrings.append(getCharacterFromBytePiece(currentPiece));
                 } else {
-                    result += "0";
+                    spaceStrings.append('0');
                 }
             }
-            spaceStrings[rank] = result;
+            spaceStrings.append('\n');
         }
-        return Arrays.toString(spaceStrings).replace(", ", ",\n");
+        return spaceStrings.toString();
     }
 
     @Override

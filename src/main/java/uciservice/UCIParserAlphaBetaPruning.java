@@ -160,7 +160,7 @@ public abstract class UCIParserAlphaBetaPruning{
                 }
                 Move currentMove = new Move(currentMoveCommand.getData());
                 currentPosition = currentPosition.getFollowUpByMove(currentMove);
-                Conductor.appendPosition(currentPosition);
+                Conductor.appendPosition(currentPosition.toStringLight());
                 Conductor.appendMove(currentMove);
             // }
             System.out.println("only " + currentMove.toStringAlgebraic() + " was applied.");
@@ -182,7 +182,7 @@ public abstract class UCIParserAlphaBetaPruning{
                         }
                         // TODO: actually apply this
                         Move currentMove = new Move(currentMoveCommand.getData());
-                        Conductor.appendPosition(currentPosition);
+                        Conductor.appendPosition(currentPosition.toStringLight());
                         currentPosition = currentPosition.getFollowUpByMove(currentMove);
                         Conductor.appendMove(currentMove);
                         System.out.println("applying move "+currentMoveCommand.getData());

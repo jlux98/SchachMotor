@@ -91,8 +91,7 @@ public class IntNode extends BaseNode<Integer> {
 
     @Override
     public void writeContentToHistory() {
-        // Int-Node does not support writing to history
-        
+        // Int-Node does not support writing to history        
     }
 
     @Override
@@ -100,7 +99,7 @@ public class IntNode extends BaseNode<Integer> {
         // Int-Node does not support deleting from history"
     }
 
-        /**
+    /**
      * Sets this node's representation used by {@link helper.TreePrinter}.
      * The representation is a StringBuilder that should be aligned with special characters as demanded
      * by TreePrinter.

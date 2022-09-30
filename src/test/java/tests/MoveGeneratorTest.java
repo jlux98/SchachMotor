@@ -878,4 +878,87 @@ public class MoveGeneratorTest {
                 assertEquals(-115, PositionEvaluator.evaluatePosition(bishopCapture));             
     }
 
+    @Test
+    public void whiteCastlingKingsideTest() {
+        //attack nothing
+        //Verify that castling move is generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/8/8/8/4K2R w K - 0 1", "h1f1", "h1g1", "h1h2", "h1h3", "h1h4", "h1h5", "h1h6",
+                "h1h7", "h1h8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2", "e1g1");
+       
+
+        //attack relevant space nr1
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/5r2/8/8/4K2R w K - 0 1", "h1f1", "h1g1", "h1h2", "h1h3", "h1h4", "h1h5",
+                "h1h6", "h1h7", "h1h8", "e1d1", "e1e2", "e1d2");
+
+        //attack relevant space nr2
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/6r1/8/8/4K2R w K - 0 1", "h1f1", "h1g1", "h1h2", "h1h3", "h1h4", "h1h5",
+                "h1h6", "h1h7", "h1h8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2");
+    }
+
+    @Test
+    public void whiteCastlingQueensideTest() {
+        //attack nothing
+        //Verify that castling move is generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/8/8/8/R3K3 w Q - 0 1", "a1b1", "a1c1", "a1d1", "a1a2", "a1a3", "a1a4",
+                "a1a5", "a1a6", "a1a7", "a1a8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2", "e1c1");
+
+        //attack relevant space nr1
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/1r6/8/8/R3K3 w Q - 0 1", "a1b1", "a1c1", "a1d1", "a1a2", "a1a3", "a1a4",
+                "a1a5", "a1a6", "a1a7", "a1a8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2", "e1c1"
+
+        );
+
+        //attack relevant space nr2
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/2r5/8/8/R3K3 w Q - 0 1", "a1b1", "a1c1", "a1d1", "a1a2", "a1a3", "a1a4",
+                "a1a5", "a1a6", "a1a7", "a1a8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2");
+    }
+
+    @Test
+    public void blackCastlingKingsideTest() {
+        //Verify that castling move is generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k2r/8/8/8/8/8/8/4K3 b k - 0 1", "h8h1", "h8h2", "h8h3", "h8h4", "h8h5", "h8h6",
+                "h8h7", "h8f8", "h8g8", "e8d7", "e8e7", "e8f7", "e8d8", "e8f8", "e8g8");
+
+        //attack relevant space nr1
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k2r/8/8/5R2/8/8/8/4K3 b k - 0 1", "h8h1", "h8h2", "h8h3", "h8h4", "h8h5", "h8h6",
+                "h8h7", "h8f8", "h8g8", "e8d7", "e8e7", "e8d8");
+
+        //attack relevant space nr2
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("4k2r/8/8/6R1/8/8/8/4K3 b k - 0 1",
+
+                "h8h1", "h8h2", "h8h3", "h8h4", "h8h5", "h8h6", "h8h7", "h8f8", "h8g8", "e8d7", "e8e7", "e8f7", "e8d8", "e8f8");
+    }
+
+    @Test
+    public void blackCastlingQueensideTest() {
+        //attack nothing
+        //Verify that castling move is generated
+        MoveGeneratorHelper.verifyMoveGeneration("r3k3/8/8/8/8/8/8/4K3 b q - 0 1",
+
+                "a8a1", "a8a2", "a8a3", "a8a4", "a8a5", "a8a6", "a8a7", "a8b8", "a8c8", "a8d8", "e8d7", "e8e7", "e8f7", "e8d8",
+                "e8f8", "e8c8"
+
+        );
+
+        //attack relevant space nr1
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("r3k3/8/8/1R6/8/8/8/4K3 b q - 0 1",
+
+                "a8a1", "a8a2", "a8a3", "a8a4", "a8a5", "a8a6", "a8a7", "a8b8", "a8c8", "a8d8", "e8d7", "e8e7", "e8f7", "e8d8",
+                "e8f8", "e8c8");
+
+        //attack relevant space nr2
+        //Verify that castling move is not generated
+        MoveGeneratorHelper.verifyMoveGeneration("r3k3/8/8/2R5/8/8/8/4K3 b q - 0 1",
+
+                "a8a1", "a8a2", "a8a3", "a8a4", "a8a5", "a8a6", "a8a7", "a8b8", "a8c8", "a8d8", "e8d7", "e8e7", "e8f7", "e8d8",
+                "e8f8");
+    }
+
 }

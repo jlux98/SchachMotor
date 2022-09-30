@@ -9,7 +9,11 @@ import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.Tree;
+import gametree.UninitializedValueException;
 
+/**
+ * Class used to print trees to stdout.
+ */
 public class TreePrinter {
     private static char OFFSET_CHARACTER = ' ';
     private static char CHILDREN_START_CHARACTER = '[';
@@ -19,24 +23,24 @@ public class TreePrinter {
     * Aligns a tree and prints it to standardout.
     * @param tree tree that should be printed
     * @param depth the tree's depth
+    * @param printValues whether nodes should be represented by their values or by their content
     */
-    public static void alignAndPrintTree(Tree<IntNode> tree, int depth) throws ComputeChildrenException {
-        alignNode(tree.getRoot(), 0, depth);
+    public static void alignAndPrintTree(Tree<IntNode> tree, int depth, boolean printValues) throws ComputeChildrenException {
+        alignNode(tree.getRoot(), 0, depth, printValues);
         updateAlignments(tree.getRoot(), 0, depth);
         printTree(tree, depth);
     }
 
-    
-    // public static void main(String[] args) throws ComputeChildrenException {
-    //     /* Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4, 5, 6, 7, 8);
-    //     alignAndPrintTree(tree, 3); */
-    //     /* Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(3, 1, 2, 3, 4, 5, 6, 7, 8);
-    //     alignAndPrintTree(tree, 2); */
-    //     /* IntNodeWikipediaTestTree tree = new IntNodeWikipediaTestTree();
-    //     alignAndPrintTree(tree, 4); */
-    //     IntNodeAsymmetricTestTree tree = new IntNodeAsymmetricTestTree();
-    //     alignAndPrintTree(tree, 6);
-    // }
+    //public static void main(String[] args) throws ComputeChildrenException {
+    // Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4, 5, 6, 7, 8);
+    // alignAndPrintTree(tree, 3, false);
+    // Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(3, 1, 2, 3, 4, 5, 6, 7, 8);
+    // alignAndPrintTree(tree, 2, false);
+    // IntNodeWikipediaTestTree tree = new IntNodeWikipediaTestTree();
+    // alignAndPrintTree(tree, 4, false);
+    // IntNodeAsymmetricTestTree tree = new IntNodeAsymmetricTestTree();
+    // alignAndPrintTree(tree, 6, false);
+    //}
 
     /**
      * Encloses a string with OFFSET_CHARACTERs until its width is >= <code>width</code>.
@@ -151,16 +155,36 @@ public class TreePrinter {
     }
 
     /**
+     * Converts a node to a string representation.
+     * If printValues = true, nodes will be represented by their value.
+     * If printValues = false, nodes will be represented by the .toString() of their content.
+     * @param node the node that should be converted
+     * @param printValues whether nodes should be printed as their value or content
+     * @return the corresponding string representation of the node
+     */
+    private static String nodeToString(IntNode node, boolean printValues) {
+        if (printValues) {
+            try {
+                return String.valueOf(node.getValue());
+            } catch (UninitializedValueException e) {
+                return "n\\a";
+            }
+        }
+        return node.getContent().toString();
+    }
+
+    /**
      * Aligns a node and its children within a tree so it can be printed to standard out.
      * @param node the node that should be aligned to its children
      * @param currentDepth the current invocation's depth
      * @param treeMaxDepth the tree's depth
      * @return the node's width
      */
-    private static int alignNode(IntNode node, int currentDepth, int treeMaxDepth) throws ComputeChildrenException {
+    private static int alignNode(IntNode node, int currentDepth, int treeMaxDepth, boolean printValues)
+            throws ComputeChildrenException {
         if (!node.hasChildren()) {
             //align representation
-            String string = node.toString();
+            String string = nodeToString(node, printValues);
             node.setAlignedRepresentation(alignGuaranteeWhiteSpace(string, string.length()));
 
             if (currentDepth < treeMaxDepth) {
@@ -177,7 +201,7 @@ public class TreePrinter {
         IntNode child;
         for (int i = 0; i < children.size(); i++) {
             child = (IntNode) children.get(i);
-            childrenWidth += alignNode((IntNode) child, currentDepth + 1, treeMaxDepth);
+            childrenWidth += alignNode((IntNode) child, currentDepth + 1, treeMaxDepth, printValues);
         }
 
         IntNode firstChild = ((IntNode) children.get(0));
@@ -186,7 +210,7 @@ public class TreePrinter {
         IntNode lastChild = ((IntNode) children.get(children.size() - 1));
         injectRight(lastChild.getAlignedRepresentation(), CHILDREN_END_CHARACTER);
 
-        node.setAlignedRepresentation(alignGuaranteeWhiteSpace(node.toString(), childrenWidth));
+        node.setAlignedRepresentation(alignGuaranteeWhiteSpace(nodeToString(node, printValues), childrenWidth));
         return node.getAlignedRepresentation().length();
     }
 
