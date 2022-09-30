@@ -46,7 +46,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean isWhite;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
-        if (bs.getWhiteNextMove()){
+        if (bs.getWhitesTurn()){
             if (bs.getWhiteInCheck()) {
                 return;
             }
@@ -62,7 +62,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
             relevantCastlingRight = bs.getBlackCastlingKingside();
         }
         if (relevantCastlingRight){
-            // check whether the traversed spaces are free and not attacked
+            // check whether the traversed squares are free and not attacked
             if (bs.isKingsideAttacked(isWhite)){
                 return;
             }
@@ -72,13 +72,13 @@ public class KingMoveGenerator extends PieceMoveGenerator {
                 }
             }
             // move king first
-            Board resultingSpaces = MoveGenerator.getBoardAfterMove(
+            Board resultingSquares = MoveGenerator.getBoardAfterMove(
                 bs.copyBoard(), relevantRank, 4, relevantRank, 6);
             // then move rook
-            resultingSpaces = MoveGenerator.getBoardAfterMove(
-                resultingSpaces, relevantRank, 7, relevantRank, 5);
+            resultingSquares = MoveGenerator.getBoardAfterMove(
+                resultingSquares, relevantRank, 7, relevantRank, 5);
             addKingMove(bs, results, relevantRank, 4, relevantRank, 6,
-                resultingSpaces, false);
+                resultingSquares, false);
         }
     }
 
@@ -86,7 +86,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean isWhite;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
-        if (bs.getWhiteNextMove()){
+        if (bs.getWhitesTurn()){
             if (bs.getWhiteInCheck()) {
                 return;
             }
@@ -102,7 +102,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
             relevantCastlingRight = bs.getBlackCastlingQueenside();
         }
         if (relevantCastlingRight){
-            // check whether the traversed spaces are free and not attacked
+            // check whether the traversed squares are free and not attacked
             if (bs.isQueensideAttacked(isWhite)){
                 return;
             }
@@ -111,19 +111,19 @@ public class KingMoveGenerator extends PieceMoveGenerator {
                     return;
                 }
             }
-            /*  even though the rook can move through attacks the space still 
+            /*  even though the rook can move through attacks the square still 
                 needs to be empty */
             if (bs.getByteAt(relevantRank, 1)!= 0){
                 return;
             }
             // move king first
-            Board resultingSpaces = MoveGenerator.getBoardAfterMove(
+            Board resultingSquares = MoveGenerator.getBoardAfterMove(
                 bs.copyBoard(), relevantRank, 4, relevantRank, 2);
             // then move rook
-            resultingSpaces = MoveGenerator.getBoardAfterMove(
-                resultingSpaces, relevantRank, 0, relevantRank, 3);
+            resultingSquares = MoveGenerator.getBoardAfterMove(
+                resultingSquares, relevantRank, 0, relevantRank, 3);
             addKingMove(bs, results, relevantRank, 4, relevantRank, 2,
-                resultingSpaces, false);
+                resultingSquares, false);
         }
     }
 
@@ -137,21 +137,21 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean hasCaptured = false;
         byte targetPiece = position.getByteAt(targetRank, targetFile);
         if (targetPiece != 0){
-            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhiteNextMove()){
+            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;
             }
         }
-        Board resultingSpaces =
+        Board resultingSquares =
             MoveGenerator.getBoardAfterMove(position.copyBoard(), startingRank, startingFile, targetRank, targetFile);
         addKingMove(position, results, startingRank, startingFile, targetRank,
-            targetFile, resultingSpaces, hasCaptured);
+            targetFile, resultingSquares, hasCaptured);
     }
 
     private static void addKingMove(Position bs, List<Position> results, 
         int startingRank, int startingFile, int targetRank, int targetFile,
-        Board resultingSpaces, boolean hasCaptured){
+        Board resultingSquares, boolean hasCaptured){
         int fullMoves = bs.getFullMoves();
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
@@ -165,7 +165,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean blackCastlingKingside = bs.getBlackCastlingKingside();
         boolean blackCastlingQueenside = bs.getBlackCastlingQueenside();
 
-        if (bs.getWhiteNextMove()){
+        if (bs.getWhitesTurn()){
             whiteCastlingKingside = false;
             whiteCastlingQueenside = false;
         } else {
@@ -173,12 +173,12 @@ public class KingMoveGenerator extends PieceMoveGenerator {
             blackCastlingQueenside = false;
         }
 
-        Position resultingPosition = new Position(resultingSpaces, !bs.getWhiteNextMove(),
+        Position resultingPosition = new Position(resultingSquares, !bs.getWhiteNextMove(),
             whiteCastlingKingside, whiteCastlingQueenside,
             blackCastlingKingside, blackCastlingQueenside,
             -1,-1, halfMoves, fullMoves);
-        if ( bs.getWhiteNextMove() && !resultingPosition.getWhiteInCheck()||
-            !bs.getWhiteNextMove() && !resultingPosition.getBlackInCheck()){
+        if ( bs.getWhitesTurn() && !resultingPosition.getWhiteInCheck()||
+            !bs.getWhitesTurn() && !resultingPosition.getBlackInCheck()){
             resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
             // resultingPosition.appendAncestor(bs);
             results.add(resultingPosition);

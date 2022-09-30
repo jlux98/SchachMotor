@@ -7,7 +7,7 @@ public class UCITokenizer implements Tokenizer {
 
     @Override
     public Command tokenize(String input) {
-        // remove leading and trailing spaces, make multiple spaces into singles 
+        // remove leading and trailing squares, make multiple squares into singles 
         input = input.trim().replaceAll(" +", " ");
         // split the string into its word
         String[] splitInput = input.split(" ");

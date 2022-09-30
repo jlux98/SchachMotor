@@ -22,8 +22,6 @@ import helper.NodeHelper;
 
 public class NodeTest {
 
-    //TODO add tests for new evaluable methods
-
     private IntNodeWikipediaTestTree testTree;
 
     @BeforeEach

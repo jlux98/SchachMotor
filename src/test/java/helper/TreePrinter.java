@@ -188,7 +188,7 @@ public class TreePrinter {
             node.setAlignedRepresentation(alignGuaranteeWhiteSpace(string, string.length()));
 
             if (currentDepth < treeMaxDepth) {
-                //insert AlignmentNodes into childless nodes to keep the space below them "empty"
+                //insert AlignmentNodes into childless nodes to keep the square below them "empty"
                 node.insertChild(new AlignmentNode());
             } else {
                 //return width of leaf nodes

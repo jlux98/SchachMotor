@@ -95,18 +95,18 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
     private static void computePawnSingleStep(Position bs, List<Position> results, int rank,
         int file, int sign){
         if (bs.getByteAt(rank+(sign*1), file) == 0){
-            Board resultingSpaces = MoveGenerator.getBoardAfterMove(bs.copyBoard(), rank,
+            Board resultingSquares = MoveGenerator.getBoardAfterMove(bs.copyBoard(), rank,
                 file, rank+(sign*1), file);
-            addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, false, false);
+            addPawnMove(bs, results, rank, file, sign, resultingSquares, false, false, false);
         }
     }
 
     private static void computePawnDoubleStep(Position bs, List<Position> results, int rank,
         int file, int sign){
         if (checkPawnDoubleStep(bs, rank, file, sign)){
-            Board resultingSpaces = MoveGenerator.getBoardAfterMove(bs.copyBoard(), rank,
+            Board resultingSquares = MoveGenerator.getBoardAfterMove(bs.copyBoard(), rank,
                 file, rank+(sign*2), file);
-            addPawnMove(bs, results, rank, file, sign, resultingSpaces, true, false, false);
+            addPawnMove(bs, results, rank, file, sign, resultingSquares, true, false, false);
         }
     }
 
@@ -129,9 +129,9 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
             byte targetPiece = bs.getByteAt(rank+(sign*1), file-1);
             if (targetPiece != 0 &&
                 PieceEncoding.isBytePieceWhite(targetPiece) != (sign == -1)){
-                Board resultingSpaces = MoveGenerator.getBoardAfterMove(bs.copyBoard(),
+                Board resultingSquares = MoveGenerator.getBoardAfterMove(bs.copyBoard(),
                     rank, file, rank+(sign*1), file-1);
-                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, true, false);
+                addPawnMove(bs, results, rank, file, sign, resultingSquares, false, true, false);
             }
         }
     }
@@ -142,9 +142,9 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
             byte targetPiece = bs.getByteAt(rank+(sign*1), file+1);
             if (targetPiece != 0 &&
                 PieceEncoding.isBytePieceWhite(targetPiece) != (sign == -1)){
-                Board resultingSpaces = MoveGenerator.getBoardAfterMove(bs.copyBoard(),
+                Board resultingSquares = MoveGenerator.getBoardAfterMove(bs.copyBoard(),
                     rank, file, rank+(sign*1), file+1);
-                addPawnMove(bs, results, rank, file, sign, resultingSpaces, false, false, true);
+                addPawnMove(bs, results, rank, file, sign, resultingSquares, false, false, true);
             }
         }
     }
@@ -169,10 +169,10 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
             targetFile != -1){
             if (targetRank == rank+(sign*1) &&
                 (targetFile == file+1 || targetFile == file-1)){
-                Board resultingSpaces = MoveGenerator.getBoardAfterMove(position.copyBoard(),
+                Board resultingSquares = MoveGenerator.getBoardAfterMove(position.copyBoard(),
                     rank, file, targetRank, targetFile);
-                resultingSpaces.setByteAt(targetRank-(sign*1),targetFile,(byte)0);
-                addPawnMove(position, results, rank, file, sign, resultingSpaces, false, false, false);
+                resultingSquares.setByteAt(targetRank-(sign*1),targetFile,(byte)0);
+                addPawnMove(position, results, rank, file, sign, resultingSquares, false, false, false);
             }
         }
     }
@@ -183,14 +183,14 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
      * the promotion-method takes care of it; if it can't then this method creates
      * a position out of the old position and adds the new one to the result set.
      * @param results
-     * @param newSpaces
+     * @param newSquares
      * @param previousPosition
      * @param sign the direction in which the specified pawn moves (if sign is 
      * 1 then the pawn moves from bottom to top, if sign is -1 then the pawn
      * moves from top to bottom)
      */
     private static void addPawnMove(Position bs, List<Position> results, int startingRank,
-        int startingFile, int sign, Board resultingSpaces, boolean doubleStep, boolean hasCapturedLeft, boolean hasCapturedRight){
+        int startingFile, int sign, Board resultingSquares, boolean doubleStep, boolean hasCapturedLeft, boolean hasCapturedRight){
         int doubleStepRank = -1;
         int doubleStepFile = -1;
         int horizontalOffset = 0;
@@ -207,7 +207,7 @@ public class PawnMoveGenerator extends PieceMoveGenerator{
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
         }
-        Position resultingPosition = new Position(resultingSpaces, !bs.getWhiteNextMove(),
+        Position resultingPosition = new Position(resultingSquares, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
             doubleStepRank,doubleStepFile, (byte)0, fullMoves);

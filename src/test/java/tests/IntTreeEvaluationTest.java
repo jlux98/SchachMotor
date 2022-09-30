@@ -2,10 +2,8 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import application.Conductor;
 import classes.IntNode;
 import data.IntNodeAsymmetricTestTree;
 import data.IntNodeSmallAsymmetricTestTree;
@@ -73,7 +71,6 @@ public abstract class IntTreeEvaluationTest {
     /**
      * tree data taken from https://en.wikipedia.org/wiki/File:Minimax.svg
      */
-    // FIXME this test assumes that no pruning is happening whatsoever
     @Test
     public void incompleteBinaryTreeDepth4Test() {
         IntNodeWikipediaTestTree testTree = new IntNodeWikipediaTestTree();

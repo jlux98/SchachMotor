@@ -160,7 +160,6 @@ public class FenParser {
      * yPosition = 0 places in the first rank, yPosition = 7 in the last rank
      */
     private void parseRank(String rank, int yPosition) {
-        //A8 IS SPACES[0][0]
         int xPosition = 0;
         for (char character : rank.toCharArray()) {
             if (Character.isDigit(character)) {

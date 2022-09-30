@@ -80,7 +80,7 @@ public class PositionTest {
     /**
      * take care not to make changes to this array as it is shared between tests
      */
-    private Piece[][] testSpaces = {
+    private Piece[][] testSquares = {
             { new Piece('p'), new Piece('B'), new Piece('r'), new Piece('n'), new Piece('Q'), new Piece('k'),
                     new Piece('n'), new Piece('q') },
             { new Piece('Q'), new Piece('b'), new Piece('P'), new Piece('p'), new Piece('B'), new Piece('P'),
@@ -96,7 +96,7 @@ public class PositionTest {
                     new Piece('Q') },
             { new Piece('N'), new Piece('R'), null, new Piece('b'), null, new Piece('p'), new Piece('r'), null },
     };
-        private Board testBoard = new ArrayBoard(testSpaces);
+        private Board testBoard = new ArrayBoard(testSquares);
 
     /**
      * Returns a position that is equal to testPosition except for one square.
@@ -105,10 +105,10 @@ public class PositionTest {
      * @param pieceCharacter the piece that should be placed on the square
      * @return
      */
-    private Position generatePositionWithModififedSpaces(int rank, int file, char pieceCharacter) {
-        Board modifiedSpaces = testPosition.copyBoard();
-        modifiedSpaces.setPieceAt(rank, file, new Piece(pieceCharacter));
-        return new Position(false, false, modifiedSpaces, false, false, false, false, false, 0, 0, (byte)0, 1);
+    private Position generatePositionWithModififedSquares(int rank, int file, char pieceCharacter) {
+        Board modifiedSquares = testPosition.copyBoard();
+        modifiedSquares.setPieceAt(rank, file, new Piece(pieceCharacter));
+        return new Position(false, false, modifiedSquares, false, false, false, false, false, 0, 0, (byte)0, 1);
     }
 
     /**
@@ -139,8 +139,8 @@ public class PositionTest {
     @Test
     public void followUpPositionNoCheckTest() {
         Position base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
-        Board copiedSpaces = base.copyBoard();
-        Position followUpPosition = base.generateFollowUpPosition(copiedSpaces, false);
+        Board copiedSquares = base.copyBoard();
+        Position followUpPosition = base.generateFollowUpPosition(copiedSquares, false);
         assertFalse(followUpPosition.getBlackInCheck());
         assertFalse(followUpPosition.getWhiteInCheck());
     }
@@ -148,9 +148,9 @@ public class PositionTest {
     @Test
     public void followUpPositionWhiteInCheckTest() {
         Position base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
-        Board copiedSpaces = base.copyBoard();
-        copiedSpaces.setPieceAt(1, 2, new Piece('n'));// white in check
-        Position followUpPosition = base.generateFollowUpPosition(copiedSpaces, false);
+        Board copiedSquares = base.copyBoard();
+        copiedSquares.setPieceAt(1, 2, new Piece('n'));// white in check
+        Position followUpPosition = base.generateFollowUpPosition(copiedSquares, false);
         assertFalse(followUpPosition.getBlackInCheck());
         assertTrue(followUpPosition.getWhiteInCheck());
     }
@@ -158,9 +158,9 @@ public class PositionTest {
     @Test
     public void followUpPositionBlackInCheckTest() {
         Position base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
-        Board copiedSpaces = base.copyBoard();
-        copiedSpaces.setPieceAt(3, 0, new Piece('R'));// black in check
-        Position followUpPosition = base.generateFollowUpPosition(copiedSpaces, false);
+        Board copiedSquares = base.copyBoard();
+        copiedSquares.setPieceAt(3, 0, new Piece('R'));// black in check
+        Position followUpPosition = base.generateFollowUpPosition(copiedSquares, false);
         assertTrue(followUpPosition.getBlackInCheck());
         assertFalse(followUpPosition.getWhiteInCheck());
     }
@@ -168,16 +168,16 @@ public class PositionTest {
     @Test
     public void followUpPositionBothInCheckTest() {
         Position base = FenParser.parseFen("8/8/4K3/5r2/8/3B4/8/k7 w - - 0 1"); // no check
-        Board copiedSpaces = base.copyBoard();
-        copiedSpaces.setPieceAt(3, 0, new Piece('R')); // black in check
-        copiedSpaces.setPieceAt(1, 2, new Piece('n')); // white in check
-        Position followUpPosition = base.generateFollowUpPosition(copiedSpaces, false);
+        Board copiedSquares = base.copyBoard();
+        copiedSquares.setPieceAt(3, 0, new Piece('R')); // black in check
+        copiedSquares.setPieceAt(1, 2, new Piece('n')); // white in check
+        Position followUpPosition = base.generateFollowUpPosition(copiedSquares, false);
         assertTrue(followUpPosition.getBlackInCheck());
         assertTrue(followUpPosition.getWhiteInCheck());
     }
 
     @Test
-    public void copySpacesTest() {
+    public void copySquaresTest() {
         Position position = new Position(false, false, testBoard, false, false, false, false, false, 0, 0, (byte)0, 1);
         Board copy = position.copyBoard();
         // verify that a new array was created
@@ -194,13 +194,13 @@ public class PositionTest {
     @Test
     public void generateFollowUpPositionForBlack() {
         //white next move == false
-        Board copiedSpaces = testPosition.copyBoard();
-        Position followUpPosition = testPosition.generateFollowUpPosition(copiedSpaces, false);
+        Board copiedSquares = testPosition.copyBoard();
+        Position followUpPosition = testPosition.generateFollowUpPosition(copiedSquares, false);
 
         //check active player swap etc
         assertNoEnPassantTargetSquare(followUpPosition);
         assertEquals(!testPosition.getWhiteNextMove(), followUpPosition.getWhiteNextMove());
-        assertTrue(followUpPosition.getBoard() == copiedSpaces);
+        assertTrue(followUpPosition.getBoard() == copiedSquares);
         assertEquals(testPosition.getHalfMoves() + 1, followUpPosition.getHalfMoves());
         assertEquals(testPosition.getFullMoves() + 1, followUpPosition.getFullMoves());
     }
@@ -209,13 +209,13 @@ public class PositionTest {
     public void generateFollowUpPositionForWhite() {
         //white next move == true
         Position basePosition = new Position(false, false, testBoard, true, false, false, false, false, 0, 0, (byte)0, 1);
-        Board copiedSpaces = basePosition.copyBoard();
-        Position followUpPosition = basePosition.generateFollowUpPosition(copiedSpaces, false);
+        Board copiedSquares = basePosition.copyBoard();
+        Position followUpPosition = basePosition.generateFollowUpPosition(copiedSquares, false);
 
         //check active player swap etc
         assertNoEnPassantTargetSquare(followUpPosition);
         assertEquals(!basePosition.getWhiteNextMove(), followUpPosition.getWhiteNextMove());
-        assertTrue(followUpPosition.getBoard() == copiedSpaces);
+        assertTrue(followUpPosition.getBoard() == copiedSquares);
         assertEquals(basePosition.getHalfMoves() + 1, followUpPosition.getHalfMoves());
         assertEquals(basePosition.getFullMoves() + 0, followUpPosition.getFullMoves());
     }
@@ -223,13 +223,13 @@ public class PositionTest {
     @Test
     public void generateFollowUpPositionForBlackWithHalfMoveResetTest() {
         //white next move == false
-        Board copiedSpaces = testPosition.copyBoard();
-        Position followUpPosition = testPosition.generateFollowUpPosition(copiedSpaces, true);
+        Board copiedSquares = testPosition.copyBoard();
+        Position followUpPosition = testPosition.generateFollowUpPosition(copiedSquares, true);
 
         //check active player swap etc
         assertNoEnPassantTargetSquare(followUpPosition);
         assertEquals(!testPosition.getWhiteNextMove(), followUpPosition.getWhiteNextMove());
-        assertTrue(followUpPosition.getBoard() == copiedSpaces);
+        assertTrue(followUpPosition.getBoard() == copiedSquares);
         assertEquals(0, followUpPosition.getHalfMoves());
         assertEquals(testPosition.getFullMoves() + 1, followUpPosition.getFullMoves());
     }
@@ -237,14 +237,14 @@ public class PositionTest {
     @Test
     public void generateFollowUpPositionWithEnPassantTargetSquare() {
         //white next move == false
-        Board copiedSpaces = testPosition.copyBoard();
-        Position followUpPosition = testPosition.generateFollowUpPosition(copiedSpaces, 4,7, true);
+        Board copiedSquares = testPosition.copyBoard();
+        Position followUpPosition = testPosition.generateFollowUpPosition(copiedSquares, 4,7, true);
 
         //check active player swap etc
         assertEquals(4, followUpPosition.getEnPassantTargetRank());
         assertEquals(7, followUpPosition.getEnPassantTargetFile());
         assertEquals(!testPosition.getWhiteNextMove(), followUpPosition.getWhiteNextMove());
-        assertTrue(followUpPosition.getBoard() == copiedSpaces);
+        assertTrue(followUpPosition.getBoard() == copiedSquares);
         assertEquals(0, followUpPosition.getHalfMoves());
         assertEquals(testPosition.getFullMoves() + 1, followUpPosition.getFullMoves());
     }
@@ -252,14 +252,14 @@ public class PositionTest {
     @Test
     public void generateFollowUpPositionAllParameters() {
                 //white next move == false
-                Board copiedSpaces = testPosition.copyBoard();
-                Position followUpPosition = testPosition.generateFollowUpPosition(copiedSpaces, 6, 1, false, true, false, true, false);
+                Board copiedSquares = testPosition.copyBoard();
+                Position followUpPosition = testPosition.generateFollowUpPosition(copiedSquares, 6, 1, false, true, false, true, false);
         
                 //check active player swap etc
                 assertEquals(6, followUpPosition.getEnPassantTargetRank());
                 assertEquals(1, followUpPosition.getEnPassantTargetFile());
                 assertEquals(!testPosition.getWhiteNextMove(), followUpPosition.getWhiteNextMove());
-                assertTrue(followUpPosition.getBoard() == copiedSpaces);
+                assertTrue(followUpPosition.getBoard() == copiedSquares);
                 assertEquals(testPosition.getHalfMoves() + 1, followUpPosition.getHalfMoves());
                 assertEquals(testPosition.getFullMoves() + 1, followUpPosition.getFullMoves());
                 assertFalse(followUpPosition.getWhiteCastlingKingside());
@@ -296,26 +296,26 @@ public class PositionTest {
     }
 
     @Test
-    public void notEqualsSpacesTest() {
-        Position comparedPosition = generatePositionWithModififedSpaces(4, 7, 'b');
+    public void notEqualsSquaresTest() {
+        Position comparedPosition = generatePositionWithModififedSquares(4, 7, 'b');
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
-    public void notEqualsA8SpaceTest() {
-        Position comparedPosition = generatePositionWithModififedSpaces(0, 0, 'b');
+    public void notEqualsA8SquareTest() {
+        Position comparedPosition = generatePositionWithModififedSquares(0, 0, 'b');
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
-    public void notEqualsH1SpaceTest() {
-        Position comparedPosition = generatePositionWithModififedSpaces(7, 7, 'N');
+    public void notEqualsH1SquareTest() {
+        Position comparedPosition = generatePositionWithModififedSquares(7, 7, 'N');
         assertFalse(testPosition.equals(comparedPosition));
     }
 
     @Test
-    public void notEqualsA5SpaceTest() {
-        Position comparedPosition = generatePositionWithModififedSpaces(0, 3, 'N');
+    public void notEqualsA5SquareTest() {
+        Position comparedPosition = generatePositionWithModififedSquares(0, 3, 'N');
         assertFalse(testPosition.equals(comparedPosition));
     }
 

@@ -21,7 +21,6 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends Ba
     private AscendingValueComparator blackComparator;
 
     public MoveOrderingSelfDestructingAlphaBetaPruning() {
-        //TODO use singletons instead?
         whiteComparator = new DescendingValueComparator();
         blackComparator = new AscendingValueComparator();
     }

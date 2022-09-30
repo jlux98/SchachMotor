@@ -128,16 +128,16 @@ public class MirrorTest {
     public void mirrorB1C3MoveTest() {
         Move move = new Move(new Coordinate(7, 1), new Coordinate(5, 2));
         Move mirroredMove = Mirror.mirrorMove(move);
-        assertEquals(new Coordinate(0, 1), mirroredMove.getStartingSpace());
-        assertEquals(new Coordinate(2, 2), mirroredMove.getTargetSpace());
+        assertEquals(new Coordinate(0, 1), mirroredMove.getStartingSquare());
+        assertEquals(new Coordinate(2, 2), mirroredMove.getTargetSquare());
     }
 
     @Test
     public void mirrorE8H8MoveTest() {
         Move move = new Move(new Coordinate(0, 4), new Coordinate(0, 7));
         Move mirroredMove = Mirror.mirrorMove(move);
-        assertEquals(new Coordinate(7, 4), mirroredMove.getStartingSpace());
-        assertEquals(new Coordinate(7, 7), mirroredMove.getTargetSpace());
+        assertEquals(new Coordinate(7, 4), mirroredMove.getStartingSquare());
+        assertEquals(new Coordinate(7, 7), mirroredMove.getTargetSquare());
     }
 
     @Test

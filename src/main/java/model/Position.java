@@ -1,14 +1,10 @@
 package model;
 
-import java.util.Timer;
 import java.util.WeakHashMap;
 
 import application.Conductor;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
-import utility.PerformanceData;
-import utility.TimeUtility;
-import static model.ByteEncodedBoolean.*;
 
 /**
  * Class representing the game state.
@@ -22,20 +18,33 @@ import static model.ByteEncodedBoolean.*;
  * <br>
  * <br>
  * <b>Note:</b>
- * The array element at [0][0] represents the space a8, while [7][7] represents
+ * The array element at [0][0] represents the square a8, while [7][7] represents
  * h1.
  */
 public class Position implements Comparable<Position>, Cloneable {
 
     /**
-     * The element at the Board-space (0,0) represents the space a8, (0,7)
+     * The element at the Board-square (0,0) represents the square a8, (0,7)
      * represents h8,
      * (7,0) represents a1 and (7,7) represents h1.
      */
     private Board board;
-    private byte spacesPassedWhileCastling;
-    private byte variousFlags;
-    private Coordinate enPassantTargetSpace;
+    private boolean whiteInCheck;
+    private boolean blackInCheck;
+    private boolean blackKingsideLeft;
+    private boolean blackKingsideRight;
+    private boolean blackQueensideLeft;
+    private boolean blackQueensideRight;
+    private boolean whiteKingsideLeft;
+    private boolean whiteKingsideRight;
+    private boolean whiteQueensideLeft;
+    private boolean whiteQueensideRight;
+    private boolean whiteNextMove;
+    private boolean whiteCastlingKingside;
+    private boolean whiteCastlingQueenside;
+    private boolean blackCastlingKingside;
+    private boolean blackCastlingQueenside;
+    private Coordinate enPassantTargetSquare;
     private byte halfMovesSincePawnMoveOrCapture; //may not be greater than 100 at any time
     private int fullMoveCount;
     // private boolean[] attackedByWhite;
@@ -43,36 +52,35 @@ public class Position implements Comparable<Position>, Cloneable {
     private Move generatedByMove;
 
     private static WeakHashMap<String, Integer> hashMap = new WeakHashMap<>();
-    private static TimeUtility<Integer> attackMapTimer = new TimeUtility<Integer>();
 
     /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
     * but without requiring whiteInCheck and blackInCheck to be set.
     * These values are automatically set by computing attack maps.
     */
-    public Position(Board spaces, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
+    public Position(Board squares, boolean whiteNextMove, boolean whiteCastlingKingside, boolean whiteCastlingQueenside,
             boolean blackCastlingKingside, boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile,
             byte halfMoves, int fullMoves) {
 
-        if (spaces == null) {
-            throw new NullPointerException("spaces array may not be null");
+        if (squares == null) {
+            throw new NullPointerException("board may not be null");
         }
-        this.board = spaces;
+        this.board = squares;
 
         setFullMoveCount(fullMoves);
         setHalfMoveCount(halfMoves);
-        setWhiteNextMove(whiteNextMove);
-        setWhiteCastlingKingside(whiteCastlingKingside);
-        setWhiteCastlingQueenside(whiteCastlingQueenside);
-        setBlackCastlingKingside(blackCastlingKingside);
-        setBlackCastlingQueenside(blackCastlingQueenside);
-        setEnPAssantTargetSpace(enPassantTargetRank, enPassantTargetFile);
-        computeChecks(spaces);
+        this.whiteNextMove = whiteNextMove;
+        this.whiteCastlingKingside = whiteCastlingKingside;
+        this.whiteCastlingQueenside = whiteCastlingQueenside;
+        this.blackCastlingKingside = blackCastlingKingside;
+        this.blackCastlingQueenside = blackCastlingQueenside;
+        setEnPAssantTargetSquare(enPassantTargetRank, enPassantTargetFile);
+        computeChecks(squares);
     }
 
  /**
      * Creates a new position with the specified values.
-     * @param spaces the board holding the chess pieces
+     * @param squares the board holding the chess pieces
      * @param whiteNextMove whether the next turn is white's
      * @param whiteInCheck whether white is in checks
      * @param blackInCheck whether black is in check
@@ -80,74 +88,70 @@ public class Position implements Comparable<Position>, Cloneable {
      * @param whiteCastlingQueenside whether white has the right to castle queenside
      * @param blackCastlingKingside whether black has the right to castle kingside
      * @param blackCastlingQueenside whether black has the right to castle queenside
-     * @param enPassantTargetRank if a pawn performed a double-step in the last turn, the rank of the traversed space; -1 otherwise
-     * @param enPassantTargetFile if a pawn performed a double-step in the last turn, the file of the traversed space; -1 otherwise
+     * @param enPassantTargetRank if a pawn performed a double-step in the last turn, the rank of the traversed square; -1 otherwise
+     * @param enPassantTargetFile if a pawn performed a double-step in the last turn, the file of the traversed square; -1 otherwise
      * @param halfMoves the number of half moves since a piece was captured or a pawn was moved . Starts at 0.
      * @param fullMoves the number of full moves that have been played since the start of this game. Starts at 1.
      */
-    public Position(boolean whiteInCheck, boolean blackInCheck, Board spaces, boolean whiteNextMove,
+    public Position(boolean whiteInCheck, boolean blackInCheck, Board squares, boolean whiteNextMove,
             boolean whiteCastlingKingside, boolean whiteCastlingQueenside, boolean blackCastlingKingside,
             boolean blackCastlingQueenside, int enPassantTargetRank, int enPassantTargetFile, byte halfMoves, int fullMoves) {
-        this(spaces, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
+        this(squares, whiteNextMove, whiteCastlingKingside, whiteCastlingQueenside, blackCastlingKingside, blackCastlingQueenside,
                 enPassantTargetRank, enPassantTargetFile, halfMoves, fullMoves);
-        setWhiteInCheck(whiteInCheck);
-        setBlackInCheck(blackInCheck);
+        this.whiteInCheck = whiteInCheck;
+        this.blackInCheck = blackInCheck;
     }
 
-    private void setEnPAssantTargetSpace(int enPassantTargetRank, int enPassantTargetFile) {
+    private void setEnPAssantTargetSquare(int enPassantTargetRank, int enPassantTargetFile) {
         if (enPassantTargetRank == -1 && enPassantTargetFile == -1) {
-            this.enPassantTargetSpace = null;
+            this.enPassantTargetSquare = null;
         } else {
-            this.enPassantTargetSpace = new Coordinate(enPassantTargetRank, enPassantTargetFile);
+            this.enPassantTargetSquare = new Coordinate(enPassantTargetRank, enPassantTargetFile);
         }
     }
 
-    private int computeChecks(Board spaces) {
-        byte[] attackedByWhite = AttackMapGenerator.computeChecksByteEncoded(spaces, true);
-        byte[] attackedByBlack = AttackMapGenerator.computeChecksByteEncoded(spaces, false);
+    private int computeChecks(Board squares) {
+        byte[] attackedByWhite = AttackMapGenerator.computeChecksByteEncoded(squares, true);
+        byte[] attackedByBlack = AttackMapGenerator.computeChecksByteEncoded(squares, false);
         Coordinate whiteKing = getKingPosition(true);
         if (whiteKing != null) {
-           setWhiteInCheck(AttackMapGenerator.getBoolFromByte(whiteKing.getRank(), whiteKing.getFile(),
-                    attackedByBlack));
-            // this.whiteInCheck = isSpaceAttackedByBlack(whiteKing);
+            this.whiteInCheck = AttackMapGenerator.getBoolFromByte(whiteKing.getRank(), whiteKing.getFile(),
+                    attackedByBlack);
         } else {
             /*
              * This is done to prevent a position without a king from generating
              * moves without while allowing such a position state to exist for the
              * sake of point evaluation
              */
-            setWhiteInCheck(true);
+            this.whiteInCheck = true;
         }
         Coordinate blackKing = getKingPosition(false);
         if (blackKing != null) {
-            setBlackInCheck(AttackMapGenerator.getBoolFromByte(blackKing.getRank(), blackKing.getFile(),
-                    attackedByWhite));
-            // this.blackInCheck = isSpaceAttackedByWhite(blackKing);
+            this.blackInCheck = AttackMapGenerator.getBoolFromByte(blackKing.getRank(), blackKing.getFile(),
+                    attackedByWhite);
         } else {
             /*
              * This is done to prevent a position without a king from generating
              * moves without while allowing such a position state to exist for the
              * sake of point evaluation
              */
-            setBlackInCheck(true);
+            this.blackInCheck = true;
         }
 
-        setBlackQueensideLeft(AttackMapGenerator.getBoolFromByte(0, 2, attackedByWhite));
-        setBlackQueensideRight(AttackMapGenerator.getBoolFromByte(0, 3, attackedByWhite));
-        setBlackKingsideLeft(AttackMapGenerator.getBoolFromByte(0, 5, attackedByWhite));
-        setBlackKingsideRight(AttackMapGenerator.getBoolFromByte(0, 6, attackedByWhite));
-        setWhiteQueensideLeft(AttackMapGenerator.getBoolFromByte(7, 2, attackedByBlack));
-        setWhiteQueensideRight(AttackMapGenerator.getBoolFromByte(7, 3, attackedByBlack));
-        setWhiteKingsideLeft(AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack));
-        setWhiteKingsideRight(AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack));     
+        blackQueensideLeft  = AttackMapGenerator.getBoolFromByte(0, 2, attackedByWhite);
+        blackQueensideRight = AttackMapGenerator.getBoolFromByte(0, 3, attackedByWhite);
+        blackKingsideLeft   = AttackMapGenerator.getBoolFromByte(0, 5, attackedByWhite);
+        blackKingsideRight  = AttackMapGenerator.getBoolFromByte(0, 6, attackedByWhite);
+        whiteQueensideLeft  = AttackMapGenerator.getBoolFromByte(7, 2, attackedByBlack);
+        whiteQueensideRight = AttackMapGenerator.getBoolFromByte(7, 3, attackedByBlack);
+        whiteKingsideLeft   = AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack);
+        whiteKingsideRight  = AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack);     
         
         return -1; //for timer compatability
     }
 
-    
-
     /**
-     * Copies the spaces array to facilitate generation of follow-up positions wtihout affecting this position.
+     * Copies the board to facilitate generation of follow-up positions wtihout affecting this position.
      * <br><br>
      * <b>Note:</b> Because pieces are immutable the pieces themselves are not copied (the same piece instances are returned within the copied array).
      * @return a copy of the two dimensional array representing the chess pieces' positions.
@@ -259,18 +263,18 @@ public class Position implements Comparable<Position>, Cloneable {
     public boolean equals(Object obj) {
         if (obj instanceof Position) {
             Position position = (Position) obj;
-            return (getBlackCastlingKingside() == position.getBlackCastlingKingside()) &&
-                    (getBlackCastlingQueenside() == position.getBlackCastlingQueenside()) &&
-                    (getBlackInCheck() == position.getBlackInCheck()) &&
+            return (blackCastlingKingside == position.getBlackCastlingKingside()) &&
+                    (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
+                    (blackInCheck == position.getBlackInCheck()) &&
                     (getEnPassantTargetFile() == position.getEnPassantTargetFile()) &&
                     (getEnPassantTargetRank() == position.getEnPassantTargetRank()) &&
                     (fullMoveCount == position.getFullMoves()) &&
                     (halfMovesSincePawnMoveOrCapture == position.getHalfMoves()) &&
                     (board.equals(position.getBoard())) &&
-                    (getWhiteCastlingKingside() == position.getWhiteCastlingKingside()) &&
-                    (getWhiteCastlingQueenside() == position.getWhiteCastlingQueenside()) &&
-                    (getWhiteInCheck() == position.getWhiteInCheck()) &&
-                    (getWhiteNextMove() == position.getWhiteNextMove());
+                    (whiteCastlingKingside == position.getWhiteCastlingKingside()) &&
+                    (whiteCastlingQueenside == position.getWhiteCastlingQueenside()) &&
+                    (whiteInCheck == position.getWhiteInCheck()) &&
+                    (whiteNextMove == position.getWhiteNextMove());
         } else {
             return false;
         }
@@ -286,14 +290,14 @@ public class Position implements Comparable<Position>, Cloneable {
     public boolean equalsLight(Object obj) {
         if (obj instanceof Position) {
             Position position = (Position) obj;
-            return  (getBlackCastlingKingside() == position.getBlackCastlingKingside()) &&
-                    (getBlackCastlingQueenside() == position.getBlackCastlingQueenside()) &&
+            return (blackCastlingKingside == position.getBlackCastlingKingside()) &&
+                    (blackCastlingQueenside == position.getBlackCastlingQueenside()) &&
                     (getEnPassantTargetFile() == position.getEnPassantTargetFile()) &&
                     (getEnPassantTargetRank() == position.getEnPassantTargetRank()) &&
                     (board.equals(position.getBoard())) &&
-                    (getWhiteCastlingKingside() == position.getWhiteCastlingKingside()) &&
-                    (getWhiteCastlingQueenside() == position.getWhiteCastlingQueenside()) &&
-                    (getWhiteNextMove() == position.getWhiteNextMove());
+                    (whiteCastlingKingside == position.getWhiteCastlingKingside()) &&
+                    (whiteCastlingQueenside == position.getWhiteCastlingQueenside()) &&
+                    (whiteNextMove == position.getWhiteNextMove());
         } else {
             return false;
         }
@@ -304,30 +308,30 @@ public class Position implements Comparable<Position>, Cloneable {
         StringBuilder result = new StringBuilder();
         result.append(board.toString() + "\n");
         result.append("Generating Move: " + generatedByMove + "\n");
-        if (getWhiteNextMove()) {
+        if (whiteNextMove) {
             result.append("White Next Move\n");
         } else {
             result.append("Black Next Move\n");
         }
         result.append("White Castling: ");
-        if (getWhiteCastlingKingside() && getWhiteCastlingQueenside()) {
+        if (whiteCastlingKingside && whiteCastlingQueenside) {
             result.append("Kingside and Queenside\n");
         } else {
-            if (getWhiteCastlingKingside()) {
+            if (whiteCastlingKingside) {
                 result.append("Kingside\n");
-            } else if (getWhiteCastlingQueenside()) {
+            } else if (whiteCastlingQueenside) {
                 result.append("Queenside\n");
             } else {
                 result.append("none\n");
             }
         }
         result.append("Black Castling: ");
-        if (getBlackCastlingKingside() && getBlackCastlingQueenside()) {
+        if (blackCastlingKingside && blackCastlingQueenside) {
             result.append("Kingside and Queenside\n");
         } else {
-            if (getBlackCastlingKingside()) {
+            if (blackCastlingKingside) {
                 result.append("Kingside\n");
-            } else if (getBlackCastlingQueenside()) {
+            } else if (blackCastlingQueenside) {
                 result.append("Queenside\n");
             } else {
                 result.append("none\n");
@@ -341,23 +345,23 @@ public class Position implements Comparable<Position>, Cloneable {
         }
         result.append("Halfmove Clock: " + halfMovesSincePawnMoveOrCapture + "\n");
         result.append("Fullmove Number: " + fullMoveCount + "\n");
-        result.append("White in Check: " + getWhiteInCheck() + "\n");
-        result.append("Black in Check: " + getBlackInCheck() + "\n");
+        result.append("White in Check: " + whiteInCheck + "\n");
+        result.append("Black in Check: " + blackInCheck + "\n");
         return result.toString();
     }
 
     /**
      * Clones this position.
-     * While a new spaces array is created, the contained pieces are the same
+     * While a new board is created, the contained pieces are the same
      * instances.
      * Thus modifying the array is possible without affecting this position.
      * As pieces are immutable it is valid to use the same instances.
      */
     @Override
     public Position clone() {
-        Board copiedSpaces = this.copyBoard();
-        Position result = new Position(this.getWhiteInCheck(), this.getBlackInCheck(), copiedSpaces, this.getWhiteNextMove(),
-                this.getWhiteCastlingKingside(), this.getWhiteCastlingQueenside(), this.getBlackCastlingKingside(), this.getBlackCastlingQueenside(),
+        Board copiedSquares = this.copyBoard();
+        Position result = new Position(this.whiteInCheck, this.blackInCheck, copiedSquares, this.whiteNextMove,
+                this.whiteCastlingKingside, this.whiteCastlingQueenside, this.blackCastlingKingside, this.blackCastlingQueenside,
                 this.getEnPassantTargetRank(), this.getEnPassantTargetFile(), this.halfMovesSincePawnMoveOrCapture, this.fullMoveCount);
         if (generatedByMove != null){
                 result.setMove(generatedByMove.clone());
@@ -373,12 +377,12 @@ public class Position implements Comparable<Position>, Cloneable {
     public String toStringLight() {
         StringBuilder result = new StringBuilder();
         result.append(board.toString() + "\n");
-        result.append(getWhiteNextMove() + "\n");
-        result.append(getWhiteCastlingKingside() + "\n");
-        result.append(getWhiteCastlingQueenside() + "\n");
-        result.append(getBlackCastlingKingside() + "\n");
-        result.append(getBlackCastlingQueenside() + "\n");
-        result.append(enPassantTargetSpace + "\n");
+        result.append(whiteNextMove + "\n");
+        result.append(whiteCastlingKingside + "\n");
+        result.append(whiteCastlingQueenside + "\n");
+        result.append(blackCastlingKingside + "\n");
+        result.append(blackCastlingQueenside + "\n");
+        result.append(enPassantTargetSquare + "\n");
         return result.toString();
     }
 
@@ -400,6 +404,14 @@ public class Position implements Comparable<Position>, Cloneable {
      **********************************
      */
 
+    public void setWhiteInCheck(boolean whiteInCheck) {
+        this.whiteInCheck = whiteInCheck;
+    }
+
+    public void setBlackInCheck(boolean blackInCheck) {
+        this.blackInCheck = blackInCheck;
+    }
+
     public void setFullMoveCount(int fullMoveCount) {
         if (fullMoveCount < 1) {
             // full move counter starts at 1
@@ -415,22 +427,54 @@ public class Position implements Comparable<Position>, Cloneable {
         this.halfMovesSincePawnMoveOrCapture = halfMoveCount;
     }
 
-    public Coordinate getEnPassantTargetSpace() {
-        return enPassantTargetSpace;
+    public boolean getWhitesTurn() {
+        return whiteNextMove;
+    }
+
+    public boolean getWhiteInCheck() {
+        return whiteInCheck;
+    }
+
+    public boolean getBlackInCheck() {
+        return blackInCheck;
+    }
+
+    public boolean getWhiteNextMove() {
+        return whiteNextMove;
+    }
+
+    public boolean getWhiteCastlingKingside() {
+        return whiteCastlingKingside;
+    }
+
+    public boolean getWhiteCastlingQueenside() {
+        return whiteCastlingQueenside;
+    }
+
+    public boolean getBlackCastlingKingside() {
+        return blackCastlingKingside;
+    }
+
+    public boolean getBlackCastlingQueenside() {
+        return blackCastlingQueenside;
+    }
+
+    public Coordinate getEnPassantTargetSquare() {
+        return enPassantTargetSquare;
     }
 
     public int getEnPassantTargetRank() {
-        if (enPassantTargetSpace == null) {
+        if (enPassantTargetSquare == null) {
             return -1;
         }
-        return enPassantTargetSpace.getRank();
+        return enPassantTargetSquare.getRank();
     }
 
     public int getEnPassantTargetFile() {
-        if (enPassantTargetSpace == null) {
+        if (enPassantTargetSquare == null) {
             return -1;
         }
-        return enPassantTargetSpace.getFile();
+        return enPassantTargetSquare.getFile();
     }
 
     public byte getHalfMoves() {
@@ -442,15 +486,15 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     /**
-     * The Piece at (0,0) represents the space a8, (0,7) represents h8,
+     * The Piece at (0,0) represents the square a8, (0,7) represents h8,
      * (7,0) represents a1 and (7,7) represents h1.
      */
     public Piece getPieceAt(int rank, int file) {
         return board.getPieceAt(rank, file);
     }
 
-    public Piece getPieceAt(Coordinate space) {
-        return board.getPieceAt(space);
+    public Piece getPieceAt(Coordinate square) {
+        return board.getPieceAt(square);
     }
     // public boolean[][] getAttackedByWhite() {
     // return attackedByWhite;
@@ -458,85 +502,45 @@ public class Position implements Comparable<Position>, Cloneable {
 
     public boolean isKingsideAttacked(boolean isWhite) {
         if (isWhite) {
-            return getWhiteKingsideLeft() || getWhiteKingsideRight();
+            return whiteKingsideLeft || whiteKingsideRight;
         } else {
-            return getBlackKingsideLeft() || getBlackKingsideRight();
+            return blackKingsideLeft || blackKingsideRight;
         }
     }
 
     public boolean isQueensideAttacked(boolean isWhite) {
         if (isWhite) {
-            return getWhiteQueensideLeft() || getWhiteQueensideRight();
+            return whiteQueensideLeft || whiteQueensideRight;
         } else {
-            return getBlackQueensideLeft() || getBlackQueensideRight();
+            return blackQueensideLeft || blackQueensideRight;
         }
     }
     
-    // public void setAttackedByBlack(boolean[][] attackedByBlack) {
-    //     this.attackedByBlack = attackedByBlack;
-    // }
-
-    // public boolean isSpaceAttackedByWhite(int rank, int file){
-    // return attackedByWhite[rank*8+file];
-    // }
-
-    // public boolean isSpaceAttackedByWhite(Coordinate space){
-    // return isSpaceAttackedByWhite(space.getRank(), space.getFile());
-    // }
-
-    // public void setAttackedByWhite(boolean[] attackedByWhite) {
-    // this.attackedByWhite = attackedByWhite;
-    // }
-
-    // public boolean isSpaceAttackedByBlack(int rank, int file){
-    // return attackedByBlack[rank*8+file];
-    // }
-
-    // public boolean isSpaceAttackedByBlack(Coordinate space){
-    // return isSpaceAttackedByBlack(space.getRank(), space.getFile());
-    // }
-
-    // public boolean[][] getAttackedByBlack() {
-    // return attackedByBlack;
-    // }
-
-    // public boolean isSpaceAttacked(int rank, int file, boolean attackedByWhite){
-    // if (attackedByWhite){
-    // return isSpaceAttackedByWhite(rank, file);
-    // } else {
-    // return isSpaceAttackedByBlack(rank, file);
-    // }
-    // }
-
-    // public void setAttackedByBlack(boolean[] attackedByBlack) {
-    // this.attackedByBlack = attackedByBlack;
-    // }
-
     public String toStringFen() {
         String result = board.toStringFen();
-        if (getWhiteNextMove()) {
+        if (whiteNextMove) {
             result += " w ";
         } else {
             result += " b ";
         }
-        if (getWhiteCastlingKingside() || getWhiteCastlingQueenside() || getBlackCastlingKingside() || getBlackCastlingQueenside()) {
-            if (getWhiteCastlingKingside()) {
+        if (whiteCastlingKingside || whiteCastlingQueenside || blackCastlingKingside || blackCastlingQueenside) {
+            if (whiteCastlingKingside) {
                 result += "K";
             }
-            if (getWhiteCastlingQueenside()) {
+            if (whiteCastlingQueenside) {
                 result += "Q";
             }
-            if (getBlackCastlingKingside()) {
+            if (blackCastlingKingside) {
                 result += "k";
             }
-            if (getBlackCastlingQueenside()) {
+            if (blackCastlingQueenside) {
                 result += "q";
             }
         } else {
             result += "-";
         }
-        if (enPassantTargetSpace != null) {
-            result += " " + enPassantTargetSpace + " ";
+        if (enPassantTargetSquare != null) {
+            result += " " + enPassantTargetSquare + " ";
         } else {
             result += " - ";
         }
@@ -611,127 +615,7 @@ public class Position implements Comparable<Position>, Cloneable {
 
     @Override
     public int hashCode() {
-        // return Objects.hash(
-        // board, whiteNextMove, getWhiteCastlingKingside(),
-        // getWhiteCastlingQueenside(), getBlackCastlingKingside(),
-        // getBlackCastlingQueenside(), enPassantTargetSpace);
         return toStringLight().hashCode();
     }
 
-
-    // Constants for spacesPassedWhileCastling
-
-    private static final byte BLACK_KINGSIDE_LEFT    = 0;
-    private static final byte BLACK_KINGSIDE_RIGHT   = 1;
-    private static final byte BLACK_QUEENSIDE_LEFT   = 2;
-    private static final byte BLACK_QUEENSIDE_RIGHT  = 3;
-    private static final byte WHITE_KINGSIDE_LEFT    = 4;
-    private static final byte WHITE_KINGSIDE_RIGHT   = 5;
-    private static final byte WHITE_QUEENSIDE_LEFT   = 6;
-    private static final byte WHITE_QUEENSIDE_RIGHT  = 7;
-
-    // Getters and setters for spacesPassedWhileCastling
-
-    public void setBlackQueensideLeft(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, BLACK_QUEENSIDE_LEFT, value);
-    }
-    public void setBlackQueensideRight(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, BLACK_QUEENSIDE_RIGHT, value);
-    }
-    public void setBlackKingsideLeft(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, BLACK_KINGSIDE_LEFT, value);
-    }
-    public void setBlackKingsideRight(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, BLACK_KINGSIDE_RIGHT, value);
-    }
-    public void setWhiteQueensideLeft(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, WHITE_QUEENSIDE_LEFT, value);
-    }
-    public void setWhiteQueensideRight(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, WHITE_QUEENSIDE_RIGHT, value);
-    }
-    public void setWhiteKingsideLeft(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, WHITE_KINGSIDE_LEFT, value);
-    }
-    public void setWhiteKingsideRight(boolean value){
-        spacesPassedWhileCastling  = setByteEncodedBoolean(spacesPassedWhileCastling, WHITE_KINGSIDE_RIGHT, value);
-    }
-    public boolean getBlackQueensideLeft(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, BLACK_QUEENSIDE_LEFT);
-    }
-    public boolean getBlackQueensideRight(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, BLACK_QUEENSIDE_RIGHT);
-    }
-    public boolean getBlackKingsideLeft(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, BLACK_KINGSIDE_LEFT);
-    }
-    public boolean getBlackKingsideRight(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, BLACK_KINGSIDE_RIGHT);
-    }
-    public boolean getWhiteQueensideLeft(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, WHITE_QUEENSIDE_LEFT);
-    }
-    public boolean getWhiteQueensideRight(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, WHITE_QUEENSIDE_RIGHT);
-    }
-    public boolean getWhiteKingsideLeft(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, WHITE_KINGSIDE_LEFT);
-    }
-    public boolean getWhiteKingsideRight(){
-        return getByteEncodedBooleanAt(spacesPassedWhileCastling, WHITE_KINGSIDE_RIGHT);
-    }
-
-    // Constants for variousFlags
-
-    private static final byte WHITE_IN_CHECK            = 0;
-    private static final byte BLACK_IN_CHECK            = 1;
-    private static final byte WHITE_NEXT_MOVE           = 2;
-    private static final byte WHITE_CASTLING_KINGSIDE   = 3;
-    private static final byte WHITE_CASTLING_QUEENSIDE  = 4;
-    private static final byte BLACK_CASTLING_KINGSIDE   = 5;
-    private static final byte BLACK_CASTLING_QUEENSIDE  = 6;
-
-    public void setWhiteInCheck(boolean value){
-        variousFlags = setByteEncodedBoolean(variousFlags, WHITE_IN_CHECK, value);
-    }
-    public void setBlackInCheck(boolean value){
-        variousFlags = setByteEncodedBoolean(variousFlags, BLACK_IN_CHECK, value);
-    }
-    private void setWhiteNextMove(boolean value){
-        variousFlags = setByteEncodedBoolean(variousFlags, WHITE_NEXT_MOVE, value);
-    }
-    private void setWhiteCastlingKingside(boolean value){
-        variousFlags = setByteEncodedBoolean(variousFlags, WHITE_CASTLING_KINGSIDE, value);
-    }
-    private void setWhiteCastlingQueenside(boolean value){
-        variousFlags = setByteEncodedBoolean(variousFlags, WHITE_CASTLING_QUEENSIDE, value);
-    }
-    private void setBlackCastlingKingside(boolean value){
-        variousFlags = setByteEncodedBoolean(variousFlags, BLACK_CASTLING_KINGSIDE, value);
-    }
-    private void setBlackCastlingQueenside(boolean value){
-        variousFlags = setByteEncodedBoolean(variousFlags, BLACK_CASTLING_QUEENSIDE, value);
-    }
-
-    public boolean getWhiteInCheck() {
-        return getByteEncodedBooleanAt(variousFlags, WHITE_IN_CHECK);
-    }
-    public boolean getBlackInCheck() {
-        return getByteEncodedBooleanAt(variousFlags, BLACK_IN_CHECK);
-    }
-    public boolean getWhiteNextMove() {
-        return getByteEncodedBooleanAt(variousFlags, WHITE_NEXT_MOVE);
-    }
-    public boolean getWhiteCastlingKingside() {
-        return getByteEncodedBooleanAt(variousFlags, WHITE_CASTLING_KINGSIDE);
-    }
-    public boolean getWhiteCastlingQueenside() {
-        return getByteEncodedBooleanAt(variousFlags, WHITE_CASTLING_QUEENSIDE);
-    }
-    public boolean getBlackCastlingKingside() {
-        return getByteEncodedBooleanAt(variousFlags, BLACK_CASTLING_KINGSIDE);
-    }
-    public boolean getBlackCastlingQueenside() {
-        return getByteEncodedBooleanAt(variousFlags, BLACK_CASTLING_QUEENSIDE);
-    }
 }

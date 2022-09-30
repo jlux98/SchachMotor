@@ -63,7 +63,7 @@ public class IntNodeHelper {
      */
     public static void compareStaticIntNodeValue(int expectedStaticValue, IntNode node) {
         //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
-        assertEquals(expectedStaticValue, node.computeOrGetStaticValueOrBetter()); //FIXME can trigger evaluation on an unevaluted node
+        assertEquals(expectedStaticValue, node.computeOrGetStaticValueOrBetter());
     }
 
     /**
@@ -186,6 +186,19 @@ public class IntNodeHelper {
             return;
         }
         node.setContent(content * -1);
+    }
+
+    /**
+     * Asserts that this node does not have children.
+     * If it does, asserts that this node was not evaluted.
+     * Used to confirm the deletion of nodes by self-destructing evaluators.
+     * @param node the node that should not have children
+     */
+    public static void assertHasNoChildrenOrWasPruned(IntNode node) {
+        if (node.hasChildren()) {
+            // if node has children it may not have an explicit value
+            assertThrows(UninitializedValueException.class, () -> node.getExplicitValue());
+        }
     }
 
     @Test

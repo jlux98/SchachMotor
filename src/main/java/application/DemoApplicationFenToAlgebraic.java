@@ -167,7 +167,6 @@ public class DemoApplicationFenToAlgebraic {
             shutdown();
         }
     }
-    //TODO reduce code redundancy
 
     private void parseDefaultPositionArgument(String[] args, int index) {
         boolean failure = false;
@@ -214,7 +213,8 @@ public class DemoApplicationFenToAlgebraic {
             }
             case "st", "storing", "caching" -> {
                 algorithmName = "Storing Move-Ordering Self-Destructing Alpha-Beta-Pruning";
-                evaluator = new GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning();
+                //FIXME which storage level should be used
+                evaluator = new GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning(4);
 
             }
             default -> {
@@ -445,14 +445,14 @@ public class DemoApplicationFenToAlgebraic {
 
         String algebraic = move.toStringAlgebraic();
 
-        String startingSpace = algebraic.substring(0, 2);
-        String targetSpace = algebraic.substring(2, 4);
+        String startingSquare = algebraic.substring(0, 2);
+        String targetSquare = algebraic.substring(2, 4);
         String promoted = "";
         if (algebraic.length() > 4) {
             promoted = " promoted to " + algebraic.substring(4);
         }
 
-        System.out.println("\n" + movedColor + " : " + startingSpace + " -> " + targetSpace + promoted);
+        System.out.println("\n" + movedColor + " : " + startingSquare + " -> " + targetSquare + promoted);
     }
 
     /**

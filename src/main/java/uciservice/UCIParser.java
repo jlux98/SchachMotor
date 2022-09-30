@@ -34,7 +34,6 @@ public abstract class UCIParser{
                  * - infinite
                  */
                 if (children.get(0).getType() == CommandType.MOVETIME) {
-                    // TODO: start searching
                     System.out.println("searching for best move for the next " +
                     Integer.parseInt(children.get(1).getData())/1000 + " seconds");
                     Move testMove = new Move("a7a5");
@@ -70,10 +69,8 @@ public abstract class UCIParser{
                 }
                 Command position = children.get(0);
                 if (position.getType() == CommandType.STARTPOS){
-                    // TODO: actually initialize this
                     System.out.println("Starting position initialized");
                 } else if (position.getType() == CommandType.CONSTANT){
-                    // TODO: actually initialize this
                     System.out.println("Initializing position from FEN string");
                     break;
                 } else {
@@ -89,7 +86,6 @@ public abstract class UCIParser{
                         Command currentMove = children.get(i);
                         if (currentMove.getType() == CommandType.CONSTANT){
                             if(currentMove.getData().matches("[a-h][1-8][a-h][1-8]")){
-                                // TODO: actually apply this
                                 System.out.println("applying move "+currentMove.getData());
                             }
                         }

@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import application.Conductor;
@@ -345,13 +344,13 @@ public abstract class GameTreeEvaluationTest {
     @Test
     public void bishopCaptureDepth1BlackTest() throws UninitializedValueException {
         GameNode bestMove = helper.evaluate("rn1qkbnr/pbpppppp/1p6/8/8/N7/PPPPPPPP/1RBQKBNR b Kkq - 0 1", 1, false);
-        assertEquals(-115, bestMove.getValue());
+        assertEquals(-95, bestMove.getValue());
     }
 
     @Test
     public void bishopCaptureDepth1WhiteTest() throws UninitializedValueException {
         GameNode bestMove = helper.evaluate("1rbqkbnr/pppppppp/n7/8/8/1P6/PBPPPPPP/RN1QKBNR w KQk - 0 1", 1, true);
-        assertEquals(115, bestMove.getValue());
+        assertEquals(95, bestMove.getValue());
     }
 
     @Test
@@ -386,5 +385,4 @@ public abstract class GameTreeEvaluationTest {
 
     }
 
-    //TODO apply mirroring to these tests
 }

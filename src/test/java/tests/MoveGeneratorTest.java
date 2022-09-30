@@ -471,40 +471,35 @@ public class MoveGeneratorTest {
         PositionHelper.verifyCheckMate("1N3N2/8/N2k2N1/8/1N2NN2/8/8/K7 b - - 0 1", false);
     }
 
-    // @Test
-    // public void whiteStaleMateByBishopTest() {
-    //     PositionHelper.verifyStaleMate("8/8/3K4/b7/6bb/2b2b2/5b2/k7 w - - 0 1");
-    // }
+    @Test
+    public void whiteStaleMateByBishopTest() {
+        PositionHelper.verifyStaleMate("8/8/3K4/b7/6bb/2b2b2/5b2/k7 w - - 0 1");
+    }
 
-    // @Test
-    // public void blackStaleMateByBishopTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("8/8/3k4/B7/6B1/2B2B2/8/K7 b - - 0 1");
-    // }
+    @Test
+    public void blackStaleMateByBishopTest() {
+        PositionHelper.verifyStaleMate("8/8/3k4/B7/6BB/2B2B2/5B2/K7 b - - 0 1");
+    }
 
-    // @Test
-    // public void whiteCheckMateByBishopTest() {
-    //     // FIXME: This is not a checkmate
-    //     PositionHelper.verifyCheckMate("8/8/3K4/b7/5bb1/2b2b2/8/k7 w - - 0 1", true);
-    // }
+    @Test
+    public void whiteCheckMateByBishopTest() {
+        PositionHelper.verifyCheckMate("8/8/3K4/6b1/5bb1/4bb2/8/k7 w - - 0 1", true);
+    }
 
-    // @Test
-    // public void blackCheckMateByBishopTest() {
-    //     // FIXME: This is not a checkmate
-    //     PositionHelper.verifyCheckMate("8/8/3k4/B7/5BB1/2B2B2/8/K7 b - - 0 1", false);
-    // }
+    @Test
+    public void blackCheckMateByBishopTest() {
+        PositionHelper.verifyCheckMate("8/8/3k4/6B1/5BB1/4BB2/8/K7 b - - 0 1", false);
+    }
 
-    // @Test
-    // public void whiteStaleMateByQueenTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("8/1q6/3K4/8/4q3/8/8/k7 w - - 0 1");
-    // }
+    @Test
+    public void whiteStaleMateByQueenTest() {
+        PositionHelper.verifyStaleMate("2q5/1q6/3K4/8/4q3/8/8/k7 w - - 0 1");
+    }
 
-    // @Test
-    // public void blackStaleMateByQueenTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("8/1Q6/3k4/8/4Q3/8/8/K7 b - - 0 1");
-    // }
+    @Test
+    public void blackStaleMateByQueenTest() {
+        PositionHelper.verifyStaleMate("2Q5/1Q6/3k4/8/4Q3/8/8/K7 b - - 0 1");
+    }
 
     @Test
     public void whiteCheckMateByQueenTest() {
@@ -516,22 +511,20 @@ public class MoveGeneratorTest {
         PositionHelper.verifyCheckMate("8/1Q2Q3/3k4/8/4Q3/8/8/K7 b - - 0 1", false);
     }
 
-    // @Test
-    // public void whiteStaleMateByPawnTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("3K4/1p1p1p2/2ppp3/8/8/8/8/k7 w - - 0 1");
-    // }
+    @Test
+    public void whiteStaleMateByPawnTest() {
+        PositionHelper.verifyStaleMate("k7/8/8/8/8/2ppp3/1p1p1p2/3K4 w - - 0 1");
+    }
 
     @Test
     public void blackStaleMateByPawnTest() {
         PositionHelper.verifyStaleMate("3k4/1P1P1P2/2PPP3/8/8/8/8/K7 b - - 0 1");
     }
 
-    // @Test
-    // public void whiteCheckMateByPawnTest() {
-    //     // FIXME: This is not a checkmate
-    //     PositionHelper.verifyCheckMate("3K4/1p1ppp2/2ppp3/8/8/8/8/k7 w - - 0 1", true);
-    // }
+    @Test
+    public void whiteCheckMateByPawnTest() {
+        PositionHelper.verifyCheckMate("k7/8/8/8/8/2ppp3/1p1ppp2/3K4 w - - 0 1", true);
+    }
 
     @Test
     public void blackCheckMateByPawnTest() {
@@ -857,7 +850,7 @@ public class MoveGeneratorTest {
             }
         }
         assertNotNull(bishopMove);
-        assertEquals(40, PositionEvaluator.evaluatePosition(bishopMove));
+        assertEquals(10, PositionEvaluator.evaluatePosition(bishopMove));
     }
 
 
@@ -875,7 +868,7 @@ public class MoveGeneratorTest {
                         bishopCapture = child.getContent();
                     }
                 }
-                assertEquals(-115, PositionEvaluator.evaluatePosition(bishopCapture));             
+                assertEquals(-95, PositionEvaluator.evaluatePosition(bishopCapture));             
     }
 
     @Test
@@ -886,12 +879,12 @@ public class MoveGeneratorTest {
                 "h1h7", "h1h8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2", "e1g1");
        
 
-        //attack relevant space nr1
+        //attack relevant square nr1
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/5r2/8/8/4K2R w K - 0 1", "h1f1", "h1g1", "h1h2", "h1h3", "h1h4", "h1h5",
                 "h1h6", "h1h7", "h1h8", "e1d1", "e1e2", "e1d2");
 
-        //attack relevant space nr2
+        //attack relevant square nr2
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/6r1/8/8/4K2R w K - 0 1", "h1f1", "h1g1", "h1h2", "h1h3", "h1h4", "h1h5",
                 "h1h6", "h1h7", "h1h8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2");
@@ -904,14 +897,14 @@ public class MoveGeneratorTest {
         MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/8/8/8/R3K3 w Q - 0 1", "a1b1", "a1c1", "a1d1", "a1a2", "a1a3", "a1a4",
                 "a1a5", "a1a6", "a1a7", "a1a8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2", "e1c1");
 
-        //attack relevant space nr1
+        //attack relevant square nr1
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/1r6/8/8/R3K3 w Q - 0 1", "a1b1", "a1c1", "a1d1", "a1a2", "a1a3", "a1a4",
                 "a1a5", "a1a6", "a1a7", "a1a8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2", "e1c1"
 
         );
 
-        //attack relevant space nr2
+        //attack relevant square nr2
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("4k3/8/8/8/2r5/8/8/R3K3 w Q - 0 1", "a1b1", "a1c1", "a1d1", "a1a2", "a1a3", "a1a4",
                 "a1a5", "a1a6", "a1a7", "a1a8", "e1d1", "e1f1", "e1d2", "e1e2", "e1f2");
@@ -923,12 +916,12 @@ public class MoveGeneratorTest {
         MoveGeneratorHelper.verifyMoveGeneration("4k2r/8/8/8/8/8/8/4K3 b k - 0 1", "h8h1", "h8h2", "h8h3", "h8h4", "h8h5", "h8h6",
                 "h8h7", "h8f8", "h8g8", "e8d7", "e8e7", "e8f7", "e8d8", "e8f8", "e8g8");
 
-        //attack relevant space nr1
+        //attack relevant square nr1
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("4k2r/8/8/5R2/8/8/8/4K3 b k - 0 1", "h8h1", "h8h2", "h8h3", "h8h4", "h8h5", "h8h6",
                 "h8h7", "h8f8", "h8g8", "e8d7", "e8e7", "e8d8");
 
-        //attack relevant space nr2
+        //attack relevant square nr2
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("4k2r/8/8/6R1/8/8/8/4K3 b k - 0 1",
 
@@ -946,19 +939,42 @@ public class MoveGeneratorTest {
 
         );
 
-        //attack relevant space nr1
+        //attack relevant square nr1
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("r3k3/8/8/1R6/8/8/8/4K3 b q - 0 1",
 
                 "a8a1", "a8a2", "a8a3", "a8a4", "a8a5", "a8a6", "a8a7", "a8b8", "a8c8", "a8d8", "e8d7", "e8e7", "e8f7", "e8d8",
                 "e8f8", "e8c8");
 
-        //attack relevant space nr2
+        //attack relevant square nr2
         //Verify that castling move is not generated
         MoveGeneratorHelper.verifyMoveGeneration("r3k3/8/8/2R5/8/8/8/4K3 b q - 0 1",
 
                 "a8a1", "a8a2", "a8a3", "a8a4", "a8a5", "a8a6", "a8a7", "a8b8", "a8c8", "a8d8", "e8d7", "e8e7", "e8f7", "e8d8",
                 "e8f8");
+    }
+
+    @Test
+    public void promotedPiecesTest() {
+        MoveGeneratorHelper.verifyMoveGeneration("1BRN2Q1/2rpnpp1/q3R1P1/p1nBr1n1/b2B1R1k/2q1NbrP/N2R3Q/1K4bB w - - 0 1",
+                "g6f7", "a2c1", "a2c3", "a2b4", "e3d1", "e3f1", "e3c2", "e3g2", "e3c4", "e3g4", "e3f5", "d8c6", "d8b7", "d8f7",
+                "h1g2", "h1f3", "d4c3", "d4c5", "d4e5", "d5b3", "d5f3", "d5c4", "d5e4", "d5c6", "d5b7", "d5a8", "b8a7", "b8c7",
+                "d2d1", "d2b2", "d2c2", "d2e2", "d2f2", "d2g2", "d2d3", "f4f3", "f4e4", "f4g4", "f4h4", "f4f5", "f4f6", "f4f7",
+                "e6e5", "e6a6", "e6b6", "e6c6", "e6d6", "e6f6", "e6e7", "c8c7", "h2g1", "h2e2", "h2f2", "h2g2", "h2g3", "g8f7",
+                "g8g7", "g8h7", "g8e8", "g8f8", "g8h8"
+        );
+    }
+
+    @Test
+    public void promotedPieces2Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("6RR/1bQPN1np/r3k1R1/2q1Nb1Q/1B2rrB1/b2b2Q1/2N2r2/K4B1B w - - 0 1",
+
+                "d7d8q", "d7d8r", "d7d8b", "d7d8n", "c2e1", "c2a3", "c2e3", "c2d4", "e5d3", "e5f3", "e5c4", "e5c6", "e5f7", "e7d5",
+                "e7f5", "e7c6", "e7c8", "f1e2", "f1g2", "f1d3", "f1h3", "h1g2", "h1f3", "h1e4", "b4e1", "b4d2", "b4a3", "b4c3",
+                "b4a5", "b4c5", "g4d1", "g4e2", "g4f3", "g4h3", "g4f5", "g6g5", "g6e6", "g6f6", "g6h6", "g6g7", "g8g7", "g8a8",
+                "g8b8", "g8c8", "g8d8", "g8e8", "g8f8", "h8h7", "g3g1", "g3f2", "g3g2", "g3h2", "g3d3", "g3e3", "g3f3", "g3h3",
+                "g3f4", "g3h4", "h5h2", "h5h3", "h5h4", "h5f5", "h5g5", "h5h6", "h5h7", "c7a5", "c7c5", "c7b6", "c7c6", "c7d6",
+                "c7b7", "c7b8", "c7c8", "c7d8", "a1b1", "a1a2");
     }
 
 }

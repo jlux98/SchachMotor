@@ -42,23 +42,23 @@ public class KnightMoveGenerator extends PieceMoveGenerator{
         boolean hasCaptured = false;
         byte targetPiece = position.getByteAt(targetRank, targetFile);
         if (targetPiece != 0){
-            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhiteNextMove()){
+            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;
             }
         }
-        Board resultingSpaces =
+        Board resultingSquares =
             MoveGenerator.getBoardAfterMove(position.copyBoard(), rank, file, targetRank, targetFile);
         addKnightMove(position, results, rank, file, targetRank, targetFile,
-            resultingSpaces, hasCaptured);
+            resultingSquares, hasCaptured);
     }
 
 
 
     private static void addKnightMove(Position bs, List<Position> results,
         int startingRank, int startingFile, int targetRank, int targetFile,
-        Board resultingSpaces, boolean hasCaptured){
+        Board resultingSquares, boolean hasCaptured){
         int fullMoves = bs.getFullMoves();
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
@@ -67,12 +67,12 @@ public class KnightMoveGenerator extends PieceMoveGenerator{
         if (hasCaptured){
             halfMoves = 0;
         }
-        Position resultingPosition = new Position(resultingSpaces, !bs.getWhiteNextMove(),
+        Position resultingPosition = new Position(resultingSquares, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
             -1,-1, halfMoves, fullMoves);
-        if ( bs.getWhiteNextMove() && !resultingPosition.getWhiteInCheck()||
-            !bs.getWhiteNextMove() && !resultingPosition.getBlackInCheck()){
+        if ( bs.getWhitesTurn() && !resultingPosition.getWhiteInCheck()||
+            !bs.getWhitesTurn() && !resultingPosition.getBlackInCheck()){
             resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
             // resultingPosition.appendAncestor(bs);
             results.add(resultingPosition);

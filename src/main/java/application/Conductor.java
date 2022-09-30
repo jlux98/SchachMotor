@@ -36,7 +36,6 @@ public class Conductor {
 
     private static List<String> pastPositions = new ArrayList<>();
     private String startingPosition;
-    // TODO: make sure only one calculation runs at a time
 
     private void start(){
         stopCalculating = true;
@@ -77,7 +76,6 @@ public class Conductor {
         appendPosition(bestFollowUp.clone().toStringLight());
         appendMove(bestFollowUp.getMove().clone());
         cleanup();
-        System.gc();
     }
 
     public void quit(){
@@ -135,6 +133,6 @@ public class Conductor {
         GameTreeEvaluator evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
         GameTree tree = new ImpGameTree(currentPosition, evaluator);
         MoveGenerator.executor.submit(new TimerRunner(30));
-        MoveGenerator.executor.submit(new IterativeDeepeningRunner(tree, evaluator, currentPosition.getWhiteNextMove(), 30, 7));
+        MoveGenerator.executor.submit(new IterativeDeepeningRunner(tree, evaluator, currentPosition.getWhitesTurn(), 30, 7));
     }
 }
