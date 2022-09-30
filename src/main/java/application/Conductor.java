@@ -126,14 +126,13 @@ public class Conductor {
         return pastPositions;
     }
 
-    public void calculateBestMove(Position currentPosition) {
+    public void calculateBestMove(Position currentPosition, int secondsToCompute) {
         if(!stopCalculating){
             return;
         }
         stopCalculating = false;
         GameTreeEvaluator evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
         GameTree tree = new ImpGameTree(currentPosition, evaluator);
-        MoveGenerator.executor.submit(new TimerRunner(30));
-        MoveGenerator.executor.submit(new IterativeDeepeningRunner(tree, evaluator, currentPosition.getWhiteNextMove(), 30, 7));
+        MoveGenerator.executor.submit(new IterativeDeepeningRunner(tree, evaluator, currentPosition.getWhiteNextMove(), secondsToCompute, 7));
     }
 }
