@@ -8,8 +8,6 @@ import uciservice.FenParser;
 
 public class PositionEvaluatorTest {
 
-    // FIXME: Recalculate Values
-
     @Test
     public void equalBoardTest(){
         assertEquals(0, PositionEvaluator.evaluatePosition(

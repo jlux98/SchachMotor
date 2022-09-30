@@ -3,8 +3,6 @@ package application;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import gametree.DetachingGameTree;
-import gametree.GameNode;
 import gametree.GameTree;
 import gametree.ImpGameTree;
 import minimax.GameNodeAlphaBetaPruning;
@@ -213,8 +211,7 @@ public class DemoApplicationFenToAlgebraic {
             }
             case "st", "storing", "caching" -> {
                 algorithmName = "Storing Move-Ordering Self-Destructing Alpha-Beta-Pruning";
-                //FIXME which storage level should be used
-                evaluator = new GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning(4);
+                evaluator = new GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning(3);
 
             }
             default -> {
@@ -419,7 +416,7 @@ public class DemoApplicationFenToAlgebraic {
     private Move calculateFollowUpMove(Position position) {
         TimeUtility<Position> timer = new TimeUtility<Position>();
 
-        GameTree tree = new ImpGameTree(position, evaluator); //FIXME possible / worth to use detaching?
+        GameTree tree = new ImpGameTree(position, evaluator);
         IterativeDeepening<Position> iterativeDeepening = new IterativeDeepening<Position>();
         //GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
         Position bestChild = timer.time(() -> {

@@ -43,6 +43,5 @@ public class DetachingGameNode extends GameNode {
     protected void detachChildGenerationData() {
         this.deleteContent(); //position = null
     }
-    //FIXME detach position after evaluation if possible
 
 }

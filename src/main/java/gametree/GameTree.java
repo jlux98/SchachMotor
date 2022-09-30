@@ -8,7 +8,11 @@ package gametree;
 public interface GameTree extends Tree<GameNode> {
 
 
-    //TODO specification
+    /**
+     * Evaluates the tree to the specified depth and returns the best node.
+     * @param depth the depth to which the tree should be evaluated
+     * @return the GameNode representing the best move
+     */
     public abstract GameNode calculateBestMove(int depth);
 
 }

@@ -10,8 +10,6 @@ import gametree.ImpGameTree;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
 import minimax.IterativeDeepeningRunner;
-import model.ArrayBoard;
-import model.ByteBoard;
 import model.Move;
 import model.Position;
 import movegenerator.MoveGenerator;
