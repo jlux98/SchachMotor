@@ -385,22 +385,22 @@ public class PositionTest {
     @Test
     public void threefoldRepetitionTestTrue(){
         Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1"));
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1"));
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2"));
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2"));
-        Conductor.appendPosition(testPos);
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1").toStringLight());
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1").toStringLight());
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2").toStringLight());
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2").toStringLight());
+        Conductor.appendPosition(testPos.toStringLight());
         assertTrue(testPos.isDraw());
     }
 
     @Test
     public void threefoldRepetitionTestFalse(){
         Position testPos = FenParser.parseFen("r1bqkbnr/pppppppp/4n3/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 5 3");
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1"));
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1"));
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2"));
-        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2"));
-        Conductor.appendPosition(testPos);
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 1 1").toStringLight());
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 2 1").toStringLight());
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/n7/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 3 2").toStringLight());
+        Conductor.appendPosition(FenParser.parseFen("r1bqkbnr/pppppppp/8/2n3N1/8/8/PPPPPPPP/RNBQKB1R b KQkq - 4 2").toStringLight());
+        Conductor.appendPosition(testPos.toStringLight());
         assertFalse(testPos.isDraw());
     }
 

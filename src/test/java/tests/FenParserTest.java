@@ -31,14 +31,16 @@ public class FenParserTest {
         Position startingPosition = FenParser.parseFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         String startingStringActual = startingPosition.toString();
         String startingStringExpected = """
-                [rnbqkbnr,
-                pppppppp,
-                00000000,
-                00000000,
-                00000000,
-                00000000,
-                PPPPPPPP,
-                RNBQKBNR]
+            
+                rnbqkbnr
+                pppppppp
+                00000000
+                00000000
+                00000000
+                00000000
+                PPPPPPPP
+                RNBQKBNR
+
                 Generating Move: null
                 White Next Move
                 White Castling: Kingside and Queenside
