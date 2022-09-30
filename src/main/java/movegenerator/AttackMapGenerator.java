@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public abstract class AttackMapGenerator {
 
-    public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
+    public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
     public static void shutDownThreads() {
         executor.shutdown();
