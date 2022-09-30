@@ -4,7 +4,19 @@ import model.Board;
 import model.PieceType;
 import static model.PieceEncoding.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+
 public abstract class AttackMapGenerator {
+
+    public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
+
+    public static void shutDownThreads() {
+        executor.shutdown();
+    }
 
     public static boolean[] computeChecks(Board spaces, boolean isWhite) {
         boolean[] result = new boolean[64];
@@ -150,8 +162,44 @@ public abstract class AttackMapGenerator {
 
     // -------------------------ByteEncoded------------------------------------
 
+    // public static byte[] computeChecksByteEncoded(Board spaces, boolean isWhite) {
+    //     byte[] result = new byte[8];
+    //     for (int rank = 0; rank < 8; rank++){
+    //         for (int file = 0; file < 8; file++){
+    //             byte currentPiece = spaces.getByteAt(rank, file);
+    //             if (currentPiece != EMPTY_SQUARE && isBytePieceWhite(currentPiece) == isWhite){
+    //                 result = paintAttackBoardByteEncoded(spaces, result, rank, file, getBytePieceType(currentPiece),isWhite);
+    //             }
+    //         }
+    //     }
+    //     return result;
+    // }
+
     public static byte[] computeChecksByteEncoded(Board spaces, boolean isWhite) {
         byte[] result = new byte[8];
+        List<Future<?>> futureList = new ArrayList<>();
+        List<byte[]> tempResultList = new ArrayList<>();
+        for (int rank = 0; rank < 8; rank++) {
+            byte[] tempResults = new byte[8];
+            Future<?> f = generateAttackMapsPerRow(spaces, rank, tempResults, isWhite);
+            if (f != null) {
+                futureList.add(f);
+                tempResultList.add(tempResults);
+            }
+        }
+        for (int i = 0; i < futureList.size(); i++){
+            if (futureList.get(i) != null){
+                try {
+                    futureList.get(i).get();
+                    addTempResultsToResult(result,tempResultList.get(i));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
                 byte currentPiece = spaces.getByteAt(rank, file);
@@ -163,7 +211,24 @@ public abstract class AttackMapGenerator {
         return result;
     }
 
-    private static byte[] paintAttackBoardByteEncoded(Board spaces, byte[] result, int rank, int file,
+    private static void addTempResultsToResult(byte[] result, byte[] tempResult) {
+        for (int rank = 0; rank < 8; rank++){
+            // for (int file = 0; file < 8; file++){
+            //     if (getBoolFromByte(rank, file, tempResult)){
+            //         setBitToTrue(rank, file, result);
+            //     }
+            // }
+            result[rank] = (byte) (result[rank] | tempResult[rank]);
+        }
+    }
+
+
+    private static Future<?> generateAttackMapsPerRow(Board spaces, int rank, byte[] tempResults, boolean isWhite) {
+        Future<?> f = executor.submit(new RowAttackMapGenerator(spaces, rank, tempResults, isWhite));
+        return f;
+    }
+
+    public static byte[] paintAttackBoardByteEncoded(Board spaces, byte[] result, int rank, int file,
         PieceType type, boolean isWhite) {
         switch(type){
             case BISHOP:
