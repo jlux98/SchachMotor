@@ -427,6 +427,7 @@ public class DemoApplicationFenToAlgebraic {
             return (GameNode) IterativeDeepening.lastResult;
         });
         Move bestMove = bestChild.getRepresentedMove();
+        tree.delete();
 
         //save rough time spent calculating
         calculationTime = timer.getElapsedTime();
