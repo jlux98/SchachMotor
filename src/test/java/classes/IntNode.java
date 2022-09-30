@@ -29,7 +29,6 @@ import minimax.TreeEvaluator;
 public class IntNode extends BaseNode<Integer> {
 
 
-    public static List<Integer> pastIntegers = new ArrayList<>(); //FIXME usage?
     private StringBuilder whitespaceAlignedRepresentation;
     /**
      * Creates an IntNode storing the specified Integer as content.
@@ -126,7 +125,7 @@ public class IntNode extends BaseNode<Integer> {
 
     @Override
     protected int computeStaticLeafValue(int depth) {
-        return getContent(); //TODO return a special value to differentiate from computeStaticValue?
+        return getContent();
     }
 
 }

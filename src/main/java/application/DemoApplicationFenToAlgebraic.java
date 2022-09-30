@@ -167,7 +167,6 @@ public class DemoApplicationFenToAlgebraic {
             shutdown();
         }
     }
-    //TODO reduce code redundancy
 
     private void parseDefaultPositionArgument(String[] args, int index) {
         boolean failure = false;

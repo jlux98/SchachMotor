@@ -180,7 +180,6 @@ public abstract class UCIParserAlphaBetaPruning{
                             currentMoveCommand.setData(currentMoveCommand.getData().substring(0,4)
                             + currentMoveCommand.getData().substring(4,5).toUpperCase());
                         }
-                        // TODO: actually apply this
                         Move currentMove = new Move(currentMoveCommand.getData());
                         Conductor.appendPosition(currentPosition.toStringLight());
                         currentPosition = currentPosition.getFollowUpByMove(currentMove);
@@ -193,7 +192,6 @@ public abstract class UCIParserAlphaBetaPruning{
         return currentPosition;
     }
 
-    // TODO: make private after testing
     public static boolean isTheSameGame(String startingPosition, List<Move> oldTurn, List<Command> children) {
         if (startingPosition == null){
             // System.out.println("Not the same because starting position not set");

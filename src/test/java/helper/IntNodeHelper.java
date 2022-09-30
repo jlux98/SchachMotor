@@ -63,7 +63,7 @@ public class IntNodeHelper {
      */
     public static void compareStaticIntNodeValue(int expectedStaticValue, IntNode node) {
         //intnodes guarantees that roughlyEvaluateStatically and evaluateStatically are equal
-        assertEquals(expectedStaticValue, node.computeOrGetStaticValueOrBetter()); //FIXME can trigger evaluation on an unevaluted node
+        assertEquals(expectedStaticValue, node.computeOrGetStaticValueOrBetter());
     }
 
     /**

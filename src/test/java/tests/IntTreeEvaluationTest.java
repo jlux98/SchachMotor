@@ -71,7 +71,6 @@ public abstract class IntTreeEvaluationTest {
     /**
      * tree data taken from https://en.wikipedia.org/wiki/File:Minimax.svg
      */
-    // FIXME this test assumes that no pruning is happening whatsoever
     @Test
     public void incompleteBinaryTreeDepth4Test() {
         IntNodeWikipediaTestTree testTree = new IntNodeWikipediaTestTree();

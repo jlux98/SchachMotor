@@ -385,5 +385,4 @@ public abstract class GameTreeEvaluationTest {
 
     }
 
-    //TODO apply mirroring to these tests
 }
