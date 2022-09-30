@@ -471,40 +471,35 @@ public class MoveGeneratorTest {
         PositionHelper.verifyCheckMate("1N3N2/8/N2k2N1/8/1N2NN2/8/8/K7 b - - 0 1", false);
     }
 
-    // @Test
-    // public void whiteStaleMateByBishopTest() {
-    //     PositionHelper.verifyStaleMate("8/8/3K4/b7/6bb/2b2b2/5b2/k7 w - - 0 1");
-    // }
+    @Test
+    public void whiteStaleMateByBishopTest() {
+        PositionHelper.verifyStaleMate("8/8/3K4/b7/6bb/2b2b2/5b2/k7 w - - 0 1");
+    }
 
-    // @Test
-    // public void blackStaleMateByBishopTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("8/8/3k4/B7/6B1/2B2B2/8/K7 b - - 0 1");
-    // }
+    @Test
+    public void blackStaleMateByBishopTest() {
+        PositionHelper.verifyStaleMate("8/8/3k4/B7/6BB/2B2B2/5B2/K7 b - - 0 1");
+    }
 
-    // @Test
-    // public void whiteCheckMateByBishopTest() {
-    //     // FIXME: This is not a checkmate
-    //     PositionHelper.verifyCheckMate("8/8/3K4/b7/5bb1/2b2b2/8/k7 w - - 0 1", true);
-    // }
+    @Test
+    public void whiteCheckMateByBishopTest() {
+        PositionHelper.verifyCheckMate("8/8/3K4/6b1/5bb1/4bb2/8/k7 w - - 0 1", true);
+    }
 
-    // @Test
-    // public void blackCheckMateByBishopTest() {
-    //     // FIXME: This is not a checkmate
-    //     PositionHelper.verifyCheckMate("8/8/3k4/B7/5BB1/2B2B2/8/K7 b - - 0 1", false);
-    // }
+    @Test
+    public void blackCheckMateByBishopTest() {
+        PositionHelper.verifyCheckMate("8/8/3k4/6B1/5BB1/4BB2/8/K7 b - - 0 1", false);
+    }
 
-    // @Test
-    // public void whiteStaleMateByQueenTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("8/1q6/3K4/8/4q3/8/8/k7 w - - 0 1");
-    // }
+    @Test
+    public void whiteStaleMateByQueenTest() {
+        PositionHelper.verifyStaleMate("2q5/1q6/3K4/8/4q3/8/8/k7 w - - 0 1");
+    }
 
-    // @Test
-    // public void blackStaleMateByQueenTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("8/1Q6/3k4/8/4Q3/8/8/K7 b - - 0 1");
-    // }
+    @Test
+    public void blackStaleMateByQueenTest() {
+        PositionHelper.verifyStaleMate("2Q5/1Q6/3k4/8/4Q3/8/8/K7 b - - 0 1");
+    }
 
     @Test
     public void whiteCheckMateByQueenTest() {
@@ -516,22 +511,20 @@ public class MoveGeneratorTest {
         PositionHelper.verifyCheckMate("8/1Q2Q3/3k4/8/4Q3/8/8/K7 b - - 0 1", false);
     }
 
-    // @Test
-    // public void whiteStaleMateByPawnTest() {
-    //     // FIXME: This is not a stalemate
-    //     PositionHelper.verifyStaleMate("3K4/1p1p1p2/2ppp3/8/8/8/8/k7 w - - 0 1");
-    // }
+    @Test
+    public void whiteStaleMateByPawnTest() {
+        PositionHelper.verifyStaleMate("k7/8/8/8/8/2ppp3/1p1p1p2/3K4 w - - 0 1");
+    }
 
     @Test
     public void blackStaleMateByPawnTest() {
         PositionHelper.verifyStaleMate("3k4/1P1P1P2/2PPP3/8/8/8/8/K7 b - - 0 1");
     }
 
-    // @Test
-    // public void whiteCheckMateByPawnTest() {
-    //     // FIXME: This is not a checkmate
-    //     PositionHelper.verifyCheckMate("3K4/1p1ppp2/2ppp3/8/8/8/8/k7 w - - 0 1", true);
-    // }
+    @Test
+    public void whiteCheckMateByPawnTest() {
+        PositionHelper.verifyCheckMate("k7/8/8/8/8/2ppp3/1p1ppp2/3K4 w - - 0 1", true);
+    }
 
     @Test
     public void blackCheckMateByPawnTest() {
