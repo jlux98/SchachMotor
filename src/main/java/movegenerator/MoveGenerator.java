@@ -21,7 +21,7 @@ import model.Board;
  */
 public abstract class MoveGenerator {
 
-    public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(9);
+    public static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
     public static void shutDownThreads() {
         executor.shutdown();

@@ -11,6 +11,9 @@ public abstract class UCIParserAlphaBetaPruning{
     private final static String STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     public static Position executeCommand(Command command, Position currentPosition, Conductor conductor){
+        if (command == null){
+            return currentPosition;
+        }
         List<Command> children = command.getChildren();
         switch(command.getType()){
             case BINC:
@@ -44,7 +47,8 @@ public abstract class UCIParserAlphaBetaPruning{
                     Integer.parseInt(children.get(1).getData())/1000 + " seconds");
                 }
 
-                return conductor.calculateBestMove(currentPosition);
+                conductor.calculateBestMove(currentPosition);
+                return currentPosition;
             case INFINITE:
                 break;
             case ISREADY:

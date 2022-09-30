@@ -1,26 +1,26 @@
 package minimax;
 
+import application.Conductor;
 import gametree.Node;
 import gametree.Tree;
-import utility.TimeUtility;
+import model.Position;
 
 public class IterativeDeepening<ContentType> {
 
-    private long stopTime;
     public static Node<?> lastResult;
-
-    protected void isTimeLeft() throws OutOfTimeException {
-        if (System.nanoTime() >= stopTime - 1 * TimeUtility.SECOND_TO_NANO) {
-            throw new OutOfTimeException();
-        }
-    }
 
     /**
      * Used to save an intermediate result of iterative deepning.
-     * @param bestMove the move that should be saved
+     * @param bestNode the move that should be saved
      */
-    private void saveMove(Node<ContentType> bestMove) {
-        lastResult = bestMove;
+    private void saveMove(Node<ContentType> bestNode, int depth) {
+        if (bestNode.getContent() instanceof Position){
+            Position bestFollowUp   = (Position) bestNode.getContent();
+            Conductor.bestFollowUp  = bestFollowUp;
+            Conductor.depthCompleted  = depth;
+        } else {
+            lastResult = bestNode;
+        }
         //System.out.println(bestMove);
         //System.out.println(((GameNode)bestMove).getRepresentedMove().toStringAlgebraic());
     }
@@ -35,16 +35,15 @@ public class IterativeDeepening<ContentType> {
     */
     public void evaluateTree(Tree<? extends Node<ContentType>> tree, TreeEvaluator<ContentType> evaluator, boolean whitesTurn, int secondsToCompute,
             int maxDepth) {
-        long start = System.nanoTime();
-        stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
         int depth = 1;
         Node<ContentType> bestMove = null;
-        while (depth <= maxDepth) {
+        while (depth <= maxDepth && !Conductor.stopCalculating) {
             System.out.println("depth " + depth);
             bestMove = evaluator.evaluateTree(tree, depth, whitesTurn);
-            saveMove(bestMove);
+            saveMove(bestMove, depth);
             depth += 1;
         }
-        //System.out.println("finished with: "  + (((GameNode)bestMove).getRepresentedMove().toStringAlgebraic()));
+        Conductor.stopCalculating = true;
+        System.out.println("finished");
     }
 }

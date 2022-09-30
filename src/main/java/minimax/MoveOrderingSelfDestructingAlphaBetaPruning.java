@@ -2,6 +2,7 @@ package minimax;
 
 import java.util.List;
 
+import application.Conductor;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.UninitializedValueException;
@@ -13,6 +14,8 @@ import gametree.UninitializedValueException;
  * using the static evaluation of each child node.
  */
 public class MoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends BaseTreeEvaluator<ContentType> {
+
+    private int counter;
 
     private DescendingValueComparator whiteComparator;
     private AscendingValueComparator blackComparator;
@@ -76,6 +79,13 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends Ba
     protected Node<ContentType> alphaBetaMinimize(Node<ContentType> parent, int depth, int alpha, int beta) {
 
         this.increaseEvaluatedNodeCount();
+
+        if (counter == 50000){
+            counter = 0;
+            if (Conductor.stopCalculating){
+                return parent;
+            }
+        }
 
         parent.writeContentToHistory();
 
@@ -184,7 +194,15 @@ public class MoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends Ba
      */
     protected Node<ContentType> alphaBetaMaximize(Node<ContentType> parent, int depth, int alpha, int beta) {
 
+        counter++;
         this.increaseEvaluatedNodeCount();
+
+        if (counter == 50000){
+            counter = 0;
+            if (Conductor.stopCalculating){
+                return parent;
+            }
+        }
 
         parent.writeContentToHistory();
 

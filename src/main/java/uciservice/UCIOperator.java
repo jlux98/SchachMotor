@@ -35,14 +35,6 @@ public abstract class UCIOperator {
             " ponder "  + ponderMove.toStringAlgebraic());
     }
 
-    public static void sendInfo(){
-        // TODO: Discuss whether needed and if so with which arguments
-    }
-
-    public static void sendOption(){
-        // TODO: Discuss which options - if any - can be set in the engine
-    }
-
     private static void sendOff(String message){
         System.out.println(message);
     }
