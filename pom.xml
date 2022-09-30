@@ -61,7 +61,7 @@
           <configuration>
             <archive>
               <manifest>
-                <mainClass>application.DemoApplicationFenToAlgebraic</mainClass>
+                <mainClass>application.Conductor</mainClass>
               </manifest>
             </archive>
           </configuration>
