@@ -188,6 +188,19 @@ public class IntNodeHelper {
         node.setContent(content * -1);
     }
 
+    /**
+     * Asserts that this node does not have children.
+     * If it does, asserts that this node was not evaluted.
+     * Used to confirm the deletion of nodes by self-destructing evaluators.
+     * @param node the node that should not have children
+     */
+    public static void assertHasNoChildrenOrWasPruned(IntNode node) {
+        if (node.hasChildren()) {
+            // if node has children it may not have an explicit value
+            assertThrows(UninitializedValueException.class, () -> node.getExplicitValue());
+        }
+    }
+
     @Test
     public void createRootNodeTest() throws ComputeChildrenException {
         Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4);

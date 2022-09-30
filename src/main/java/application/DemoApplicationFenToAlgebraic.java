@@ -214,7 +214,8 @@ public class DemoApplicationFenToAlgebraic {
             }
             case "st", "storing", "caching" -> {
                 algorithmName = "Storing Move-Ordering Self-Destructing Alpha-Beta-Pruning";
-                evaluator = new GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning();
+                //FIXME which storage level should be used
+                evaluator = new GameNodeStoringMoveOrderingSelfDestructingAlphaBetaPruning(4);
 
             }
             default -> {
