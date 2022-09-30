@@ -10,7 +10,7 @@ import gametree.UninitializedValueException;
  * Class implementing Alpha-Beta-Pruning-Minimax for trees consisting of Nodes
  * that store any kind of Object. 
  * <p>
- * This implementation stores the first <code>STORED_LEVELS</code> levels of the tree,
+ * This implementation stores the first <code>storedLevels</code> levels of the tree,
  * but deletes child nodes of deeper layers
  * after evaluating their parent to save memory.
  * <p>
@@ -20,14 +20,21 @@ import gametree.UninitializedValueException;
  */
 public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> extends BaseTreeEvaluator<ContentType> {
 
-    //FIXME initialization, see genericalphabetapruning
-
     private DescendingValueComparator whiteComparator;
     private AscendingValueComparator blackComparator;
 
-    public static final int STORED_LEVELS = 4;
+    public final int storedLevels;
 
-    public StoringMoveOrderingSelfDestructingAlphaBetaPruning() {
+    /**
+     * Creates a tree evaluator that deletes any nodes past the specified layer from the evalauted tree.
+     * <code>storedLevels</code> is the depth of the deepest level that should be stored 
+     * (with root being depth 0).
+     * <p>
+     * Setting a depth of 0 causes the evaluator to delete all nodes from the tree (other than the root).
+     * @param storedLevels the number of levels beneath the root that should be stored
+     */
+    public StoringMoveOrderingSelfDestructingAlphaBetaPruning(int storedLevels) {
+        this.storedLevels = storedLevels;
         whiteComparator = new DescendingValueComparator();
         blackComparator = new AscendingValueComparator();
     }
@@ -54,7 +61,8 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> ext
      *               (if the parent of the node passed to this method is reached)
      * @return the child node that has the best value
      */
-    private Node<ContentType> alphaBetaPruningMiniMax(Node<ContentType> parent, int depth, int alpha, int beta, boolean whiteNextMove) {
+    private Node<ContentType> alphaBetaPruningMiniMax(Node<ContentType> parent, int depth, int alpha, int beta,
+            boolean whiteNextMove) {
         if (whiteNextMove) {
             // maximize this node
             return alphaBetaMaximize(parent, depth, alpha, beta, 1);
@@ -154,7 +162,7 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> ext
             }
 
             // delete children from tree after parent was evaluated
-            if (currentDepth > STORED_LEVELS) {
+            if (currentDepth > storedLevels) {
                 parent.deleteChildren();
             }
 
@@ -261,7 +269,7 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> ext
             }
 
             // delete children from tree after parent was evaluated
-            if (currentDepth > STORED_LEVELS) {
+            if (currentDepth > storedLevels) {
                 parent.deleteChildren();
             }
 
