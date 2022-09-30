@@ -13,7 +13,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import classes.DifferentValuesIntNode;
-import classes.IntNode;
 import data.IntNodeAsymmetricTestTree;
 import data.IntNodeSmallAsymmetricTestTree;
 import data.IntNodeWikipediaTestTree;

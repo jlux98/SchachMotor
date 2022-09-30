@@ -43,12 +43,11 @@ public class IterativeDeepening<ContentType> {
         int depth = 1;
         Node<ContentType> bestMove = null;
         while (depth <= maxDepth && !Conductor.stopCalculating) {
-            System.out.println("depth " + depth);
+            // System.out.println("depth " + depth);
             bestMove = evaluator.evaluateTree(tree, depth, whitesTurn);
             saveMove(bestMove, depth);
             depth += 1;
         }
         Conductor.stopCalculating = true;
-        System.out.println("finished");
     }
 }

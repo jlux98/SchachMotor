@@ -5,8 +5,6 @@ import java.util.WeakHashMap;
 import application.Conductor;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
-import utility.PerformanceData;
-import utility.TimeUtility;
 import static model.ByteEncodedBoolean.*;
 
 /**

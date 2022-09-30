@@ -84,7 +84,7 @@ public class Conductor {
     }
 
     public static void cleanup(){
-        System.out.println("cleaning up");
+        // System.out.println("cleaning up");
         bestFollowUp = null;
         depthCompleted = 0;
         stopCalculating = false;

@@ -4,8 +4,6 @@ import java.util.List;
 
 import classes.AlignmentNode;
 import classes.IntNode;
-import data.IntNodeAsymmetricTestTree;
-import data.IntNodeWikipediaTestTree;
 import gametree.ComputeChildrenException;
 import gametree.Node;
 import gametree.Tree;
@@ -30,17 +28,6 @@ public class TreePrinter {
         updateAlignments(tree.getRoot(), 0, depth);
         printTree(tree, depth);
     }
-
-    //public static void main(String[] args) throws ComputeChildrenException {
-    // Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(2, 1, 2, 3, 4, 5, 6, 7, 8);
-    // alignAndPrintTree(tree, 3, false);
-    // Tree<IntNode> tree = IntNodeHelper.createIntNodeTree(3, 1, 2, 3, 4, 5, 6, 7, 8);
-    // alignAndPrintTree(tree, 2, false);
-    // IntNodeWikipediaTestTree tree = new IntNodeWikipediaTestTree();
-    // alignAndPrintTree(tree, 4, false);
-    // IntNodeAsymmetricTestTree tree = new IntNodeAsymmetricTestTree();
-    // alignAndPrintTree(tree, 6, false);
-    //}
 
     /**
      * Encloses a string with OFFSET_CHARACTERs until its width is >= <code>width</code>.
