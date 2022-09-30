@@ -268,7 +268,6 @@ public class DemoApplicationFenToAlgebraic {
     private void prepareNextRun() {
         evaluator.resetEvaluatedNodeCount();
         PerformanceData.moveGenerationTime = 0;
-        PerformanceData.attackMapGenerationTime = 0;
         PerformanceData.leafValueComputations = 0;
         PerformanceData.getOrComputeStaticValueCalls = 0;
         PerformanceData.staticValueComputations = 0;
@@ -490,7 +489,6 @@ public class DemoApplicationFenToAlgebraic {
                 .append("\n\tevaluated positions: " + format(evaluator.getEvaluatedNodeCount()))
                 .append("\n\ttime spent: " + TimeUtility.nanoToSeconds(calculationTime))
                 .append("\n\ttime spent by movegen: " + TimeUtility.nanoToSeconds(PerformanceData.moveGenerationTime))
-                .append("\n\ttime spent by attack maps: " + TimeUtility.nanoToSeconds(PerformanceData.attackMapGenerationTime))
                 .append("\n\troughlyEvaluateStatically calls: "
                         + format(PerformanceData.leafValueComputations))
                 .append("\n\tevaluateStatically calls: " + format(PerformanceData.getOrComputeStaticValueCalls))

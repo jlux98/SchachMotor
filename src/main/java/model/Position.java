@@ -80,9 +80,7 @@ public class Position implements Comparable<Position>, Cloneable {
         this.blackCastlingKingside = blackCastlingKingside;
         this.blackCastlingQueenside = blackCastlingQueenside;
         setEnPAssantTargetSpace(enPassantTargetRank, enPassantTargetFile);
-
-        attackMapTimer.time(() -> computeChecks(spaces));
-        PerformanceData.attackMapGenerationTime += attackMapTimer.getElapsedTime();
+        computeChecks(spaces);
     }
 
  /**
