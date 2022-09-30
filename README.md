@@ -1,9 +1,14 @@
-# ChessEngine
+# SchachMotor Chess Engine
 
-[General Class Diagram](https://github.com/tk1/ChessEngine/raw/main/diagrams/DetailedArchitecture_2022.07.14.svg)
+## Compile
 
-![Class Diagram](diagrams/DetailedArchitecture_2022.07.14.svg)
+Compile with `mvn package`.  
+(mvn is available at [maven.apache.org](https://maven.apache.org/install.html))
 
-[Class Diagram: Game Tree](https://github.com/tk1/ChessEngine/raw/main/diagrams/ClassDiagramGameTree.drawio.svg)
-
-![Tree Class Diagram](diagrams/ClassDiagramGameTree.drawio.svg)
+## Install
+To play with [arena](http://www.playwitharena.de/):
+- Select `Engines` in the menu bar
+- Select the compiled .jar in ChessEngine/target (select filetype jar)
+- Choose `UCI` when prompted for the engine type
+- Go to `Engines` > `Manage` and select the tab `Details`
+- Select Engine `SchachMotor` and choose `UCI` from the drop-down list `Type`

@@ -5,7 +5,7 @@
   <!-- groupid is not based on a website -->
   <groupId>ChessEngine.tk1</groupId>
   <artifactId>ChessEngine</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <url>https://github.com/tk1/ChessEngine</url>
   <description>
     A chessengine using UCI implemented in Java.
@@ -34,6 +34,7 @@
   </dependencies>
 
   <build>
+    <finalName>SchachMotor</finalName>
     <pluginManagement>
       <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>

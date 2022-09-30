@@ -46,14 +46,7 @@ public class Conductor {
         while (contd){
             String input = inputScanner.nextLine();
             try {
-                currentPosition = UCIParserAlphaBetaPruning.executeCommand(tokenizer.tokenize(input), currentPosition, this);                
-                if (currentPosition != null){
-                    if (currentPosition.getBoard() instanceof ArrayBoard){
-                        System.out.println("Using ArrayBoards");
-                    } else if (currentPosition.getBoard() instanceof ByteBoard){
-                        System.out.println("Using ByteBoards");
-                    }
-                }    
+                currentPosition = UCIParserAlphaBetaPruning.executeCommand(tokenizer.tokenize(input), currentPosition, this);                   
             } catch (Exception e) {
                 e.printStackTrace();
             }
