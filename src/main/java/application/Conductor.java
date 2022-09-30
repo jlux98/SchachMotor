@@ -74,7 +74,7 @@ public class Conductor {
         stopCalculating = true;
         System.out.println("Highest depth completed: " + depthCompleted);
         UCIOperator.sendBestmove(bestFollowUp.getMove());
-        appendPosition(bestFollowUp.clone());
+        appendPosition(bestFollowUp.clone().toStringLight());
         appendMove(bestFollowUp.getMove().clone());
         cleanup();
     }
