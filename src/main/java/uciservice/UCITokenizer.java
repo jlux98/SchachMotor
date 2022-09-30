@@ -13,7 +13,7 @@ public class UCITokenizer implements Tokenizer {
         String[] splitInput = input.split(" ");
         int i = 0;
         Command result = tokenizeWord(splitInput, i, null);
-        while (result.getType() == CommandType.CONSTANT){
+        while (result != null && result.getType() == CommandType.CONSTANT){
             i++;
             result = tokenizeWord(splitInput, i, null);
         }
@@ -22,6 +22,9 @@ public class UCITokenizer implements Tokenizer {
 
     private Command tokenizeWord(String[] sentence, int i, Command parent){
         Command result = null;
+        if (sentence.length == 1){
+            return null;
+        }
         String word = sentence[i];
         switch (word){
             case "binc":
