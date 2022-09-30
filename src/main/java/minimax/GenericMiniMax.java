@@ -60,11 +60,6 @@ public class GenericMiniMax<ContentType> extends BaseTreeEvaluator<ContentType> 
      * @return the child node that has the best (smallest) value
      */
     protected Node<ContentType> minimize(Node<ContentType> parent, int depth) {
-        /*
-         * if (depth == 0 && parent.isInteresting()) {
-         *      depth = depth + 1; //evaluate recursively
-         * }
-         */
 
         this.increaseEvaluatedNodeCount();
 
@@ -151,11 +146,6 @@ public class GenericMiniMax<ContentType> extends BaseTreeEvaluator<ContentType> 
      * @return the child node that has the best (greatest) value
      */
     protected Node<ContentType> maximize(Node<ContentType> parent, int depth) {
-        /*
-         * if (depth == 0 && parent.isInteresting()) {
-         *      depth = depth + 1; //evaluate recursively
-         * }
-         */
 
         this.increaseEvaluatedNodeCount();
 
