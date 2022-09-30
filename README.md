@@ -9,6 +9,6 @@ Compile with `mvn package`.
 To play with [arena](http://www.playwitharena.de/):
 - Select `Engines` in the menu bar
 - Select the compiled .jar in ChessEngine/target (select filetype jar)
-- Finally choose `UCI` when prompted for the engine type
+- Choose `UCI` when prompted for the engine type
 - Go to `Engines` > `Manage` and select the tab `Details`
 - Select Engine `SchachMotor` and choose `UCI` from the drop down `Type`
