@@ -2,6 +2,7 @@ package model;
 
 import java.util.HashMap;
 import java.util.Timer;
+import java.util.WeakHashMap;
 
 import application.Conductor;
 import movegenerator.AttackMapGenerator;
@@ -54,6 +55,7 @@ public class Position implements Comparable<Position>, Cloneable {
     // private boolean[] attackedByBlack;
     private Move generatedByMove;
 
+    private static WeakHashMap<String, Integer> hashMap = new WeakHashMap<>();
     private static TimeUtility<Integer> attackMapTimer = new TimeUtility<Integer>();
 
     /**
@@ -312,49 +314,49 @@ public class Position implements Comparable<Position>, Cloneable {
 
     @Override
     public String toString() {
-        String result;
-        result = board.toString() + "\n";
-        result += "Generating Move: " + generatedByMove + "\n";
+        StringBuilder result = new StringBuilder();
+        result.append(board.toString() + "\n");
+        result.append("Generating Move: " + generatedByMove + "\n");
         if (whiteNextMove) {
-            result += "White Next Move\n";
+            result.append("White Next Move\n");
         } else {
-            result += "Black Next Move\n";
+            result.append("Black Next Move\n");
         }
-        result += "White Castling: ";
+        result.append("White Castling: ");
         if (whiteCastlingKingside && whiteCastlingQueenside) {
-            result += "Kingside and Queenside\n";
+            result.append("Kingside and Queenside\n");
         } else {
             if (whiteCastlingKingside) {
-                result += "Kingside\n";
+                result.append("Kingside\n");
             } else if (whiteCastlingQueenside) {
-                result += "Queenside\n";
+                result.append("Queenside\n");
             } else {
-                result += "none\n";
+                result.append("none\n");
             }
         }
-        result += "Black Castling: ";
+        result.append("Black Castling: ");
         if (blackCastlingKingside && blackCastlingQueenside) {
-            result += "Kingside and Queenside\n";
+            result.append("Kingside and Queenside\n");
         } else {
             if (blackCastlingKingside) {
-                result += "Kingside\n";
+                result.append("Kingside\n");
             } else if (blackCastlingQueenside) {
-                result += "Queenside\n";
+                result.append("Queenside\n");
             } else {
-                result += "none\n";
+                result.append("none\n");
             }
         }
         if (getEnPassantTargetRank() == -1 || getEnPassantTargetFile() == -1) {
-            result += "No En Passant possible\n";
+            result.append("No En Passant possible\n");
         } else {
-            result += "En Passant possible with target square [" +
-                    getEnPassantTargetRank() + "][" + getEnPassantTargetFile() + "]\n";
+            result.append("En Passant possible with target square [" +
+                    getEnPassantTargetRank() + "][" + getEnPassantTargetFile() + "]\n");
         }
-        result += "Halfmove Clock: " + halfMovesSincePawnMoveOrCapture + "\n";
-        result += "Fullmove Number: " + fullMoveCount + "\n";
-        result += "White in Check: " + whiteInCheck + "\n";
-        result += "Black in Check: " + blackInCheck + "\n";
-        return result;
+        result.append("Halfmove Clock: " + halfMovesSincePawnMoveOrCapture + "\n");
+        result.append("Fullmove Number: " + fullMoveCount + "\n");
+        result.append("White in Check: " + whiteInCheck + "\n");
+        result.append("Black in Check: " + blackInCheck + "\n");
+        return result.toString();
     }
 
     /**
@@ -382,14 +384,15 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     public String toStringLight() {
-        String result = board.toString() + "\n";
-        result += whiteNextMove + "\n";
-        result += whiteCastlingKingside + "\n";
-        result += whiteCastlingQueenside + "\n";
-        result += blackCastlingKingside + "\n";
-        result += blackCastlingQueenside + "\n";
-        result += enPassantTargetSpace + "\n";
-        return result;
+        StringBuilder result = new StringBuilder();
+        result.append(board.toString() + "\n");
+        result.append(whiteNextMove + "\n");
+        result.append(whiteCastlingKingside + "\n");
+        result.append(whiteCastlingQueenside + "\n");
+        result.append(blackCastlingKingside + "\n");
+        result.append(blackCastlingQueenside + "\n");
+        result.append(enPassantTargetSpace + "\n");
+        return result.toString();
     }
 
 
@@ -644,9 +647,9 @@ public class Position implements Comparable<Position>, Cloneable {
     }
 
     private boolean checkForThreefoldRepetition() {
-        HashMap<String, Integer> hashMap = new HashMap<>();
+        hashMap.clear();
         for (int i = 0; i < Conductor.getPastPositions().size(); i++) {
-            String key = Conductor.getPastPositions().get(i).toStringLight();
+            String key = Conductor.getPastPositions().get(i);
             if (hashMap.get(key) == null) {
                 hashMap.put(key, 1);
             } else {

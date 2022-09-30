@@ -25,7 +25,7 @@ public class Conductor {
      * position (would cost more memory but make finding draws easier when 
      * checking if the same Position occurs thrice in the list)*/
     private static List<Move> pastMoves = new ArrayList<Move>();
-    private static List<Position> pastPositions = new ArrayList<>();
+    private static List<String> pastPositions = new ArrayList<>();
     private String startingPosition;
     private GameTree currentGameTree;
     // TODO: make sure only one calculation runs at a time
@@ -75,7 +75,7 @@ public class Conductor {
         this.startingPosition = startingPosition;
     }
 
-    public static void appendPosition(Position position){
+    public static void appendPosition(String position){
         pastPositions.add(position);
     }
 
@@ -99,7 +99,7 @@ public class Conductor {
         pastPositions.clear();
     }
 
-    public static List<Position> getPastPositions(){
+    public static List<String> getPastPositions(){
         return pastPositions;
     }
 
@@ -108,7 +108,7 @@ public class Conductor {
         GameTree tree = new ImpGameTree(currentPosition, evaluator);
         GameNode bestChild = tree.calculateBestMove(7);
         UCIOperator.sendBestmove(bestChild.getRepresentedMove());
-        appendPosition(bestChild.getContent().clone());
+        appendPosition(bestChild.getContent().toString());
         appendMove(bestChild.getRepresentedMove().clone());
         return bestChild.getContent().clone();
     }

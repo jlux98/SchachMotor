@@ -131,7 +131,7 @@ public class GameNode extends BaseNode<Position> {
         if (getContent() == null) {
             throw new NullPointerException("cannot write content to history because content is null");
         }
-        Conductor.appendPosition(getContent());
+        Conductor.appendPosition(getContent().toStringLight());
     }
 
     @Override
