@@ -122,7 +122,7 @@ public abstract class UCIParserAlphaBetaPruning{
                 break;
             case STOP:
                 // UCIOperator.sendBestmove(new Move(new Coordinate(1, 0), new Coordinate(3, 0)));
-                conductor.stop();
+                Conductor.stop();
                 return currentPosition;
             case UCI:
                 UCIOperator.sendId("SchachMotor", "lux&schoenenberger");
