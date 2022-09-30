@@ -18,7 +18,7 @@ public class Move implements Cloneable {
         if (moveString.matches("[a-h][1-8][a-h][1-8](B|N|Q|R|b|n|q|r)")){
             this.startingSpace = new Coordinate(moveString.substring(0,2));
             this.targetSpace = new Coordinate(moveString.substring(2,4));
-            this.promotedTo = new Piece(moveString.charAt(4)).toByte();
+            this.promotedTo = PieceEncoding.getBytePieceFromCharacter(moveString.charAt(4));
             return;
         }
 

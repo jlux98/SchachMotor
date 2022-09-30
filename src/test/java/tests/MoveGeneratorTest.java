@@ -954,4 +954,27 @@ public class MoveGeneratorTest {
                 "e8f8");
     }
 
+    @Test
+    public void promotedPiecesTest() {
+        MoveGeneratorHelper.verifyMoveGeneration("1BRN2Q1/2rpnpp1/q3R1P1/p1nBr1n1/b2B1R1k/2q1NbrP/N2R3Q/1K4bB w - - 0 1",
+                "g6f7", "a2c1", "a2c3", "a2b4", "e3d1", "e3f1", "e3c2", "e3g2", "e3c4", "e3g4", "e3f5", "d8c6", "d8b7", "d8f7",
+                "h1g2", "h1f3", "d4c3", "d4c5", "d4e5", "d5b3", "d5f3", "d5c4", "d5e4", "d5c6", "d5b7", "d5a8", "b8a7", "b8c7",
+                "d2d1", "d2b2", "d2c2", "d2e2", "d2f2", "d2g2", "d2d3", "f4f3", "f4e4", "f4g4", "f4h4", "f4f5", "f4f6", "f4f7",
+                "e6e5", "e6a6", "e6b6", "e6c6", "e6d6", "e6f6", "e6e7", "c8c7", "h2g1", "h2e2", "h2f2", "h2g2", "h2g3", "g8f7",
+                "g8g7", "g8h7", "g8e8", "g8f8", "g8h8"
+        );
+    }
+
+    @Test
+    public void promotedPieces2Test() {
+        MoveGeneratorHelper.verifyMoveGeneration("6RR/1bQPN1np/r3k1R1/2q1Nb1Q/1B2rrB1/b2b2Q1/2N2r2/K4B1B w - - 0 1",
+
+                "d7d8q", "d7d8r", "d7d8b", "d7d8n", "c2e1", "c2a3", "c2e3", "c2d4", "e5d3", "e5f3", "e5c4", "e5c6", "e5f7", "e7d5",
+                "e7f5", "e7c6", "e7c8", "f1e2", "f1g2", "f1d3", "f1h3", "h1g2", "h1f3", "h1e4", "b4e1", "b4d2", "b4a3", "b4c3",
+                "b4a5", "b4c5", "g4d1", "g4e2", "g4f3", "g4h3", "g4f5", "g6g5", "g6e6", "g6f6", "g6h6", "g6g7", "g8g7", "g8a8",
+                "g8b8", "g8c8", "g8d8", "g8e8", "g8f8", "h8h7", "g3g1", "g3f2", "g3g2", "g3h2", "g3d3", "g3e3", "g3f3", "g3h3",
+                "g3f4", "g3h4", "h5h2", "h5h3", "h5h4", "h5f5", "h5g5", "h5h6", "h5h7", "c7a5", "c7c5", "c7b6", "c7c6", "c7d6",
+                "c7b7", "c7b8", "c7c8", "c7d8", "a1b1", "a1a2");
+    }
+
 }

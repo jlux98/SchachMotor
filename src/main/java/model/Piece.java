@@ -140,7 +140,7 @@ public class Piece {
                 break;
         }
         if (!isWhite){
-            result += WHITE_ROOK;
+            result = switchBytePieceColor(result);
         }
         return result;
     }
