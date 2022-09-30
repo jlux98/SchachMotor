@@ -23,11 +23,6 @@ package gametree;
  * <p>
  * If only explicitly set values should be retrieved, use
  * {@link #getExplicitValue()} which throws an Exception if the value was not set by {@link #setValue(int)}.
- * <p>
- * Evaluables can be marked as especially interesting by {@link #markAsInteresting()}
- * and are unmarked by {@link #unmarkAsInteresting()}.
- * Use {@link #isInteresting()} to determine whether an Evaluable is currently marked
- * as interesting.
  */
 public interface Evaluable {
 
@@ -68,31 +63,11 @@ public interface Evaluable {
      * @throws UninitializedValueException if no value was set explicitly
      */
     public abstract int getExplicitValue() throws UninitializedValueException;
+
     /**
      * Overwrites the current value of this evaluable with the specified value.
      * @param value the value that should be stored
      */
     public abstract void setValue(int value);
-
-    /**
-     * Used to determine if this node is marked as especially interesting.
-     * Nodes are marked by calls to {@link #markAsInteresting()}
-     * and unmarked by {@link #unmarkAsInteresting()}.
-     * Nodes that are marked this way may be priotized in evaluation strategies.
-     * @return whether this node is marked as interesting.
-     */
-    public abstract boolean isInteresting();
-
-    /**
-     * Marks this Evaluable as especially interesting.
-     * Evaluable that are marked this way may be priotized in evaluation strategies.
-     */
-    public abstract void markAsInteresting();
-
-    /**
-     * Unmarks this Evaluable if it was previously marked as especially interesting.
-     * If this Evaluable was not marked, does nothing.
-     */
-    public abstract void unmarkAsInteresting();
 
 }

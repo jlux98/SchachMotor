@@ -363,10 +363,6 @@ public class Position implements Comparable<Position>, Cloneable {
      * instances.
      * Thus modifying the array is possible without affecting this position.
      * As pieces are immutable it is valid to use the same instances.
-     * <br>
-     * <br>
-     * The created Position will not be marked as interesting, even if this Position
-     * is.
      */
     @Override
     public Position clone() {

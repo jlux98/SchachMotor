@@ -82,11 +82,6 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> ext
      * @return the child node that has the best (smallest) value
      */
     protected Node<ContentType> alphaBetaMinimize(Node<ContentType> parent, int depth, int alpha, int beta, int currentDepth) {
-        /*
-         * if (depth == 0 && parent.isInteresting()) {
-         *      depth = depth + 1; //evaluate recursively
-         * }
-         */
 
         this.increaseEvaluatedNodeCount();
 
@@ -197,12 +192,6 @@ public class StoringMoveOrderingSelfDestructingAlphaBetaPruning<ContentType> ext
      * @return the child node that has the best (greatest) value
      */
     protected Node<ContentType> alphaBetaMaximize(Node<ContentType> parent, int depthLeft, int alpha, int beta, int currentDepth) {
-        /*
-         * if (depth == 0 && parent.isInteresting()) {
-         *      depth = depth + 1; //evaluate recursively
-         * }
-         */
-
         this.increaseEvaluatedNodeCount();
         parent.writeContentToHistory();
 
