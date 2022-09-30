@@ -5,6 +5,7 @@ import java.util.List;
 import static model.PieceEncoding.*;
 
 public class ByteBoard implements Board {
+    
     private byte[] squares;
 
     public ByteBoard(Piece[][] squares) {

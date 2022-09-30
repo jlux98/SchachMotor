@@ -70,7 +70,7 @@ public class FenParserTest {
 
         assertEquals(-1, position.getEnPassantTargetFile());
         assertEquals(-1, position.getEnPassantTargetRank());
-        assertTrue(position.getWhitesTurn());
+        assertTrue(position.getWhiteNextMove());
         assertEquals(1, position.getFullMoves());
         assertEquals(0, position.getHalfMoves());
     }

@@ -46,7 +46,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean isWhite;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
-        if (bs.getWhitesTurn()){
+        if (bs.getWhiteNextMove()){
             if (bs.getWhiteInCheck()) {
                 return;
             }
@@ -86,7 +86,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean isWhite;
         int relevantRank = -1;
         boolean relevantCastlingRight = false;
-        if (bs.getWhitesTurn()){
+        if (bs.getWhiteNextMove()){
             if (bs.getWhiteInCheck()) {
                 return;
             }
@@ -137,7 +137,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean hasCaptured = false;
         byte targetPiece = position.getByteAt(targetRank, targetFile);
         if (targetPiece != 0){
-            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhitesTurn()){
+            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhiteNextMove()){
                 return;
             } else {
                 hasCaptured = true;
@@ -165,7 +165,7 @@ public class KingMoveGenerator extends PieceMoveGenerator {
         boolean blackCastlingKingside = bs.getBlackCastlingKingside();
         boolean blackCastlingQueenside = bs.getBlackCastlingQueenside();
 
-        if (bs.getWhitesTurn()){
+        if (bs.getWhiteNextMove()){
             whiteCastlingKingside = false;
             whiteCastlingQueenside = false;
         } else {
@@ -177,8 +177,8 @@ public class KingMoveGenerator extends PieceMoveGenerator {
             whiteCastlingKingside, whiteCastlingQueenside,
             blackCastlingKingside, blackCastlingQueenside,
             -1,-1, halfMoves, fullMoves);
-        if ( bs.getWhitesTurn() && !resultingPosition.getWhiteInCheck()||
-            !bs.getWhitesTurn() && !resultingPosition.getBlackInCheck()){
+        if ( bs.getWhiteNextMove() && !resultingPosition.getWhiteInCheck()||
+            !bs.getWhiteNextMove() && !resultingPosition.getBlackInCheck()){
             resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
             // resultingPosition.appendAncestor(bs);
             results.add(resultingPosition);
