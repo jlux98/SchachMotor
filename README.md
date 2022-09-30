@@ -7,7 +7,7 @@ Compile with `mvn package`.
 
 ## Install
 To play with [arena](http://www.playwitharena.de/):
-- Select `Engines` in the menu bar
+- Select `Engines` in the menu bar and select `Install new Engine`
 - Select the compiled .jar in ChessEngine/target (select filetype jar)
 - Choose `UCI` when prompted for the engine type
 - Go to `Engines` > `Manage` and select the tab `Details`
