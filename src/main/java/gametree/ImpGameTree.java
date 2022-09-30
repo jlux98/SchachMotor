@@ -33,9 +33,4 @@ public class ImpGameTree extends ImpTree<GameNode> implements GameTree {
     public GameNode calculateBestMove(int depth) {
         return this.evaluator.evaluateTree(this, depth, this.getRoot().getContent().getWhitesTurn());
     }
-
-    @Override
-    public void stop() {
-        // TODO implement a way for the Conductor to stop a running calculation after receiving the stop command        
-    }
 }
