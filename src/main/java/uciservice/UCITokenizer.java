@@ -22,9 +22,9 @@ public class UCITokenizer implements Tokenizer {
 
     private Command tokenizeWord(String[] sentence, int i, Command parent){
         Command result = null;
-        if (sentence.length == 1){
-            return null;
-        }
+        // if (sentence.length == 1){
+        //     return null;
+        // }
         String word = sentence[i];
         switch (word){
             case "binc":
