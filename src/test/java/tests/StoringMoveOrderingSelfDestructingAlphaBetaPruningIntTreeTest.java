@@ -19,7 +19,7 @@ import gametree.UninitializedValueException;
 public class StoringMoveOrderingSelfDestructingAlphaBetaPruningIntTreeTest extends IntTreeEvaluationTest {
 
     public StoringMoveOrderingSelfDestructingAlphaBetaPruningIntTreeTest() {
-        super(new IntTreeEvaluationHelper(() -> new StoringMoveOrderingSelfDestructingAlphaBetaPruning<Integer>()));
+        super(new IntTreeEvaluationHelper(() -> new StoringMoveOrderingSelfDestructingAlphaBetaPruning<Integer>(), false));
     }
 
     //TODO add tests verifying storage depth

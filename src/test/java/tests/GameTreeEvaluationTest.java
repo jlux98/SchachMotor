@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import application.Conductor;
@@ -18,6 +19,7 @@ import gametree.UninitializedValueException;
 import helper.GameTreeEvaluationHelper;
 import helper.Mirror;
 import minimax.GameTreeEvaluator;
+import minimax.IterativeDeepening;
 import minimax.TreeEvaluator;
 import model.Move;
 import model.Position;
@@ -58,6 +60,7 @@ import uciservice.FenParser;
  */
 public abstract class GameTreeEvaluationTest {
 
+
     protected GameTreeEvaluationHelper helper;
 
     /**
@@ -68,7 +71,7 @@ public abstract class GameTreeEvaluationTest {
     public GameTreeEvaluationTest(GameTreeEvaluationHelper gameTreeEvaluator) {
         this.helper = gameTreeEvaluator;
     }
-
+    
     @Test
     public void illegalDepthTest() {
         GameTree tree = new ImpGameTree(new GameNode(FenParser.parseFen("2k5/8/8/8/8/3rrr2/N2rrr2/2K5 b - - 1 1")), helper.instantiateTreeEvaluator());
@@ -84,6 +87,8 @@ public abstract class GameTreeEvaluationTest {
     * Calculates the next move for the given fen twice using
     * {@link TreeEvaluator#evaluateTree(gametree.Tree, int, boolean)}
     * and compares both results.
+    * Also compares the result with that of 
+    * {@link IterativeDeepening#evaluateTree(gametree.Tree, TreeEvaluator, boolean, int, int)}.
     * 
     * @param fen        the position to calculate the move to be plaed for
     * @param depth      the depth used by alpha-beta pruning
@@ -98,13 +103,23 @@ public abstract class GameTreeEvaluationTest {
         GameTreeEvaluator evaluator2 = helper.instantiateTreeEvaluator();
         Move result2 = evaluator2.evaluateTree(new ImpGameTree(pos2, evaluator2), depth, whitesTurn).getRepresentedMove();
 
+        IterativeDeepening<Position> iterativeDeepening = new IterativeDeepening<Position>();
+        Position pos3 = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluator3 = helper.instantiateTreeEvaluator();
+        iterativeDeepening.evaluateTree(new ImpGameTree(pos3, evaluator3), evaluator3, whitesTurn, -1, depth);
+        Move result3 = Conductor.bestFollowUp.getMove();
+
         assertEquals(result1, result2);
+        assertEquals(result2, result3);
+        assertEquals(result1, result3);
     }
 
     /**
      * Calculates the next move for the given fen twice using
      * {@link ImpGameTree#calculateBestMove(int)}
      * and compares both results.
+     * Also compares the result with that of 
+     * {@link IterativeDeepening#evaluateTree(gametree.Tree, TreeEvaluator, boolean, int, int)}.
      * 
      * @param fen        the position to calculate the move to be plaed for
      * @param depth      the depth used by alpha-beta pruning
@@ -116,7 +131,15 @@ public abstract class GameTreeEvaluationTest {
         Position pos2 = FenParser.parseFen(fen);
         Move result2 = new ImpGameTree(pos2, helper.instantiateTreeEvaluator()).calculateBestMove(depth).getRepresentedMove();
 
+        IterativeDeepening<Position> iterativeDeepening = new IterativeDeepening<Position>();
+        Position pos3 = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluator3 = helper.instantiateTreeEvaluator();
+        iterativeDeepening.evaluateTree(new ImpGameTree(pos3, evaluator3), evaluator3, whitesTurn, -1, depth);
+        Move result3 = Conductor.bestFollowUp.getMove();
+
         assertEquals(result1, result2);
+        assertEquals(result2, result3);
+        assertEquals(result1, result3);
     }
 
     /**
@@ -124,6 +147,8 @@ public abstract class GameTreeEvaluationTest {
      * {@link ImpGameTree#calculateBestMove(int)}
      * and {@link TreeEvaluator#evaluateTree(gametree.Tree, int, boolean)}
      * and comapares both results.
+     * Also compares the result with that of 
+     * {@link IterativeDeepening#evaluateTree(gametree.Tree, TreeEvaluator, boolean, int, int)}.
      * 
      * @param fen        the position to calculate the move to be plaed for
      * @param depth      the depth used by alpha-beta pruning
@@ -138,7 +163,15 @@ public abstract class GameTreeEvaluationTest {
         Position pos2 = FenParser.parseFen(fen);
         Move result2 = new ImpGameTree(pos2, helper.instantiateTreeEvaluator()).calculateBestMove(depth).getRepresentedMove();
 
+        IterativeDeepening<Position> iterativeDeepening = new IterativeDeepening<Position>();
+        Position pos3 = FenParser.parseFen(fen);
+        GameTreeEvaluator evaluator3 = helper.instantiateTreeEvaluator();
+        iterativeDeepening.evaluateTree(new ImpGameTree(pos3, evaluator3), evaluator3, whitesTurn, -1, depth);
+        Move result3 = Conductor.bestFollowUp.getMove();
+
         assertEquals(result1, result2);
+        assertEquals(result2, result3);
+        assertEquals(result1, result3);
     }
 
     @Test

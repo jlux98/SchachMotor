@@ -10,6 +10,7 @@ import classes.IntNode;
 import gametree.Node;
 import gametree.Tree;
 import gametree.UninitializedValueException;
+import minimax.IterativeDeepening;
 import minimax.TreeEvaluator;
 
 /**
@@ -21,12 +22,15 @@ import minimax.TreeEvaluator;
  * <p>
  * The class containing the tests just has to store an instance of TreeEvaluationHelper
  * and can then use it to instantiate TreeEvaluators as needed for testing.
+ * Tree evaluators that do not delete nodes from the tree are compatible to iterative deepening
+ * and should provide this information to the constructor. This will cause
+ * {@link #verifyTreeAndInvertedTree(int, int, boolean, Supplier)} to also test iterative deepening.
  * </p>
  * 
  * <p>
  * This class can be instantiated by providing its constructor with a suitable lambda expression,
  * for example: 
- * <pre>new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning < Integer > ())</pre>
+ * <pre>new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning < Integer > (), true)</pre>
  * </p>
  * 
  * <p>
@@ -40,9 +44,17 @@ import minimax.TreeEvaluator;
 public class IntTreeEvaluationHelper {
 
     private Supplier<TreeEvaluator<Integer>> treeEvaluatorSupplier;
+    
+    protected boolean isIterativeDeepeningCompatible;
 
-    public IntTreeEvaluationHelper(Supplier<TreeEvaluator<Integer>> treeEvaluatorSupplier) {
+    /**
+     * Creates a new  IntTreeEvaluationHelper.
+     * @param treeEvaluatorSupplier a supplier for tree evaluators
+     * @param isSelfDestructing whether the tree evaluators are compatible to iterative deepening
+     */
+    public IntTreeEvaluationHelper(Supplier<TreeEvaluator<Integer>> treeEvaluatorSupplier, boolean isSelfDestructing) {
         this.treeEvaluatorSupplier = treeEvaluatorSupplier;
+        this.isIterativeDeepeningCompatible = isSelfDestructing;
     }
 
     /**
@@ -113,7 +125,7 @@ public class IntTreeEvaluationHelper {
         assertEquals(expectedResult, result);
         return evaluator.getEvaluatedNodeCount();
         } catch (UninitializedValueException exception) {
-            throw new FailureException("evaluator returned node without set value");
+            throw new FailureException(exception);
         }
     }
 
@@ -139,8 +151,10 @@ public class IntTreeEvaluationHelper {
      * Additionally, inverts the the tree's static leaf values (multiplies them by -1) and asserts 
      * that evaluation of the inverted tree for the opposing player returns -expectedResult.
      * <p>
-     * This method requires a supplier to construct the tree twice - 
+     * This method requires a supplier to construct the tree multple times - 
      * once for the initial test, and once for the inverted test.
+     * If iterative deepening is supported the tree will be constructed an additional time to verify
+     * the result of iterative deepening.
      * The supplier has to always provide a new but equal tree.
      * <p>
      * Example invocation: 
@@ -162,6 +176,20 @@ public class IntTreeEvaluationHelper {
         Tree<? extends Node<Integer>> invertedTree = treeSupplier.get();
         IntNodeHelper.invertLeaves(invertedTree);
         verifyEvaluateTree(-1 * expectedResult, invertedTree, depth, !whitesTurn);
+        
+        //test iterative deepening if supported on trees that cannot be recalculated from root
+        if (isIterativeDeepeningCompatible) {
+            Tree<? extends Node<Integer>> iterativeTree = treeSupplier.get();
+            IterativeDeepening<Integer> iterativeDeepening = new IterativeDeepening<Integer>();
+            iterativeDeepening.evaluateTree(iterativeTree, instantiateTreeEvaluator(), whitesTurn, -1, depth);
+            try {
+                int iterativeResult = iterativeDeepening.lastResult.getValue();
+                assertEquals(expectedResult, iterativeResult);
+            } catch (UninitializedValueException exception) {
+                throw new FailureException(exception);
+            }
+        }
+
     }
 
     /**

@@ -7,8 +7,11 @@ import model.Position;
 
 public class IterativeDeepening<ContentType> {
 
-    public static Node<?> lastResult;
-
+    /**
+     * lastResult of an evaluation of a non Node < Position > tree
+     * (e.g. Tree < Node < Position > >)
+     */
+    public Node<ContentType> lastResult;
     /**
      * Used to save an intermediate result of iterative deepning.
      * @param bestNode the move that should be saved
@@ -35,6 +38,8 @@ public class IterativeDeepening<ContentType> {
     */
     public void evaluateTree(Tree<? extends Node<ContentType>> tree, TreeEvaluator<ContentType> evaluator, boolean whitesTurn, int secondsToCompute,
             int maxDepth) {
+        
+        Conductor.cleanup();
         int depth = 1;
         Node<ContentType> bestMove = null;
         while (depth <= maxDepth && !Conductor.stopCalculating) {

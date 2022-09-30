@@ -16,7 +16,7 @@ import minimax.GenericAlphaBetaPruning;
 
 public class AlphaBetaIntTreeTest extends IntTreeEvaluationTest {
     public AlphaBetaIntTreeTest() {
-        super(new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>()));
+        super(new IntTreeEvaluationHelper(() -> new GenericAlphaBetaPruning<Integer>(), true));
     }
 
     // the first line's whitespace within the <pre> block is trimmed ("Tree:" has to

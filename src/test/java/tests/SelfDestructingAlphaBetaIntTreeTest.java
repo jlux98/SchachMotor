@@ -5,6 +5,6 @@ import minimax.SelfDestructingAlphaBetaPruning;
 
 public class SelfDestructingAlphaBetaIntTreeTest extends IntTreeEvaluationTest {
     public SelfDestructingAlphaBetaIntTreeTest() {
-        super(new IntTreeEvaluationHelper(() -> new SelfDestructingAlphaBetaPruning<Integer>()));
+        super(new IntTreeEvaluationHelper(() -> new SelfDestructingAlphaBetaPruning<Integer>(), false));
     }
 }

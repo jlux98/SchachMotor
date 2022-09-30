@@ -417,15 +417,16 @@ public class DemoApplicationFenToAlgebraic {
      * @return the follow-up move
      */
     private Move calculateFollowUpMove(Position position) {
-        TimeUtility<GameNode> timer = new TimeUtility<GameNode>();
+        TimeUtility<Position> timer = new TimeUtility<Position>();
 
         GameTree tree = new ImpGameTree(position, evaluator); //FIXME possible / worth to use detaching?
+        IterativeDeepening<Position> iterativeDeepening = new IterativeDeepening<Position>();
         //GameNode bestChild = timer.time(() -> evaluator.evaluateTree(tree, depth, position.getWhiteNextMove()));
-        GameNode bestChild = timer.time(() -> {
-            new IterativeDeepening<Position>().evaluateTree(tree, evaluator, position.getWhiteNextMove(), -1, depth);
-            return (GameNode) IterativeDeepening.lastResult;
+        Position bestChild = timer.time(() -> {
+            iterativeDeepening.evaluateTree(tree, evaluator, position.getWhiteNextMove(), -1, depth);
+            return Conductor.bestFollowUp;
         });
-        Move bestMove = bestChild.getRepresentedMove();
+        Move bestMove = bestChild.getMove();
         tree.delete();
 
         //save rough time spent calculating

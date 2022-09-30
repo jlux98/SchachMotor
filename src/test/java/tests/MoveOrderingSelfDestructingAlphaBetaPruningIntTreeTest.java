@@ -6,6 +6,6 @@ import minimax.MoveOrderingSelfDestructingAlphaBetaPruning;
 public class MoveOrderingSelfDestructingAlphaBetaPruningIntTreeTest extends IntTreeEvaluationTest {
 
     public MoveOrderingSelfDestructingAlphaBetaPruningIntTreeTest() {
-        super(new IntTreeEvaluationHelper(() -> new MoveOrderingSelfDestructingAlphaBetaPruning<Integer>()));
+        super(new IntTreeEvaluationHelper(() -> new MoveOrderingSelfDestructingAlphaBetaPruning<Integer>(), false));
     }
 }

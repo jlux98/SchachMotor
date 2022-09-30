@@ -87,6 +87,7 @@ public class Conductor {
         System.out.println("cleaning up");
         bestFollowUp = null;
         depthCompleted = 0;
+        stopCalculating = false;
     }
 
     public String getStartingPosition(){

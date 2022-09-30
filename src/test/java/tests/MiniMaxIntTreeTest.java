@@ -5,7 +5,7 @@ import minimax.GenericMiniMax;
 
 public class MiniMaxIntTreeTest extends IntTreeEvaluationTest {
     public MiniMaxIntTreeTest() {
-        super(new IntTreeEvaluationHelper(() -> new GenericMiniMax<Integer>()));
+        super(new IntTreeEvaluationHelper(() -> new GenericMiniMax<Integer>(), true));
     }
 
 }

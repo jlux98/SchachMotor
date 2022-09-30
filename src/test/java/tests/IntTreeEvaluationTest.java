@@ -2,8 +2,10 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import application.Conductor;
 import classes.IntNode;
 import data.IntNodeAsymmetricTestTree;
 import data.IntNodeSmallAsymmetricTestTree;
@@ -59,8 +61,7 @@ public abstract class IntTreeEvaluationTest {
     public IntTreeEvaluationTest(IntTreeEvaluationHelper intTreeEvaluator) {
         this.helper = intTreeEvaluator;
     }
-
-    
+   
     @Test
     public void illegalDepthTest() {
         Tree<Node<Integer>> tree = new ImpTree<Node<Integer>>(new IntNode(1));
