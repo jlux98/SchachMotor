@@ -44,7 +44,8 @@ public abstract class UCIParserAlphaBetaPruning{
                     Integer.parseInt(children.get(1).getData())/1000 + " seconds");
                 }
 
-                return conductor.calculateBestMove(currentPosition);
+                conductor.calculateBestMove(currentPosition);
+                return currentPosition;
             case INFINITE:
                 break;
             case ISREADY:

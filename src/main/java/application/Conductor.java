@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import gametree.GameNode;
+
 import gametree.GameTree;
 import gametree.ImpGameTree;
 import minimax.GameNodeMoveOrderingSelfDestructingAlphaBetaPruning;
 import minimax.GameTreeEvaluator;
+import minimax.IterativeDeepeningRunner;
 import model.ArrayBoard;
 import model.ByteBoard;
 import model.Move;
 import model.Position;
+import movegenerator.MoveGenerator;
 import uciservice.Tokenizer;
 import uciservice.UCIOperator;
 import uciservice.UCIParserAlphaBetaPruning;
 import uciservice.UCITokenizer;
+import utility.TimerRunner;
 
 public class Conductor {
     private boolean contd = true;
@@ -26,12 +29,16 @@ public class Conductor {
      * checking if the same Position occurs thrice in the list)*/
     private static List<Move> pastMoves = new ArrayList<Move>();
     private static List<Position> pastPositions = new ArrayList<>();
+
+    public static volatile Position bestFollowUp;
+    public static volatile boolean stopCalculating;
+    public static volatile int depthCompleted;
+
     private String startingPosition;
-    private GameTree currentGameTree;
     // TODO: make sure only one calculation runs at a time
-    private boolean isCalculating;
 
     private void start(){
+        stopCalculating = true;
         System.out.println("New Conductor entering the stage.");
         Position currentPosition = null;
         Scanner inputScanner = new Scanner(System.in);
@@ -53,18 +60,32 @@ public class Conductor {
         }
         inputScanner.close();
         return;
+
+
+
     }
     public static void main(String[] args) {
         new Conductor().start();
         return;
     }
 
-    public void stop(){
-        currentGameTree.stop();
+    public static void stop(){
+        stopCalculating = true;
+        System.out.println("Highest depth completed: " + depthCompleted);
+        UCIOperator.sendBestmove(bestFollowUp.getMove());
+        appendPosition(bestFollowUp.clone());
+        appendMove(bestFollowUp.getMove().clone());
+        cleanup();
     }
 
     public void quit(){
         contd = false;
+    }
+
+    public static void cleanup(){
+        System.out.println("cleaning up");
+        bestFollowUp = null;
+        depthCompleted = 0;
     }
 
     public String getStartingPosition(){
@@ -103,13 +124,14 @@ public class Conductor {
         return pastPositions;
     }
 
-    public Position calculateBestMove(Position currentPosition) {
+    public void calculateBestMove(Position currentPosition) {
+        if(!stopCalculating){
+            return;
+        }
+        stopCalculating = false;
         GameTreeEvaluator evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
         GameTree tree = new ImpGameTree(currentPosition, evaluator);
-        GameNode bestChild = tree.calculateBestMove(7);
-        UCIOperator.sendBestmove(bestChild.getRepresentedMove());
-        appendPosition(bestChild.getContent().clone());
-        appendMove(bestChild.getRepresentedMove().clone());
-        return bestChild.getContent().clone();
+        MoveGenerator.executor.submit(new TimerRunner(30));
+        MoveGenerator.executor.submit(new IterativeDeepeningRunner(tree, evaluator, currentPosition.getWhitesTurn(), 30, 7));
     }
 }
