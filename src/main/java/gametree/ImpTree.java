@@ -20,4 +20,10 @@ public class ImpTree<NodeType extends Node<?>> implements Tree<NodeType> {
         return this.root;
     }
 
+    @Override
+    public void delete() {
+        root.deleteChildren();
+        root = null;
+    }
+
 }

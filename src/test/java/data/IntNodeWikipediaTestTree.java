@@ -28,6 +28,11 @@ public class IntNodeWikipediaTestTree implements Tree<IntNode> {
         return this.root;
     }
 
+    @Override
+    public void delete() {
+        throw new UnsupportedOperationException("test trees do not support deletion so value changes can be examined");
+    }
+
     //layers and nodes are 0 based
     //root would be layer0Node0
     //children of root are layer1Node0 and layer1Node1
