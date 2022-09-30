@@ -36,7 +36,6 @@ public class Conductor {
 
     private static List<String> pastPositions = new ArrayList<>();
     private String startingPosition;
-    // TODO: make sure only one calculation runs at a time
 
     private void start(){
         stopCalculating = true;

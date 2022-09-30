@@ -1,14 +1,10 @@
 package model;
 
-import java.util.HashMap;
-import java.util.Timer;
 import java.util.WeakHashMap;
 
 import application.Conductor;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
-import utility.PerformanceData;
-import utility.TimeUtility;
 
 /**
  * Class representing the game state.
@@ -56,7 +52,6 @@ public class Position implements Comparable<Position>, Cloneable {
     private Move generatedByMove;
 
     private static WeakHashMap<String, Integer> hashMap = new WeakHashMap<>();
-    private static TimeUtility<Integer> attackMapTimer = new TimeUtility<Integer>();
 
     /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
