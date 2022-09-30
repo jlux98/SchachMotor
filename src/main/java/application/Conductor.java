@@ -120,9 +120,6 @@ public class Conductor {
     }
 
     public void calculateBestMove(Position currentPosition) {
-        if(!stopCalculating){
-            return;
-        }
         stopCalculating = false;
         GameTreeEvaluator evaluator = new GameNodeMoveOrderingSelfDestructingAlphaBetaPruning();
         GameTree tree = new ImpGameTree(currentPosition, evaluator);
