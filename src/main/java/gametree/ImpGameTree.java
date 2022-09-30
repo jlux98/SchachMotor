@@ -31,7 +31,7 @@ public class ImpGameTree extends ImpTree<GameNode> implements GameTree {
     // Ich würde den calculateBestMove evtl einen Namen geben wie kickOffCalculation oder startCalculatingBestMove
     // und dann irgendwo in ner privaten Methode im GameTree eine Hauptschleife für das Iterative Deepening haben
     public GameNode calculateBestMove(int depth) {
-        return this.evaluator.evaluateTree(this, depth, this.getRoot().getContent().getWhiteNextMove());
+        return this.evaluator.evaluateTree(this, depth, this.getRoot().getContent().getWhitesTurn());
     }
 
     @Override

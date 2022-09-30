@@ -111,7 +111,7 @@ public abstract class MoveGenerator {
         if (currentPiece == 0) {
             return result;
         }
-        if (currentPiece < BLACK_BISHOP != position.getWhiteNextMove()){
+        if (currentPiece < BLACK_BISHOP != position.getWhitesTurn()){
             return result;
         }
         switch (currentPiece) {
@@ -163,7 +163,7 @@ public abstract class MoveGenerator {
         if (currentPiece == 0) {
             return -1;
         }
-        if (currentPiece < BLACK_BISHOP != position.getWhiteNextMove()){
+        if (currentPiece < BLACK_BISHOP != position.getWhitesTurn()){
             return -1;
         }
         switch (currentPiece) {

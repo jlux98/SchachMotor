@@ -42,7 +42,7 @@ public class KnightMoveGenerator extends PieceMoveGenerator{
         boolean hasCaptured = false;
         byte targetPiece = position.getByteAt(targetRank, targetFile);
         if (targetPiece != 0){
-            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhiteNextMove()){
+            if (PieceEncoding.isBytePieceWhite(targetPiece) == position.getWhitesTurn()){
                 return;
             } else {
                 hasCaptured = true;
@@ -71,8 +71,8 @@ public class KnightMoveGenerator extends PieceMoveGenerator{
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
             -1,-1, halfMoves, fullMoves);
-        if ( bs.getWhiteNextMove() && !resultingPosition.getWhiteInCheck()||
-            !bs.getWhiteNextMove() && !resultingPosition.getBlackInCheck()){
+        if ( bs.getWhitesTurn() && !resultingPosition.getWhiteInCheck()||
+            !bs.getWhitesTurn() && !resultingPosition.getBlackInCheck()){
             resultingPosition.setMove(startingRank, startingFile, targetRank, targetFile);
             // resultingPosition.appendAncestor(bs);
             results.add(resultingPosition);
