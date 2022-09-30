@@ -1,10 +1,13 @@
 package model;
 
 import java.util.HashMap;
+import java.util.Timer;
 
 import application.Conductor;
 import movegenerator.AttackMapGenerator;
 import movegenerator.MoveGenerator;
+import utility.PerformanceData;
+import utility.TimeUtility;
 
 /**
  * Class representing the game state.
@@ -51,6 +54,8 @@ public class Position implements Comparable<Position>, Cloneable {
     // private boolean[] attackedByBlack;
     private Move generatedByMove;
 
+    private static TimeUtility<Integer> attackMapTimer = new TimeUtility<Integer>();
+
     /**
     * Like {@link #Position(int , boolean , boolean , Piece[][] , boolean , boolean , boolean , boolean , boolean , int , int , int , int)}
     * but without requiring whiteInCheck and blackInCheck to be set.
@@ -73,7 +78,9 @@ public class Position implements Comparable<Position>, Cloneable {
         this.blackCastlingKingside = blackCastlingKingside;
         this.blackCastlingQueenside = blackCastlingQueenside;
         setEnPAssantTargetSpace(enPassantTargetRank, enPassantTargetFile);
-        computeChecks(spaces);
+
+        attackMapTimer.time(() -> computeChecks(spaces));
+        PerformanceData.attackMapGenerationTime += attackMapTimer.getElapsedTime();
     }
 
  /**
@@ -108,7 +115,7 @@ public class Position implements Comparable<Position>, Cloneable {
         }
     }
 
-    private void computeChecks(Board spaces) {
+    private int computeChecks(Board spaces) {
         byte[] attackedByWhite = AttackMapGenerator.computeChecksByteEncoded(spaces, true);
         byte[] attackedByBlack = AttackMapGenerator.computeChecksByteEncoded(spaces, false);
         Coordinate whiteKing = getKingPosition(true);
@@ -145,7 +152,9 @@ public class Position implements Comparable<Position>, Cloneable {
         whiteQueensideLeft  = AttackMapGenerator.getBoolFromByte(7, 2, attackedByBlack);
         whiteQueensideRight = AttackMapGenerator.getBoolFromByte(7, 3, attackedByBlack);
         whiteKingsideLeft   = AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack);
-        whiteKingsideRight  = AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack);        
+        whiteKingsideRight  = AttackMapGenerator.getBoolFromByte(7, 5, attackedByBlack);     
+        
+        return -1; //for timer compatability
     }
 
     /**
