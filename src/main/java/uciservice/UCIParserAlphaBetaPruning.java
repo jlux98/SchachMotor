@@ -41,14 +41,13 @@ public abstract class UCIParserAlphaBetaPruning{
                  * - infinite
                  */
 
-                int secondsToCompute = -1;
                 // For debugging purposes we verify, that the engine has reade the number of remaining seconds without error
                 if (children.size()>0 && children.get(0).getType() == CommandType.MOVETIME) {
-                    secondsToCompute = Integer.parseInt(children.get(1).getData())/1000;
-                    System.out.println("searching for best move for the next " + secondsToCompute + " seconds");
+                    System.out.println("searching for best move for the next " +
+                    Integer.parseInt(children.get(1).getData())/1000 + " seconds");
                 }
 
-                conductor.calculateBestMove(currentPosition, secondsToCompute);
+                conductor.calculateBestMove(currentPosition);
                 return currentPosition;
             case INFINITE:
                 break;

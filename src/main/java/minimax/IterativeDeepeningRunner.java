@@ -2,8 +2,6 @@ package minimax;
 
 import gametree.GameTree;
 import model.Position;
-import movegenerator.MoveGenerator;
-import utility.TimerRunner;
 
 public class IterativeDeepeningRunner implements Runnable{
 
@@ -25,7 +23,6 @@ public class IterativeDeepeningRunner implements Runnable{
 
     @Override
     public void run() {
-        MoveGenerator.executor.submit(new TimerRunner(secondsToCompute));
         new IterativeDeepening<Position>().evaluateTree(tree, evaluator, whitesTurn, -1, depth);
     }
     
