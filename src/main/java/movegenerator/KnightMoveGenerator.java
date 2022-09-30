@@ -48,17 +48,17 @@ public class KnightMoveGenerator extends PieceMoveGenerator{
                 hasCaptured = true;
             }
         }
-        Board resultingSpaces =
+        Board resultingSquares =
             MoveGenerator.getBoardAfterMove(position.copyBoard(), rank, file, targetRank, targetFile);
         addKnightMove(position, results, rank, file, targetRank, targetFile,
-            resultingSpaces, hasCaptured);
+            resultingSquares, hasCaptured);
     }
 
 
 
     private static void addKnightMove(Position bs, List<Position> results,
         int startingRank, int startingFile, int targetRank, int targetFile,
-        Board resultingSpaces, boolean hasCaptured){
+        Board resultingSquares, boolean hasCaptured){
         int fullMoves = bs.getFullMoves();
         if (!bs.getWhiteNextMove()) {
             fullMoves ++;
@@ -67,7 +67,7 @@ public class KnightMoveGenerator extends PieceMoveGenerator{
         if (hasCaptured){
             halfMoves = 0;
         }
-        Position resultingPosition = new Position(resultingSpaces, !bs.getWhiteNextMove(),
+        Position resultingPosition = new Position(resultingSquares, !bs.getWhiteNextMove(),
             bs.getWhiteCastlingKingside(), bs.getWhiteCastlingQueenside(),
             bs.getBlackCastlingKingside(), bs.getBlackCastlingQueenside(),
             -1,-1, halfMoves, fullMoves);

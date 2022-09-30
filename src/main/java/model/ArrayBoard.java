@@ -9,15 +9,15 @@ import static model.PieceEncoding.*;
  * An implementation of Board based on a two-dimensional array of Pieces representing the board.
  */
 public class ArrayBoard implements Board {
-    private Piece[][] spaces;
+    private Piece[][] squares;
 
-    public ArrayBoard(Piece[][] spaces) {
-        this.spaces = spaces;
+    public ArrayBoard(Piece[][] squares) {
+        this.squares = squares;
     }
 
     @Override
     public Piece getPieceAt(int rank, int file){
-        return spaces[rank][file];
+        return squares[rank][file];
     }
 
     
@@ -26,7 +26,7 @@ public class ArrayBoard implements Board {
     public Coordinate getKingPosition(boolean isWhite){
         for (int rank = 0; rank < 8; rank++){
             for (int file = 0; file < 8; file++){
-                Piece currentPiece = spaces[rank][file];
+                Piece currentPiece = squares[rank][file];
                 if (isWhite && currentPiece != null &&
                     currentPiece.toString().equals("K")){
                     return new Coordinate(rank, file);
@@ -40,37 +40,31 @@ public class ArrayBoard implements Board {
         return null;
     }
 
-    // @Override
-    // public Piece[][] getSpaces() {
-    //     return spaces;
-    // }
-
-    // @Override
-    public Piece[][] copySpaces() {
+    public Piece[][] copySquares() {
         Piece[][] copy = new Piece[8][8];
-        for (int index = 0; index < spaces.length; index++) {
+        for (int index = 0; index < squares.length; index++) {
             //copy the 8 inner arrays
-            copy[index] = spaces[index].clone();
+            copy[index] = squares[index].clone();
         }
         return copy;
     }
 
     @Override
     public String toString() {
-        String[] spaceStrings = new String[8];
+        String[] resultArray = new String[8];
         for (int rank = 0; rank < 8; rank++) {
             String result = "";
             for (int file = 0; file < 8; file++) {
-                Piece currentPiece = spaces[rank][file];
+                Piece currentPiece = squares[rank][file];
                 if (currentPiece != null) {
                     result += currentPiece.toString();
                 } else {
                     result += "0";
                 }
             }
-            spaceStrings[rank] = result;
+            resultArray[rank] = result;
         }
-        String result = addChar(Arrays.toString(spaceStrings).replace(", ", ",\n"), '\n', 1);
+        String result = addChar(Arrays.toString(resultArray).replace(", ", ",\n"), '\n', 1);
         return result;
     }
 
@@ -90,47 +84,47 @@ public class ArrayBoard implements Board {
 
     @Override
     public void setPieceAt(int rank, int file, Piece piece) {
-        spaces[rank][file] = piece;
+        squares[rank][file] = piece;
         return;
     }
 
     @Override
     public List<Piece> getRank(int rank) {
         List<Piece> result = new ArrayList<>();
-        for (int i = 0; i < spaces.length; i++) {
-            result.add(spaces[rank][i]);
+        for (int i = 0; i < squares.length; i++) {
+            result.add(squares[rank][i]);
         }
         return result;
     }
 
     @Override
     public Board copyBoard() {
-        return new ArrayBoard(copySpaces());
+        return new ArrayBoard(copySquares());
     }
 
     @Override
-    public Piece getPieceAt(Coordinate space) {
-        return getPieceAt(space.getRank(), space.getFile());
+    public Piece getPieceAt(Coordinate square) {
+        return getPieceAt(square.getRank(), square.getFile());
     }
 
     @Override
-    public void setPieceAt(Coordinate space, Piece piece) {
-        this.setPieceAt(space.getRank(), space.getFile(), piece);        
+    public void setPieceAt(Coordinate square, Piece piece) {
+        this.setPieceAt(square.getRank(), square.getFile(), piece);        
     }
 
 	@Override
-	public byte getByteAt(Coordinate space) {
-        return getByteAt(space.getRank(),space.getFile());
+	public byte getByteAt(Coordinate square) {
+        return getByteAt(square.getRank(),square.getFile());
 	}
 
 	@Override
-	public void setByteAt(Coordinate space, byte b) {
-        setByteAt(space.getRank(), space.getFile(), b);		
+	public void setByteAt(Coordinate square, byte b) {
+        setByteAt(square.getRank(), square.getFile(), b);		
 	}
 
 	@Override
 	public byte getByteAt(int rank, int file) {
-        return pieceToByte(spaces[rank][file]);
+        return pieceToByte(squares[rank][file]);
 	}
 
 	private byte pieceToByte(Piece piece) {
@@ -168,7 +162,7 @@ public class ArrayBoard implements Board {
 
     @Override
 	public void setByteAt(int rank, int file, byte b) {
-		spaces[rank][file] = byteToPiece(b);
+		squares[rank][file] = byteToPiece(b);
 	}
 
     private Piece byteToPiece(byte b) {

@@ -65,7 +65,7 @@ public class Mirror {
      */
     public static Move mirrorMove(Move move) {
         byte promotedTo = changeColor(move.getPromotedTo());
-        return new Move(mirrorCoordinate(move.getStartingSpace()), mirrorCoordinate(move.getTargetSpace()), promotedTo);
+        return new Move(mirrorCoordinate(move.getStartingSquare()), mirrorCoordinate(move.getTargetSquare()), promotedTo);
     }
 
     /**
@@ -156,7 +156,7 @@ public class Mirror {
         private boolean blackCastlingKingside; <- swap with whiteCastlingKingside
         private boolean blackCastlingQueenside; <- swap with  blackCastlingQueenside
         
-        private Coordinate enPassantTargetSpace; <- do not change
+        private Coordinate enPassantTargetSquare; <- do not change
         
         private int halfMovesSincePawnMoveOrCapture; <- do not change
         private int fullMoveCount; <- do not change
@@ -179,12 +179,12 @@ public class Mirror {
         boolean mirroredBlackCastlingKingside = position.getWhiteCastlingKingside();
         boolean mirroredBlackCastlingQueenside = position.getWhiteCastlingQueenside();
 
-        Coordinate mirroredEnPAssantTargetSpace = mirrorCoordinate(position.getEnPassantTargetSpace());
+        Coordinate mirroredEnPAssantTargetSquare = mirrorCoordinate(position.getEnPassantTargetSquare());
         int mirroredEnPassantTargetRank;
         int mirroredEnPassantTargetFile;
-        if (mirroredEnPAssantTargetSpace != null) {
-            mirroredEnPassantTargetRank = mirroredEnPAssantTargetSpace.getRank();
-            mirroredEnPassantTargetFile = mirroredEnPAssantTargetSpace.getFile();
+        if (mirroredEnPAssantTargetSquare != null) {
+            mirroredEnPassantTargetRank = mirroredEnPAssantTargetSquare.getRank();
+            mirroredEnPassantTargetFile = mirroredEnPAssantTargetSquare.getFile();
         } else {
             mirroredEnPassantTargetRank = -1;
             mirroredEnPassantTargetFile = -1;

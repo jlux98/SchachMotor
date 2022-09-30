@@ -5,20 +5,20 @@ import java.util.List;
 import static model.PieceEncoding.*;
 
 public class ByteBoard implements Board {
-    private byte[] spaces;
+    private byte[] squares;
 
-    public ByteBoard(Piece[][] spaces) {
+    public ByteBoard(Piece[][] squares) {
         byte[] result = new byte[64];
-        this.spaces = result;
+        this.squares = result;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                setByteAt(i, j, pieceToByte(spaces[i][j]));
+                setByteAt(i, j, pieceToByte(squares[i][j]));
             }
         }
     }
 
-    public ByteBoard(byte[] spaces) {
-        this.spaces = spaces;
+    public ByteBoard(byte[] squares) {
+        this.squares = squares;
     }
 
     /**
@@ -106,12 +106,12 @@ public class ByteBoard implements Board {
                 byte currentByte = getByteAt(rank,file);
                 if (isWhite && currentByte != 0 &&
                     currentByte == WHITE_KING){
-                    // whiteKingSpace = (byte)(rank*8+file);
+                    // whiteKingSquare = (byte)(rank*8+file);
                     return new Coordinate(rank, file);
                 }
                 if (!isWhite && currentByte != 0 &&
                     currentByte == BLACK_KING){
-                    // blackKingSpace = (byte)(rank*8+file);
+                    // blackKingSquare = (byte)(rank*8+file);
                     return new Coordinate(rank, file);
                 }
             }
@@ -119,26 +119,26 @@ public class ByteBoard implements Board {
         return null;
     }
 
-    public byte[] copySpaces() {
-        return spaces.clone();
+    public byte[] copySquares() {
+        return squares.clone();
     }
 
     @Override
     public String toString() {
-        StringBuilder spaceStrings = new StringBuilder();
-        spaceStrings.append('\n');
+        StringBuilder squareStrings = new StringBuilder();
+        squareStrings.append('\n');
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 byte currentPiece = getByteAt(rank, file);
                 if (currentPiece != EMPTY_SQUARE) {
-                    spaceStrings.append(getCharacterFromBytePiece(currentPiece));
+                    squareStrings.append(getCharacterFromBytePiece(currentPiece));
                 } else {
-                    spaceStrings.append('0');
+                    squareStrings.append('0');
                 }
             }
-            spaceStrings.append('\n');
+            squareStrings.append('\n');
         }
-        return spaceStrings.toString();
+        return squareStrings.toString();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class ByteBoard implements Board {
     @Override
     public List<Piece> getRank(int rank) {
         List<Piece> result = new ArrayList<>();
-        for (int file = 0; file < spaces.length; file++) {
+        for (int file = 0; file < squares.length; file++) {
             result.add(byteToPiece(getByteAt(rank, file)));
         }
         return result;
@@ -168,28 +168,28 @@ public class ByteBoard implements Board {
 
     @Override
     public Board copyBoard() {
-        return new ByteBoard(copySpaces());
+        return new ByteBoard(copySquares());
     }
 
     @Override
-    public Piece getPieceAt(Coordinate space) {
-        return getPieceAt(space.getRank(), space.getFile());
+    public Piece getPieceAt(Coordinate square) {
+        return getPieceAt(square.getRank(), square.getFile());
     }
 
     @Override
-    public void setPieceAt(Coordinate space, Piece piece) {
-        setPieceAt(space.getRank(), space.getFile(), piece);
+    public void setPieceAt(Coordinate square, Piece piece) {
+        setPieceAt(square.getRank(), square.getFile(), piece);
     }
 
     @Override
-    public byte getByteAt(Coordinate space) {
-        return getByteAt(space.getRank(), space.getFile());
+    public byte getByteAt(Coordinate square) {
+        return getByteAt(square.getRank(), square.getFile());
     }
 
     @Override
     public byte getByteAt(int rank, int file) {
         boolean leftBits = file % 2 == 0;
-        byte piece = spaces[rank*8+file/2];
+        byte piece = squares[rank*8+file/2];
         if (leftBits){
             piece = (byte) (piece >>> 4);
         } 
@@ -198,8 +198,8 @@ public class ByteBoard implements Board {
     }
 
     @Override
-    public void setByteAt(Coordinate space, byte b) {
-        setByteAt(space.getRank(), space.getFile(), b);
+    public void setByteAt(Coordinate square, byte b) {
+        setByteAt(square.getRank(), square.getFile(), b);
     }
 
     @Override
@@ -209,20 +209,20 @@ public class ByteBoard implements Board {
         
         byte piece = b;
         byte resetMask;
-        // reset current value at that space
+        // reset current value at that square
         if (leftBits){
             resetMask = (byte) 0b00001111;
             piece = (byte) (piece << 4);
         } else {
             resetMask = (byte) 0b11110000;
         }
-        spaces[rank*8+file/2] = (byte)(spaces[rank*8+file/2] & resetMask);
-        spaces[rank*8+file/2] = (byte)(spaces[rank*8+file/2] | piece);
+        squares[rank*8+file/2] = (byte)(squares[rank*8+file/2] & resetMask);
+        squares[rank*8+file/2] = (byte)(squares[rank*8+file/2] | piece);
 
         // if (piece == WHITE_KING){
-        //     whiteKingSpace = (byte)(rank*8+file/2);
+        //     whiteKingSquare = (byte)(rank*8+file/2);
         // } else if (piece == BLACK_KING){
-        //     whiteKingSpace = (byte)(rank*8+file/2);
+        //     whiteKingSquare = (byte)(rank*8+file/2);
         // }
     }
 

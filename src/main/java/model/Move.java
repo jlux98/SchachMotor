@@ -3,55 +3,55 @@ package model;
 import static model.PieceEncoding.*;
 
 public class Move implements Cloneable {
-    private Coordinate startingSpace;
-    private Coordinate targetSpace;
+    private Coordinate startingSquare;
+    private Coordinate targetSquare;
     private byte promotedTo;
 
-    public Move(Coordinate startingSpace, Coordinate targetSpace) {
-        this.startingSpace = startingSpace;
-        this.targetSpace = targetSpace;
+    public Move(Coordinate startingSquare, Coordinate targetSquare) {
+        this.startingSquare = startingSquare;
+        this.targetSquare = targetSquare;
         this.promotedTo = 0;
     }
 
     public Move(String moveString){
 
         if (moveString.matches("[a-h][1-8][a-h][1-8](B|N|Q|R|b|n|q|r)")){
-            this.startingSpace = new Coordinate(moveString.substring(0,2));
-            this.targetSpace = new Coordinate(moveString.substring(2,4));
+            this.startingSquare = new Coordinate(moveString.substring(0,2));
+            this.targetSquare = new Coordinate(moveString.substring(2,4));
             this.promotedTo = PieceEncoding.getBytePieceFromCharacter(moveString.charAt(4));
             return;
         }
 
         if (moveString.matches("[a-h][1-8][a-h][1-8]")){
-            this.startingSpace = new Coordinate(moveString.substring(0,2));
-            this.targetSpace = new Coordinate(moveString.substring(2,4));
+            this.startingSquare = new Coordinate(moveString.substring(0,2));
+            this.targetSquare = new Coordinate(moveString.substring(2,4));
         } else {
             throw new IllegalArgumentException("Error: Move not correctly formatted: " + moveString);
         }
     }    
     
-    public Move(Coordinate startingSpace, Coordinate targetSpace, byte promotedTo) {
-        this.startingSpace = startingSpace;
-        this.targetSpace = targetSpace;
+    public Move(Coordinate startingSquare, Coordinate targetSquare, byte promotedTo) {
+        this.startingSquare = startingSquare;
+        this.targetSquare = targetSquare;
         this.promotedTo = promotedTo;
     }
 
     /**
      * This constructor exists purely for compatibility with old tests
-     * @param startingSpace
-     * @param targetSpace
+     * @param startingSquare
+     * @param targetSquare
      * @param piece
      */
-    public Move(Coordinate startingSpace, Coordinate targetSpace, Piece piece) {
-        this(startingSpace, targetSpace, piece.toByte());
+    public Move(Coordinate startingSquare, Coordinate targetSquare, Piece piece) {
+        this(startingSquare, targetSquare, piece.toByte());
     }
 
-    public Coordinate getStartingSpace() {
-        return startingSpace;
+    public Coordinate getStartingSquare() {
+        return startingSquare;
     }
 
-    public Coordinate getTargetSpace() {
-        return targetSpace;
+    public Coordinate getTargetSquare() {
+        return targetSquare;
     }
 
     public byte getPromotedTo() {
@@ -60,7 +60,7 @@ public class Move implements Cloneable {
 
     @Override
     public String toString() {
-        String result = startingSpace.toString() + targetSpace.toString();
+        String result = startingSquare.toString() + targetSquare.toString();
         if (promotedTo != 0) {
             result += promotedToString();
         }
@@ -93,7 +93,7 @@ public class Move implements Cloneable {
     }
 
     public String toStringAlgebraic() {
-        String result = startingSpace.toStringAlgebraic() + targetSpace.toStringAlgebraic();
+        String result = startingSquare.toStringAlgebraic() + targetSquare.toStringAlgebraic();
         if (promotedTo != 0) {
             result += promotedToString();
         }
@@ -118,8 +118,8 @@ public class Move implements Cloneable {
         if (obj instanceof Move) {
             Move otherMove = (Move) obj;
             return this.promotedToEquals(otherMove)
-                    && this.getStartingSpace().equals(otherMove.getStartingSpace())
-                    && this.getTargetSpace().equals(otherMove.getTargetSpace());
+                    && this.getStartingSquare().equals(otherMove.getStartingSquare())
+                    && this.getTargetSquare().equals(otherMove.getTargetSquare());
         }
         return false;
     }

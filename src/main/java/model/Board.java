@@ -15,14 +15,14 @@ public interface Board {
      * @return the piece at the specified rank and file
      */    
     /**
-     * The Piece at (0,0) represents the space a8, (0,7) represents h8,
+     * The Piece at (0,0) represents the square a8, (0,7) represents h8,
      * (7,0) represents a1 and (7,7) represents h1.
      */
     public abstract Piece getPieceAt(int rank, int file);
 
-    public abstract Piece getPieceAt(Coordinate space);
+    public abstract Piece getPieceAt(Coordinate square);
 
-    public abstract byte getByteAt(Coordinate space);
+    public abstract byte getByteAt(Coordinate square);
     public abstract byte getByteAt(int rank, int file);
 
     public abstract List<Piece> getRank(int rank);
@@ -31,9 +31,9 @@ public interface Board {
     // for better modularity so we can implement BitBoards without much code change
     public abstract void setPieceAt(int rank, int file, Piece piece);
 
-    public abstract void setByteAt(Coordinate space, byte b);
+    public abstract void setByteAt(Coordinate square, byte b);
     public abstract void setByteAt(int rank, int file, byte b);
-    public abstract void setPieceAt(Coordinate space, Piece piece);
+    public abstract void setPieceAt(Coordinate square, Piece piece);
     /**
      * Returns the position of the white/black king on this board.
      * Calls to getPieceAt(rank,file) with rank and file as returned by this method must return the corresponding king.
@@ -42,16 +42,6 @@ public interface Board {
      */
     public abstract Coordinate getKingPosition(boolean isWhite);
 
-    // public abstract Piece[][] getSpaces();
-
-    /**
-    * Copies the spaces array to facilitate generation of follow-up positions wtihout affecting this position.
-    * <br><br>
-    * <b>Note:</b> Because pieces are immutable the pieces themselves are not copied (the same piece instances are returned within the copied array).
-    * @return a copy of the two dimensional array representing the chess pieces' positions.
-    */
-    // public abstract Piece[][] copySpaces();
-    
     public abstract Board copyBoard();
 
     public abstract String toStringFen();
