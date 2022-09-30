@@ -4,7 +4,6 @@ import java.util.List;
 
 import gametree.ComputeChildrenException;
 import gametree.Node;
-import gametree.Tree;
 import gametree.UninitializedValueException;
 
 /**
