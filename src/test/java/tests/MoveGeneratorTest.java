@@ -850,7 +850,7 @@ public class MoveGeneratorTest {
             }
         }
         assertNotNull(bishopMove);
-        assertEquals(40, PositionEvaluator.evaluatePosition(bishopMove));
+        assertEquals(10, PositionEvaluator.evaluatePosition(bishopMove));
     }
 
 
@@ -868,7 +868,7 @@ public class MoveGeneratorTest {
                         bishopCapture = child.getContent();
                     }
                 }
-                assertEquals(-115, PositionEvaluator.evaluatePosition(bishopCapture));             
+                assertEquals(-95, PositionEvaluator.evaluatePosition(bishopCapture));             
     }
 
     @Test
