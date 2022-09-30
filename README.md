@@ -11,4 +11,4 @@ To play with [arena](http://www.playwitharena.de/):
 - Select the compiled .jar in ChessEngine/target (select filetype jar)
 - Choose `UCI` when prompted for the engine type
 - Go to `Engines` > `Manage` and select the tab `Details`
-- Select Engine `SchachMotor` and choose `UCI` from the drop down `Type`
+- Select Engine `SchachMotor` and choose `UCI` from the drop-down list `Type`
