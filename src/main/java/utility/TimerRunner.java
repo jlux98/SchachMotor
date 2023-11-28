@@ -27,14 +27,24 @@ public class TimerRunner implements Runnable {
     public void run() {
         long start = System.nanoTime();
         stopTime = start + secondsToCompute * TimeUtility.SECOND_TO_NANO;
-        while (isTimeLeft() && !Conductor.stopCalculating){
+        boolean stopper = true;
+        while (stopper){
             try {
-                Thread.sleep(1000);
-                System.out.println(nanoSecondsLeft()/1000000000 + " seconds left");
-            } catch (InterruptedException e) {
+                Thread.sleep(1000000);
+                long nsLeft = nanoSecondsLeft();
+                // if (nsLeft % 1000 == 0){
+                    System.out.println(nsLeft/1000000000 + " seconds left");
+                // }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            stopper = isTimeLeft();
+            if (Conductor.stopCalculating){
+                stopper = false;
+            }
         }
-        Conductor.stop();
+        // if (!Conductor.stopCalculating){
+            Conductor.stop();
+        // }
     }
 }

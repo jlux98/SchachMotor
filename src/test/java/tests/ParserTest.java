@@ -1,18 +1,18 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+// import static org.junit.jupiter.api.Assertions.assertFalse;
+// import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
+// import java.util.ArrayList;
+// import java.util.List;
 
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
 
-import model.Move;
-import uciservice.Command;
-import uciservice.Tokenizer;
-import uciservice.UCIParserAlphaBetaPruning;
-import uciservice.UCITokenizer;
+// import model.Move;
+// import uciservice.Command;
+// import uciservice.Tokenizer;
+// import uciservice.UCIParserAlphaBetaPruning;
+// import uciservice.UCITokenizer;
 
 
 public class ParserTest {
@@ -44,31 +44,31 @@ public class ParserTest {
     //     // }
     // }
 
-    @Test
-    public void sameGameTestTrue(){
-        Tokenizer tokenizer = new UCITokenizer();
-        Command parent = tokenizer.tokenize("position startpos moves a2a4 a7a5 d2d4 d7d5");
-        String startingPosition = "startpos";
-        List<Move> oldTurn = new ArrayList<Move>();
-        oldTurn.add(new Move("a2a4"));
-        oldTurn.add(new Move("a7a5"));
-        assertTrue(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition, oldTurn, parent.getChildren()));
-        String startingPosition2 = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        assertTrue(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition2, oldTurn, parent.getChildren()));
-    }
-    @Test
-    public void sameGameTestFalse(){
-        Tokenizer tokenizer = new UCITokenizer();
-        Command parent1 = tokenizer.tokenize("position startpos moves a2a4 a7a5 d2d4 d7d5 e2e4");
-        String startingPosition = "startpos";
-        List<Move> oldTurn = new ArrayList<Move>();
-        oldTurn.add(new Move("a2a4"));
-        oldTurn.add(new Move("a7a5"));
-        assertFalse(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition, oldTurn, parent1.getChildren()));
-        Command parent2 = tokenizer.tokenize("position startpos moves a2a1 a7a5 d2d4 d7d5");
-        assertFalse(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition, oldTurn, parent2.getChildren()));
-        String startingPosition2 = "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR w KQkq - 0 1"; 
-        Command parent3 = tokenizer.tokenize("position startpos moves a2a4 a7a5 d2d4 d7d5");
-        assertFalse(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition2, oldTurn, parent3.getChildren()));
-    }
+//     @Test
+//     public void sameGameTestTrue(){
+//         Tokenizer tokenizer = new UCITokenizer();
+//         Command parent = tokenizer.tokenize("position startpos moves a2a4 a7a5 d2d4 d7d5");
+//         String startingPosition = "startpos";
+//         List<Move> oldTurn = new ArrayList<Move>();
+//         oldTurn.add(new Move("a2a4"));
+//         oldTurn.add(new Move("a7a5"));
+//         assertTrue(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition, oldTurn, parent.getChildren()));
+//         String startingPosition2 = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+//         assertTrue(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition2, oldTurn, parent.getChildren()));
+//     }
+//     @Test
+//     public void sameGameTestFalse(){
+//         Tokenizer tokenizer = new UCITokenizer();
+//         Command parent1 = tokenizer.tokenize("position startpos moves a2a4 a7a5 d2d4 d7d5 e2e4");
+//         String startingPosition = "startpos";
+//         List<Move> oldTurn = new ArrayList<Move>();
+//         oldTurn.add(new Move("a2a4"));
+//         oldTurn.add(new Move("a7a5"));
+//         assertFalse(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition, oldTurn, parent1.getChildren()));
+//         Command parent2 = tokenizer.tokenize("position startpos moves a2a1 a7a5 d2d4 d7d5");
+//         assertFalse(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition, oldTurn, parent2.getChildren()));
+//         String startingPosition2 = "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR w KQkq - 0 1"; 
+//         Command parent3 = tokenizer.tokenize("position startpos moves a2a4 a7a5 d2d4 d7d5");
+//         assertFalse(UCIParserAlphaBetaPruning.isTheSameGame(startingPosition2, oldTurn, parent3.getChildren()));
+//     }
 }

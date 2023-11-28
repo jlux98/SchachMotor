@@ -89,7 +89,7 @@ public class FenParser {
             parseHalfMoveCount(tokens[4]);
             parseFullMoveCount(tokens[5]);
         } catch (ArrayIndexOutOfBoundsException exception) {
-            throw new FenParseException("fen could not be split");
+            throw new FenParseException("fen \"" + fen + "\" could not be split");
         }
     }
 

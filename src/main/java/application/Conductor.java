@@ -62,12 +62,12 @@ public class Conductor {
 
     public static void stop(){
         stopCalculating = true;
-        System.out.println("Highest depth completed: " + depthCompleted);
-        UCIOperator.sendBestmove(bestFollowUp.getMove());
-        appendPosition(bestFollowUp.clone().toStringLight());
-        appendMove(bestFollowUp.getMove().clone());
+        if (bestFollowUp != null){
+            System.out.println("Highest depth completed: " + depthCompleted);
+            UCIOperator.sendBestmove(bestFollowUp.getMove());
+        }
         cleanup();
-        System.gc();
+        // System.gc();
     }
 
     public void quit(){

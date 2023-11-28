@@ -15,7 +15,11 @@ public class UCITokenizer implements Tokenizer {
         Command result = tokenizeWord(splitInput, i, null);
         while (result != null && result.getType() == CommandType.CONSTANT){
             i++;
-            result = tokenizeWord(splitInput, i, null);
+            if (i < splitInput.length){
+                result = tokenizeWord(splitInput, i, null);
+            } else {
+                break;
+            }
         }
         return result;
     }
@@ -54,7 +58,7 @@ public class UCITokenizer implements Tokenizer {
 
             case "fen":
                 result = new Command(CommandType.FEN, parent);
-                result.addChild(tokenizeWord(sentence, i+1, result));
+                result.addAll(grabChildren(sentence, i+1, parent));
             break;
 
             case "go":
@@ -192,10 +196,10 @@ public class UCITokenizer implements Tokenizer {
     }
     
     private boolean checkForFenString(List<Command> children){
-        if (children.size() > 5){
+        if (children.size() > 6){
             if (children.get(0).getParent() != null &&
                 children.get(0).getParent().getType() == CommandType.POSITION &&
-                children.get(0).getType() != CommandType.STARTPOS){
+                children.get(0).getType() == CommandType.FEN){
                 return true;
             }
         }
@@ -204,10 +208,10 @@ public class UCITokenizer implements Tokenizer {
 
     private List<Command> glueFenTogether(List<Command> children){
         String fenString = children.get(0).getData();
-        for (int i = 1; i < 6; i++){
-            fenString = fenString + " " + children.get(i).getData();
+        for (int i = 1; i < 7; i++){
+            fenString += children.get(i).getData() + " ";
         }
-        for (int i = 5; i > 0; i--){
+        for (int i = 6; i > 0; i--){
             children.remove(i);
         }
         children.get(0).setData(fenString);
